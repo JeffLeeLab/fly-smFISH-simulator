@@ -1,0 +1,96 @@
+/* ==========================================================================
+   tokens.css: frozen design tokens (style-direction phase outcome)
+   Direction A "Editorial essay" overall, with the boxed compare pane from C,
+   subtle illustration texture, dark background #1F1E1C, revised text-size rule.
+   Every screen uses these variables; no hard-coded colours, fonts or sizes.
+   Fonts must be self-hosted in the repo at pinned versions (no CDN).
+   ========================================================================== */
+
+:root {
+  /* ---- fonts ---- */
+  --font-serif: "Newsreader", Georgia, serif;          /* headings, story text */
+  --font-sans: "Instrument Sans", system-ui, sans-serif; /* UI, compare pane */
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace; /* numbers, IDs, overlays, ticks */
+
+  /* ---- type scale (rule: body ≥16 px, UI text and controls ≥13 px, overlays and ticks ≥11 px) ---- */
+  --fs-display: 46px;     /* hero title */
+  --fs-h1: 40px;
+  --fs-h2: 28px;
+  --fs-h3: 18px;
+  --fs-story: 18px;       /* serif story text, steps 1–2 and 7 */
+  --fs-body: 16px;        /* sans body text */
+  --fs-ui-lg: 14px;       /* card titles, field text */
+  --fs-ui: 13px;          /* controls, chips, tabs, verdict buttons, predictions, evidence */
+  --fs-label: 11px;       /* eyebrows, group labels, plot ticks, burned-in viewer overlays (mono) */
+  --lh-story: 1.6;
+  --lh-body: 1.55;
+  --lh-tight: 1.05;
+  --tracking-label: .08em;  /* uppercase labels */
+
+  /* ---- spacing, radii, lines ---- */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 32px; --sp-7: 48px;
+  --r-chip: 2px;          /* chips, viewer frame (editorial, near-square) */
+  --r-pane: 3px;          /* compare pane fields, mode cards, verdict bars (from C) */
+  --r-frame: 8px;         /* outer page frames only */
+  --hairline: 1px;
+  --measure: 70ch;        /* story column width */
+
+  /* ---- surfaces and text (light) ---- */
+  --bg: #F0EEE6;          /* ivory */
+  --panel: #E8E6DC;
+  --field: #F6F4EE;       /* inputs, mode cards */
+  --border: #C9C6BC;      /* hairlines; decorative */
+  --border-strong: #B0AEA5;
+  --muted: #87867F;       /* ≥3:1 graphics only, never body text */
+  --text: #141413;
+  --text-2: #3D3D3A;      /* secondary text, 9.4:1 */
+  --accent: #D97757;      /* clay: fills, current step, focus rings; never text */
+  --on-accent: #141413;   /* text on clay (≈5.9:1); white on clay fails */
+  --accent-text: #A8492C; /* links and accent text on ivory, 4.9:1 */
+  --viewer-frame: #2A2926;/* warm charcoal around the always-black viewer */
+
+  /* ---- data colours (the only saturated hues; same meaning everywhere) ---- */
+  --ch1: #46E66E;         /* smFISH 1, viewer LUT (green) */
+  --ch2: #EB46E1;         /* smFISH 2, viewer LUT (magenta) */
+  --ch-merge: #FFFFFF;    /* both regions on one molecule */
+  --tdp: #FFD63C;         /* TDP-43 IF default LUT (yellow); see --tdp-with-fish */
+  --tdp-with-fish: .4;    /* TDP-43 intensity while any smFISH channel is on (avoids false "white") */
+  --mem: #5F78C0;         /* membrane (mCD8::BFP) + anatomy neurons */
+  --dapi: #5A78EB;
+  --ch1-ink: #1F8A4C;     /* smFISH 1 on the page (map, plot, chips), 3.8:1 */
+  --ch2-ink: #B0328F;     /* smFISH 2 on the page, 4.9:1 */
+
+  /* ---- illustration (story layer only; never on data) ---- */
+  --ink: #2B2A27;
+  --wash-body: #E7E0D1; --wash-wing: rgba(255,255,255,.38); --wash-eye: #D7A089; --wash-gene: #E3D8C4;
+  --wash-a: #E2D2BA; --wash-b: #E8C2AC; --wash-c: #D7D5CB;
+  /* subtle texture strength */
+  --tex-ink-displace: .9;   /* feDisplacementMap scale on outlines */
+  --tex-ink-frequency: .03; /* feTurbulence baseFrequency */
+  --tex-boil-fps: 12;
+  --tex-wash-opacity: .28;
+  --tex-grain-opacity: .22;
+}
+
+[data-theme="dark"] {
+  --bg: #1F1E1C;
+  --panel: #2A2926;
+  --field: #252422;
+  --border: #4A4945;
+  --border-strong: #5E5D59;
+  --muted: #9C9A91;
+  --text: #F0EEE6;
+  --text-2: #B0AEA5;
+  --accent-text: #E59A80;
+  --viewer-frame: #141413;
+  --ch1-ink: #4CC27A;
+  --ch2-ink: #E066C4;
+  --ink: #E8E6DC;
+  --wash-body: #3A3833; --wash-wing: rgba(255,255,255,.06); --wash-eye: #7E4C3D; --wash-gene: #4A4640;
+  --wash-a: #3B352D; --wash-b: #4B3429; --wash-c: #34332F;
+  --tex-grain-opacity: .12;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { color-scheme: dark; }
+}

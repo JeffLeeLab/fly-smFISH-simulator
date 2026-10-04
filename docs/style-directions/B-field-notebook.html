@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-dir="B">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style direction B · Field notebook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+:root { --serif:"Source Serif 4", Georgia, serif; --sans:"Hanken Grotesk", system-ui, sans-serif; --mono:"JetBrains Mono", ui-monospace, monospace;
+  --bg:#F0EEE6; --panel:#E8E6DC; --field:#FAF8F2; --paper:#F7F3EA; --border:#B0AEA5; --muted:#87867F; --text:#141413; --text2:#3D3D3A;
+  --accent:#D97757; --accent-text:#A8492C; --viewer-frame:#2A2926; --ch1:#46E66E; --ch2:#EB46E1; --ch1-ink:#1F8A4C; --ch2-ink:#B0328F; --tdp:#FFD63C; --mem:#5F78C0; --ink:#2B2A27; --wash-body:#E7E0D1; --wash-wing:rgba(255,255,255,.38); --wash-eye:#D7A089; --wash-gene:#E3D8C4;
+  --wash-a:#E2D2BA; --wash-b:#E8C2AC; --wash-c:#D7D5CB; }
+[data-theme="dark"] { --bg:#1F1E1C; --panel:#2A2926; --field:#2E2D2A; --paper:#2A2926; --border:#4A4945; --muted:#9C9A91; --text:#F0EEE6; --text2:#B0AEA5;
+  --accent-text:#E59A80; --viewer-frame:#141413; --ch1-ink:#4CC27A; --ch2-ink:#E066C4; --ink:#E8E6DC; --wash-body:#3A3833; --wash-wing:rgba(255,255,255,.06); --wash-eye:#7E4C3D; --wash-gene:#4A4640;
+  --wash-a:#3B352D; --wash-b:#4B3429; --wash-c:#34332F; }
+h1, h2, .t-h1, .t-h2 { font-family: var(--sans); font-weight: 700; letter-spacing: -.02em; }
+.doc-head h1 { font-size: 38px; }
+.t-h1 { font-size: 42px; line-height: 1.05; margin: 0 0 8px; } .t-h2 { font-size: 26px; margin: 0 0 12px; }
+.t-body { font: 400 17px/1.6 var(--sans); max-width: 64ch; } .t-small { font: italic 15px var(--serif); color: var(--text2); } .t-num { font: 15px var(--mono); }
+.hero-text h1 { font-size: 44px; line-height: 1.04; } .hero-text .lede { font-size: 17px; } .hero-text .cap { font: italic 400 24px var(--serif); }
+.s1 { display:grid; grid-template-columns: 200px 1fr; height:100%; } .s1-rail { padding: 40px 18px; background: var(--panel); }
+.rstep.now { background: var(--bg); border-radius: 0 8px 8px 0; }
+.s6 { grid-template-columns: 40px 1fr 372px; grid-template-rows: auto 1fr auto; grid-template-areas: "rail head side" "rail viewer side" "rail plot side"; gap: 12px 18px; padding: 18px 18px 14px 12px; }
+.s6-rail { grid-area: rail; } .s6-head { grid-area: head; } .s6-viewer { grid-area: viewer; border-radius: 12px; } .s6-plot { grid-area: plot; }
+.s6-side { grid-area: side; background: var(--paper); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px;
+  background-image: radial-gradient(color-mix(in srgb, var(--border) 55%, transparent) .8px, transparent .8px); background-size: 14px 14px; }
+.s6 h2 { font-size: 26px; }
+.chip, .ghost { border-radius: 99px; }
+.mc { border-radius: 10px; border-left: 4px solid var(--accent); }
+.vb.on { background: var(--accent); color: #141413; }
+.ta { border-radius: 8px; }
+.cmp-tabs { border-radius: 99px; } .cmp-tabs button.on { background: var(--text); color: var(--bg); }
+.ptabs button.on { border-radius: 99px; }
+.pred { font-family: var(--serif); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header class="doc-head">
+    <div><p class="eyebrow">Style direction B of 3 · mockup, simulated data</p><h1>Field notebook</h1><p class="why">Sans-led and warmer, with hand-drawn line illustration. The lab notebook is the centrepiece: a paper-toned panel that grows through the session, with index-card mode cards.</p></div>
+    <button data-act="theme">Light / dark</button>
+  </header>
+
+  <section class="sec"><h3>1 · Tokens <span>contrast computed against this direction's background</span></h3><div class="toks" id="toks"></div></section>
+
+  <section class="sec"><h3>2 · Type</h3>
+    <div class="spec">
+      <div>
+        <p class="t-h1">Two flies, one human gene</p>
+        <p class="t-h2">Reveal + compare</p>
+        <p class="t-body">The fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i>. In the mutant, fewer molecules reach the boutons, but the cell body holds as many as before. Where did they go?</p>
+        <p class="t-small">Caption · simulated teaching data · n = 3 animals</p>
+        <p class="t-num">S7 0123456789 · 15.2 ± 1.4 · 6,122,978–6,123,899</p>
+      </div>
+      <div id="tab"></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>3 · Step 1 frame <span>the hero at two texture strengths · 1280×720</span></h3>
+    <div class="frames2">
+      <div><div class="frame-wrap"><div class="frame"><div class="s1"><div class="s1-rail"></div><div class="s1-main" data-tex="subtle"></div></div></div></div><p class="frame-note">Subtle texture</p></div>
+      <div><div class="frame-wrap"><div class="frame"><div class="s1"><div class="s1-rail"></div><div class="s1-main" data-tex="full"></div></div></div></div><p class="frame-note">Full texture</p></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>4 · Step 6 frame <span>the densest screen · 1280×720</span></h3>
+    <div class="frame-wrap"><div class="frame" id="f6"></div></div>
+    <p class="frame-note">TDP-43 shown at ~40% intensity while smFISH channels are on (see test 5).</p>
+  </section>
+
+  <section class="sec"><h3>5 · TDP-43 overlap test <span>mutant axon, zoomed: magenta + white spots on yellow puncta</span></h3><div id="otest"></div></section>
+</div>
+<script src="shared.js"></script>
+<script>
+SD.init();
+SD.onRedraw(() => SD.tokens(document.getElementById("toks"), [
+  ["--bg","Background","deco"],["--panel","Panel","deco"],["--border","Border","deco"],["--muted","Muted",true],
+  ["--text","Text"],["--text2","Secondary text"],["--accent","Accent (fills)","fill"],["--accent-text","Accent text / links"],
+  ["--ch1-ink","smFISH 1 on page (map, plot)",true],["--ch2-ink","smFISH 2 on page (map, plot)",true]]));
+SD.countTable(document.getElementById("tab"));
+document.querySelectorAll(".s1").forEach(s => { SD.rail(s.querySelector(".s1-rail"), 1, document.documentElement.dataset.dir === "C"); SD.hero(s.querySelector(".s1-main"), s.querySelector(".s1-main").dataset.tex); });
+const d6 = SD.step6(document.getElementById("f6"), { tdp: "dim" });
+const dt = SD.overlapTest(document.getElementById("otest"));
+document.querySelectorAll("[data-act=theme]").forEach(b => b.addEventListener("click", () => { d6(); dt(); }));
+SD.fitFrames();
+</script>
+</body>
+</html>

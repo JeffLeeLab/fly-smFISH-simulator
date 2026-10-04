@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DAM Motion Schematic</title>
+<!--
+  10-second schematic of the Drosophila Activity Monitor (DAM), animated with GSAP.
+  Open in a browser to play (click to replay). Append ?render to load paused for
+  frame-by-frame export (see render-dam-video.mjs), which drives window.seekTo(t).
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  :root {
+    --ink: #1f2937; --muted: #6b7280; --line: #d1d5db;
+    --ir: #e11d48; --food: #f59e0b; --plug: #e5e7eb; --data: #2563eb; --night: #111827;
+  }
+  html, body { margin: 0; height: 100%; background: #ffffff; }
+  body { display: grid; place-items: center; overflow: hidden;
+         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  svg { width: 100vw; height: 100vh; max-width: calc(100vh * 16 / 9); display: block; }
+  text { fill: var(--ink); }
+  .muted { fill: var(--muted); }
+  .title { font-size: 46px; font-weight: 700; }
+  .sub   { font-size: 26px; }
+  .lbl   { font-size: 24px; }
+  .small { font-size: 20px; }
+</style>
+</head>
+<body>
+<svg id="stage" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#fff"/>
+  <defs>
+    <g id="fly">
+      <!-- wings -->
+      <ellipse cx="-8" cy="-14" rx="22" ry="9" fill="#dbeafe" stroke="#1f2937" stroke-width="2" transform="rotate(-18 -8 -14)"/>
+      <ellipse cx="-8" cy="14"  rx="22" ry="9" fill="#dbeafe" stroke="#1f2937" stroke-width="2" transform="rotate(18 -8 14)"/>
+      <!-- abdomen, thorax, head -->
+      <ellipse cx="-12" cy="0" rx="18" ry="11" fill="#b45309" stroke="#1f2937" stroke-width="2"/>
+      <ellipse cx="8" cy="0" rx="11" ry="10" fill="#92400e" stroke="#1f2937" stroke-width="2"/>
+      <circle cx="24" cy="0" r="8" fill="#7c2d12" stroke="#1f2937" stroke-width="2"/>
+      <circle cx="27" cy="-5" r="3.5" fill="#dc2626"/>
+      <circle cx="27" cy="5"  r="3.5" fill="#dc2626"/>
+    </g>
+  </defs>
+
+  <!-- Persistent header -->
+  <g id="header">
+    <text id="title" class="title" x="80" y="100">Drosophila Activity Monitor (DAM)</text>
+    <text id="step" class="sub muted" x="80" y="145"></text>
+  </g>
+
+  <!-- Scene 1: the monitor -->
+  <g id="monitor">
+   <g id="rig" transform="translate(-260 0)">
+    <g id="tubes"></g>
+    <rect id="board" x="880" y="215" width="160" height="720" rx="14" fill="#f3f4f6" stroke="#1f2937" stroke-width="3"/>
+    <line id="boardBeam" x1="960" y1="225" x2="960" y2="925" stroke="var(--ir)" stroke-width="3" stroke-dasharray="8 8"/>
+   </g>
+    <text id="monLbl1" class="lbl" x="1180" y="520">32 glass tubes, 1 fly each</text>
+    <text id="monLbl2" class="lbl" x="1180" y="560" style="fill:var(--ir)">infrared beam across the midline</text>
+    <text id="monLbl3" class="lbl muted" x="1180" y="600">every beam break = 1 count</text>
+  </g>
+
+  <!-- Scene 2: one tube, close-up -->
+  <g id="closeup">
+    <g id="bigTube">
+      <rect x="260" y="400" width="1400" height="110" rx="55" fill="#f9fafb" stroke="#1f2937" stroke-width="4"/>
+      <rect x="264" y="404" width="190" height="102" rx="51" fill="var(--food)" opacity="0.85"/>
+      <rect x="1500" y="404" width="156" height="102" rx="12" fill="var(--plug)" stroke="#9ca3af" stroke-width="2"/>
+      <path d="M1515 430 q20 -10 40 0 t40 0 t40 0 M1515 455 q20 -10 40 0 t40 0 t40 0 M1515 480 q20 -10 40 0 t40 0 t40 0" fill="none" stroke="#9ca3af" stroke-width="2"/>
+      <!-- emitter / detector -->
+      <rect x="935" y="330" width="50" height="46" rx="6" fill="#fee2e2" stroke="var(--ir)" stroke-width="3"/>
+      <rect x="935" y="534" width="50" height="46" rx="6" fill="#fee2e2" stroke="var(--ir)" stroke-width="3"/>
+      <line id="beam" x1="960" y1="376" x2="960" y2="534" stroke="var(--ir)" stroke-width="5" stroke-dasharray="10 8"/>
+      <circle id="flash" cx="960" cy="455" r="70" fill="var(--ir)" opacity="0"/>
+      <g id="flyUse"><g id="flyFlip"><use href="#fly"/></g></g>
+      <text class="lbl" x="360" y="620" text-anchor="middle">food</text>
+      <text class="small muted" x="360" y="648" text-anchor="middle">(agar + sucrose)</text>
+      <text class="lbl" x="1578" y="620" text-anchor="middle">cotton plug</text>
+      <text class="lbl" x="1010" y="345" style="fill:var(--ir)">IR emitter</text>
+      <text class="lbl" x="1010" y="570" style="fill:var(--ir)">detector</text>
+    </g>
+    <g id="counter">
+      <rect x="1360" y="190" width="300" height="110" rx="14" fill="#fff" stroke="#1f2937" stroke-width="3"/>
+      <text class="small muted" x="1510" y="228" text-anchor="middle">beam crossings</text>
+      <text id="count" x="1510" y="282" text-anchor="middle" style="font-size:54px;font-weight:700;fill:var(--ir)">0</text>
+    </g>
+  </g>
+
+  <!-- Scene 3: counts binned per minute, sleep bouts -->
+  <g id="bins">
+    <line x1="260" y1="900" x2="1660" y2="900" stroke="#1f2937" stroke-width="3"/>
+    <line x1="260" y1="620" x2="260" y2="900" stroke="#1f2937" stroke-width="3"/>
+    <text class="small muted" x="960" y="945" text-anchor="middle">time (1-min bins)</text>
+    <text class="small muted" x="240" y="760" text-anchor="middle" transform="rotate(-90 240 760)">counts</text>
+    <g id="binBars"></g>
+    <g id="sleepMark">
+      <rect id="sleepRect" x="0" y="620" width="0" height="280" fill="var(--data)" opacity="0.08"/>
+      <text id="sleepTxt" class="lbl" x="0" y="648" text-anchor="middle" style="fill:var(--data)">sleep = ≥ 5 min with no crossings</text>
+    </g>
+  </g>
+
+  <!-- Scene 4: actogram -->
+  <g id="acto">
+    <g id="ldBar"></g>
+    <g id="actoRows"></g>
+    <text class="small muted" x="960" y="985" text-anchor="middle">Zeitgeber time (h)</text>
+    <g id="actoTicks"></g>
+    <text id="mLbl" class="lbl" style="fill:var(--data)" text-anchor="middle">morning peak</text>
+    <text id="eLbl" class="lbl" style="fill:var(--data)" text-anchor="middle">evening peak</text>
+  </g>
+
+  <text id="tagline" class="sub" x="960" y="1045" text-anchor="middle">Automated, high-throughput readout of locomotor activity, sleep and circadian rhythm</text>
+</svg>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const $ = (id) => document.getElementById(id);
+function el(tag, attrs, parent) {
+  const n = document.createElementNS(NS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  parent && parent.appendChild(n);
+  return n;
+}
+// deterministic pseudo-random so every render is identical
+let seed = 7;
+const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+
+/* ---------- Scene 1: 32 tubes through the board ---------- */
+const tubes = $("tubes");
+for (let i = 0; i < 32; i++) {
+  const y = 232 + i * 21.8;
+  const g = el("g", { class: "tube" }, tubes);
+  el("rect", { x: 560, y: y, width: 800, height: 12, rx: 6, fill: "#f9fafb", stroke: "#1f2937", "stroke-width": 1.5 }, g);
+  el("rect", { x: 561, y: y + 1, width: 70, height: 10, rx: 5, fill: "var(--food)" }, g);
+  el("rect", { x: 1300, y: y + 1, width: 59, height: 10, rx: 3, fill: "var(--plug)" }, g);
+  el("circle", { class: "dot", cx: 700 + rnd() * 560, cy: y + 6, r: 4, fill: "#7c2d12" }, g);
+}
+
+/* ---------- Scene 2: fly path + crossing detection ---------- */
+const MID = 960, FLY_Y = 455;
+const path = [520, 1180, 760, 1320, 640, 1100, 880, 1240]; // x waypoints
+const legDur = 0.36;
+const walkStart = 2.9;
+const crossings = []; // absolute timeline times of beam breaks
+for (let i = 1; i < path.length; i++) {
+  const a = path[i - 1], b = path[i];
+  if ((a - MID) * (b - MID) < 0) crossings.push(walkStart + (i - 1) * legDur + legDur * (MID - a) / (b - a));
+}
+
+/* ---------- Scene 3: 1-min bins ---------- */
+const binData = [3,5,2,6,4,7,3,1,0,0,0,0,0,0,0,1,4,6,8,5,3,6,2,4,7,5,2,3];
+const SLEEP_FROM = 8, SLEEP_TO = 15; // indices of zero run
+const bw = 1380 / binData.length;
+const binBars = $("binBars");
+binData.forEach((v, i) => {
+  el("rect", { class: "bin", x: 270 + i * bw, y: 900 - v * 32, width: bw - 8, height: v * 32, fill: "var(--data)" }, binBars);
+});
+$("sleepRect").setAttribute("x", 270 + SLEEP_FROM * bw - 4);
+$("sleepRect").setAttribute("width", (SLEEP_TO - SLEEP_FROM) * bw);
+$("sleepTxt").setAttribute("x", 270 + (SLEEP_FROM + SLEEP_TO) / 2 * bw - 4);
+
+/* ---------- Scene 4: actogram (3 days, LD 12:12, 30-min bins) ---------- */
+const AX = 260, AW = 1400, NB = 48, abw = AW / NB;
+const ld = $("ldBar");
+el("rect", { x: AX, y: 250, width: AW / 2, height: 30, fill: "#fff", stroke: "#1f2937", "stroke-width": 2 }, ld);
+el("rect", { x: AX + AW / 2, y: 250, width: AW / 2, height: 30, fill: "var(--night)", stroke: "#1f2937", "stroke-width": 2 }, ld);
+el("text", { x: AX + AW / 4, y: 240, "text-anchor": "middle", class: "small muted" }, ld).textContent = "lights on";
+el("text", { x: AX + AW * 3 / 4, y: 240, "text-anchor": "middle", class: "small muted" }, ld).textContent = "lights off";
+const rows = $("actoRows");
+const ROW_H = 190, ROW0 = 310;
+const actoRowsEls = [];
+for (let d = 0; d < 3; d++) {
+  const base = ROW0 + (d + 1) * ROW_H;
+  const row = el("g", { class: "arow" }, rows);
+  el("rect", { x: AX + AW / 2, y: base - ROW_H + 12, width: AW / 2, height: ROW_H - 12, fill: "#f3f4f6" }, row);
+  el("line", { x1: AX, y1: base, x2: AX + AW, y2: base, stroke: "#1f2937", "stroke-width": 2 }, row);
+  el("text", { x: AX - 20, y: base - 10, "text-anchor": "end", class: "small muted" }, row).textContent = "day " + (d + 1);
+  for (let b = 0; b < NB; b++) {
+    const zt = (b + 0.5) / 2;
+    // bimodal: anticipatory morning (ZT0) and evening (ZT12) peaks, midday siesta
+    const circ = (x, c, w) => Math.exp(-Math.pow(Math.min(Math.abs(x - c), 24 - Math.abs(x - c)) / w, 2));
+    const act = 0.95 * circ(zt, 0.6, 1.6) + 1.0 * circ(zt, 11.6, 1.5) + 0.06;
+    const v = Math.max(0, act * (0.75 + 0.5 * rnd()));
+    const h = Math.min(ROW_H - 20, v * (ROW_H - 30));
+    el("rect", { class: "abar", x: AX + b * abw + 1, y: base - h, width: abw - 2, height: h, fill: "#1f2937" }, row);
+  }
+  actoRowsEls.push(row);
+}
+const ticks = $("actoTicks");
+[0, 6, 12, 18, 24].forEach((zt) => {
+  const x = AX + zt / 24 * AW;
+  el("line", { x1: x, y1: ROW0 + 3 * ROW_H, x2: x, y2: ROW0 + 3 * ROW_H + 10, stroke: "#1f2937", "stroke-width": 2 }, ticks);
+  el("text", { x: x, y: ROW0 + 3 * ROW_H + 38, "text-anchor": "middle", class: "small muted" }, ticks).textContent = zt;
+});
+$("mLbl").setAttribute("x", AX + 1.5 / 24 * AW); $("mLbl").setAttribute("y", 300);
+$("eLbl").setAttribute("x", AX + 11.6 / 24 * AW); $("eLbl").setAttribute("y", 300);
+
+/* ---------- Timeline ---------- */
+const RENDER = new URLSearchParams(location.search).has("render");
+const tl = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
+
+gsap.set(["#closeup", "#bins", "#acto", "#tagline"], { autoAlpha: 0 });
+gsap.set(["#monLbl1", "#monLbl2", "#monLbl3"], { autoAlpha: 0, x: -20 });
+gsap.set("#flyUse", { x: 420, y: FLY_Y });
+gsap.set("#title", { autoAlpha: 0, y: 20 });
+gsap.set("#boardBeam", { scaleY: 0, transformOrigin: "50% 0%" });
+
+// Step labels (driven by timeline so seeking is exact)
+const steps = [
+  [0.3, "1 · Flies are loaded into individual tubes"],
+  [2.3, "2 · Each crossing of the infrared beam is counted"],
+  [5.4, "3 · Counts are binned per minute"],
+  [7.5, "4 · Days of recording reveal circadian rhythm"],
+];
+
+// Scene 1 (0 – 2.3 s)
+tl.to("#title", { autoAlpha: 1, y: 0, duration: 0.5 }, 0)
+  .from("#tubes .tube", { x: -900, autoAlpha: 0, duration: 0.55, stagger: 0.018, ease: "power3.out" }, 0.25)
+  .from("#board", { scaleY: 0, transformOrigin: "50% 50%", duration: 0.5 }, 0.2)
+  .to("#boardBeam", { scaleY: 1, duration: 0.5, ease: "power1.inOut" }, 0.9)
+  .to(["#monLbl1", "#monLbl2", "#monLbl3"], { autoAlpha: 1, x: 0, duration: 0.35, stagger: 0.18 }, 1.0)
+  .to("#tubes .dot", { x: () => (rnd() - 0.5) * 160, duration: 0.8, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.8)
+
+// Transition to close-up (2.3 – 2.8 s): the monitor zooms into a single tube
+  .to("#monitor", { scale: 3.2, svgOrigin: "700 455", autoAlpha: 0, duration: 0.55, ease: "power2.in" }, 2.2)
+  .fromTo("#closeup", { autoAlpha: 0, scale: 0.6, svgOrigin: "960 455" },
+          { autoAlpha: 1, scale: 1, duration: 0.5 }, 2.45);
+
+// Scene 2 (2.9 – 5.4 s): fly walks, beam breaks increment the counter
+path.forEach((x, i) => {
+  tl.to("#flyUse", { x, duration: legDur, ease: "sine.inOut" }, walkStart + (i - 1) * legDur);
+  if (i > 0) {
+    const flip = x < path[i - 1] ? -1 : 1;
+    tl.set("#flyFlip", { scaleX: flip, svgOrigin: "0 0" }, walkStart + (i - 1) * legDur);
+  }
+});
+crossings.forEach((t) => {
+  tl.fromTo("#flash", { opacity: 0.45, scale: 0.3, svgOrigin: "960 455" },
+            { opacity: 0, scale: 1.2, duration: 0.3, ease: "power1.out", immediateRender: false }, t)
+    .fromTo("#beam", { strokeWidth: 12 }, { strokeWidth: 5, duration: 0.3, immediateRender: false }, t)
+    .fromTo("#count", { scale: 1.35, transformOrigin: "50% 60%" }, { scale: 1, duration: 0.25, immediateRender: false }, t);
+});
+
+// Scene 3 (5.4 – 7.4 s): tube moves up, bins grow
+tl.to("#closeup", { y: -150, scale: 0.72, svgOrigin: "960 250", duration: 0.6, ease: "power2.inOut" }, 5.4)
+  .to("#bins", { autoAlpha: 1, duration: 0.3 }, 5.6)
+  .from("#binBars .bin", { scaleY: 0, transformOrigin: "50% 100%", duration: 0.3, stagger: 0.03 }, 5.7)
+  .from("#sleepRect", { autoAlpha: 0, duration: 0.3 }, 6.5)
+  .from("#sleepTxt", { autoAlpha: 0, y: 12, duration: 0.3 }, 6.6);
+
+// Scene 4 (7.4 – 10 s): actogram
+tl.to(["#closeup", "#bins"], { autoAlpha: 0, duration: 0.35 }, 7.35)
+  .to("#acto", { autoAlpha: 1, duration: 0.3 }, 7.5)
+  .from("#ldBar", { autoAlpha: 0, y: -10, duration: 0.3 }, 7.5);
+actoRowsEls.forEach((row, d) => {
+  tl.from(row.querySelectorAll(".abar"), { scaleY: 0, transformOrigin: "50% 100%", duration: 0.2, stagger: 0.006, ease: "power1.out" }, 7.65 + d * 0.3);
+});
+tl.from(["#mLbl", "#eLbl"], { autoAlpha: 0, y: 10, duration: 0.3, stagger: 0.12 }, 8.8)
+  .to("#tagline", { autoAlpha: 1, duration: 0.4 }, 9.1)
+  .to({}, { duration: 0.01 }, 9.99); // pad to exactly 10 s
+
+// Counter + step label derived from playhead (exact under seek)
+tl.eventCallback("onUpdate", () => {
+  const t = tl.time();
+  $("count").textContent = crossings.filter((c) => c <= t).length;
+  let s = "";
+  for (const [ts, txt] of steps) if (t >= ts) s = txt;
+  $("step").textContent = s;
+});
+
+window.seekTo = (t) => { tl.seek(t, false); tl.eventCallback("onUpdate")(); };
+window.DURATION = tl.duration();
+if (!RENDER) {
+  tl.play(0);
+  document.addEventListener("click", () => tl.restart());
+}
+</script>
+</body>
+</html>

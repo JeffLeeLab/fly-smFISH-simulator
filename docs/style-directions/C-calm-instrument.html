@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-dir="C">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Style direction C · Calm instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Serif:ital,wght@1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+:root { --serif:"IBM Plex Serif", Georgia, serif; --sans:"IBM Plex Sans", system-ui, sans-serif; --mono:"IBM Plex Mono", ui-monospace, monospace;
+  --bg:#F0EEE6; --panel:#E8E6DC; --field:#F6F4EE; --border:#B0AEA5; --muted:#87867F; --text:#141413; --text2:#3D3D3A;
+  --accent:#D97757; --accent-text:#A8492C; --viewer-frame:#1F1E1C; --ch1:#46E66E; --ch2:#EB46E1; --ch1-ink:#1F8A4C; --ch2-ink:#B0328F; --tdp:#FFD63C; --mem:#5F78C0; --ink:#2B2A27; --wash-body:#E7E0D1; --wash-wing:rgba(255,255,255,.38); --wash-eye:#D7A089; --wash-gene:#E3D8C4;
+  --wash-a:#E2D2BA; --wash-b:#E8C2AC; --wash-c:#D7D5CB; }
+[data-theme="dark"] { --bg:#1A1917; --panel:#24231F; --field:#211F1C; --border:#3D3C38; --muted:#9C9A91; --text:#ECEAE2; --text2:#A9A79E;
+  --accent-text:#E59A80; --viewer-frame:#0F0F0E; --ch1-ink:#4CC27A; --ch2-ink:#E066C4; --ink:#E8E6DC; --wash-body:#3A3833; --wash-wing:rgba(255,255,255,.06); --wash-eye:#7E4C3D; --wash-gene:#4A4640;
+  --wash-a:#3B352D; --wash-b:#4B3429; --wash-c:#34332F; }
+body { font-size: 15px; }
+h1, h2, .t-h1, .t-h2 { font-family: var(--sans); font-weight: 500; letter-spacing: -.01em; }
+.doc-head h1 { font-size: 32px; }
+.t-h1 { font-size: 34px; line-height: 1.1; margin: 0 0 8px; } .t-h2 { font-size: 22px; margin: 0 0 12px; }
+.t-body { font: 400 16px/1.6 var(--sans); max-width: 66ch; } .t-small { font-size: 13.5px; color: var(--text2); } .t-num { font: 15px var(--mono); }
+.ctab td { font-family: var(--mono); font-size: 13.5px; }
+.hero-text h1 { font-size: 38px; line-height: 1.08; } .hero-text .cap { font: 500 20px var(--mono); letter-spacing: -.01em; }
+.s1 { display:grid; grid-template-columns: 56px 1fr; height:100%; } .s1-rail { padding: 24px 0; border-right: 1px solid var(--border); }
+.s6 { grid-template-columns: 40px 1fr 300px; grid-template-rows: auto 1fr auto; grid-template-areas: "rail head head" "rail viewer side" "rail plot side"; gap: 8px 12px; padding: 12px 12px 10px 8px; }
+.s6-rail { grid-area: rail; border-right: 1px solid var(--border); } .s6-head { grid-area: head; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+.s6-viewer { grid-area: viewer; border-radius: 3px; } .s6-plot { grid-area: plot; border-top: 1px solid var(--border); padding-top: 6px; }
+.s6-side { grid-area: side; border-left: 1px solid var(--border); padding-left: 12px; }
+.s6 h2 { font-size: 20px; } .s6 .eyebrow { display: none; }
+.chip, .ghost, .ta, .mc, .vbar, .cmp-tabs { border-radius: 3px; }
+.mc-h b { font-weight: 500; }
+.vb.on { background: var(--accent); color: #1A1917; }
+.ptitle { font-family: var(--mono); font-weight: 500; }
+.rc { border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="doc">
+  <header class="doc-head">
+    <div><p class="eyebrow">Style direction C of 3 · mockup, simulated data</p><h1>Calm instrument</h1><p class="why">Dark-first and compact, like well-made lab software. Mono numbers, square panels and a dominant viewer; the warm charcoal keeps it calm rather than clinical. The story steps borrow the same restraint.</p></div>
+    <button data-act="theme">Light / dark</button>
+  </header>
+
+  <section class="sec"><h3>1 · Tokens <span>contrast computed against this direction's background</span></h3><div class="toks" id="toks"></div></section>
+
+  <section class="sec"><h3>2 · Type</h3>
+    <div class="spec">
+      <div>
+        <p class="t-h1">Two flies, one human gene</p>
+        <p class="t-h2">Reveal + compare</p>
+        <p class="t-body">The fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i>. In the mutant, fewer molecules reach the boutons, but the cell body holds as many as before. Where did they go?</p>
+        <p class="t-small">Caption · simulated teaching data · n = 3 animals</p>
+        <p class="t-num">S7 0123456789 · 15.2 ± 1.4 · 6,122,978–6,123,899</p>
+      </div>
+      <div id="tab"></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>3 · Step 1 frame <span>the hero at two texture strengths · 1280×720</span></h3>
+    <div class="frames2">
+      <div><div class="frame-wrap"><div class="frame"><div class="s1"><div class="s1-rail"></div><div class="s1-main" data-tex="subtle"></div></div></div></div><p class="frame-note">Subtle texture</p></div>
+      <div><div class="frame-wrap"><div class="frame"><div class="s1"><div class="s1-rail"></div><div class="s1-main" data-tex="full"></div></div></div></div><p class="frame-note">Full texture</p></div>
+    </div>
+  </section>
+
+  <section class="sec"><h3>4 · Step 6 frame <span>the densest screen · 1280×720</span></h3>
+    <div class="frame-wrap"><div class="frame" id="f6"></div></div>
+    <p class="frame-note">TDP-43 shown at ~40% intensity while smFISH channels are on (see test 5).</p>
+  </section>
+
+  <section class="sec"><h3>5 · TDP-43 overlap test <span>mutant axon, zoomed: magenta + white spots on yellow puncta</span></h3><div id="otest"></div></section>
+</div>
+<script src="shared.js"></script>
+<script>
+SD.init();
+SD.onRedraw(() => SD.tokens(document.getElementById("toks"), [
+  ["--bg","Background","deco"],["--panel","Panel","deco"],["--border","Border","deco"],["--muted","Muted",true],
+  ["--text","Text"],["--text2","Secondary text"],["--accent","Accent (fills)","fill"],["--accent-text","Accent text / links"],
+  ["--ch1-ink","smFISH 1 on page (map, plot)",true],["--ch2-ink","smFISH 2 on page (map, plot)",true]]));
+SD.countTable(document.getElementById("tab"));
+document.querySelectorAll(".s1").forEach(s => { SD.rail(s.querySelector(".s1-rail"), 1, document.documentElement.dataset.dir === "C"); SD.hero(s.querySelector(".s1-main"), s.querySelector(".s1-main").dataset.tex); });
+const d6 = SD.step6(document.getElementById("f6"), { tdp: "dim" });
+const dt = SD.overlapTest(document.getElementById("otest"));
+document.querySelectorAll("[data-act=theme]").forEach(b => b.addEventListener("click", () => { d6(); dt(); }));
+SD.fitFrames();
+</script>
+</body>
+</html>

@@ -1,0 +1,901 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-04T21:59:04.265190+00:00",
+  "title": "Design System: smFISH Simulator",
+  "extensions": {
+    "colorMeta": {
+      "clay": {
+        "role": "primary",
+        "displayName": "Kiln Clay",
+        "canonical": "#D97757",
+        "oklch": "oklch(67.2% 0.131 38.8)",
+        "tonalRamp": [
+          "#1A0400",
+          "#441202",
+          "#722506",
+          "#9D4121",
+          "#C36344",
+          "#EA8666",
+          "#FFB093",
+          "#FFDEC9"
+        ]
+      },
+      "clay-ink": {
+        "role": "primary",
+        "displayName": "Fired Clay Ink",
+        "canonical": "#A8492C",
+        "oklch": "oklch(52.4% 0.133 37.5)",
+        "tonalRamp": [
+          "#1A0401",
+          "#441203",
+          "#732408",
+          "#9E4022",
+          "#C46245",
+          "#EB8567",
+          "#FFAF94",
+          "#FFDDCA"
+        ]
+      },
+      "clay-ink-dark": {
+        "role": "primary",
+        "displayName": "Fired Clay Ink (dark)",
+        "canonical": "#E59A80",
+        "oklch": "oklch(75.4% 0.098 39.9)",
+        "tonalRamp": [
+          "#170602",
+          "#3D190C",
+          "#672F1B",
+          "#8F4C34",
+          "#B46D55",
+          "#DA9076",
+          "#F9B7A1",
+          "#FFE3D2"
+        ]
+      },
+      "on-clay": {
+        "role": "neutral",
+        "displayName": "Text on Clay",
+        "canonical": "#141413",
+        "oklch": "oklch(19.1% 0.002 106.6)",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#252524",
+          "#424241",
+          "#616160",
+          "#828281",
+          "#A5A5A4",
+          "#C9C9C8",
+          "#EEEEED"
+        ]
+      },
+      "ivory": {
+        "role": "neutral",
+        "displayName": "Gallery Ivory",
+        "canonical": "#F0EEE6",
+        "oklch": "oklch(94.8% 0.011 95.2)",
+        "tonalRamp": [
+          "#0D0B06",
+          "#27251F",
+          "#44423C",
+          "#63615A",
+          "#84827B",
+          "#A7A59E",
+          "#CBC9C1",
+          "#F1EFE7"
+        ]
+      },
+      "ivory-panel": {
+        "role": "neutral",
+        "displayName": "Bound Panel",
+        "canonical": "#E8E6DC",
+        "oklch": "oklch(92.4% 0.014 97.5)",
+        "tonalRamp": [
+          "#0D0B05",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#848279",
+          "#A7A59C",
+          "#CBC9C0",
+          "#F1EFE5"
+        ]
+      },
+      "ivory-field": {
+        "role": "neutral",
+        "displayName": "Blotter White",
+        "canonical": "#F6F4EE",
+        "oklch": "oklch(96.7% 0.008 91.5)",
+        "tonalRamp": [
+          "#0C0B07",
+          "#262521",
+          "#43423D",
+          "#63615C",
+          "#84827D",
+          "#A7A59F",
+          "#CBC9C3",
+          "#F0EEE8"
+        ]
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Pencil Hairline",
+        "canonical": "#C9C6BC",
+        "oklch": "oklch(82.6% 0.014 93.0)",
+        "tonalRamp": [
+          "#0D0B05",
+          "#27251D",
+          "#44423A",
+          "#646158",
+          "#858279",
+          "#A8A59B",
+          "#CCC9BF",
+          "#F2EEE4"
+        ]
+      },
+      "hairline-strong": {
+        "role": "neutral",
+        "displayName": "Graphite Hairline",
+        "canonical": "#B0AEA5",
+        "oklch": "oklch(75.0% 0.013 96.5)",
+        "tonalRamp": [
+          "#0D0B06",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#84827A",
+          "#A7A59C",
+          "#CBC9C0",
+          "#F1EFE5"
+        ]
+      },
+      "stone": {
+        "role": "neutral",
+        "displayName": "Stone",
+        "canonical": "#87867F",
+        "oklch": "oklch(61.9% 0.010 100.1)",
+        "tonalRamp": [
+          "#0C0B07",
+          "#262520",
+          "#43423C",
+          "#62615B",
+          "#84837C",
+          "#A6A59E",
+          "#CAC9C2",
+          "#F0EFE7"
+        ]
+      },
+      "ink-black": {
+        "role": "neutral",
+        "displayName": "Lamp Black",
+        "canonical": "#141413",
+        "oklch": "oklch(19.1% 0.002 106.6)",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#252524",
+          "#424241",
+          "#616160",
+          "#828281",
+          "#A5A5A4",
+          "#C9C9C8",
+          "#EEEEED"
+        ]
+      },
+      "ink-grey": {
+        "role": "neutral",
+        "displayName": "Slate Ink",
+        "canonical": "#3D3D3A",
+        "oklch": "oklch(35.9% 0.005 106.7)",
+        "tonalRamp": [
+          "#0B0B09",
+          "#252522",
+          "#42423F",
+          "#61615E",
+          "#82827F",
+          "#A5A5A2",
+          "#C9C9C6",
+          "#EFEFEB"
+        ]
+      },
+      "charcoal-bg": {
+        "role": "neutral",
+        "displayName": "Warm Charcoal",
+        "canonical": "#1F1E1C",
+        "oklch": "oklch(23.5% 0.004 84.6)",
+        "tonalRamp": [
+          "#0C0B09",
+          "#262523",
+          "#434240",
+          "#62615F",
+          "#838280",
+          "#A6A5A2",
+          "#CAC9C6",
+          "#F0EEEB"
+        ]
+      },
+      "charcoal-panel": {
+        "role": "neutral",
+        "displayName": "Charcoal Panel",
+        "canonical": "#2A2926",
+        "oklch": "oklch(28.1% 0.006 91.6)",
+        "tonalRamp": [
+          "#0C0B09",
+          "#262522",
+          "#43423F",
+          "#62615E",
+          "#83827F",
+          "#A6A5A1",
+          "#CAC9C5",
+          "#F0EEEA"
+        ]
+      },
+      "charcoal-field": {
+        "role": "neutral",
+        "displayName": "Charcoal Field",
+        "canonical": "#252422",
+        "oklch": "oklch(26.1% 0.004 84.6)",
+        "tonalRamp": [
+          "#0C0B09",
+          "#262523",
+          "#434240",
+          "#62615F",
+          "#838280",
+          "#A6A5A2",
+          "#CAC9C6",
+          "#F0EEEB"
+        ]
+      },
+      "charcoal-hairline": {
+        "role": "neutral",
+        "displayName": "Charcoal Hairline",
+        "canonical": "#4A4945",
+        "oklch": "oklch(40.5% 0.007 95.2)",
+        "tonalRamp": [
+          "#0C0B08",
+          "#262521",
+          "#43423E",
+          "#62615D",
+          "#83827E",
+          "#A6A5A0",
+          "#CAC9C4",
+          "#F0EEEA"
+        ]
+      },
+      "charcoal-hairline-strong": {
+        "role": "neutral",
+        "displayName": "Charcoal Hairline Strong",
+        "canonical": "#5E5D59",
+        "oklch": "oklch(47.8% 0.006 95.2)",
+        "tonalRamp": [
+          "#0C0B08",
+          "#262522",
+          "#43423E",
+          "#62615D",
+          "#83827E",
+          "#A6A5A1",
+          "#CAC9C4",
+          "#F0EEEA"
+        ]
+      },
+      "stone-dark": {
+        "role": "neutral",
+        "displayName": "Stone (dark)",
+        "canonical": "#9C9A91",
+        "oklch": "oklch(68.5% 0.013 96.5)",
+        "tonalRamp": [
+          "#0D0B06",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#84827A",
+          "#A7A59C",
+          "#CBC9C0",
+          "#F1EFE5"
+        ]
+      },
+      "ivory-text": {
+        "role": "neutral",
+        "displayName": "Ivory Text (dark)",
+        "canonical": "#F0EEE6",
+        "oklch": "oklch(94.8% 0.011 95.2)",
+        "tonalRamp": [
+          "#0D0B06",
+          "#27251F",
+          "#44423C",
+          "#63615A",
+          "#84827B",
+          "#A7A59E",
+          "#CBC9C1",
+          "#F1EFE7"
+        ]
+      },
+      "ash-text": {
+        "role": "neutral",
+        "displayName": "Ash Text (dark)",
+        "canonical": "#B0AEA5",
+        "oklch": "oklch(75.0% 0.013 96.5)",
+        "tonalRamp": [
+          "#0D0B06",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#84827A",
+          "#A7A59C",
+          "#CBC9C0",
+          "#F1EFE5"
+        ]
+      },
+      "viewer-frame": {
+        "role": "neutral",
+        "displayName": "Viewer Surround",
+        "canonical": "#2A2926",
+        "oklch": "oklch(28.1% 0.006 91.6)",
+        "tonalRamp": [
+          "#0C0B09",
+          "#262522",
+          "#43423F",
+          "#62615E",
+          "#83827F",
+          "#A6A5A1",
+          "#CAC9C5",
+          "#F0EEEA"
+        ]
+      },
+      "viewer-frame-dark": {
+        "role": "neutral",
+        "displayName": "Viewer Surround (dark)",
+        "canonical": "#141413",
+        "oklch": "oklch(19.1% 0.002 106.6)",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#252524",
+          "#424241",
+          "#616160",
+          "#828281",
+          "#A5A5A4",
+          "#C9C9C8",
+          "#EEEEED"
+        ]
+      },
+      "viewer-field": {
+        "role": "neutral",
+        "displayName": "Field Black",
+        "canonical": "#000000",
+        "oklch": "oklch(0.0% 0.000 0.0)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "lut-green": {
+        "role": "data",
+        "displayName": "smFISH Green",
+        "canonical": "#46E66E",
+        "oklch": "oklch(81.7% 0.209 147.8)",
+        "tonalRamp": [
+          "#001200",
+          "#003300",
+          "#005800",
+          "#007D00",
+          "#00A127",
+          "#03C64F",
+          "#6CE883",
+          "#B5FFC0"
+        ]
+      },
+      "lut-magenta": {
+        "role": "data",
+        "displayName": "smFISH Magenta",
+        "canonical": "#EB46E1",
+        "oklch": "oklch(68.4% 0.257 330.6)",
+        "tonalRamp": [
+          "#1D001C",
+          "#4A0047",
+          "#7B0077",
+          "#A800A2",
+          "#D024C7",
+          "#F854EE",
+          "#FF8DFF",
+          "#FFC9FF"
+        ]
+      },
+      "lut-merge": {
+        "role": "data",
+        "displayName": "Merge White",
+        "canonical": "#FFFFFF",
+        "oklch": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#A5A5A5",
+          "#C9C9C9",
+          "#EEEEEE"
+        ]
+      },
+      "lut-tdp-yellow": {
+        "role": "data",
+        "displayName": "TDP-43 Yellow",
+        "canonical": "#FFD63C",
+        "oklch": "oklch(88.7% 0.165 93.1)",
+        "tonalRamp": [
+          "#140900",
+          "#362100",
+          "#5D3C00",
+          "#815B00",
+          "#A47D00",
+          "#C9A000",
+          "#E8C74F",
+          "#FFEEA3"
+        ]
+      },
+      "membrane-blue": {
+        "role": "data",
+        "displayName": "Membrane Blue",
+        "canonical": "#5F78C0",
+        "oklch": "oklch(58.5% 0.115 268.2)",
+        "tonalRamp": [
+          "#050A1C",
+          "#172247",
+          "#2B3D77",
+          "#465DA2",
+          "#657FC7",
+          "#86A2ED",
+          "#AEC7FF",
+          "#DBEEFF"
+        ]
+      },
+      "dapi-blue": {
+        "role": "data",
+        "displayName": "DAPI Blue",
+        "canonical": "#5A78EB",
+        "oklch": "oklch(60.9% 0.176 269.6)",
+        "tonalRamp": [
+          "#040725",
+          "#121C59",
+          "#243493",
+          "#3C54C3",
+          "#5A77EA",
+          "#7A9CFF",
+          "#A3C3FF",
+          "#D3ECFF"
+        ]
+      },
+      "green-ink": {
+        "role": "data",
+        "displayName": "Green Ink",
+        "canonical": "#1F8A4C",
+        "oklch": "oklch(56.0% 0.134 152.5)",
+        "tonalRamp": [
+          "#001003",
+          "#00300F",
+          "#005320",
+          "#007639",
+          "#33995A",
+          "#5BBD7B",
+          "#8EDFA5",
+          "#C8FED6"
+        ]
+      },
+      "magenta-ink": {
+        "role": "data",
+        "displayName": "Magenta Ink",
+        "canonical": "#B0328F",
+        "oklch": "oklch(53.8% 0.189 340.3)",
+        "tonalRamp": [
+          "#1B0013",
+          "#460036",
+          "#75005C",
+          "#A12181",
+          "#C849A4",
+          "#EF6EC9",
+          "#FF9DE9",
+          "#FFD2FF"
+        ]
+      },
+      "green-ink-dark": {
+        "role": "data",
+        "displayName": "Green Ink (dark)",
+        "canonical": "#4CC27A",
+        "oklch": "oklch(72.9% 0.149 153.5)",
+        "tonalRamp": [
+          "#001102",
+          "#00310D",
+          "#00541C",
+          "#007835",
+          "#149B56",
+          "#49C078",
+          "#83E1A2",
+          "#C2FFD4"
+        ]
+      },
+      "magenta-ink-dark": {
+        "role": "data",
+        "displayName": "Magenta Ink (dark)",
+        "canonical": "#E066C4",
+        "oklch": "oklch(68.9% 0.186 337.1)",
+        "tonalRamp": [
+          "#1A0015",
+          "#440139",
+          "#730261",
+          "#9E2586",
+          "#C44CAA",
+          "#EB70CF",
+          "#FF9FEE",
+          "#FFD3FF"
+        ]
+      },
+      "illustration-ink": {
+        "role": "illustration",
+        "displayName": "Drawing Ink",
+        "canonical": "#2B2A27",
+        "oklch": "oklch(28.5% 0.006 91.6)",
+        "tonalRamp": [
+          "#0C0B09",
+          "#262522",
+          "#43423F",
+          "#62615E",
+          "#83827F",
+          "#A6A5A1",
+          "#CAC9C5",
+          "#F0EEEA"
+        ]
+      },
+      "illustration-ink-dark": {
+        "role": "illustration",
+        "displayName": "Drawing Ink (dark)",
+        "canonical": "#E8E6DC",
+        "oklch": "oklch(92.4% 0.014 97.5)",
+        "tonalRamp": [
+          "#0D0B05",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#848279",
+          "#A7A59C",
+          "#CBC9C0",
+          "#F1EFE5"
+        ]
+      },
+      "wash-body": {
+        "role": "illustration",
+        "displayName": "Body Wash",
+        "canonical": "#E7E0D1",
+        "oklch": "oklch(90.8% 0.021 85.9)",
+        "tonalRamp": [
+          "#0D0B08",
+          "#28251E",
+          "#464137",
+          "#676154",
+          "#888274",
+          "#ABA496",
+          "#CEC9BC",
+          "#F2EEE5"
+        ]
+      },
+      "wash-eye": {
+        "role": "illustration",
+        "displayName": "Eye Wash",
+        "canonical": "#D7A089",
+        "oklch": "oklch(75.2% 0.073 43.7)",
+        "tonalRamp": [
+          "#140804",
+          "#371D12",
+          "#5F3624",
+          "#84533E",
+          "#A8745E",
+          "#CD9780",
+          "#EDBDA9",
+          "#FFE6D8"
+        ]
+      },
+      "wash-gene": {
+        "role": "illustration",
+        "displayName": "Gene Wash",
+        "canonical": "#E3D8C4",
+        "oklch": "oklch(88.6% 0.029 82.6)",
+        "tonalRamp": [
+          "#0D0B07",
+          "#29241B",
+          "#494132",
+          "#6A604E",
+          "#8B816F",
+          "#AEA491",
+          "#D1C8B7",
+          "#F4EEE2"
+        ]
+      },
+      "wash-a": {
+        "role": "illustration",
+        "displayName": "Wash A",
+        "canonical": "#E2D2BA",
+        "oklch": "oklch(87.0% 0.037 78.1)",
+        "tonalRamp": [
+          "#0E0B06",
+          "#2B2419",
+          "#4C402E",
+          "#6D5F4A",
+          "#8F806A",
+          "#B2A38C",
+          "#D5C7B3",
+          "#F7EDDF"
+        ]
+      },
+      "wash-b": {
+        "role": "illustration",
+        "displayName": "Wash B",
+        "canonical": "#E8C2AC",
+        "oklch": "oklch(84.1% 0.053 51.8)",
+        "tonalRamp": [
+          "#110905",
+          "#322116",
+          "#563B2B",
+          "#7A5945",
+          "#9D7A65",
+          "#C19C87",
+          "#E2C2AF",
+          "#FFE9DC"
+        ]
+      },
+      "wash-c": {
+        "role": "illustration",
+        "displayName": "Wash C",
+        "canonical": "#D7D5CB",
+        "oklch": "oklch(87.2% 0.014 97.5)",
+        "tonalRamp": [
+          "#0D0B05",
+          "#27251E",
+          "#44423A",
+          "#636159",
+          "#848279",
+          "#A7A59C",
+          "#CBC9BF",
+          "#F1EFE4"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero title only."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Story-layout step titles."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Workbench step titles."
+      },
+      "subtitle": {
+        "displayName": "Subtitle",
+        "purpose": "Section heads within a step."
+      },
+      "story": {
+        "displayName": "Story",
+        "purpose": "Serif narrative, steps 1–2 and 7, max 70ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Sans body text and glossary."
+      },
+      "ui-large": {
+        "displayName": "UI Large",
+        "purpose": "Card titles, field text, table headers."
+      },
+      "ui": {
+        "displayName": "UI",
+        "purpose": "All controls; 13px floor."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Uppercase eyebrows and group labels."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Counts, coordinates, IDs; tabular figures."
+      },
+      "overlay": {
+        "displayName": "Overlay",
+        "purpose": "Viewer burn-ins and plot ticks; 11px floor."
+      }
+    },
+    "shadows": [
+      {
+        "name": "viewer-overlay-text",
+        "value": "text-shadow: 0 0 3px #000",
+        "purpose": "Only shadow in the system: keeps burned-in viewer text legible over bright spots. No box-shadow anywhere."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-smootherstep",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Approximation of smootherstep for CSS; zero-velocity start and end. GSAP timelines use a custom smootherstep ease."
+      },
+      {
+        "name": "state-change",
+        "value": "150ms",
+        "purpose": "Hover fills and map isoform fades; colour/opacity only (provisional)."
+      },
+      {
+        "name": "ink-boil",
+        "value": "12fps",
+        "purpose": "feTurbulence seed step for illustration outlines (--tex-boil-fps); paused during reading holds and with reduced motion."
+      },
+      {
+        "name": "texture-subtle",
+        "value": "displace .9 · frequency .03 · wash .28 · grain .22 light / .12 dark",
+        "purpose": "Chosen 'subtle' texture strength, story layer only."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "min-laptop",
+        "value": "1280x720"
+      },
+      {
+        "name": "step5-fit",
+        "value": "1366x768"
+      },
+      {
+        "name": "large-laptop",
+        "value": "1920x1080"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Default action: Choose a new pair, fly-to, Copy as PNG.",
+      "html": "<button class=\"ds-btn-ghost\">Choose a new pair</button>",
+      "css": ".ds-btn-ghost{background:transparent;color:var(--text, #141413);border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);padding:3px 10px;font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);cursor:pointer;transition:background .15s} .ds-btn-ghost:hover{background:var(--panel, #E8E6DC)} .ds-btn-ghost:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:2px}"
+    },
+    {
+      "name": "Primary Action (provisional)",
+      "kind": "button",
+      "refersTo": "verdict-segment-selected",
+      "description": "At most one per screen, e.g. Show results. Near-black text on clay.",
+      "html": "<button class=\"ds-btn-primary\">Show results</button>",
+      "css": ".ds-btn-primary{background:var(--accent, #D97757);color:var(--on-accent, #141413);border:1px solid var(--accent, #D97757);border-radius:var(--r-pane, 3px);padding:4px 12px;font:600 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);cursor:pointer;transition:filter .15s} .ds-btn-primary:hover{filter:brightness(.95)} .ds-btn-primary:focus-visible{outline:2px solid var(--text, #141413);outline-offset:2px}"
+    },
+    {
+      "name": "Channel Chip",
+      "kind": "chip",
+      "refersTo": "chip-channel",
+      "description": "Identifies a channel and its probe; the dot is the LUT colour.",
+      "html": "<span class=\"ds-chip\"><i style=\"background:#46E66E\"></i>smFISH 1 · S7</span> <span class=\"ds-chip\"><i style=\"background:#EB46E1\"></i>smFISH 2 · S8</span> <span class=\"ds-chip\"><i style=\"background:#FFD63C\"></i>TDP-43</span> <span class=\"ds-chip\"><i style=\"background:#5F78C0\"></i>Membrane + DAPI</span>",
+      "css": ".ds-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-chip, 2px);font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text, #141413)} .ds-chip i{width:8px;height:8px;border-radius:50%;display:block}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Notebook fields: Observation, Interpretation, evidence lines.",
+      "html": "<label class=\"ds-fld\"><span>Interpretation</span><textarea placeholder=\"What could explain it?\"></textarea></label>",
+      "css": ".ds-fld{display:block;font:400 13px var(--font-sans, \"Instrument Sans\", system-ui, sans-serif)} .ds-fld span{display:block;font-weight:600;color:var(--text-2, #3D3D3A);margin-bottom:3px} .ds-fld textarea{display:block;width:100%;min-height:36px;padding:6px 8px;background:var(--field, #F6F4EE);color:var(--text, #141413);border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);font:inherit;resize:vertical} .ds-fld textarea::placeholder{color:var(--muted, #87867F)} .ds-fld textarea:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:1px;border-color:var(--border-strong, #B0AEA5)}"
+    },
+    {
+      "name": "Mode Card with Verdict Bar",
+      "kind": "custom",
+      "refersTo": "mode-card",
+      "description": "Signature: one shortlisted PTR mode with a three-way verdict; all verdicts look equal when selected.",
+      "html": "<div class=\"ds-mc\"><small>Nucleus</small><b>Nuclear export / retention</b><div class=\"ds-vbar\" role=\"radiogroup\"><button role=\"radio\" aria-checked=\"false\">Ruled out</button><button role=\"radio\" aria-checked=\"false\">Supported</button><button role=\"radio\" aria-checked=\"true\" class=\"on\">Unresolved</button></div><p class=\"pred\">Your prediction: more white spots in the nucleus.</p><p class=\"ev\">Evidence (optional)</p></div>",
+      "css": ".ds-mc{background:var(--field, #F6F4EE);border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);padding:8px 10px;font-family:var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text, #141413);max-width:280px} .ds-mc small{display:block;font:600 11px/1.3 inherit;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2, #3D3D3A)} .ds-mc b{font:500 14px/1.4 inherit} .ds-vbar{display:flex;margin:6px 0 4px;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);overflow:hidden} .ds-vbar button{flex:1;background:transparent;border:0;border-right:1px solid var(--border, #C9C6BC);font:400 13px/1.4 inherit;padding:3px 0;color:var(--text-2, #3D3D3A);cursor:pointer;transition:background .15s} .ds-vbar button:last-child{border-right:0} .ds-vbar button:hover{background:var(--panel, #E8E6DC)} .ds-vbar button.on{background:var(--accent, #D97757);color:var(--on-accent, #141413);font-weight:600} .ds-vbar button:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:-2px} .ds-mc .pred{margin:0;font-size:13px;font-style:italic;color:var(--text-2, #3D3D3A)} .ds-mc .ev{margin:4px 0 0;padding-top:4px;border-top:1px dashed var(--border, #C9C6BC);font-size:13px;color:var(--muted, #87867F)}"
+    },
+    {
+      "name": "Segmented Tabs",
+      "kind": "nav",
+      "refersTo": "tab-segmented",
+      "description": "Viewer | Compare, Plot | Table.",
+      "html": "<div class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"false\">Viewer</button><button role=\"tab\" aria-selected=\"true\" class=\"on\">Compare</button></div>",
+      "css": ".ds-tabs{display:inline-flex;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);overflow:hidden} .ds-tabs button{background:transparent;border:0;padding:4px 12px;font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text-2, #3D3D3A);cursor:pointer} .ds-tabs button.on{background:var(--panel, #E8E6DC);color:var(--text, #141413);font-weight:600} .ds-tabs button:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:-2px}"
+    },
+    {
+      "name": "Progress Rail",
+      "kind": "nav",
+      "refersTo": "rail-step-current",
+      "description": "Story rail: stages and steps; current step has a 2px clay left rule.",
+      "html": "<nav class=\"ds-rail\"><div class=\"h\">Clue</div><a class=\"done\"><i>3</i>TDP-43 clue</a><a class=\"now\" aria-current=\"step\"><i>4</i>Hypotheses</a><div class=\"h\">Design</div><a><i>5</i>Target + probe design</a></nav>",
+      "css": ".ds-rail{font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);width:180px} .ds-rail .h{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2, #3D3D3A);margin:12px 0 4px} .ds-rail a{display:flex;gap:8px;padding:3px 0 3px 10px;border-left:2px solid transparent;color:var(--text-2, #3D3D3A);text-decoration:none;cursor:pointer} .ds-rail a i{font:500 11px var(--font-mono, \"IBM Plex Mono\", monospace);font-style:normal;color:var(--muted, #87867F);width:12px} .ds-rail a.done{color:var(--text, #141413)} .ds-rail a.now{border-left-color:var(--accent, #D97757);color:var(--text, #141413);font-weight:600} .ds-rail a:hover{color:var(--text, #141413)}"
+    },
+    {
+      "name": "Viewer Frame",
+      "kind": "custom",
+      "refersTo": "viewer-frame",
+      "description": "Signature: charcoal surround, black field, mono burned-in overlay, scale bar, italic serif decoder legend.",
+      "html": "<figure class=\"ds-viewer\"><div class=\"f\"><span class=\"o\">S7 <i style=\"background:#46E66E\"></i> S8 <i style=\"background:#EB46E1\"></i> · hTDP-43 WT · animal 1 · simulated</span><span class=\"sb\"><b></b>10 µm</span></div><figcaption>Decoder · White: carries S7 and S8 · Green only: S7 without S8</figcaption></figure>",
+      "css": ".ds-viewer{margin:0;background:var(--viewer-frame, #2A2926);border-radius:var(--r-chip, 2px);padding:8px;width:420px} .ds-viewer .f{position:relative;height:200px;background:#000;border-radius:2px} .ds-viewer .o{position:absolute;left:8px;top:6px;font:11px var(--font-mono, \"IBM Plex Mono\", monospace);color:#E8E6DC;text-shadow:0 0 3px #000} .ds-viewer .o i{display:inline-block;width:7px;height:7px;border-radius:50%} .ds-viewer .sb{position:absolute;right:10px;bottom:8px;display:flex;flex-direction:column;align-items:center;gap:3px;font:11px var(--font-mono, \"IBM Plex Mono\", monospace);color:#E8E6DC} .ds-viewer .sb b{display:block;width:52px;height:3px;background:#E8E6DC} .ds-viewer figcaption{margin-top:6px;font:italic 400 13px var(--font-serif, Newsreader, Georgia, serif);color:#CFCDC4}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Annotated Specimen",
+    "overview": "The site reads like a scientific essay built around one real specimen. Steps 1–2 and 7 are set as a single serif column on warm ivory paper, with ink drawings of the flies, soft washes and a light paper grain. From step 3 onwards the essay gives way to the specimen: a black microscope field in a warm charcoal frame, with notes beside it. The notes are set in a precise sans-serif and laid out in hairline boxes, like annotations written next to a figure. The page steps from ivory to charcoal to black, so moving into the microscope feels like a change of material, not a cut.\n\nThe mood is **sober, warm and exact**. It is sober because ALS is a fatal disease and the readers are final-year students: there are no mascots, no celebration and no decoration for its own sake. It is warm because of the ivory, clay and serif type, which make this a place to think rather than a dashboard. It is exact wherever data appears: crisp lines, mono numbers, fixed scales, and saturated colour only where colour carries meaning. Density is moderate. The story steps have generous space; steps 3–6 are packed to fit 1280×720 without losing the hierarchy.\n\nRejected outright (spec banned list): purple/blue gradients, glassmorphism, emoji and stock icon sets, drop-shadowed rounded cards everywhere, centred heroes, Inter as the default font, the same fade-up stagger everywhere.",
+    "keyCharacteristics": [
+      "An ivory → charcoal → black progression that follows the story → instrument → specimen progression.",
+      "A serif carries the argument, a sans carries the controls, and a mono carries numbers and IDs.",
+      "One clay accent for chrome. Every other saturated colour is a data channel.",
+      "Hairlines and tonal fills instead of shadows. Corners are 2–3 px everywhere except the outer page frames.",
+      "Hand-drawn texture on the story artwork only. It stops at the data."
+    ],
+    "rules": [
+      {
+        "name": "The Colour Belongs to the Data Rule",
+        "body": "Chrome is warm neutral plus Kiln Clay. Any other saturated hue on screen must be a data channel and must mean that channel. Don't use a channel colour for decoration, status or emphasis.",
+        "section": "colors"
+      },
+      {
+        "name": "The Clay Never Speaks Rule",
+        "body": "Clay fills; it never carries text. Text on clay is `on-clay`, and accent text is `clay-ink`.",
+        "section": "colors"
+      },
+      {
+        "name": "The Clay Is Not a LUT Rule",
+        "body": "No LUT option, now or later, may look like clay. That is why TDP-43 is yellow and not amber or orange.",
+        "section": "colors"
+      },
+      {
+        "name": "The Size Floor Rule",
+        "body": "Body text is at least 16px, UI text and controls at least 13px, and burned-in overlays and plot ticks at least 11px (mono). Nothing goes smaller. If a screen doesn't fit, cut content, not type size.",
+        "section": "typography"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "The serif argues, the sans operates and the mono counts. A number in a sentence of the story can stay serif, but a number in a table, plot, overlay or ID is always mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Crisp Text Rule",
+        "body": "All text is live HTML or SVG text in these three fonts. Text is never painted into artwork and never given the ink-boil filter.",
+        "section": "typography"
+      },
+      {
+        "name": "The Fits-at-720 Rule",
+        "body": "Every workbench screen must work at 1280×720 without scrolling the page. Only the side pane may scroll.",
+        "section": "layout"
+      },
+      {
+        "name": "The No-Shadow Rule",
+        "body": "No `box-shadow` or drop shadows on any surface, card, popover or button. If something needs to stand out, use a tonal fill or a hairline.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Texture Stops at the Data Rule",
+        "body": "Grain, washes and the ink boil exist only in the story artwork. The transcript map, plot, tables, notebook and viewer are always crisp, because a wobbly line suggests imprecision.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** take every colour, size, radius and spacing value from `tokens.css` custom properties. Never hard-code them.",
+      "**Do** keep clay for fills, the current step, selected verdicts and focus rings, and put `on-clay` (#141413) text on it.",
+      "**Do** use the `-ink` channel variants on page surfaces (map, plot, chips) and the raw LUT colours only on black.",
+      "**Do** keep the ivory → charcoal → black order: viewer field black, surround charcoal, page by theme.",
+      "**Do** set every number in a table, plot, overlay or probe ID in IBM Plex Mono with tabular figures.",
+      "**Do** check every screen at 1280×720 and 1920×1080 in both themes, at WCAG AA (text 4.5:1, graphics 3:1).",
+      "**Do** follow the system theme by default, setting `data-theme` on `<html>`, and keep a manual toggle in localStorage (wrapped in try/catch).",
+      "**Do** use smooth, zero-velocity-start eases (smootherstep) and one main move at a time. Reduced motion shows the end frames.",
+      "**Do** label every image, plot and animation as simulated or schematic."
+    ],
+    "donts": [
+      "**Don't** use `box-shadow`, glassmorphism, gradients on chrome, or purple/blue gradients anywhere.",
+      "**Don't** use white text on clay, or clay as text.",
+      "**Don't** use a data-channel hue (green, magenta, yellow, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.",
+      "**Don't** apply grain, washes or the ink-boil filter to the map, plot, tables, notebook or viewer.",
+      "**Don't** use emoji, stock icon sets, mascots, or flies with faces or expressions.",
+      "**Don't** centre the hero, use Inter, or repeat the same fade-up stagger across sections.",
+      "**Don't** use bounce, elastic or back eases, or animate layout properties (transform and opacity only).",
+      "**Don't** set any text below 11px, or any control text below 13px.",
+      "**Don't** show genotype by colour. Show it by position (control on the left) and by label.",
+      "**Don't** add p-values, significance stars or highlighted \"relevant\" regions. The design must never hint at the answer."
+    ]
+  }
+}
