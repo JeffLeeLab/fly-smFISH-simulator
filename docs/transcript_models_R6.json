@@ -566,8 +566,12 @@
        ]
       ],
       "length_nt": 1562,
-      "cds": null,
-      "protein_aa": null
+      "cds": [
+       1452703,
+       1454104
+      ],
+      "protein_aa": 428,
+      "protein": "Gr2a-PC"
      },
      {
       "name": "Gr2a-RB",
@@ -596,8 +600,12 @@
        ]
       ],
       "length_nt": 1508,
-      "cds": null,
-      "protein_aa": null
+      "cds": [
+       1452703,
+       1454104
+      ],
+      "protein_aa": 410,
+      "protein": "Gr2a-PB"
      }
     ]
    },

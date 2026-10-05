@@ -14,7 +14,13 @@ A teaching web app: final-year students design two-colour smFISH probes and read
 
 - **Python is managed with uv.** The generator and every build script run in this repo's uv environment (`pyproject.toml`, `uv.lock`, Python 3.14). Set up with `uv sync`, run with `uv run <script>`, and add dependencies with `uv add <package>` so `uv.lock` stays in step. Don't use `pip`, the system `python3` or a hand-made venv.
 - **Local server:** `uv run python -m http.server -d site`. Always test over HTTP, never from `file://`.
-- **Browser checks:** `playwright-cli` (a global install, not a project dependency) for screenshots, window sizes (`resize 1280 720`), video recordings (`video-start` / `video-stop`) and the offline test (`network-state-set offline`).
+- **Generated data:** the site only reads files in `site/data/`, written by scripts in `generator/`. Commit the output; the Pages workflow fails if it is out of date. Truth tables and private molecule records go in `data/`, which is never served. For a case, in order:
+  - `uv run python -m generator.public_models` (transcript maps without the answer key)
+  - `uv run python -m generator.geometry_pdf` (geometry; one script per case)
+  - `uv run python -m generator.truth_table pdf` (expands `data/pdf/truth-table.toml`)
+  - `uv run python -m generator.build pdf` (seed search, molecules, tables; about a minute)
+  - `uv run python -m generator.validate pdf --signed` (the gate; fails on any mismatch or an unsigned truth table)
+- **Browser checks:** `playwright-cli` (a global install, not a project dependency) for screenshots, window sizes (`resize 1280 720`), video recordings (`video-start` / `video-stop`) and the offline test (`network-state-set offline`; or list `performance.getEntriesByType('resource')` and check that every URL is local). The dev server lets the browser cache JS and CSS, so open a fresh `playwright-cli` session after editing them. Sessions start with empty localStorage, so seed the notebook state before testing gated steps.
 - **The public repo is fine.** The answer key in `docs/` is readable on GitHub, and that is accepted. What matters is that the site never serves it, so keep stripping `mature_in`, `nascent_in` and `also_detects` from the public JSON.
 
 ## Image generation (Impeccable comps and plates)

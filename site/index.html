@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>smFISH Simulator</title>
+<meta name="description" content="Design two-colour smFISH probes and read simulated confocal images of Drosophila neurons in a TDP-43 ALS model. Simulated teaching data.">
+<script>
+  // Theme before first paint: the saved choice, else the system setting (see js/theme.js).
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("smfish:theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" href="fonts/newsreader-latin-opsz-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/app.css">
+<script type="importmap">
+{
+  "imports": {
+    "pixi.js": "./vendor/pixi.js-8.22.0/pixi.min.mjs",
+    "pixi-viewport": "./vendor/pixi-viewport-6.0.3/pixi_viewport.js"
+  }
+}
+</script>
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#view">Skip to content</a>
+<div class="app" id="app" data-layout="story">
+  <nav class="rail rail--full" id="rail" aria-label="Progress"></nav>
+  <main class="view" id="view" tabindex="-1"></main>
+</div>
+<button class="nb-tab" id="nb-tab" type="button" aria-controls="notebook" aria-expanded="false">Notebook</button>
+<aside class="notebook" id="notebook" aria-labelledby="nb-title"></aside>
+<noscript><p class="notice">The smFISH Simulator needs JavaScript. Please turn it on, or open the site in a current version of Chrome, Edge, Firefox or Safari.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,301 @@
+{
+ "gene": "stai",
+ "source": "NCBI RefSeq annotation (FlyBase-derived transcript models), D. melanogaster Release 6 assembly; fetched 2026-09-28. Pin the FlyBase release at build.",
+ "conventions": "1-based inclusive genomic coordinates [lo, hi]; exons listed 5'->3' in transcript order.",
+ "chrom": "2L",
+ "accession": "NT_033779.5",
+ "strand": "+",
+ "flybase_gene": "FBgn0266521",
+ "transcripts": [
+  {
+   "name": "stai-RE",
+   "flybase": "FBtr0333406",
+   "refseq": "NM_001273193.1",
+   "exons": [
+    [
+     6100377,
+     6100549
+    ],
+    [
+     6101694,
+     6101798
+    ],
+    [
+     6109773,
+     6110224
+    ],
+    [
+     6113030,
+     6113113
+    ],
+    [
+     6121774,
+     6121943
+    ],
+    [
+     6122005,
+     6122190
+    ],
+    [
+     6122264,
+     6122410
+    ],
+    [
+     6122698,
+     6122853
+    ],
+    [
+     6122978,
+     6123899
+    ]
+   ],
+   "length_nt": 2395,
+   "cds": [
+    6110146,
+    6123064
+   ],
+   "protein_aa": 302,
+   "protein": "stai-PE"
+  },
+  {
+   "name": "stai-RC",
+   "flybase": "FBtr0079196",
+   "refseq": "NM_164682.3",
+   "exons": [
+    [
+     6100377,
+     6100549
+    ],
+    [
+     6101694,
+     6101798
+    ],
+    [
+     6121774,
+     6121943
+    ],
+    [
+     6122005,
+     6122190
+    ],
+    [
+     6122264,
+     6122410
+    ],
+    [
+     6122698,
+     6122853
+    ],
+    [
+     6122978,
+     6123899
+    ]
+   ],
+   "length_nt": 1859,
+   "cds": [
+    6101771,
+    6123064
+   ],
+   "protein_aa": 257,
+   "protein": "stai-PC"
+  },
+  {
+   "name": "stai-RB",
+   "flybase": "FBtr0079197",
+   "refseq": "NM_164683.3",
+   "exons": [
+    [
+     6109667,
+     6110224
+    ],
+    [
+     6113030,
+     6113113
+    ],
+    [
+     6121774,
+     6121943
+    ],
+    [
+     6122005,
+     6122190
+    ],
+    [
+     6122264,
+     6122410
+    ],
+    [
+     6122698,
+     6122853
+    ],
+    [
+     6122978,
+     6124653
+    ]
+   ],
+   "length_nt": 2977,
+   "cds": [
+    6110146,
+    6123064
+   ],
+   "protein_aa": 302,
+   "protein": "stai-PB"
+  },
+  {
+   "name": "stai-RA",
+   "flybase": "FBtr0079198",
+   "refseq": "NM_164684.3",
+   "exons": [
+    [
+     6109667,
+     6110224
+    ],
+    [
+     6113030,
+     6113113
+    ],
+    [
+     6121774,
+     6121943
+    ],
+    [
+     6122005,
+     6122190
+    ],
+    [
+     6122264,
+     6122410
+    ],
+    [
+     6122978,
+     6123899
+    ]
+   ],
+   "length_nt": 2067,
+   "cds": [
+    6110146,
+    6123064
+   ],
+   "protein_aa": 250,
+   "protein": "stai-PA"
+  },
+  {
+   "name": "stai-RD",
+   "flybase": "FBtr0304908",
+   "refseq": "NM_001258983.2",
+   "exons": [
+    [
+     6120674,
+     6121210
+    ],
+    [
+     6121774,
+     6121943
+    ],
+    [
+     6122005,
+     6122190
+    ],
+    [
+     6122264,
+     6122410
+    ],
+    [
+     6122698,
+     6122853
+    ],
+    [
+     6122978,
+     6124653
+    ]
+   ],
+   "length_nt": 2872,
+   "cds": [
+    6120811,
+    6123064
+   ],
+   "protein_aa": 381,
+   "protein": "stai-PD"
+  }
+ ],
+ "overlapping_same_strand_genes": {
+  "CG31642": [
+   {
+    "name": "CG31642-RA",
+    "flybase": "FBtr0079199",
+    "refseq": "NM_164685.2",
+    "exons": [
+     [
+      6118512,
+      6118568
+     ],
+     [
+      6118630,
+      6120522
+     ]
+    ],
+    "length_nt": 1950,
+    "cds": null,
+    "protein_aa": null
+   }
+  ]
+ },
+ "probe_regions": [
+  {
+   "id": "S1",
+   "label": "first exon (TSS1)",
+   "lo": 6100377,
+   "hi": 6100549,
+   "length_nt": 173
+  },
+  {
+   "id": "S2",
+   "label": "first exon (TSS2)",
+   "lo": 6109667,
+   "hi": 6109772,
+   "length_nt": 106
+  },
+  {
+   "id": "S3",
+   "label": "intron (overlaps CG31642)",
+   "lo": 6118512,
+   "hi": 6120522,
+   "length_nt": 2011
+  },
+  {
+   "id": "S4",
+   "label": "first exon (TSS3)",
+   "lo": 6120674,
+   "hi": 6121210,
+   "length_nt": 537
+  },
+  {
+   "id": "S5",
+   "label": "intron",
+   "lo": 6122411,
+   "hi": 6122697,
+   "length_nt": 287
+  },
+  {
+   "id": "S6",
+   "label": "cassette exon",
+   "lo": 6122698,
+   "hi": 6122853,
+   "length_nt": 156
+  },
+  {
+   "id": "S7",
+   "label": "last exon",
+   "lo": 6122978,
+   "hi": 6123899,
+   "length_nt": 922
+  },
+  {
+   "id": "S8",
+   "label": "long 3'UTR",
+   "lo": 6123900,
+   "hi": 6124653,
+   "length_nt": 754
+  }
+ ]
+}

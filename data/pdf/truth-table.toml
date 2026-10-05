@@ -1,0 +1,83 @@
+# PDF neurons – futsch: "RNA made but not kept".
+# The instructor answer key in machine-readable form (docs/spec.md, *Case truth tables*).
+# This file states what must be true of the simulated results; the generator implements the
+# biology separately, and the validation gate checks one against the other.
+#
+# `uv run python -m generator.truth_table pdf` expands these rules, with the probe menu in
+# docs/transcript_models_R6.json, into data/pdf/truth-table.json (every single probe and all
+# 56 ordered pairs) and data/pdf/truth-table.md (the readable version to sign off).
+#
+# Written from the prose truth table and the simulation parameters in the spec; signed off by
+# the instructor after reading truth-table.md.
+
+case = "pdf"
+gene = "futsch"
+status = "signed-off"
+signed_off_by = "Jeff Lee (instructor)"
+signed_off_on = "2026-10-05"
+
+# The coverage row for this case (spec, *Coverage*).
+[verdicts]
+transport = "ruled-out"
+granule = "ruled-out"
+isoform = "ruled-out"
+splicing = "ruled-out"
+export = "unresolved"      # an export block is ruled out (nuclear counts flat), but failed export + fast nuclear decay is not
+stability = "supported"
+translation = "not-tested"
+celltype = "not-tested"
+
+# Isoform mix, the same in both genotypes (spec, *Simulation parameters*).
+[isoforms]
+RC = 0.50
+RF = 0.25
+RE = 0.25
+
+# Mean mature molecules per cell, [control, mutant]. Axon and terminals are shared by the four
+# cells, so per animal they hold four cells' worth.
+[mature_per_cell]
+nucleus = [10, 10]
+cellbody = [80, 40]
+axon = [25, 13]
+terminals = [25, 12]
+
+# How the mutant compares with control. Bands are mutant / control.
+[rules]
+same = 0.10                  # "unchanged": within ±10% (spec: primary effects 40–60%, unchanged ±10%)
+fall = [0.40, 0.60]          # primary effect: 40–60% lower
+fall_per_area = [0.25, 0.60] # lower after normalising to terminal area (mutant terminals ~20% smaller)
+rise_nc = [1.6, 2.4]         # nuclear:cytoplasmic ratio about doubles
+nominal = 0.20               # control means within ±20% of the numbers above
+chance = 0.04                # TDP-43 overlap within 4 percentage points of the randomised-position control (or 2 SE, whichever is larger)
+ts_number = 2                # transcription-site number: within 2 nuclei of control (12 nuclei per genotype)
+ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% for dim sites)
+
+# Mature (spliced, exported or not) RNA of every isoform behaves alike: stability.
+[mature]
+nucleus = "same"             # nuclear count flat, so an export block is ruled out
+cellbody = "fall"
+axon = "fall"
+terminals = "fall"
+terminals_per_area = "fall_per_area"
+nc_ratio = "rise_nc"         # looks like RNA held back in the nucleus, until the nuclear count is checked
+share_distal = "same"        # share of cytoplasmic RNA in axon + terminals: transport ruled out
+region_ratio = "same"        # any region-to-region ratio in any compartment: isoform-specific ruled out
+tdp43_overlap = "chance"     # both genotypes: granule incorporation ruled out
+
+# Nascent RNA: production unchanged; no intron retention, no splicing change.
+[nascent]
+ts_number = "same"
+ts_intensity = "same"
+intron_spots_away_from_ts = "none"
+
+# Designed look of each region's transcription sites (spec, probe menu notes).
+# bright: the brightest; present; dim: few nascent copies; none: (almost) no site.
+[ts]
+F1 = "present"
+F2 = "present"
+F3 = "present"
+F4 = "present"
+F5 = "bright"                # 13-kb intron: bright transcription sites
+F6 = "present"
+F7 = "dim"                   # 63-nt 3' intron: dim transcription sites
+F8 = "none"                  # only futsch-RE pre-mRNA reaches it, near its 3' end

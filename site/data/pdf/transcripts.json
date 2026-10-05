@@ -1,0 +1,283 @@
+{
+ "gene": "futsch",
+ "source": "NCBI RefSeq annotation (FlyBase-derived transcript models), D. melanogaster Release 6 assembly; fetched 2026-09-28. Pin the FlyBase release at build.",
+ "conventions": "1-based inclusive genomic coordinates [lo, hi]; exons listed 5'->3' in transcript order.",
+ "chrom": "X",
+ "accession": "NC_004354.4",
+ "strand": "+",
+ "flybase_gene": "FBgn0259108",
+ "transcripts": [
+  {
+   "name": "futsch-RF",
+   "flybase": "FBtr0307598",
+   "refseq": "NM_001258532.1",
+   "exons": [
+    [
+     1409069,
+     1410121
+    ],
+    [
+     1413418,
+     1414685
+    ],
+    [
+     1427676,
+     1427774
+    ],
+    [
+     1432743,
+     1432915
+    ],
+    [
+     1432975,
+     1433197
+    ],
+    [
+     1433254,
+     1433412
+    ],
+    [
+     1433476,
+     1447295
+    ],
+    [
+     1447364,
+     1448783
+    ],
+    [
+     1448847,
+     1451367
+    ]
+   ],
+   "length_nt": 20736,
+   "cds": [
+    1414262,
+    1449016
+   ],
+   "protein_aa": 5495,
+   "protein": "futsch-PF"
+  },
+  {
+   "name": "futsch-RE",
+   "flybase": "FBtr0307597",
+   "refseq": "NM_001169161.3",
+   "exons": [
+    [
+     1411726,
+     1411978
+    ],
+    [
+     1413418,
+     1414685
+    ],
+    [
+     1427676,
+     1427774
+    ],
+    [
+     1432743,
+     1432915
+    ],
+    [
+     1432975,
+     1433197
+    ],
+    [
+     1433254,
+     1433412
+    ],
+    [
+     1433476,
+     1447295
+    ],
+    [
+     1447364,
+     1448783
+    ],
+    [
+     1448847,
+     1453686
+    ]
+   ],
+   "length_nt": 22255,
+   "cds": [
+    1414262,
+    1449016
+   ],
+   "protein_aa": 5495,
+   "protein": "futsch-PE"
+  },
+  {
+   "name": "futsch-RC",
+   "flybase": "FBtr0112628",
+   "refseq": "NM_001103394.3",
+   "exons": [
+    [
+     1413801,
+     1414685
+    ],
+    [
+     1427676,
+     1427774
+    ],
+    [
+     1432743,
+     1432915
+    ],
+    [
+     1432975,
+     1433197
+    ],
+    [
+     1433254,
+     1433412
+    ],
+    [
+     1433476,
+     1447295
+    ],
+    [
+     1447364,
+     1448783
+    ],
+    [
+     1448847,
+     1451367
+    ]
+   ],
+   "length_nt": 19300,
+   "cds": [
+    1414262,
+    1449016
+   ],
+   "protein_aa": 5495,
+   "protein": "futsch-PC"
+  }
+ ],
+ "overlapping_same_strand_genes": {
+  "Gr2a": [
+   {
+    "name": "Gr2a-RC",
+    "flybase": "FBtr0300224",
+    "refseq": "NM_001169162.2",
+    "exons": [
+     [
+      1452430,
+      1452591
+     ],
+     [
+      1452663,
+      1453686
+     ],
+     [
+      1453753,
+      1453965
+     ],
+     [
+      1454015,
+      1454177
+     ]
+    ],
+    "length_nt": 1562,
+    "cds": [
+     1452703,
+     1454104
+    ],
+    "protein_aa": 428,
+    "protein": "Gr2a-PC"
+   },
+   {
+    "name": "Gr2a-RB",
+    "flybase": "FBtr0114515",
+    "refseq": "NM_080299.4",
+    "exons": [
+     [
+      1452430,
+      1452591
+     ],
+     [
+      1452663,
+      1453686
+     ],
+     [
+      1453753,
+      1453821
+     ],
+     [
+      1453876,
+      1453965
+     ],
+     [
+      1454015,
+      1454177
+     ]
+    ],
+    "length_nt": 1508,
+    "cds": [
+     1452703,
+     1454104
+    ],
+    "protein_aa": 410,
+    "protein": "Gr2a-PB"
+   }
+  ]
+ },
+ "probe_regions": [
+  {
+   "id": "F1",
+   "label": "first exon (TSS1)",
+   "lo": 1409069,
+   "hi": 1410121,
+   "length_nt": 1053
+  },
+  {
+   "id": "F2",
+   "label": "intron",
+   "lo": 1410122,
+   "hi": 1411725,
+   "length_nt": 1604
+  },
+  {
+   "id": "F3",
+   "label": "first exon (TSS2)",
+   "lo": 1411726,
+   "hi": 1411978,
+   "length_nt": 253
+  },
+  {
+   "id": "F4",
+   "label": "5'UTR exon",
+   "lo": 1413418,
+   "hi": 1413800,
+   "length_nt": 383
+  },
+  {
+   "id": "F5",
+   "label": "intron (13 kb)",
+   "lo": 1414686,
+   "hi": 1427675,
+   "length_nt": 12990
+  },
+  {
+   "id": "F6",
+   "label": "giant coding exon",
+   "lo": 1433476,
+   "hi": 1447295,
+   "length_nt": 13820
+  },
+  {
+   "id": "F7",
+   "label": "intron (63 nt)",
+   "lo": 1448784,
+   "hi": 1448846,
+   "length_nt": 63
+  },
+  {
+   "id": "F8",
+   "label": "long 3'UTR (proximal part)",
+   "lo": 1451368,
+   "hi": 1452429,
+   "length_nt": 1062
+  }
+ ]
+}

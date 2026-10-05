@@ -6,5 +6,26 @@
       "maxFindings": 5,
       "maxChars": 8000
     }
+  },
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "instrument sans",
+        "createdAt": "2026-10-05T14:34:08.011Z",
+        "reason": "Frozen style direction: docs/spec.md Fonts row and docs/style-directions/tokens.css name Instrument Sans as the UI face, chosen in the Phase 0 style phase"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "site/index.html"
+        ],
+        "createdAt": "2026-10-05T14:34:08.033Z",
+        "reason": "Frozen design token: --bg #F0EEE6 ivory in docs/style-directions/tokens.css, chosen in the Phase 0 style phase (docs/spec.md Design tokens)"
+      }
+    ]
   }
 }

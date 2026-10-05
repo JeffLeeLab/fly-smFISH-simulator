@@ -1,0 +1,469 @@
+// The microscope viewer: PixiJS v8 + pixi-viewport, drawn live from the generated data.
+// Split view (control | mutant) with linked pan and zoom, or flicker (one field, F switches
+// genotype in place). World units are µm, so the scale bar is exact for spots and granules.
+//
+// Layers per genotype, back to front, all additive like fluorescence:
+//   autofluorescence → blue channel (membrane + DAPI) → TDP-43 IF → smFISH 1 → smFISH 2
+// Grain sits on top in screen space. Green + magenta sum to white on molecules carrying both.
+
+import { Application, CanvasSource, Container, Sprite, Texture, TilingSprite } from "pixi.js";
+import { Viewport } from "pixi-viewport";
+import { loadJSON } from "../data.js";
+import { copyCanvas } from "../export.js";
+import { autofluorescence, blueChannel, gaussianCanvas, grainCanvas, tdpNuclear } from "./textures.js";
+
+const RES = 6;                 // px per µm for the pre-drawn blue and TDP-43 nuclear images
+const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
+const MIN_SIGMA_PX = 0.85;     // below this the spot is drawn larger and dimmer (same total light)
+const SPOT_GAIN = 0.95;
+const MAX_SCALE = 60;          // px per µm
+const SCALE_STEPS = [0.5, 1, 2, 5, 10, 20, 50];
+const GENOTYPES = ["control", "mutant"];
+export const GENOTYPE_LABEL = { control: "hTDP-43 WT", mutant: "hTDP-43 ALS mutant" };
+
+export const TDP_LUTS = {
+  yellow: { label: "Yellow", color: "#FFD63C" },
+  cyan: { label: "Cyan", color: "#3CDCFF" },
+  "red-orange": { label: "Red-orange", color: "#FF4B3A" },
+};
+export const FISH_LUT = { ch1: { color: "#46E66E", name: "Green" }, ch2: { color: "#EB46E1", name: "Magenta" } };
+const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
+
+const hex = c => parseInt(c.slice(1), 16);
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function texture(canvas) {
+  return new Texture({ source: new CanvasSource({ resource: canvas }) });
+}
+
+function imageSprite(img, tint, alpha) {
+  const s = new Sprite(texture(img.canvas || img));
+  s.position.set(img.x0, img.y0);
+  s.scale.set(1 / img.res);
+  s.tint = hex(tint);
+  s.alpha = alpha;
+  s.blendMode = "add";
+  return s;
+}
+
+export async function createViewer(root, opts) {
+  const { caseId, mode, pair = null, regionIds = [] } = opts;
+  const geometry = {
+    control: await loadJSON(`data/${caseId}/geometry-control.json`),
+    mutant: await loadJSON(`data/${caseId}/geometry-mutant.json`),
+  };
+  const [bx0, by0, bx1, by1] = geometry.control.bounds;
+  const views = { whole: [bx0, by0, bx1, by1], ...geometry.control.views };
+  const bitOf = id => regionIds.indexOf(id);
+
+  const state = {
+    layout: "split",
+    flicker: "control",
+    animal: opts.animal || 1,
+    visible: { blue: true, tdp: true, ch1: mode === "results", ch2: mode === "results" },
+    tdpLut: opts.tdpLut || "yellow",
+    tdpBrightness: opts.tdpBrightness ?? 1,
+    solo: null,
+  };
+  const listeners = new Set();
+  const emit = () => listeners.forEach(fn => fn(state));
+
+  // ---------- DOM ----------
+  root.classList.add("viewer");
+  root.innerHTML = `
+    <div class="viewer__tools" role="toolbar" aria-label="Viewer">
+      <span class="viewer__group" role="group" aria-label="Fly to">
+        ${[["whole", "Whole neuron"], ["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Dorsal terminals"]]
+          .map(([k, l]) => `<button type="button" class="vbtn" data-fly="${k}">${l}</button>`).join("")}
+      </span>
+      <span class="viewer__sep" aria-hidden="true"></span>
+      <span class="vseg" role="group" aria-label="Compare genotypes">
+        <button type="button" class="vbtn" data-layout="split" aria-pressed="true">Split</button><button type="button" class="vbtn" data-layout="flicker" aria-pressed="false">Flicker</button>
+      </span>
+      <button type="button" class="vbtn" data-act="flip" hidden>Switch genotype <kbd>F</kbd></button>
+      <span class="viewer__spacer"></span>
+      <button type="button" class="vbtn" data-act="png">Copy as PNG</button>
+    </div>
+    <div class="viewer__fields" data-layout="split">
+      ${GENOTYPES.map((g, i) => `
+        <div class="viewer__field" data-field="${i}">
+          <p class="viewer__overlay" aria-live="polite"></p>
+          <div class="viewer__scale" aria-hidden="true"><i></i><span></span></div>
+        </div>`).join("")}
+    </div>
+    ${mode === "results" && pair ? `<p class="viewer__legend"></p>` : ""}
+    <div class="viewer__bar"><span class="viewer__hint">Drag to pan · scroll or pinch to zoom</span><span class="proj">2D maximum-intensity projection (simulated)</span></div>`;
+
+  const fieldEls = [...root.querySelectorAll(".viewer__field")];
+  const fieldsBox = root.querySelector(".viewer__fields");
+
+  // ---------- one PixiJS application per field ----------
+  const gaussCanvas = gaussianCanvas(64);
+  const grain = grainCanvas(256, 7);
+  const auto = autofluorescence([bx0 - 20, by0 - 20, bx1 + 20, by1 + 20], 1, 11);
+  const blue = Object.fromEntries(GENOTYPES.map((g, i) => [g, blueChannel(geometry[g], RES, 101 + i)]));
+
+  async function makeField(el, index) {
+    const app = new Application();
+    await app.init({
+      resizeTo: el,
+      background: "#000000",
+      preference: "webgl",
+      antialias: false,
+      autoDensity: true,
+      resolution: Math.min(window.devicePixelRatio || 1, 2),
+      preserveDrawingBuffer: false,
+    });
+    app.canvas.classList.add("viewer__canvas");
+    app.canvas.setAttribute("aria-label", "Simulated confocal image");
+    app.canvas.tabIndex = 0;
+    el.prepend(app.canvas);
+
+    const vp = new Viewport({
+      screenWidth: app.screen.width,
+      screenHeight: app.screen.height,
+      worldWidth: bx1 - bx0,
+      worldHeight: by1 - by0,
+      events: app.renderer.events,
+      passiveWheel: false,
+    });
+    vp.drag().pinch().wheel({ smooth: 4 }).decelerate({ friction: 0.92 });
+    app.stage.addChild(vp);
+    // pixi-viewport assumes the world starts at 0,0: shift the µm coordinates so the bounds do
+    const content = new Container();
+    content.position.set(-bx0, -by0);
+    vp.addChild(content);
+
+    const gauss = texture(gaussCanvas);
+    const worlds = {};
+    for (const g of GENOTYPES) {
+      const w = new Container();
+      const af = imageSprite(auto, "#8C9A9E", 0.05);
+      const blueC = new Container();
+      blueC.addChild(imageSprite({ canvas: blue[g].membrane, x0: blue[g].x0, y0: blue[g].y0, res: RES }, BLUE.membrane, 0.55));
+      blueC.addChild(imageSprite({ canvas: blue[g].nuclei, x0: blue[g].x0, y0: blue[g].y0, res: RES }, BLUE.dapi, 0.62));
+      const tdp = new Container();
+      const ch1 = new Container();
+      const ch2 = new Container();
+      w.addChild(af, blueC, tdp, ch1, ch2);
+      w.visible = false;
+      content.addChild(w);
+      worlds[g] = { root: w, blue: blueC, tdp, ch1, ch2 };
+    }
+    const grainSprite = new TilingSprite({ texture: texture(grain), width: app.screen.width, height: app.screen.height });
+    grainSprite.blendMode = "add";
+    grainSprite.alpha = 0.07;
+    app.stage.addChild(grainSprite);
+
+    const field = { el, index, app, vp, worlds, gauss, grainSprite, shown: GENOTYPES[index] };
+    app.renderer.on("resize", () => onResize(field));
+    return field;
+  }
+
+  const fields = [];
+  for (let i = 0; i < 2; i++) fields.push(await makeField(fieldEls[i], i));
+
+  // ---------- data for the current animal ----------
+  async function loadAnimal(n) {
+    const data = Object.fromEntries(await Promise.all(GENOTYPES.map(async g =>
+      [g, await loadJSON(`data/${caseId}/molecules/${g}-${n}.json`)])));
+    for (const f of fields) {
+      for (const g of GENOTYPES) {
+        const w = f.worlds[g];
+        const d = data[g];
+        // TDP-43: nuclear signal + puncta
+        w.tdp.removeChildren().forEach(c => c.destroy());
+        w.tdp.addChild(imageSprite(tdpNuclear(geometry[g], d.tdp43.nuclear, RES, 300 + n), "#FFFFFF", 0.85));
+        for (const [x, y, r, inten] of d.tdp43.puncta) {
+          const s = new Sprite(f.gauss);
+          s.anchor.set(0.5);
+          s.position.set(x, y);
+          const size = 6 * Math.max(SIGMA_UM, r * 0.75);
+          s.scale.set(size / 64);
+          s.alpha = Math.min(1, 0.9 * inten);
+          s.blendMode = "add";
+          w.tdp.addChild(s);
+        }
+        // smFISH spots
+        for (const ch of ["ch1", "ch2"]) {
+          w[ch].removeChildren().forEach(c => c.destroy());
+          if (mode !== "results" || !pair) continue;
+          const bit = bitOf(pair[ch]);
+          if (bit < 0) continue;
+          for (let i = 0; i < d.m.length; i++) {
+            if (!((d.m[i] >> bit) & 1)) continue;
+            const s = new Sprite(f.gauss);
+            s.anchor.set(0.5);
+            s.position.set(d.x[i], d.y[i]);
+            s.alpha = Math.min(1, SPOT_GAIN * d.i[i]);
+            s.blendMode = "add";
+            w[ch].addChild(s);
+          }
+        }
+      }
+    }
+    applyStyle();
+    fields.forEach(updateZoomDependent);
+  }
+
+  // ---------- appearance ----------
+  function applyStyle() {
+    const v = state.visible;
+    const anyFish = v.ch1 || v.ch2;
+    const tdpColor = hex(TDP_LUTS[state.tdpLut].color);
+    for (const f of fields) {
+      for (const g of GENOTYPES) {
+        const w = f.worlds[g];
+        w.blue.visible = v.blue;
+        w.tdp.visible = v.tdp;
+        w.tdp.alpha = state.tdpBrightness * (anyFish ? 0.4 : 1);
+        w.tdp.children.forEach(c => { c.tint = tdpColor; });
+        w.ch1.visible = v.ch1;
+        w.ch2.visible = v.ch2;
+        w.ch1.children.forEach(c => { c.tint = hex(FISH_LUT.ch1.color); });
+        w.ch2.children.forEach(c => { c.tint = hex(FISH_LUT.ch2.color); });
+      }
+    }
+    labelFields();
+  }
+
+  function labelFields() {
+    fields.forEach(f => {
+      const g = f.shown;
+      const probes = mode === "results" && pair
+        ? `<span class="d" style="--c:${FISH_LUT.ch1.color}"></span>${pair.ch1} · <span class="d" style="--c:${FISH_LUT.ch2.color}"></span>${pair.ch2} · `
+        : `<span class="d" style="--c:${TDP_LUTS[state.tdpLut].color}"></span>TDP-43 IF · `;
+      f.el.querySelector(".viewer__overlay").innerHTML =
+        `${probes}${GENOTYPE_LABEL[g]} · animal ${state.animal} · simulated`;
+    });
+    const legend = root.querySelector(".viewer__legend");
+    if (legend && pair) {
+      const a = pair.ch1, b = pair.ch2;
+      legend.textContent = `White: carries ${a} and ${b} · ${FISH_LUT.ch1.name} only: ${a} without ${b} · ${FISH_LUT.ch2.name} only: ${b} without ${a} · Bright nuclear spots: transcription sites`;
+    }
+  }
+
+  // Spots shrink below a pixel when zoomed out: draw them at least MIN_SIGMA_PX wide and dim
+  // them by the same area factor, so the total light (and dense regions' glow) is conserved.
+  function updateZoomDependent(f) {
+    const s = f.vp.scale.x;
+    const sigmaPx = SIGMA_UM * s;
+    const k = Math.max(1, MIN_SIGMA_PX / sigmaPx);
+    const size = (6 * SIGMA_UM * k) / 64;
+    for (const g of GENOTYPES) {
+      for (const ch of ["ch1", "ch2"]) {
+        const c = f.worlds[g][ch];
+        c.alpha = 1 / (k * k);
+        c.children.forEach(sp => sp.scale.set(size));
+      }
+    }
+    // live scale bar: the smallest round length that spans at least 80 px
+    const len = SCALE_STEPS.find(L => L * s >= 80) ?? SCALE_STEPS[SCALE_STEPS.length - 1];
+    const bar = f.el.querySelector(".viewer__scale");
+    bar.querySelector("i").style.width = `${Math.round(len * s)}px`;
+    bar.querySelector("span").textContent = `${len} µm`;
+    f.scaleLen = len;
+  }
+
+  function showWorlds() {
+    fields.forEach((f, i) => {
+      f.shown = state.layout === "split" ? GENOTYPES[i] : state.flicker;
+      for (const g of GENOTYPES) f.worlds[g].root.visible = g === f.shown;
+    });
+    labelFields();
+  }
+
+  // ---------- navigation ----------
+  function fitScale(f, [x0, y0, x1, y1]) {
+    return Math.min(f.app.screen.width / (x1 - x0), f.app.screen.height / (y1 - y0));
+  }
+
+  function onResize(f) {
+    f.vp.resize(f.app.screen.width, f.app.screen.height);
+    f.grainSprite.width = f.app.screen.width;
+    f.grainSprite.height = f.app.screen.height;
+    const min = fitScale(f, views.whole) * 0.92;
+    f.vp.clampZoom({ minScale: min, maxScale: MAX_SCALE });
+    const m = 30;
+    f.vp.clamp({ left: -m, right: bx1 - bx0 + m, top: -m, bottom: by1 - by0 + m, underflow: "center" });
+    updateZoomDependent(f);
+  }
+
+  let syncing = false;
+  function syncFrom(src) {
+    if (syncing) return;
+    syncing = true;
+    for (const f of fields) {
+      if (f === src) continue;
+      f.vp.scale.set(src.vp.scale.x);
+      f.vp.moveCenter(src.vp.center.x, src.vp.center.y);
+      updateZoomDependent(f);
+    }
+    syncing = false;
+  }
+
+  function flyTo(name, { animate = true } = {}) {
+    const box = views[name];
+    if (!box) return;
+    const f0 = fields[0];
+    const scale = Math.min(MAX_SCALE, fitScale(f0, box) * (name === "whole" ? 0.92 : 0.9));
+    const cx = (box[0] + box[2]) / 2 - bx0, cy = (box[1] + box[3]) / 2 - by0;  // viewport coordinates
+    for (const f of fields) {
+      if (animate && !reduceMotion()) {
+        f.vp.animate({ position: { x: cx, y: cy }, scale, time: 650, ease: "easeInOutSine", removeOnInterrupt: true });
+      } else {
+        f.vp.setZoom(scale, true);
+        f.vp.moveCenter(cx, cy);
+        updateZoomDependent(f);
+      }
+    }
+  }
+
+  for (const f of fields) {
+    onResize(f);
+    const on = () => { updateZoomDependent(f); syncFrom(f); };
+    f.vp.on("moved", on);
+    f.vp.on("zoomed", on);
+  }
+
+  // Layout changes resize the field elements without a window resize: watch them.
+  const ro = new ResizeObserver(() => fields.forEach(f => f.app.resize()));
+  fieldEls.forEach(el => ro.observe(el));
+
+  function setLayout(layout) {
+    state.layout = layout;
+    fieldsBox.dataset.layout = layout;
+    root.querySelectorAll("[data-layout]").forEach(b => { if (b.tagName === "BUTTON") b.setAttribute("aria-pressed", String(b.dataset.layout === layout)); });
+    root.querySelector("[data-act=flip]").hidden = layout !== "flicker";
+    showWorlds();
+    requestAnimationFrame(() => { fields.forEach(f => f.app.resize()); syncFrom(fields[0]); });
+    emit();
+  }
+
+  function flip() {
+    if (state.layout !== "flicker") setLayout("flicker");
+    else {
+      state.flicker = state.flicker === "control" ? "mutant" : "control";
+      showWorlds();
+      emit();
+    }
+  }
+
+  // ---------- controls ----------
+  root.querySelector(".viewer__tools").addEventListener("click", e => {
+    const b = e.target.closest("button");
+    if (!b) return;
+    if (b.dataset.fly) flyTo(b.dataset.fly);
+    else if (b.dataset.layout) setLayout(b.dataset.layout);
+    else if (b.dataset.act === "flip") flip();
+    else if (b.dataset.act === "png") copyPNG(b);
+  });
+
+  const onKey = e => {
+    if (e.target.closest("input, textarea, select, [contenteditable]")) return;
+    if (e.key === "f" || e.key === "F") { e.preventDefault(); flip(); }
+    if (document.activeElement?.classList.contains("viewer__canvas")) {
+      const f = fields.find(x => x.app.canvas === document.activeElement) || fields[0];
+      const step = 40 / f.vp.scale.x;
+      const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+      if (moves[e.key]) { e.preventDefault(); f.vp.moveCenter(f.vp.center.x + moves[e.key][0], f.vp.center.y + moves[e.key][1]); updateZoomDependent(f); syncFrom(f); }
+      if (e.key === "+" || e.key === "=" || e.key === "-") {
+        e.preventDefault();
+        f.vp.setZoom(f.vp.scale.x * (e.key === "-" ? 1 / 1.25 : 1.25), true);
+        updateZoomDependent(f); syncFrom(f);
+      }
+    }
+  };
+  document.addEventListener("keydown", onKey);
+
+  // ---------- PNG export at slide resolution, overlay burned in ----------
+  async function exportCanvas() {
+    const shown = state.layout === "split" ? fields : [fields[0]];
+    const gap = 12;
+    const targetW = 1920;
+    const fw = shown[0].app.screen.width, fh = shown[0].app.screen.height;
+    const scale = (targetW - gap * (shown.length - 1)) / (fw * shown.length);
+    const out = document.createElement("canvas");
+    out.width = targetW;
+    out.height = Math.round(fh * scale);
+    const g = out.getContext("2d");
+    g.fillStyle = "#000";
+    g.fillRect(0, 0, out.width, out.height);
+    shown.forEach((f, i) => {
+      const c = f.app.renderer.extract.canvas({ target: f.app.stage, resolution: scale, frame: f.app.screen.clone(), clearColor: "#000000" });
+      const ox = i * (fw * scale + gap);
+      g.drawImage(c, ox, 0, fw * scale, fh * scale);
+      // overlay: same text as on screen, scaled for a slide
+      const px = Math.round(11 * scale * 1.15);
+      g.font = `${px}px "IBM Plex Mono", ui-monospace, monospace`;
+      g.textBaseline = "top";
+      g.shadowColor = "#000";
+      g.shadowBlur = 3 * scale;
+      const text = f.el.querySelector(".viewer__overlay").textContent;
+      let x = ox + 8 * scale, y = 6 * scale;
+      if (mode === "results" && pair) {
+        for (const [ch, label] of [["ch1", pair.ch1], ["ch2", pair.ch2]]) {
+          g.fillStyle = FISH_LUT[ch].color;
+          g.beginPath(); g.arc(x + px * 0.35, y + px * 0.55, px * 0.32, 0, Math.PI * 2); g.fill();
+          x += px * 0.9;
+          g.fillStyle = "#E8E6DC";
+          g.fillText(`${label} · `, x, y);
+          x += g.measureText(`${label} · `).width;
+        }
+        g.fillText(text.split(" · ").slice(2).join(" · "), x, y);
+      } else {
+        g.fillStyle = "#E8E6DC";
+        g.fillText(text, x, y);
+      }
+      // scale bar
+      const len = f.scaleLen;
+      const barPx = len * f.vp.scale.x * scale;
+      const bx = ox + fw * scale - 12 * scale - barPx, by = fh * scale - 14 * scale;
+      g.fillStyle = "#E8E6DC";
+      g.fillRect(bx, by, barPx, 3 * scale);
+      g.textAlign = "center";
+      g.textBaseline = "bottom";
+      g.fillText(`${len} µm`, bx + barPx / 2, by - 3 * scale);
+      g.textAlign = "left";
+    });
+    return out;
+  }
+
+  async function copyPNG(button) {
+    const c = await exportCanvas();
+    await copyCanvas(c, `smFISH-${caseId}-${mode}-animal${state.animal}.png`, button);
+  }
+
+  // ---------- start ----------
+  showWorlds();
+  await loadAnimal(state.animal);
+  flyTo(opts.view || "whole", { animate: false });
+  root.dataset.ready = "true";
+
+  return {
+    state,
+    on(fn) { listeners.add(fn); return () => listeners.delete(fn); },
+    async setAnimal(n) { state.animal = n; await loadAnimal(n); emit(); },
+    setVisible(ch, on) { state.visible[ch] = on; state.solo = null; applyStyle(); emit(); },
+    solo(ch) {
+      if (state.solo === ch) { state.visible = { ...state.beforeSolo }; state.solo = null; }
+      else {
+        if (!state.solo) state.beforeSolo = { ...state.visible };
+        state.solo = ch;
+        for (const k of Object.keys(state.visible)) state.visible[k] = k === ch && (mode === "results" || !k.startsWith("ch"));
+      }
+      applyStyle(); emit();
+    },
+    setTdpLut(name) { state.tdpLut = name; applyStyle(); emit(); },
+    setTdpBrightness(v) { state.tdpBrightness = v; applyStyle(); emit(); },
+    flyTo,
+    setLayout,
+    flip,
+    exportCanvas,
+    destroy() {
+      document.removeEventListener("keydown", onKey);
+      ro.disconnect();
+      fields.forEach(f => f.app.destroy(true, { children: true, texture: true }));
+    },
+  };
+}

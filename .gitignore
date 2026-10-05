@@ -1,2 +1,6 @@
 .DS_Store
 .venv/
+__pycache__/
+.playwright-cli/
+# private generator output (full molecule records); rebuild with: uv run python -m generator.build <case>
+data/*/generated/
