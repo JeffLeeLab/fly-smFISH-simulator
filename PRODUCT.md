@@ -8,7 +8,7 @@ web
 
 ## Stack
 
-Decided in `docs/spec.md` (*Rendering stack*, *Hosting and offline use*): a static site with no build step. Plain HTML, CSS, SVG and vanilla JavaScript; PixiJS v8 + `pixi-viewport` for the microscopy viewer; GSAP (pinned local copy with plugins) for the openings. Fonts and libraries are self-hosted at pinned versions, with no CDN. Served from GitHub Pages under `/repo-name/` with relative paths, and also runs offline from a local folder over HTTP. A separate generator (Python/NumPy or JS) pre-computes all molecules and tables.
+Decided in `docs/spec.md` (*Rendering stack*, *Hosting and offline use*): a static site with no build step. Plain HTML, CSS, SVG and vanilla JavaScript; PixiJS v8 + `pixi-viewport` for the microscopy viewer; GSAP (pinned local copy with plugins) for the openings. Fonts and libraries are self-hosted at pinned versions, with no CDN. Served from GitHub Pages under `/repo-name/` with relative paths, and also runs offline from a local folder over HTTP. A separate generator (Python with NumPy, run with uv) pre-computes all molecules and tables.
 
 ## Users
 
@@ -51,7 +51,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 - Name: **smFISH Simulator**.
 - No University of Glasgow branding. anthropic.com and gla.ac.uk are references for principles only, not for identity.
-- Tone: sober and respectful, because ALS is a fatal disease and the audience is final-year students. Flies are anatomically correct and never mascots.
+- Tone: sober and respectful, because ALS is a fatal disease and the audience is final-year students. Flies are simplified drawings with a correct body plan, and never mascots.
 - A visual direction has already been chosen and frozen: `docs/style-directions/tokens.css` and `docs/style-directions/Style directions review.md`, with art direction in `docs/spec.md`. That direction is the authority for visual decisions; this file does not repeat it.
 
 ## Evidence on Hand

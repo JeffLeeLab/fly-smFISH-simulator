@@ -244,6 +244,112 @@
    "probe_regions": [
     {
      "id": "S1",
+     "label": "first exon (TSS1)",
+     "lo": 6100377,
+     "hi": 6100549,
+     "length_nt": 173,
+     "mature_in": [
+      "E",
+      "C"
+     ],
+     "nascent_in": [
+      "E",
+      "C"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "S2",
+     "label": "first exon (TSS2)",
+     "lo": 6109667,
+     "hi": 6109772,
+     "length_nt": 106,
+     "mature_in": [
+      "B",
+      "A"
+     ],
+     "nascent_in": [
+      "E",
+      "C",
+      "B",
+      "A"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "S3",
+     "label": "intron (overlaps CG31642)",
+     "lo": 6118512,
+     "hi": 6120522,
+     "length_nt": 2011,
+     "mature_in": [],
+     "nascent_in": [
+      "E",
+      "C",
+      "B",
+      "A"
+     ],
+     "also_detects": [
+      "CG31642"
+     ]
+    },
+    {
+     "id": "S4",
+     "label": "first exon (TSS3)",
+     "lo": 6120674,
+     "hi": 6121210,
+     "length_nt": 537,
+     "mature_in": [
+      "D"
+     ],
+     "nascent_in": [
+      "E",
+      "C",
+      "B",
+      "A",
+      "D"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "S5",
+     "label": "intron",
+     "lo": 6122411,
+     "hi": 6122697,
+     "length_nt": 287,
+     "mature_in": [],
+     "nascent_in": [
+      "E",
+      "C",
+      "B",
+      "A",
+      "D"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "S6",
+     "label": "cassette exon",
+     "lo": 6122698,
+     "hi": 6122853,
+     "length_nt": 156,
+     "mature_in": [
+      "E",
+      "C",
+      "B",
+      "D"
+     ],
+     "nascent_in": [
+      "E",
+      "C",
+      "B",
+      "A",
+      "D"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "S7",
      "label": "last exon",
      "lo": 6122978,
      "hi": 6123899,
@@ -265,7 +371,7 @@
      "also_detects": []
     },
     {
-     "id": "S2",
+     "id": "S8",
      "label": "long 3'UTR",
      "lo": 6123900,
      "hi": 6124653,
@@ -279,112 +385,6 @@
       "D"
      ],
      "also_detects": []
-    },
-    {
-     "id": "S3",
-     "label": "cassette exon",
-     "lo": 6122698,
-     "hi": 6122853,
-     "length_nt": 156,
-     "mature_in": [
-      "E",
-      "C",
-      "B",
-      "D"
-     ],
-     "nascent_in": [
-      "E",
-      "C",
-      "B",
-      "A",
-      "D"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "S4",
-     "label": "first exon (TSS1)",
-     "lo": 6100377,
-     "hi": 6100549,
-     "length_nt": 173,
-     "mature_in": [
-      "E",
-      "C"
-     ],
-     "nascent_in": [
-      "E",
-      "C"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "S5",
-     "label": "first exon (TSS2)",
-     "lo": 6109667,
-     "hi": 6109772,
-     "length_nt": 106,
-     "mature_in": [
-      "B",
-      "A"
-     ],
-     "nascent_in": [
-      "E",
-      "C",
-      "B",
-      "A"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "S6",
-     "label": "first exon (TSS3)",
-     "lo": 6120674,
-     "hi": 6121210,
-     "length_nt": 537,
-     "mature_in": [
-      "D"
-     ],
-     "nascent_in": [
-      "E",
-      "C",
-      "B",
-      "A",
-      "D"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "S7",
-     "label": "intron",
-     "lo": 6122411,
-     "hi": 6122697,
-     "length_nt": 287,
-     "mature_in": [],
-     "nascent_in": [
-      "E",
-      "C",
-      "B",
-      "A",
-      "D"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "S8",
-     "label": "intron (overlaps CG31642)",
-     "lo": 6118512,
-     "hi": 6120522,
-     "length_nt": 2011,
-     "mature_in": [],
-     "nascent_in": [
-      "E",
-      "C",
-      "B",
-      "A"
-     ],
-     "also_detects": [
-      "CG31642"
-     ]
     }
    ]
   },
@@ -604,38 +604,6 @@
    "probe_regions": [
     {
      "id": "F1",
-     "label": "giant coding exon",
-     "lo": 1433476,
-     "hi": 1447295,
-     "length_nt": 13820,
-     "mature_in": [
-      "F",
-      "E",
-      "C"
-     ],
-     "nascent_in": [
-      "F",
-      "E",
-      "C"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "F2",
-     "label": "long 3'UTR (proximal part)",
-     "lo": 1451368,
-     "hi": 1452429,
-     "length_nt": 1062,
-     "mature_in": [
-      "E"
-     ],
-     "nascent_in": [
-      "E"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "F3",
      "label": "first exon (TSS1)",
      "lo": 1409069,
      "hi": 1410121,
@@ -649,7 +617,19 @@
      "also_detects": []
     },
     {
-     "id": "F4",
+     "id": "F2",
+     "label": "intron",
+     "lo": 1410122,
+     "hi": 1411725,
+     "length_nt": 1604,
+     "mature_in": [],
+     "nascent_in": [
+      "F"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "F3",
      "label": "first exon (TSS2)",
      "lo": 1411726,
      "hi": 1411978,
@@ -664,7 +644,7 @@
      "also_detects": []
     },
     {
-     "id": "F5",
+     "id": "F4",
      "label": "5'UTR exon",
      "lo": 1413418,
      "hi": 1413800,
@@ -680,12 +660,30 @@
      "also_detects": []
     },
     {
-     "id": "F6",
+     "id": "F5",
      "label": "intron (13 kb)",
      "lo": 1414686,
      "hi": 1427675,
      "length_nt": 12990,
      "mature_in": [],
+     "nascent_in": [
+      "F",
+      "E",
+      "C"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "F6",
+     "label": "giant coding exon",
+     "lo": 1433476,
+     "hi": 1447295,
+     "length_nt": 13820,
+     "mature_in": [
+      "F",
+      "E",
+      "C"
+     ],
      "nascent_in": [
       "F",
       "E",
@@ -709,13 +707,15 @@
     },
     {
      "id": "F8",
-     "label": "intron",
-     "lo": 1410122,
-     "hi": 1411725,
-     "length_nt": 1604,
-     "mature_in": [],
+     "label": "long 3'UTR (proximal part)",
+     "lo": 1451368,
+     "hi": 1452429,
+     "length_nt": 1062,
+     "mature_in": [
+      "E"
+     ],
      "nascent_in": [
-      "F"
+      "E"
      ],
      "also_detects": []
     }
@@ -1510,27 +1510,15 @@
    "probe_regions": [
     {
      "id": "U1",
-     "label": "last exon",
-     "lo": 870930,
-     "hi": 871654,
-     "length_nt": 725,
+     "label": "first exon (far-upstream TSS)",
+     "lo": 904822,
+     "hi": 905963,
+     "length_nt": 1142,
      "mature_in": [
-      "D",
-      "G",
-      "F",
-      "A",
-      "C",
-      "B",
-      "E"
+      "G"
      ],
      "nascent_in": [
-      "D",
-      "G",
-      "F",
-      "A",
-      "C",
-      "B",
-      "E"
+      "G"
      ],
      "also_detects": []
     },
@@ -1558,6 +1546,22 @@
     },
     {
      "id": "U3",
+     "label": "intron upstream of group-2 TSS",
+     "lo": 893566,
+     "hi": 898392,
+     "length_nt": 4827,
+     "mature_in": [],
+     "nascent_in": [
+      "D",
+      "G",
+      "F",
+      "A",
+      "C"
+     ],
+     "also_detects": []
+    },
+    {
+     "id": "U4",
      "label": "N-terminal exon (group 2)",
      "lo": 886965,
      "hi": 892840,
@@ -1578,41 +1582,7 @@
      "also_detects": []
     },
     {
-     "id": "U4",
-     "label": "intron upstream of group-2 TSS",
-     "lo": 893566,
-     "hi": 898392,
-     "length_nt": 4827,
-     "mature_in": [],
-     "nascent_in": [
-      "D",
-      "G",
-      "F",
-      "A",
-      "C"
-     ],
-     "also_detects": []
-    },
-    {
      "id": "U5",
-     "label": "intron",
-     "lo": 878993,
-     "hi": 881842,
-     "length_nt": 2850,
-     "mature_in": [],
-     "nascent_in": [
-      "D",
-      "G",
-      "F",
-      "A",
-      "C",
-      "B",
-      "E"
-     ],
-     "also_detects": []
-    },
-    {
-     "id": "U6",
      "label": "alternative exon",
      "lo": 881843,
      "hi": 881949,
@@ -1633,16 +1603,46 @@
      "also_detects": []
     },
     {
+     "id": "U6",
+     "label": "intron",
+     "lo": 878993,
+     "hi": 881842,
+     "length_nt": 2850,
+     "mature_in": [],
+     "nascent_in": [
+      "D",
+      "G",
+      "F",
+      "A",
+      "C",
+      "B",
+      "E"
+     ],
+     "also_detects": []
+    },
+    {
      "id": "U7",
-     "label": "first exon (far-upstream TSS)",
-     "lo": 904822,
-     "hi": 905963,
-     "length_nt": 1142,
+     "label": "last exon",
+     "lo": 870930,
+     "hi": 871654,
+     "length_nt": 725,
      "mature_in": [
-      "G"
+      "D",
+      "G",
+      "F",
+      "A",
+      "C",
+      "B",
+      "E"
      ],
      "nascent_in": [
-      "G"
+      "D",
+      "G",
+      "F",
+      "A",
+      "C",
+      "B",
+      "E"
      ],
      "also_detects": []
     },

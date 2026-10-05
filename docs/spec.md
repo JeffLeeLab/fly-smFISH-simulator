@@ -164,9 +164,10 @@ Paths in this document are relative to `docs/` unless stated otherwise.
 | `docs/style-directions/` | Style-phase mockups, screenshots, review note; `tokens.css` (frozen design tokens) |
 | `docs/mockups/` | Transcript map mockup (`step5-target-probe-map.html`) and screenshots |
 | `docs/references/` | `reference-pdf-neurons.pdf` (+ `.docx`), `dam-motion/` (activity-monitor schematic), `gene-models/` (FlyBase gene-model images) |
-| `transcript_models_R6.json` (root) | Transcript models, CDS and probe menus; source for the generator and the map |
+| `docs/transcript_models_R6.json` | Transcript models, CDS and probe menus; source for the generator and the map. Probe IDs follow the menus in this spec |
+| `pyproject.toml`, `uv.lock`, `.python-version` (root) | Python environment for the generator and build scripts, managed with uv |
 
-Proposed for Phase 1 (not yet created): `site/` (the static site served by GitHub Pages; `tokens.css` copied in from `docs/style-directions/`), `generator/` (Python or JavaScript), `data/` (geometry files and generated JSON; `transcript_models_R6.json` could move here). Mockups and screenshots in `docs/` are design records and are not served.
+Proposed for Phase 1 (not yet created): `site/` (the static site served by GitHub Pages; `tokens.css` copied in from `docs/style-directions/`), `generator/` (Python, run with uv), `data/` (geometry files, machine-readable truth tables and generated JSON). Mockups and screenshots in `docs/` are design records and are not served.
 
 #### Purpose and scope
 
@@ -184,8 +185,8 @@ Build one case completely before the others, so every shared part (data pipeline
 **Phase 1 – PDF neurons (*futsch*), start to finish.** Every step from the hero to the summary PNG, working for this one case.
 - *Why PDF first:* it has the least connectome support (geometry traced from reference images), the widest range of intron sizes on its map (13 kb vs 63 nt), a daily-remodelling terminal arbor at ZT2, and four cells per animal, so it tests the hardest parts of geometry, map and plot early.
 - *Order of work:*
-	1. **Scaffold:** repository, `tokens.css`, self-hosted fonts and libraries, hash routes, progress rail, notebook shell, light/dark theme, GitHub Pages and offline test.
-	2. **Data:** PDF geometry (control and mutant templates), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the PDF truth table.
+	1. **Scaffold:** repository (the uv environment is already set up), `tokens.css`, self-hosted fonts and libraries, hash routes, progress rail, notebook shell, light/dark theme, GitHub Pages and offline test.
+	2. **Data:** PDF geometry (control and mutant templates), the PDF truth table as a machine-readable file (signed off by the instructor), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the PDF truth table.
 	3. **Screens 3–7:** viewer (split view, flicker, fly-to, LUTs incl. TDP-43 dimming, overlay, PNG copy), TDP-43 clue, hypotheses cards, target card and map with probe track, reveal + compare with plot and table, revise with summary PNG.
 	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders); the PDF descent ending in the viewer.
 	5. **Review loop:** Playwright recordings, contact sheets and dead-stretch checks for the animations; screenshots of every step at 1280×720 and 1920×1080 in both themes.
@@ -208,12 +209,13 @@ Build one case completely before the others, so every shared part (data pipeline
 Data generation is separate from display, so images and numbers always agree. A generator script creates every molecule once from a fixed seed and pre-computes every probe result; the website only reads and draws that data.
 
 0. **Case truth table** (see *Case truth tables*): per case, which PTR modes are active, plus the expected result for every single probe and every probe pair, decoys included. Active modes combine into one coherent molecule set. The generator implements it; instructors use it as the answer key.
+	- Stored as one machine-readable file per case in `data/`, covering every single probe and all 56 ordered pairs. It is drafted from the prose tables in *Case truth tables* and signed off by the instructor before the validation gate uses it.
 0.5. **Geometry** (built before the generator; see *Geometry references*): one file per case and genotype, in µm, shared by generator and viewer.
 	- Closed, non-overlapping named shapes: nucleus, cell body cytoplasm, dendrites, axon (with centreline), each bouton or terminal. Mushroom body: one cell-body cluster (30 nuclei), calyx, peduncle and the three lobe systems as shared regions.
 	- Minimum neurite width 0.5 µm, so spots fit inside; axons wider (see *Geometry references*).
 	- Separate control and mutant templates (NMJ: 20 vs 15 boutons; PDF: s-LNv dorsal terminals at ZT2, slightly less branched in the mutant).
 	- Key coordinates (nucleus centres and radii, terminal IDs) stored as JSON alongside.
-1. **Generator** (Python with NumPy, or JavaScript): produces one JSON file per case, genotype and animal. Each molecule records its gene (the target, or an overlapping same-strand gene such as CG31642), isoform, the transcript regions it carries (nascent and intron-retained molecules include intron regions), position in µm inside its geometry compartment, compartment, and whether it is nascent or in a granule. A TDP-43 protein layer (nuclear intensity field + cytoplasmic puncta/granule positions) is generated from the same seed so target mRNA–TDP-43 co-localisation is consistent.
+1. **Generator** (Python with NumPy and Shapely, run with uv): produces one JSON file per case, genotype and animal. Each molecule records its gene (the target, or an overlapping same-strand gene such as CG31642), isoform, the transcript regions it carries (nascent and intron-retained molecules include intron regions), position in µm inside its geometry compartment, compartment, and whether it is nascent or in a granule. A TDP-43 protein layer (nuclear intensity field + cytoplasmic puncta/granule positions) is generated from the same seed so target mRNA–TDP-43 co-localisation is consistent.
 2. **Detection** (pre-computed by the generator): for each molecule and each of the 8 probe regions, whether it is detected, stored as an 8-bit mask per molecule. **Pilot: detection efficiency is 1.0**, so a molecule is detected by a region if and only if it carries it (not introduced to students; see *Future implementation ideas*). The browser only filters by this mask.
 3. **Viewer**: draws anatomy, spots and background.
 4. **Tables and summary** (pre-computed): for each single probe and all 56 ordered probe assignments per case (28 pairs × channel order, so a channel swap only swaps columns). Per compartment and channel: single- and double-positive counts; nuclear:cytoplasmic ratio; share of cytoplasmic RNA in axon and terminals; counts per terminal unit (per bouton at the NMJ; per terminal area for PDF neurons; per lobe system for the mushroom body); transcription-site number and intensity; overlap with TDP-43 puncta vs a randomised-position control. Mean ± SD over 3 animals, plus the per-animal means and per-unit values the count plot needs (see *Count plot*).
@@ -223,7 +225,7 @@ Molecules do not depend on probe choice, so every group, and every new attempt, 
 
 #### Transcript models and probe menus
 
-- Maps show every annotated isoform with its FlyBase name, drawn from Release 6 coordinates (NCBI RefSeq, FlyBase-derived; pin the FlyBase release at build). Full exon models, CDS, overlapping same-strand genes and the menus below are in `transcript_models_R6.json` (repository root: `../transcript_models_R6.json` from this file).
+- Maps show every annotated isoform with its FlyBase name, drawn from Release 6 coordinates (NCBI RefSeq, FlyBase-derived; pin the FlyBase release at build). Full exon models, CDS, overlapping same-strand genes and the menus below are in `transcript_models_R6.json` (in `docs/`, alongside this file).
 - Students choose two regions from a curated menu of 8 per gene, including decoys. On screen, regions carry neutral IDs (S1–S8 etc.), numbered 5′→3′ from left to right on the map; the note column is instructor-only.
 - *Mature in*: isoforms whose mRNA contains the region. *Nascent in*: isoforms whose pre-mRNA spans it. They differ for nested promoters.
 - Gr2a CDS added from NCBI RefSeq (FlyBase-derived; Gr2a-PB 410 aa, Gr2a-PC 428 aa), so it draws as coding.
@@ -299,7 +301,12 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 - Terminals at ZT2, when branching is greatest. The mutant template is slightly less branched (e.g. about 20% less total terminal length).
 
 **All systems**
-- Whole-fly overview (Part 1, step 2): silhouette rendered from the [flybody](https://github.com/TuragaLab/flybody) body meshes (MuJoCo model), with the case neurons from the same geometry.
+- **Flies** (hero, assays and the whole-fly overview in step 2): drawn from the [flybody](https://github.com/TuragaLab/flybody) body model ([Vaxenburg et al. 2025, *Nature*](https://doi.org/10.1038/s41586-025-09029-4); code and assets Apache-2.0, credited on the site). The flies are there to show the phenotypes, not to teach anatomy, so the mesh is a starting point rather than a target: they are simplified until they sit in the site's illustration style instead of looking like a 3D render.
+	- A Python script (run with uv) projects the per-segment OBJ meshes to fixed 2D views and simplifies each part to a few smooth SVG paths: head, thorax, abdomen, wings and halteres, and each leg as coxa, femur, tibia and tarsus, with joint pivots read from `fruitfly.xml` so the legs can be posed for walking, grooming and climbing.
+	- Keep the body plan and proportions (head, thorax, abdomen; six legs; two wings). Drop bristles, ocelli, claws, mouthparts and eye facets.
+	- Draw them in the site's inks and washes from `tokens.css`, with the same boil filter as the other illustrations (see *Art direction*).
+	- The raw meshes (up to about 30 MB each) are downloaded by the script and not committed; only the SVG output is.
+- Case neurons in the whole-fly overview come from the same geometry files as the viewer.
 - Fix the projection per case before building: frontal suits s-LNvs and the mushroom body lobes but foreshortens the peduncle.
 
 #### Simulation parameters (draft)
@@ -370,7 +377,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Banned (generic AI defaults):** purple/blue gradients, glassmorphism, emoji or stock icon sets, drop-shadowed rounded cards everywhere, centred hero sections, Inter as the default font, the same fade-up stagger everywhere. Use hairline borders and tonal fills, not shadows.
 - **Illustration texture** (reference: [I'm Upping My P(doom)](https://x.com/other__reality/status/2102514581684052169); design reference only): hand-inked outlines that "boil" (a slight redraw wobble, 12 times a second), flat washes, watercolour backgrounds, paper grain. Take the artwork, not the editing (no rapid scene changes, bursts or sound-effect lettering).
 	- *Soft colour:* washes in ivory, warm grey and clay; membrane blue stays the only saturated colour.
-	- *No mascots:* flies are anatomically correct ink drawings without faces or emotions (ALS is a fatal disease; final-year students).
+	- *No mascots:* flies are simplified ink drawings with a correct body plan, without faces or emotions (ALS is a fatal disease; final-year students). They don't need fine anatomical detail (see *Geometry references*).
 	- *Texture stops at the data:* the transcript map, plot, tables and viewer stay crisp, since wobbly lines would suggest imprecision. All text is crisp HTML in the UI fonts, never painted into the artwork.
 	- *Built simply:* paper grain and watercolour washes are static texture images (WebP) under the SVG; ink wobble is an SVG `feTurbulence` + `feDisplacementMap` filter on the outlines, its seed stepped 12 times a second for the boil (from the seeded PRNG, paused during reading holds and with reduced motion).
 
@@ -467,7 +474,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 **Instructor**
 - No plenary page or shared screen: groups present from their own slides, built from PNGs and screenshots.
-- The answer key (truth tables, note column) stays in this document and is never shipped. The build writes a public copy of `transcript_models_R6.json` with exon models, CDS and probe coordinates and types only: `mature_in`, `nascent_in` and `also_detects` are stripped, as `also_detects` would expose the S3 / CG31642 trap in the browser's developer tools.
+- The answer key (truth tables, note column) stays in this document and is never shipped. The repository is public, so the key can be read there; that is accepted. The rule is that the site never serves it. The build writes a public copy of `transcript_models_R6.json` with exon models, CDS and probe coordinates and types only: `mature_in`, `nascent_in` and `also_detects` are stripped, as `also_detects` would expose the S3 / CG31642 trap in the browser's developer tools.
 
 #### Openings (steps 1–2)
 
@@ -505,7 +512,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - The SVG neuron outline at the end of the descent matches the PixiJS viewer's opening frame (same outline, position and scale), so the hand-over is a matched swap, not a cross-fade.
 - Compartment labels use the same names and order as the viewer's fly-to buttons and the plot's x-axis.
 - **Three-layer badges** introduced here and reused wherever a claim appears: *Established*, *Simplified* ("axon shortened", "cell bodies enlarged"), *Invented for this case* (e.g. the sleep phenotype).
-- **Illustration style:** the flybody mesh projected to fixed 2D views and drawn as semi-transparent ink outlines with soft washes on ivory, in the illustration texture (see *Art direction*); neurons in blue.
+- **Illustration style:** the simplified flybody outlines (see *Geometry references*) drawn as semi-transparent ink outlines with soft washes on ivory, in the illustration texture (see *Art direction*); neurons in blue.
 
 **What "modern and aesthetic" means here (testable)**
 - **Continuity:** every transition passes a shared element on to the next scene (fly → legend, station → case view, fly → neuron → viewer outline). No hard cuts, no blank frames, no plain cross-fades.
@@ -583,7 +590,7 @@ Adapted from [motion-video-kit](https://github.com/echris6/motion-video-kit) (MI
 - **Holds allowed:** unlike adverts, the phenotype needs time to be watched. Keep holds alive with small idle motion (grooming) rather than freezing.
 - **Clean transitions:** frame 0 is a finished image. The old label leaves before the new one enters, so text never collides mid-transition. Eases start at zero velocity (smootherstep) so parts don't pop. Settled text meets WCAG AA contrast. `gsap.matchMedia()` gives still end-point frames when reduced motion is set.
 - **Labelled:** animations are labelled "schematic / simulated", like the images.
-- **Review loop:** record each animation with Playwright, make contact sheets (`contact-sheet.sh`) and check for dead stretches (`frozen-time.sh`). A fresh reviewer who sees only the recording critiques it; a short ledger tracks each finding and what changed.
+- **Review loop:** record each animation with `playwright-cli` (`video-start` / `video-stop`), make contact sheets (`contact-sheet.sh`) and check for dead stretches (`frozen-time.sh`). A fresh reviewer who sees only the recording critiques it; a short ledger tracks each finding and what changed.
 
 #### Viewer features
 
@@ -678,7 +685,7 @@ The same folder runs on GitHub Pages and on a laptop with no internet connection
 
 - Store PixiJS, `pixi-viewport`, GSAP (with its plugins), fonts and texture images in the repository at pinned versions; do not load them from a CDN.
 - Use relative paths for all data, textures and SVG files, as the site lives under `/repo-name/`.
-- Test locally over HTTP (`python -m http.server`), not by opening the file directly.
+- Test locally over HTTP (`uv run python -m http.server -d site`), not by opening the file directly.
 - Keep individual files under 100 MB; compress textures.
 - Check that the installed `pixi-viewport` version supports PixiJS v8 before building.
 
