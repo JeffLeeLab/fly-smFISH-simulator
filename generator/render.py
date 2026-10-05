@@ -4,8 +4,9 @@ site/data/<case>/images/<genotype>-<animal>-<layer>.webp
 
 Realism comes from modelling the label and the optics, not from detail (docs/spec.md,
 *Image realism model*):
-- Membrane: beaded neurites whose brightness follows their thickness and labelling, cell bodies
-  with a bright plasma-membrane rim, granular internal membranes and a dark nucleus.
+- Membrane: continuous processes whose width and brightness wander irregularly, mottled like a
+  real membrane label; cell bodies with a bright plasma-membrane rim, granular internal
+  membranes and a dark nucleus.
 - DAPI: mottled chromatin with bright chromocentres, a dimmer nucleolus and a brighter rim.
 - TDP-43: finely speckled nucleoplasm that leaves the nucleolus out, scaled by each nucleus's
   intensity (lower in the mutant). Its puncta are drawn live by the viewer from the data.
@@ -21,8 +22,8 @@ from PIL import Image
 from shapely import contains_xy, prepare
 
 RES = 10                     # px per µm
-PSF_SIGMA_UM = 0.13          # lateral PSF
-HAZE_SIGMA_UM = 1.6          # out-of-focus light gathered by the projection
+PSF_SIGMA_UM = 0.2          # lateral PSF (a little soft, as in the reference images)
+HAZE_SIGMA_UM = 1.3          # out-of-focus light gathered by the projection
 LAYERS = ("membrane", "dapi", "tdp43")
 
 
@@ -97,7 +98,7 @@ def stamp(layer, cv, f, core_r):
     more labelled membrane in the column."""
     I, J = cv.px(f["xy"][:, 0], f["xy"][:, 1])
     R = f["r"] * cv.res
-    V = f["b"] * f["v"] * (f["r"] / core_r) ** 0.3
+    V = f["b"] * f["v"] * (f["r"] / core_r) ** 0.25
     for i, j, r, v in zip(I, J, R, V):
         c0, c1 = max(0, int(i - r - 2)), min(cv.w, int(i + r + 3))
         r0, r1 = max(0, int(j - r - 2)), min(cv.h, int(j + r + 3))
@@ -130,9 +131,11 @@ def membrane(cv, skel, rng):
     layer = cv.zeros()
     for f in skel["fibres"]:
         layer[:] = 0
-        core = {"axon": 0.4, "neurite": 0.5, "terminal": 0.3}[f["kind"]]
+        core = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}[f["kind"]]
         stamp(layer, cv, f, core)
-        np.maximum(out, layer * {"axon": 0.9, "neurite": 0.85, "terminal": 1.0}[f["kind"]], out=out)
+        np.maximum(out, layer * {"axon": 0.9, "neurite": 0.85, "terminal": 1.0, "fine": 1.0}[f["kind"]], out=out)
+    # membrane label is cloudy, not even: mottle the processes at fine and medium scales
+    out *= uneven(cv, rng, 0.42, 1.1, scale_um=0.3) * uneven(cv, rng, 0.6, 1.06, scale_um=1.2)
     for c in skel["cells"]:
         soma = mask(cv, c["soma"])
         nuc = mask(cv, c["nucleus"], 0.15)
@@ -150,7 +153,7 @@ def membrane(cv, skel, rng):
         body = (0.12 + 0.55 * np.clip(gran, 0, 1.8) + 0.62 * rim) * soma * (1 - 0.88 * nuc) + 0.08 * envelope
         np.maximum(out, body * c["brightness"] * 1.45, out=out)
     out *= uneven(cv, rng, 0.62, 1.08)
-    return optics(out, rng, photons=30, haze=0.22) / 1.35
+    return optics(out, rng, photons=30, haze=0.32) / 1.25
 
 
 def nucleus_texture(cv, c, rng, kind):

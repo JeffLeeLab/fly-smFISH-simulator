@@ -5,10 +5,12 @@ Representative, not exact anatomy (docs/spec.md, *Geometry references*), drawn a
 reference pack (docs/references/reference-pdf-neurons.pdf): four s-LNvs on one side.
 - Cell bodies sit in a tight cluster, irregular and teardrop-shaped where the neurite leaves,
   enlarged to about 15 µm across, each with an off-centre nucleus of about 7 µm.
-- The four axons run as separate thin, beaded fibres that weave, cross and briefly split
-  apart (as in the EM reconstruction, p. 4), bend at the kink and enter the dorsal terminals.
-- The dorsal terminals, drawn at ZT2, are a tangle of beaded fibres and short twigs fanning
-  medially. The mutant arbor has about 20% less total length than the control mean.
+- The four axons run close enough to merge into one irregular band, splitting apart now and
+  then (as in the EM reconstruction, p. 4), bend at the kink and enter the dorsal terminals.
+- The dorsal terminals, drawn at ZT2, are thick, irregular processes that fan medially, cross
+  and rejoin into a lacy mesh, with a few thin, faint processes at the edge (after the CD8::GFP
+  panel, p. 5: diffuse membranes, not beads). The mutant arbor has about 20% less total length
+  than the control mean.
 Every animal is a little different (cluster arrangement, cell sizes, axon path, weaving,
 branching); only the terminal-length difference is systematic.
 
@@ -38,10 +40,10 @@ STEP = 0.1                     # skeleton sampling, µm
 
 SOMA_R = (6.6, 7.8)            # cell body radius range (spec: about 15 µm across)
 NUC_R = (3.2, 3.8)             # nucleus radius range (spec: about 7 µm)
-NEURITE_R = 0.5
-AXON_R = 0.4                   # each of the four axons; the bundle is 2–4 µm wide where they run together
-TERM_R = 0.3
-TWIG_R = 0.27                  # spec minimum width 0.5 µm
+NEURITE_R = 0.6
+AXON_R = 0.62                  # each of the four axons; together they make a 2–4 µm band
+TERM_R = 0.52
+FINE_R = 0.25                  # thin, faint processes at the edge of the arbor (spec minimum width 0.5 µm)
 CONTROL_TERM_LENGTH = (220.0, 245.0)
 MUTANT_FRACTION = 0.80         # spec: about 20% less total terminal length
 
@@ -90,21 +92,19 @@ def normals(xy):
     return np.c_[-d[:, 1], d[:, 0]]
 
 
-def beads(s, rng, base_r, bead_r, spacing, along=1.0):
-    """A thin, dim core with varicosities (beads) of irregular size, spacing and brightness.
-    Returns the radius and the relative brightness along the fibre."""
-    r = np.full(s.shape, base_r)
-    v = np.full(s.shape, 0.55)            # the core between beads is dimmer
-    pos = rng.uniform(0, spacing[1])
+def irregular(s, rng, base_r, var=0.35, swell=(0.35, 0.85), every=(4.0, 10.0), swell_len=(1.5, 4.0), r_min=0.25):
+    """A membrane-labelled process (after the CD8::GFP panel on p. 5 of the reference pack): its
+    width wanders smoothly and irregularly, with elongated swellings that blend into the
+    membrane rather than discrete beads; brightness is blotchy. Returns radius and brightness."""
+    r = base_r * (1 + var * smooth(rng, wl=(6, 16))(s) + 0.5 * var * smooth(rng, wl=(1.8, 4.5))(s)
+                  + 0.3 * var * smooth(rng, wl=(0.7, 1.6))(s))  # ragged edges
+    pos = rng.uniform(0, every[1])
     while pos < s[-1]:
-        rb = base_r + (rng.uniform(*bead_r) - base_r) * rng.uniform(0.35, 1.0) ** 0.6
-        w = along * rb * rng.uniform(0.7, 1.6)
-        prof = np.exp(-((s - pos) / w) ** 2)
-        r = np.maximum(r, base_r + (rb - base_r) * prof)
-        v = np.maximum(v, rng.lognormal(0.0, 0.45) * prof)
-        gap = rng.uniform(*spacing)
-        pos += gap if rng.random() > 0.15 else gap * rng.uniform(1.6, 2.6)  # now and then a long bare stretch
-    return r, v
+        r = r + base_r * rng.uniform(*swell) * np.exp(-((s - pos) / rng.uniform(*swell_len)) ** 2)
+        pos += rng.uniform(*every)
+    r = np.maximum(r, r_min)
+    v = 0.8 + 0.22 * smooth(rng, wl=(2.5, 9))(s) + 0.12 * (r / base_r - 1)
+    return r, np.clip(v, 0.4, 1.3)
 
 
 def fibre(xy, s, radius_v, bright, kind):
@@ -215,7 +215,8 @@ def bundle_path(rng):
 
 
 def build_axons(rng, cells, p0_xy):
-    """Four beaded axons weaving along the bundle, with one stretch where they split apart."""
+    """Four axons running close enough to merge into one irregular band, weaving and splitting
+    apart now and then (as in the EM reconstruction, p. 4)."""
     cxy, cs = bundle_path(rng)
     n = normals(cxy)
     L = cs[-1]
@@ -234,12 +235,12 @@ def build_axons(rng, cells, p0_xy):
         fine = smooth(rng, wl=(5, 11))
         ramp_in = np.clip(cs / 9.0, 0, 1)
         ramp_out = np.clip((L - cs) / 7.0, 0, 1)
-        o = starts[k] * (1 - ramp_in) + ramp_in * ramp_out * (1.6 * weave(cs) + 0.35 * fine(cs))
+        o = starts[k] * (1 - ramp_in) + ramp_in * ramp_out * (1.1 * weave(cs) + 0.3 * fine(cs))
         o += split_sign[k] * 2.4 * np.exp(-((cs - split_at) / 7.5) ** 2) * ramp_out
         o += split_sign2[k] * 1.8 * np.exp(-((cs - split_at2) / 5.5) ** 2) * ramp_out
         o += (1 - ramp_out) * (starts[k] * 0.35)
         xy = cxy + o[:, None] * n
-        r = beads(cs, rng, AXON_R, (0.62, 1.0), (1.2, 4.2))
+        r = irregular(cs, rng, AXON_R, var=0.3, swell=(0.25, 0.7), every=(5.0, 12.0))
         b = (0.75 + 0.25 * smooth(rng, wl=(10, 30))(cs)) * rng.uniform(0.85, 1.1)
         axons.append(fibre(xy, cs, r, b, "axon"))
         # primary neurite: from the cell's neck to where its axon starts
@@ -247,46 +248,63 @@ def build_axons(rng, cells, p0_xy):
         a, z = c["tip"], xy[0]
         mid = (a + z) / 2 + normals(np.array([a, z]))[0] * rng.uniform(-2.0, 2.0)
         nxy, ns = resample(catmull([a, mid, z], n=30))
-        nr = beads(ns, rng, NEURITE_R, (0.7, 0.95), (1.8, 4.0))
+        nr = irregular(ns, rng, NEURITE_R, var=0.25, swell=(0.2, 0.5), every=(4.0, 9.0))
         nb = np.full(ns.shape, 0.9) * rng.uniform(0.85, 1.1)
         neurites.append(fibre(nxy, ns, nr, nb, "neurite"))
     return axons, neurites, cxy
 
 
+def wandering(start, theta0, heading0, L, rng, amp=0.35, wl=(8.0, 22.0), settle=0.35):
+    s = np.arange(0, L, STEP)
+    th = theta0 + amp * smooth(rng, wl=wl)(s) - settle * (theta0 - heading0) * (s / max(L, 1))
+    return start + np.c_[np.cos(th), np.sin(th)].cumsum(axis=0) * STEP, s
+
+
 def build_terminals(rng, t0, heading0, target_length):
-    """Beaded terminal fibres and twigs fanning medially from the end of the bundle, generated
-    until their total length reaches the target."""
+    """The dorsal terminals as on p. 5 of the reference pack: thick, irregular processes that fan
+    medially, cross and rejoin into a lacy mesh with dark holes, plus a few thin, faint processes
+    at the edge. Generated until the total length reaches the target."""
     fibres, total = [], 0.0
-    angles = rng.permutation(np.linspace(-0.42, 0.34, 9) + rng.normal(0, 0.05, 9))
+    add = lambda f, L: (fibres.append(f), L)[1]
+    # main processes: a narrow fan, so neighbours run close, cross and touch
+    angles = rng.permutation(np.linspace(-0.42, 0.34, 8) + rng.normal(0, 0.05, 8))
     i = 0
-    while total < target_length and i < 40:
-        theta0 = heading0 + angles[i % len(angles)] + rng.normal(0, 0.08)
-        remaining = target_length - total
-        if remaining < 4:
-            break
-        L = min(rng.uniform(26, 50), remaining)
-        start = t0 + rng.normal(0, 0.6, 2)
-        wander = smooth(rng, wl=(9, 26))
-        s = np.arange(0, L, STEP)
-        th = theta0 + 0.3 * wander(s) - 0.35 * (theta0 - heading0) * (s / max(L, 1))  # spread, then run medially
-        xy = start + np.c_[np.cos(th), np.sin(th)].cumsum(axis=0) * STEP
-        r = beads(s, rng, TERM_R, (0.45, 1.1), (1.0, 3.2), along=0.9)
-        b = (0.7 + 0.3 * smooth(rng, wl=(6, 18))(s)) * rng.uniform(0.75, 1.15)
-        fibres.append(fibre(xy, s, r, b, "terminal"))
-        total += L
-        # short twigs off this fibre
-        for _ in range(rng.integers(0, 3)):
-            if target_length - total < 2:
-                break
-            at = int(rng.uniform(0.25, 0.9) * len(s))
-            tl = min(rng.uniform(3, 9), target_length - total)
-            ta = th[at] + rng.choice([-1, 1]) * rng.uniform(0.6, 1.2)
-            ts = np.arange(0, tl, STEP)
-            txy = xy[at] + np.c_[np.cos(ta + 0.3 * smooth(rng, wl=(4, 9))(ts)), np.sin(ta + 0.3 * smooth(rng, wl=(4, 9))(ts))].cumsum(axis=0) * STEP
-            tr = beads(ts, rng, TWIG_R, (0.45, 0.9), (1.0, 2.6), along=0.8)
-            fibres.append(fibre(txy, ts, tr, np.full(ts.shape, 0.75) * rng.uniform(0.7, 1.1), "terminal"))
-            total += tl
+    while total < 0.8 * target_length and i < 30:
+        L = min(rng.uniform(30, 50), 0.8 * target_length - total + 4)
+        xy, s = wandering(t0 + rng.normal(0, 0.8, 2), heading0 + angles[i % 8] + rng.normal(0, 0.05), heading0, L, rng, amp=0.4, wl=(8, 20), settle=0.3)
+        total += add(fibre(xy, s, irregular(s, rng, TERM_R, var=0.45, swell=(0.45, 1.1), every=(3.0, 7.0), swell_len=(1.2, 3.0)),
+                           rng.uniform(0.8, 1.1), "terminal"), L)
         i += 1
+    mains = list(fibres)
+    # bridges between neighbouring processes: the mesh
+    for _ in range(400):
+        if total >= 0.9 * target_length:
+            break
+        a, b = rng.choice(len(mains), 2, replace=False)
+        ia = rng.integers(len(mains[a]["s"]) // 6, len(mains[a]["s"]))
+        pa = mains[a]["xy"][ia]
+        d = np.hypot(*(mains[b]["xy"] - pa).T)
+        ib = int(np.argmin(d))
+        if not 1.4 <= d[ib] <= 6.0:
+            continue
+        # join a little further along the other process, so the link runs on a slant, not as a rung
+        ib = int(np.clip(ib + rng.choice([-1, 1]) * rng.integers(20, 45), 0, len(mains[b]["s"]) - 1))
+        pb = mains[b]["xy"][ib]
+        mid = (pa + pb) / 2 + normals(np.array([pa, pb]))[0] * rng.uniform(-1.4, 1.4)
+        xy, s = resample(catmull([pa, mid, pb], n=12))
+        L = float(s[-1]) if len(s) else 0.0
+        if L < 1.0:
+            continue
+        total += add(fibre(xy, s, irregular(s, rng, TERM_R * rng.uniform(0.55, 1.0), var=0.35, swell=(0.2, 0.7), every=(2.5, 5.0)),
+                           rng.uniform(0.7, 1.0), "terminal"), L)
+    # a few thin, faint processes wandering out from the arbor
+    while target_length - total >= 3:
+        src = mains[rng.integers(len(mains))]
+        k = rng.integers(len(src["s"]) // 3, len(src["s"]))
+        L = min(rng.uniform(8, 18), target_length - total)
+        xy, s = wandering(src["xy"][k], heading0 + rng.choice([-1, 1]) * rng.uniform(0.3, 0.8), heading0, L, rng, amp=0.7, wl=(3, 9), settle=0.3)
+        total += add(fibre(xy, s, irregular(s, rng, FINE_R, var=0.2, swell=(0.1, 0.4), every=(4.0, 9.0), r_min=0.25),
+                           rng.uniform(0.35, 0.55), "fine"), L)
     return fibres, total
 
 
