@@ -47,6 +47,23 @@ function pick(r) {
   return { key: r.step };
 }
 
+// A step that fails to load says so, instead of leaving the previous step on screen. The usual
+// cause is a browser holding an older copy of some files (a hard refresh fixes it).
+function failed(err) {
+  console.error(err);
+  unmount();
+  unmount = () => {};
+  const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+  view.innerHTML = `
+    <div class="locked" role="alert">
+      <p class="t-label">Something went wrong</p>
+      <h1 class="t-h1">This step didn’t load</h1>
+      <p class="t-story">The browser may be holding an older copy of part of the site. Reload the page, bypassing the cache: press <kbd>${mac ? "Cmd+Shift+R" : "Ctrl+F5"}</kbd>. Your notes are kept.</p>
+      <p class="next-row"><button class="btn btn--primary btn--lg" type="button" data-act="reload">Reload the page</button></p>
+    </div>`;
+  view.querySelector("[data-act=reload]").addEventListener("click", () => location.reload());
+}
+
 async function show(r) {
   const my = ++token;
   endTour();
@@ -67,14 +84,26 @@ async function show(r) {
     ? `${STEPS[r.step].title} · ${c.system} · smFISH Simulator`
     : "smFISH Simulator";
 
-  const mod = await VIEWS[choice.key]();
+  let mod;
+  try {
+    mod = await VIEWS[choice.key]();
+  } catch (err) {
+    if (my === token) failed(err);
+    return;
+  }
   if (my !== token) return; // a newer route arrived while loading
   unmount();
   unmount = () => {};
   view.replaceChildren();
   window.scrollTo(0, 0);
   const ctx = { ...r, case: c, stage: r.caseId ? stageOf(r.step) : "Meet", reason: choice.reason };
-  const cleanup = (await mod.mount(view, ctx)) || (() => {});
+  let cleanup;
+  try {
+    cleanup = (await mod.mount(view, ctx)) || (() => {});
+  } catch (err) {
+    if (my === token) failed(err);
+    return;
+  }
   if (my !== token) { cleanup(); return; } // left before the view finished mounting
   unmount = cleanup;
   view.focus({ preventScroll: true });

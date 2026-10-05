@@ -36,7 +36,7 @@ export async function mount(root, ctx) {
             <button type="button" role="tab" aria-selected="true" data-view="plot">Plot</button><button type="button" role="tab" aria-selected="false" data-view="table">Table</button>
           </div>
           <div class="seg results__plotonly" role="group" aria-label="Channel">
-            <button type="button" data-channel="ch1" aria-pressed="true">smFISH 1 · ${pair.ch1}</button><button type="button" data-channel="ch2" aria-pressed="false">smFISH 2 · ${pair.ch2}</button><button type="button" data-channel="both" aria-pressed="false">Both</button>
+            <button type="button" data-channel="ch1" aria-pressed="true"><span class="cdot cdot--ch1" aria-hidden="true"></span>smFISH 1 · ${pair.ch1}</button><button type="button" data-channel="ch2" aria-pressed="false"><span class="cdot cdot--ch2" aria-hidden="true"></span>smFISH 2 · ${pair.ch2}</button><button type="button" data-channel="both" aria-pressed="false"><span class="cdot cdot--both" aria-hidden="true"></span>Both</button>
           </div>
           <label class="results__measure results__plotonly"><span class="vh">Measure</span>
             <select class="select" data-act="measure">${Object.entries(MEASURES).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>

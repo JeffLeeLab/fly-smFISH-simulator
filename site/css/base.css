@@ -146,3 +146,4 @@ legend { padding: 0; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; scroll-behavior: auto !important; }
 }
+kbd { font: 500 .92em var(--font-mono); padding: 0 .3em; border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip); }

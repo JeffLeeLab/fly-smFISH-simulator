@@ -430,3 +430,9 @@ a.station:hover { border-color: var(--border-strong); background: var(--panel); 
 .bench__side .tour-lit { outline-offset: -1px; }
 .viewer__fields--one { grid-template-columns: 1fr; }
 .viewer__note--block { max-width: 46ch; margin: auto; font-size: var(--fs-ui-lg); line-height: 1.5; color: var(--viewer-text); }
+
+/* channel dot inside a control: the channel's page ink; "both" is half of each */
+.cdot { display: inline-block; width: 8px; height: 8px; margin-right: 6px; border-radius: 50%; vertical-align: 0; background: var(--c); }
+.cdot--ch1 { --c: var(--ch1-ink); }
+.cdot--ch2 { --c: var(--ch2-ink); }
+.cdot--both { background: linear-gradient(90deg, var(--ch1-ink) 50%, var(--ch2-ink) 50%); }

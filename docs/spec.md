@@ -690,7 +690,7 @@ The same folder runs on GitHub Pages and on a laptop with no internet connection
 
 - Store PixiJS, `pixi-viewport`, GSAP (with its plugins), fonts and texture images in the repository at pinned versions; do not load them from a CDN.
 - Use relative paths for all data, textures and SVG files, as the site lives under `/repo-name/`.
-- Test locally over HTTP (`uv run python -m http.server -d site`), not by opening the file directly.
+- Test locally over HTTP (`uv run python tools/serve.py`, which turns off browser caching so edits never mix with stale files), not by opening the file directly. A step that fails to load shows a message with a reload button rather than leaving the previous step on screen.
 - Keep individual files under 100 MB; compress textures.
 - Check that the installed `pixi-viewport` version supports PixiJS v8 before building.
 
