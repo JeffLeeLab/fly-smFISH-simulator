@@ -20,6 +20,8 @@ A teaching web app: final-year students design two-colour smFISH probes and read
   - `uv run python -m generator.truth_table pdf` (expands `data/pdf/truth-table.toml`)
   - `uv run python -m generator.build pdf` (chooses the animals, places molecules, renders images, writes tables; about a minute)
   - `uv run python -m generator.validate pdf --signed` (the gate; fails on any mismatch or an unsigned truth table)
+- **Story artwork:** `uv run python -m generator.flies` (fly drawings from flybody; downloads the meshes into `data/flybody/`, not committed) and `uv run python -m generator.textures` (paper grain and watercolour washes). Both write into `site/`.
+- **Animation review:** `tools/contact-sheet.sh '<url with {t}>' out.png <times…>` renders frames through the page's frozen-time mode (`?t=` seconds) and tiles them; `tools/frozen-time.sh <video.webm>` reports dead stretches in a `playwright-cli` recording (the subtle ink boil can vanish in video compression, so confirm "frozen" holds with screenshots).
 - **Browser checks:** `playwright-cli` (a global install, not a project dependency) for screenshots, window sizes (`resize 1280 720`), video recordings (`video-start` / `video-stop`) and the offline test (`network-state-set offline`; or list `performance.getEntriesByType('resource')` and check that every URL is local). Sessions start with empty localStorage, so seed the notebook state before testing gated steps.
 - **The public repo is fine.** The answer key in `docs/` is readable on GitHub, and that is accepted. What matters is that the site never serves it, so keep stripping `mature_in`, `nascent_in` and `also_detects` from the public JSON.
 

@@ -163,12 +163,14 @@ Paths in this document are relative to `docs/` unless stated otherwise.
 | `docs/spec.md` | This spec |
 | `docs/style-directions/` | Style-phase mockups, screenshots, review note; `tokens.css` (frozen design tokens) |
 | `docs/mockups/` | Transcript map mockup (`step5-target-probe-map.html`) and screenshots |
+| `docs/storyboards/` | Opening storyboards for review before animation code (`pdf-openings.md`) and fly-drawing contact sheets |
 | `docs/references/` | `reference-pdf-neurons.pdf` (+ `.docx`), `dam-motion/` (activity-monitor schematic), `gene-models/` (FlyBase gene-model images) |
 | `docs/transcript_models_R6.json` | Transcript models, CDS and probe menus; source for the generator and the map. Probe IDs follow the menus in this spec |
 | `pyproject.toml`, `uv.lock`, `.python-version` (root) | Python environment for the generator and build scripts, managed with uv |
-| `site/` (root) | The static site served by GitHub Pages: `index.html`, `css/` (`tokens.css` copied in from `docs/style-directions/`), `js/`, `fonts/`, `vendor/` (pinned PixiJS 8.22.0, `pixi-viewport` 6.0.3, GSAP 3.15.0) and `data/<case>/` (public data only: transcript maps without the answer key, geometry, pre-computed tables, molecule positions and masks, and `images/` with the rendered membrane, DAPI and TDP-43 nuclear images) |
-| `generator/` (root) | Python scripts, run with uv as `uv run python -m generator.<script>`: `public_models`, `geometry_pdf`, `truth_table`, `build` (generator and tables) and `validate` (the gate) |
+| `site/` (root) | The static site served by GitHub Pages: `index.html`, `css/` (`tokens.css` copied in from `docs/style-directions/`), `js/`, `fonts/`, `vendor/` (pinned PixiJS 8.22.0, `pixi-viewport` 6.0.3, GSAP 3.15.0) and `data/<case>/` (public data only: transcript maps without the answer key, geometry, pre-computed tables, molecule positions and masks, and `images/` with the rendered membrane, DAPI and TDP-43 nuclear images), `data/flies/` (fly drawing sprites) and `textures/` (paper and wash images for the story layer). Story-layer scripts: `js/fly.js` (fly sprites and the ink boil), `js/gsap.js` (loads the pinned GSAP), `js/monitor.js` (the activity monitor's tubes, fly motion and seeded activity model), `js/stations.js` (the three landing stations) and `js/handoff.js` (shared elements across a route change) |
+| `generator/` (root) | Python scripts, run with uv as `uv run python -m generator.<script>`: `public_models`, `geometry_pdf`, `truth_table`, `build` (generator and tables), `validate` (the gate) and `flies` (fly drawings from flybody, written to `site/data/flies/`) |
 | `data/<case>/` (root) | Never served: the truth table (`truth-table.toml`, the rules the instructor signs off; `truth-table.json` and `.md`, expanded from it) and full molecule records (`generated/`, rebuilt by the generator and not committed) |
+| `tools/` (root) | `serve.py` (local server without caching), `contact-sheet.sh` and `frozen-time.sh` (animation review loop) |
 | `.github/workflows/pages.yml` | Deploys `site/` to GitHub Pages after checking that the generated data is up to date and the validation gate passes |
 
 Mockups and screenshots in `docs/` are design records and are not served.
@@ -198,7 +200,7 @@ Build one case completely before the others, so every shared part (data pipeline
 	- **Science:** the PDF truth table is reproduced, e.g. F6 + F5 shows flat transcription sites and fewer cytoplasmic spots; each decoy gives its designed result; no step gives the answer away.
 	- **Usability:** a FISH-naive first-time user gets from the hero to the summary PNG without help; the decoder legend and "How two-colour smFISH works" are enough to read the images.
 	- **Design:** banned list, contrast in both themes, text-size rule, colour belongs to the data, texture stops at the data.
-	- **Motion:** under 1 minute of directed animation; reduced motion gives still end frames.
+	- **Motion:** under 40 s of directed animation; reduced motion gives still end frames.
 	- **Devices:** Chrome, Edge, Firefox and Safari; 1280×720 minimum; a low-end Windows laptop with integrated graphics; offline copy.
 	- **Open questions to settle before Phase 2:** keeping verdicts across probe pairs, the TDP-43 default colour, and the default zoom when results open.
 - Findings are written back into this spec before Phase 2 starts.
@@ -483,14 +485,14 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 #### Openings (steps 1–2)
 
-**Budget:** under 1 minute of directed animation per case, skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
+**Budget:** under 40 s of directed animation per case (set at the storyboard review; PDF: 38.9 s, see [storyboards/pdf-openings.md](storyboards/pdf-openings.md)), skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
 
 | Segment | Time |
 | --- | --- |
-| Hero: knock-in sequence with two identical flies | ~10 s, then idle grooming loop |
+| Hero: knock-in sequence with two identical flies | ~9.6 s, then idle grooming loop |
 | Three-assay landing | ambient loop until the group chooses (not counted) |
-| Chosen assay: student action → readout | ~20 s |
-| Descent into anatomy | ~20 s |
+| Chosen assay: student action → readout | ~15 s |
+| Descent into anatomy | ~14 s |
 
 **Spatial convention:** hTDP-43 WT always on the left, ALS mutant always on the right: hero, assays, split viewer and plot (control first).
 
@@ -498,8 +500,8 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - Left-aligned editorial layout: title and one-line subtitle beside the flies (not a centred hero).
 - Two flies side by side, labelled **hTDP-43 WT** and **hTDP-43 ALS mutant** (humanised WT, not a wild-type fly: it teaches the correct control from the first frame).
 - **No visible defect:** matches the mild real phenotype (Chang & Morton 2017) and doesn't favour any one case.
-- **Knock-in sequence, with the flies present throughout:** the flies keep grooming and walking while a thin leader line draws from each fly to a small locus strip beside it; the fly TBPH exon blocks morph into human TDP-43 at the same locus in both flies; then one point change is marked on the mutant's strip only (residue unspecified, marked by ink weight and a label rather than a data colour). The strips retract along their leader lines and the flies remain, identical. Caption: "They look the same."
-- Storyboard: 0 s finished frame (flies + title) → 1–2 s leader lines draw → 2–6 s TBPH → hTDP-43 morph → 6–8 s mutation mark + genotype labels settle → 8–10 s strips retract.
+- **Knock-in sequence, with the flies present throughout:** the flies keep grooming and walking while a thin leader line draws from each fly to a small locus strip beside it; a human TDP-43 cassette flies in, parts into one copy per fly, and each copy knocks the fly TBPH cassette out of its chromosome and takes its place; then one point change is marked on the mutant's strip only (residue unspecified, marked by ink weight and a label rather than a data colour). The chromosome lines are labelled "genomic DNA". The knocked-in loci stay on screen with the flies, which look the same; the mutant only stands at a slightly different angle, so the pair doesn't read as one drawing copied. Caption: "They look the same."
+- Storyboard: 0 s finished frame (flies + title) → 0.8–1.6 s leader lines draw to each fly's locus → 1.6–6.6 s knock-in: a human *TDP-43* cassette flies in, parts into one copy per fly and knocks the fly *TBPH* cassette out of the chromosome → 6.6–8.2 s mutation mark + genotype labels settle → 8.2–9.6 s the caption lands; the loci stay.
 - **Scroll into the landing:** the two hero flies shrink into a WT | mutant legend at the top of the assay scene (shared-element transition), and the caption completes: "Their behaviour isn't."
 
 **Three-assay landing (shared by all groups)**
@@ -526,7 +528,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Depth:** subtle parallax between fly, apparatus and background while scrolling.
 - **Smooth playback:** 60 fps on typical student laptops (integrated graphics), with no layout jank; transform and opacity only, no animated layout properties; texture filters limited to the small fly and neuron outlines.
 - **Scroll-driven and deterministic:** scrubbing back and forth always gives the same frame; reduced motion shows the end frames.
-- **Tools:** GSAP ScrollTrigger (scroll), Flip (shared-element transitions), MorphSVG (TBPH → hTDP-43), DrawSVG (leader lines, axons).
+- **Tools:** GSAP ScrollTrigger (scroll), Flip (shared-element transitions), MotionPath (the knock-in cassettes), MorphSVG (the fly's turn in the descent), DrawSVG (leader lines, axons).
 - **Storyboard first:** each segment is written as shots with timed "reads" (what the viewer must understand, in order, one at a time) before any animation code, following the storyboard format in [ClaudeAnimationBase's `ANIMATION_GUIDE.md`](https://github.com/JohnHeibel/ClaudeAnimationBase) (process reference only).
 
 #### Steps 3–4: clue and hypotheses

@@ -4,3 +4,5 @@ __pycache__/
 .playwright-cli/
 # private generator output (full molecule records); rebuild with: uv run python -m generator.build <case>
 data/*/generated/
+# flybody meshes (downloaded by generator.flies; Apache-2.0, not committed)
+data/flybody/

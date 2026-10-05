@@ -163,21 +163,102 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .viewer__bar { display: flex; gap: var(--sp-2); align-items: center; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--viewer-text-2); }
 .viewer__bar .proj { margin-left: auto; color: var(--viewer-text-3); }
 
-/* ---------- landing (placeholder until the openings are built) ---------- */
-.landing-hero { display: grid; grid-template-columns: minmax(0, 34ch) minmax(0, 1fr); gap: var(--sp-6); align-items: end; max-width: none; }
-.landing-hero h1 { margin-bottom: var(--sp-3); }
+/* ---------- hero (story layer: ink, washes, grain; texture stops at the data) ---------- */
+.story--landing { padding-top: var(--sp-5); }
+.hero {
+  position: relative; max-width: none !important;
+  display: grid; grid-template-columns: minmax(280px, 36ch) minmax(0, 1fr); gap: var(--sp-5); align-items: center;
+  min-height: min(620px, calc(100vh - 64px));
+}
+.hero__text { display: flex; flex-direction: column; gap: var(--sp-4); position: relative; z-index: 1; }
+.hero__text h1 { margin: 0; }
+.hero__caption { font: italic 400 24px/1.35 var(--font-serif); color: var(--text); min-height: 2.8em; }
+.hero__controls { display: flex; gap: var(--sp-2); min-height: 28px; margin-top: calc(-1 * var(--sp-2)); }
+.hero__cue { margin-top: var(--sp-2); }
+.hero__art { position: relative; align-self: stretch; display: grid; place-items: center; min-height: 420px; }
+.hero__scene { position: relative; z-index: 1; width: 100%; max-height: min(560px, calc(100vh - 96px)); overflow: visible; }
+.hero__wash {
+  position: absolute; inset: 4% 2% 10% 4%; z-index: 0; opacity: var(--tex-wash-opacity);
+  background: var(--wash-a);
+  -webkit-mask: url("../textures/wash-1.webp") center / 100% 100% no-repeat;
+  mask: url("../textures/wash-1.webp") center / 100% 100% no-repeat;
+}
+/* the story pages are printed on paper: the background with grain baked in (no blend layers) */
+.app[data-layout="story"] { background: var(--bg) url("../textures/paper-light.webp") repeat; background-size: 384px; }
+[data-theme="dark"] .app[data-layout="story"] { background-image: url("../textures/paper-dark.webp"); }
+.hero__tag { position: absolute; right: var(--sp-3); bottom: var(--sp-3); z-index: 3; }
+
+/* fly drawings take the theme's inks and washes (story layer only) */
+.fly { --fly-ink: var(--ink); --fly-wash: var(--wash-body); --fly-eye: var(--wash-eye); --fly-wing: var(--wash-wing); stroke-width: 1.4px; }
+.tube-fly .fly { stroke-width: 1.05px; }
+.station-svg .fly { stroke-width: .6px; }
+.fly-sprites { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* hero scene: gene strips, leader lines and labels; text stays crisp (never boiled) */
+.leader { fill: none; stroke: var(--ink); stroke-width: 1.1; opacity: .7; }
+.chromosome { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-linecap: round; opacity: .7; }
+.cassette-frame { fill: var(--bg); stroke: var(--ink); stroke-width: 1; stroke-opacity: .55; }
+.cassette-line { stroke: var(--ink); stroke-width: 1; opacity: .6; }
+.gene-exon { fill: var(--wash-gene); stroke: var(--ink); stroke-width: 1.1; }
+.gene-exon--human { fill: var(--wash-b); }
+.impact { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linecap: round; }
+.dna-pointer { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .55; }
+.gene-tick { stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; }
+.gene-dot { fill: var(--ink); }
+.scene-label { font: 600 15px var(--font-sans); fill: var(--text); }
+.scene-small { font: 400 12.5px var(--font-sans); fill: var(--text-2); }
+.scene-gene { font: 500 13px var(--font-sans); fill: var(--text); }
+
+/* ---------- the activity monitor (PDF step 1 and its landing station) ---------- */
+.assay, .station__art svg { --assay-night: rgba(43, 42, 39, .13); }
+[data-theme="dark"] .assay, [data-theme="dark"] .station__art svg { --assay-night: rgba(0, 0, 0, .34); }
+.stage--assay { background: transparent; min-height: 0; overflow: hidden; }
+.stage--assay .assay { display: block; width: 100%; height: auto; }
+.assay__tag { position: absolute; right: var(--sp-3); bottom: var(--sp-2); }
+.assay__caption { font: italic 400 22px/1.35 var(--font-serif); color: var(--text); min-height: 2.8em; margin: calc(-1 * var(--sp-2)) 0 0; }
+.assay__controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); min-height: 36px; margin-top: calc(-1 * var(--sp-3)); max-width: none !important; }
+.assay__controls .badges { margin-left: auto; }
+.night-wash { fill: var(--assay-night); }
+.tube-glass { fill: var(--field); fill-opacity: .5; }
+.tube-outline { fill: none; stroke: var(--ink); stroke-width: 1.3; }
+.tube-food { fill: var(--wash-a); }
+.tube-plug { fill: var(--wash-c); }
+.tube-plug-line { fill: none; stroke: var(--ink); stroke-width: .8; opacity: .4; }
+.beam-box { fill: var(--bg); stroke: var(--ink); stroke-width: 1; }
+.beam { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .6; }
+.counter-n { font: 500 20px var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
+.scene-tick { font: 400 11px var(--font-mono); fill: var(--text-2); }
+.acto-bar { fill: var(--text-2); }
+.acto-night { fill: var(--wash-c); opacity: .6; }
+.acto-base, .acto-tick { stroke: var(--ink); stroke-width: .8; opacity: .6; }
+/* lights on is always light and lights off always dark, whatever the theme */
+.ld-day { fill: #F3F1EA; stroke: var(--ink); stroke-width: 1; }
+.ld-night { fill: #1C1B19; stroke: var(--ink); stroke-width: 1; }
+.ld-on { fill: #3D3D3A; }
+.ld-off { fill: #E8E6DC; }
+.ld-head path { fill: var(--ink); }
+.ld-head line { stroke: var(--ink); stroke-width: 1.2; }
+.zt2-head { fill: var(--ink); }
+.zt2-line { stroke: var(--ink); stroke-width: 1.6; }
+
+/* ---------- landing stations (shot F) ---------- */
 .stations { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); max-width: none; }
 .station {
   display: flex; flex-direction: column; gap: var(--sp-2); height: 100%;
   padding: var(--sp-4); background: var(--field); border: var(--hairline) solid var(--border); border-radius: var(--r-pane);
   color: var(--text); text-decoration: none;
+  transition: transform .18s ease-out, border-color .18s ease-out;
 }
-a.station:hover { border-color: var(--border-strong); background: var(--panel); }
-.station__art { aspect-ratio: 16 / 9; border: var(--hairline) dashed var(--border-strong); border-radius: var(--r-chip); display: grid; place-items: center; color: var(--text-2); font: 400 var(--fs-ui)/1.3 var(--font-sans); }
+a.station:hover, a.station:focus-visible { border-color: var(--text-2); transform: scale(1.015); }
+.station__art { display: block; aspect-ratio: 16 / 9; }
+.station__art svg { display: block; width: 100%; height: 100%; }
+.station.is-off .station__art { opacity: .62; }
 .station__name { font: 500 var(--fs-h3)/1.3 var(--font-serif); }
 .station__lanes { display: flex; justify-content: space-between; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--text-2); }
 .station__go { margin-top: auto; font: 600 var(--fs-ui)/1.3 var(--font-sans); color: var(--accent-text); }
 .station.is-off { color: var(--text-2); }
+.climb-line { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: .55; }
+@media (prefers-reduced-motion: reduce) { .station { transition: none; } a.station:hover { transform: none; } }
 
 /* ---------- locked and unavailable pages ---------- */
 .locked { max-width: var(--measure); padding: var(--sp-7) var(--sp-7); display: flex; flex-direction: column; gap: var(--sp-4); }
