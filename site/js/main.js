@@ -6,6 +6,8 @@ import { caseState, updateCase, onChange } from "./store.js";
 import { initTheme, onTheme } from "./theme.js";
 import { renderRail } from "./rail.js";
 import { initNotebook, updateNotebook } from "./notebook.js";
+import { initGlossary } from "./glossary.js";
+import { endTour } from "./tour.js";
 
 const VIEWS = {
   landing: () => import("./steps/landing.js"),
@@ -47,6 +49,7 @@ function pick(r) {
 
 async function show(r) {
   const my = ++token;
+  endTour();
   route = r;
   const choice = pick(r);
   if (r.caseId && CASES[r.caseId].available && choice.key === r.step) {
@@ -78,6 +81,7 @@ async function show(r) {
 }
 
 initTheme();
+initGlossary();
 initNotebook(document.getElementById("nb-tab"), document.getElementById("notebook"));
 onTheme(drawRail);
 onChange(key => { if (route.caseId && key === "case:" + route.caseId) drawRail(); });

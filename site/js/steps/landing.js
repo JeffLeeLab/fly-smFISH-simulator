@@ -4,6 +4,7 @@
 
 import { CASES, CASE_ORDER } from "../content.js";
 import { href } from "../router.js";
+import { term } from "../glossary.js";
 
 export function mount(root) {
   const stations = CASE_ORDER.map(id => {
@@ -25,7 +26,7 @@ export function mount(root) {
       <section class="landing-hero" aria-labelledby="hero-title">
         <div>
           <h1 class="t-display" id="hero-title">They look the same. Their behaviour isn’t.</h1>
-          <p class="t-story t-muted">Two humanised flies: the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i>. One carries the wild-type human gene, the other an ALS-linked point mutation.</p>
+          <p class="t-story t-muted">Two ${term("humanised", "humanised")} flies: the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i>. One carries the wild-type human gene, the other an ALS-linked point mutation.</p>
         </div>
         <div class="stage todo-art" aria-hidden="true"><span>Knock-in sequence with two flies (openings stage)</span></div>
       </section>

@@ -13,6 +13,7 @@ import { Application, CanvasSource, Container, ImageSource, Sprite, Texture, Til
 import { Viewport } from "pixi-viewport";
 import { loadJSON } from "../data.js";
 import { copyCanvas } from "../export.js";
+import { term } from "../glossary.js";
 import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 
 const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
@@ -125,11 +126,12 @@ export async function createViewer(root, opts) {
       ${GENOTYPES.map((g, i) => `
         <div class="viewer__field" data-field="${i}">
           <p class="viewer__overlay" aria-live="polite"></p>
+          <p class="viewer__note viewer__loading">Loading simulated images…</p>
           <div class="viewer__scale" aria-hidden="true"><i></i><span></span></div>
         </div>`).join("")}
     </div>
     ${mode === "results" && pair ? `<p class="viewer__legend"></p>` : ""}
-    <div class="viewer__bar"><span class="viewer__hint">Drag to pan · scroll or pinch to zoom</span><span class="proj">2D maximum-intensity projection (simulated)</span></div>`;
+    <div class="viewer__bar"><span class="viewer__hint"><button type="button" class="viewer__tour" data-act="tour">Viewer tour</button> · Drag to pan · scroll or pinch to zoom</span><span class="proj">2D ${term("mip", "maximum-intensity projection")} (simulated)</span></div>`;
 
   const fieldEls = [...root.querySelectorAll(".viewer__field")];
   const fieldsBox = root.querySelector(".viewer__fields");
@@ -205,6 +207,7 @@ export async function createViewer(root, opts) {
 
   // ---------- data for the current animal ----------
   async function loadAnimal(n) {
+    root.dataset.loading = "true";
     const [geoms, data, images] = await Promise.all([
       geometryOf(n),
       Promise.all(GENOTYPES.map(g => loadJSON(`data/${caseId}/molecules/${g}-${n}.json`))).then(ds => Object.fromEntries(GENOTYPES.map((g, i) => [g, ds[i]]))),
@@ -251,6 +254,8 @@ export async function createViewer(root, opts) {
     }
     applyStyle();
     fields.forEach(updateZoomDependent);
+    root.querySelectorAll(".viewer__loading").forEach(n => n.remove());
+    delete root.dataset.loading;
   }
 
   // ---------- appearance ----------
@@ -290,7 +295,7 @@ export async function createViewer(root, opts) {
     const legend = root.querySelector(".viewer__legend");
     if (legend && pair) {
       const a = pair.ch1, b = pair.ch2;
-      legend.textContent = `White: carries ${a} and ${b} · ${FISH_LUT.ch1.name} only: ${a} without ${b} · ${FISH_LUT.ch2.name} only: ${b} without ${a} · Bright nuclear spots: transcription sites`;
+      legend.innerHTML = `White: carries ${a} and ${b} · ${FISH_LUT.ch1.name} only: ${a} without ${b} · ${FISH_LUT.ch2.name} only: ${b} without ${a} · Bright nuclear spots: ${term("ts", "transcription sites")}`;
     }
   }
 
@@ -401,6 +406,7 @@ export async function createViewer(root, opts) {
   }
 
   // ---------- controls ----------
+  root.querySelector("[data-act=tour]").addEventListener("click", () => root.dispatchEvent(new CustomEvent("viewer-tour")));
   root.querySelector(".viewer__tools").addEventListener("click", e => {
     const b = e.target.closest("button");
     if (!b) return;

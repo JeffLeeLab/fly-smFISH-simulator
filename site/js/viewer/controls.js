@@ -4,6 +4,7 @@
 
 import { read, write } from "../store.js";
 import { FISH_LUT, TDP_LUTS } from "./viewer.js";
+import { term } from "../glossary.js";
 
 export const viewerPrefs = () => ({ tdpLut: "yellow", tdpBrightness: 1, ...(read("viewer") || {}) });
 
@@ -18,7 +19,7 @@ export function renderControls(el, viewer, { mode, pair }) {
 
   el.innerHTML = `
     <div class="vctl">
-      <div>
+      <div data-tour="channels">
         <h2 class="t-label vctl__h">Channels</h2>
         <ul class="vctl__rows" role="list">
           ${rows.map(([k, name, color, region]) => `
@@ -31,7 +32,7 @@ export function renderControls(el, viewer, { mode, pair }) {
               </div>
               ${k === "tdp" ? `
               <div class="vctl__sub">
-                <label>LUT <select class="select" data-act="lut">${Object.entries(TDP_LUTS).map(([v, l]) => `<option value="${v}">${l.label}</option>`).join("")}</select></label>
+                <label>${term("lut", "LUT")} <select class="select" data-act="lut">${Object.entries(TDP_LUTS).map(([v, l]) => `<option value="${v}">${l.label}</option>`).join("")}</select></label>
                 <label>Brightness <input type="range" min="0.2" max="1.6" step="0.1" data-act="bright"></label>
               </div>
               ${mode === "results" ? `<p class="vctl__note">Shown at 40% while an smFISH channel is on, so it doesn’t add up to a false white.</p>` : ""}` : ""}

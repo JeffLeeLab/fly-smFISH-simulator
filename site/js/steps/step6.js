@@ -5,12 +5,13 @@ import { caseState, onChange } from "../store.js";
 import { bind } from "../forms.js";
 import { href } from "../router.js";
 import { renderCompare } from "../notebook.js";
-import { hasWebGL2, NO_WEBGL_TEXT } from "../viewer/gl.js";
+import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
 import { loadJSON, transcripts } from "../data.js";
 import { MEASURES, fixedScales, plotSVG, plotTitle, tableHTML } from "../results.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 import { newPair } from "./step5.js";
+import { tourOnce, runTour, VIEWER_TOUR, LEGEND_POINTER } from "../tour.js";
 
 export async function mount(root, ctx) {
   const id = ctx.caseId;
@@ -151,13 +152,20 @@ export async function mount(root, ctx) {
   const host = root.querySelector("#viewer");
   let viewer = null, offControls = () => {};
   if (!hasWebGL2()) {
-    host.className = "viewer";
-    host.innerHTML = `<p class="viewer__note">${NO_WEBGL_TEXT}</p>`;
+    renderNoWebGL(host);
+    // the plot, table and notebook still work: open on Compare
+    root.querySelector("#pane-viewer").innerHTML = `<p class="t-ui t-muted">Viewer controls need WebGL 2. The plot, table and Compare notes still work.</p>`;
+    root.querySelector("#tab-compare").click();
   } else {
     const { createViewer } = await import("../viewer/viewer.js");
     const regionIds = (await transcripts(id)).probe_regions.map(r => r.id);
     viewer = await createViewer(host, { caseId: id, mode: "results", pair, regionIds, ...viewerPrefs() });
     offControls = renderControls(root.querySelector("#pane-viewer"), viewer, { mode: "results", pair });
+    host.addEventListener("viewer-tour", () => {
+      root.querySelector("#tab-viewer").click();  // the tour points at the viewer controls
+      runTour(VIEWER_TOUR, { key: "viewer" });
+    });
+    tourOnce("legend", LEGEND_POINTER);  // a one-line pointer the first time the legend appears
   }
 
   return () => {

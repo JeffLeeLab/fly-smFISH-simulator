@@ -473,9 +473,9 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - "Copy as PNG" at slide resolution for both; the plot can export on a light background for white slides; the viewer always exports on black.
 
 **Onboarding and states**
-- A replayable 3-point tour the first time the viewer opens, in step 3 (zoom and fly-to, channels, flicker); the decoder legend gets a one-line pointer when it first appears in step 6.
-- Hover/tap glossary (entries in *Student-facing text*).
-- Loading, no-WebGL and localStorage-blocked states (the notebook warns that work won't persist; copying PNGs still works).
+- A replayable 3-point tour the first time the viewer opens, in step 3 (zoom and fly-to, channels, flicker); the decoder legend gets a one-line pointer when it first appears in step 6. Built as small popovers anchored to their targets (Next / Skip, Esc closes), shown once per browser; a *Viewer tour* link under the viewer replays it.
+- Hover/tap glossary (entries in *Student-facing text*): terms with a dotted underline in step text, the map key and the viewer; hover or focus shows the definition, a tap pins it.
+- Loading, no-WebGL and localStorage-blocked states (the notebook warns that work won't persist; copying PNGs still works). Without WebGL the viewer frame holds the message, and step 6 opens on the Compare tab, since the plot, table and notes still work.
 
 **Instructor**
 - No plenary page or shared screen: groups present from their own slides, built from PNGs and screenshots.

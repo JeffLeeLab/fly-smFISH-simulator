@@ -4,8 +4,10 @@
 import { bind } from "../forms.js";
 import { href } from "../router.js";
 import { storageWarning } from "../notebook.js";
-import { hasWebGL2, NO_WEBGL_TEXT } from "../viewer/gl.js";
+import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
+import { term } from "../glossary.js";
+import { tourOnce, runTour, VIEWER_TOUR } from "../tour.js";
 
 export async function mount(root, ctx) {
   root.innerHTML = `
@@ -21,7 +23,7 @@ export async function mount(root, ctx) {
         <div id="viewer"></div>
       </section>
       <aside class="bench__side" aria-label="Notebook: step 3">
-        <p class="t-body">Look at TDP-43 in both genotypes. Write down what you see first, then what it could mean, in separate fields.</p>
+        <p class="t-body">Look at TDP-43 (${term("if", "IF")}) in both genotypes. Write down what you see first, then what it could mean, in separate fields.</p>
         <div id="controls"></div>
         ${storageWarning()}
         <label class="field"><span class="field__label">Observation</span>
@@ -37,13 +39,15 @@ export async function mount(root, ctx) {
   const unbind = bind(root, ctx.caseId);
   const host = root.querySelector("#viewer");
   if (!hasWebGL2()) {
-    host.className = "viewer";
-    host.innerHTML = `<p class="viewer__note">${NO_WEBGL_TEXT}</p>`;
+    renderNoWebGL(host);
     return unbind;
   }
   const { createViewer } = await import("../viewer/viewer.js");
   const viewer = await createViewer(host, { caseId: ctx.caseId, mode: "clue", ...viewerPrefs() });
   const offControls = renderControls(root.querySelector("#controls"), viewer, { mode: "clue" });
+  const replay = () => runTour(VIEWER_TOUR, { key: "viewer" });
+  host.addEventListener("viewer-tour", replay);
+  tourOnce("viewer", VIEWER_TOUR);  // the first time the viewer opens
 
   return () => {
     unbind();

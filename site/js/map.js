@@ -5,6 +5,8 @@
 // chosen; chosen regions take their channel's ink colour as a band through every row.
 // Ported from docs/mockups/step5-target-probe-map.html.
 
+import { term } from "./glossary.js";
+
 const NS = "http://www.w3.org/2000/svg";
 const fmt = n => n.toLocaleString("en-GB");
 const kb = n => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)} kb` : `${n} nt`);
@@ -69,7 +71,7 @@ export function createMap(host, g, { onPick }) {
   host.classList.add("tmap");
   host.innerHTML = `
     <div class="tmap__bar">
-      <p class="tmap__title"><i>${g.gene}</i> transcript map <span>· ${g.transcripts.length} annotated isoforms · FlyBase R6</span></p>
+      <p class="tmap__title"><i>${g.gene}</i> transcript map <span>· ${g.transcripts.length} annotated ${term("isoform", "isoforms")} · FlyBase R6</span></p>
       <div class="seg" role="group" aria-label="Intron scale">
         <button type="button" data-scale="comp" aria-pressed="true">Introns compressed</button><button type="button" data-scale="lin" aria-pressed="false">To scale</button>
       </div>
@@ -235,11 +237,11 @@ export function createMap(host, g, { onPick }) {
     }
 
     host.querySelector(".tmap__key").innerHTML = `
-      <span><svg width="26" height="16" aria-hidden="true"><rect width="26" height="16" class="tmap__cds"/></svg>coding (CDS)</span>
-      <span><svg width="26" height="16" aria-hidden="true"><rect y="3.5" width="26" height="9" class="tmap__utr"/></svg>UTR / non-coding</span>
-      <span><svg width="30" height="16" aria-hidden="true"><line x1="0" x2="30" y1="8" y2="8" class="tmap__intron"/><path d="M13,4.5 L18,8 L13,11.5" class="tmap__chev"/></svg>intron</span>
-      <span><svg width="16" height="16" aria-hidden="true"><path d="M3,15 L3,6 L11,6" class="tmap__mark-line"/><path d="M9,3 L12.5,6 L9,9" class="tmap__mark"/></svg>transcription start</span>
-      <span><svg width="14" height="16" aria-hidden="true"><path d="M3,5 L11,5 L7,11 Z" class="tmap__mark"/></svg>3′ end (polyadenylation)</span>`;
+      <span><svg width="26" height="16" aria-hidden="true"><rect width="26" height="16" class="tmap__cds"/></svg><span>coding (${term("cds", "CDS")})</span></span>
+      <span><svg width="26" height="16" aria-hidden="true"><rect y="3.5" width="26" height="9" class="tmap__utr"/></svg><span>${term("utr", "UTR")} / non-coding</span></span>
+      <span><svg width="30" height="16" aria-hidden="true"><line x1="0" x2="30" y1="8" y2="8" class="tmap__intron"/><path d="M13,4.5 L18,8 L13,11.5" class="tmap__chev"/></svg><span>${term("intron", "intron")}</span></span>
+      <span><svg width="16" height="16" aria-hidden="true"><path d="M3,15 L3,6 L11,6" class="tmap__mark-line"/><path d="M9,3 L12.5,6 L9,9" class="tmap__mark"/></svg><span>${term("tss", "transcription start")}</span></span>
+      <span><svg width="14" height="16" aria-hidden="true"><path d="M3,5 L11,5 L7,11 Z" class="tmap__mark"/></svg><span>${term("pas", "3′ end (polyadenylation)")}</span></span>`;
   }
 
   host.addEventListener("click", e => {

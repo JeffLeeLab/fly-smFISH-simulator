@@ -8,6 +8,7 @@ import { bind } from "../forms.js";
 import { href, go } from "../router.js";
 import { transcripts } from "../data.js";
 import { createMap } from "../map.js";
+import { term } from "../glossary.js";
 
 // "How two-colour smFISH works": a made-up gene with regions A and B, never the case gene.
 const HOWTO = `
@@ -37,7 +38,7 @@ const HOWTO = `
         <li><b>Probes:</b> each probe set is many short labelled DNA oligos that bind one region of the RNA. Region A’s set is green; region B’s is magenta.</li>
         <li><b>One molecule, one spot:</b> each RNA molecule appears as a single small spot.</li>
         <li><b>Colours:</b> a molecule carrying both regions looks white (green + magenta). A molecule carrying only one region shows only that region’s colour.</li>
-        <li><b>Transcription sites:</b> many nascent RNAs on one gene make one bright spot in the nucleus. Probes against an intron label only nascent RNA, because introns are removed from mature mRNA.</li>
+        <li><b>Transcription sites:</b> many ${term("nascent", "nascent RNAs")} on one gene make one bright spot in the nucleus. Probes against an intron label only nascent RNA, because introns are removed from mature mRNA.</li>
         <li><b>Counting:</b> counting spots in each compartment tells you how many molecules are where.</li>
       </ol>
     </div>
@@ -62,7 +63,7 @@ export async function mount(root, ctx) {
         <div class="target__about">
           <p class="t-ui-lg">${esc(t.function)}</p>
           <p class="target__meta">
-            <span class="layer layer--established">Established</span><span class="t-ui t-muted">Function, orthology</span>
+            <span class="layer layer--established">Established</span><span class="t-ui t-muted">Function, ${term("orthologue", "orthology")}</span>
             <span class="layer layer--invented">Invented for this case</span><span class="t-ui t-muted">Target–neuron–behaviour link</span>
             <a class="t-ui" href="${t.flybase}" target="_blank" rel="noopener">FlyBase</a>
             <a class="t-ui" href="${t.orthologueLink}" target="_blank" rel="noopener">${esc(t.orthologue)}</a>
@@ -70,7 +71,7 @@ export async function mount(root, ctx) {
         </div>
       </header>
       <section class="bench__main probe-main" aria-label="Probe design">
-        <p class="t-body">Choose two probe regions on the map: the first fills smFISH 1, the second smFISH 2. Click a chosen region again to remove it.</p>
+        <p class="t-body">Choose two probe regions on the map: the first fills ${term("smfish", "smFISH")} 1, the second smFISH 2. Click a chosen region again to remove it.</p>
         ${HOWTO}
         <div class="slots" role="group" aria-label="Channels">
           <div class="slot" data-slot="ch1"><span class="chip chip--ch1">smFISH 1</span><b class="slot__val t-data"></b></div>
