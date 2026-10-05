@@ -44,7 +44,7 @@ NEURITE_R = 0.6
 AXON_R = 0.62                  # each of the four axons; together they make a 2–4 µm band
 TERM_R = 0.52
 FINE_R = 0.25                  # thin, faint processes at the edge of the arbor (spec minimum width 0.5 µm)
-CONTROL_TERM_LENGTH = (220.0, 245.0)
+CONTROL_TERM_LENGTH = (330.0, 370.0)   # a full arbor at ZT2, as on p. 5
 MUTANT_FRACTION = 0.80         # spec: about 20% less total terminal length
 
 BUNDLE_BASE = [(50.0, 112.0), (53.5, 92), (54.5, 72), (55.0, 52), (58.5, 35), (64.5, 24), (70.5, 17.5), (76.0, 14.0)]
@@ -267,17 +267,28 @@ def build_terminals(rng, t0, heading0, target_length):
     fibres, total = [], 0.0
     add = lambda f, L: (fibres.append(f), L)[1]
     # main processes: a narrow fan, so neighbours run close, cross and touch
-    angles = rng.permutation(np.linspace(-0.42, 0.34, 8) + rng.normal(0, 0.05, 8))
+    angles = rng.permutation(np.linspace(-0.5, 0.4, 11) + rng.normal(0, 0.05, 11))
     i = 0
-    while total < 0.8 * target_length and i < 30:
-        L = min(rng.uniform(30, 50), 0.8 * target_length - total + 4)
-        xy, s = wandering(t0 + rng.normal(0, 0.8, 2), heading0 + angles[i % 8] + rng.normal(0, 0.05), heading0, L, rng, amp=0.4, wl=(8, 20), settle=0.3)
+    while total < 0.72 * target_length and i < 40:
+        if i < 6 or rng.random() < 0.35:
+            # from the end of the bundle
+            start, theta0 = t0 + rng.normal(0, 0.8, 2), heading0 + angles[i % len(angles)] + rng.normal(0, 0.05)
+            L = min(rng.uniform(30, 50), 0.72 * target_length - total + 4)
+        else:
+            # branching off part-way along an earlier process, crossing its neighbours
+            src = fibres[rng.integers(len(fibres))]
+            k = rng.integers(len(src["s"]) // 5, int(len(src["s"]) * 0.6))
+            d = src["xy"][min(k + 5, len(src["s"]) - 1)] - src["xy"][k]
+            start = src["xy"][k]
+            theta0 = math.atan2(d[1], d[0]) + rng.choice([-1, 1]) * rng.uniform(0.3, 0.7)
+            L = min(rng.uniform(18, 38), 0.72 * target_length - total + 4)
+        xy, s = wandering(start, theta0, heading0, L, rng, amp=0.45, wl=(7, 18), settle=0.3)
         total += add(fibre(xy, s, irregular(s, rng, TERM_R, var=0.45, swell=(0.45, 1.1), every=(3.0, 7.0), swell_len=(1.2, 3.0)),
                            rng.uniform(0.8, 1.1), "terminal"), L)
         i += 1
     mains = list(fibres)
     # bridges between neighbouring processes: the mesh
-    for _ in range(400):
+    for _ in range(800):
         if total >= 0.9 * target_length:
             break
         a, b = rng.choice(len(mains), 2, replace=False)
