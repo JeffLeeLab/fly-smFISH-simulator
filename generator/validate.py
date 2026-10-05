@@ -63,9 +63,9 @@ class Gate:
         return self.rules[name]
 
     # ---------- checks ----------
-    def ratio_rule(self, where, rule, r, se_r):
+    def ratio_rule(self, where, rule, r, se_r, key=False):
         if rule == "same":
-            tol = max(self.rules["same"], 2 * se_r)
+            tol = self.rules["same"] if key else max(self.rules["same"], 2 * se_r)
             self._ok(abs(r - 1) <= tol, where, f"mutant/control = {r:.3f}, expected 1 ± {tol:.3f}", (r - 1) / tol)
         elif rule in ("fall", "fall_per_area"):
             lo, hi = self.band(rule)
@@ -98,7 +98,7 @@ class Gate:
                 return
             rc, rm = Bc / Ac, Bm / Am
             se = math.sqrt(1 / Bc + 1 / Ac + 1 / Bm + 1 / Am)
-            self.ratio_rule(where, e["rule"], rm / rc, (rm / rc) * se)
+            self.ratio_rule(where, e["rule"], rm / rc, (rm / rc) * se, e.get("key", False))
             tol = max(self.rules["nominal"], 2 * math.sqrt(1 / Bc + 1 / Ac))
             nom = e["nominal_control"]
             self._ok(abs(rc / nom - 1) <= tol, where + " (control)", f"ratio {rc:.3f}, expected {nom:.3f} ± {tol:.0%}", (rc / nom - 1) / tol)
@@ -118,7 +118,7 @@ class Gate:
                 self._ok(False, where, f"no spots (control {nc}, mutant {nm})")
                 return
             r = mu / c
-            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm))
+            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm), e.get("key", False))
             if "nominal_control" in e:
                 nom = e["nominal_control"]
                 tol = max(self.rules["nominal"], 2 / math.sqrt(nc))
@@ -140,7 +140,7 @@ class Gate:
             (pc, nc), (pm, nm) = p(tc), p(tm)
             r = pm / pc
             se = math.sqrt((1 - pm) / (pm * nm) + (1 - pc) / (pc * nc))
-            self.ratio_rule(where, e["rule"], r, r * se)
+            self.ratio_rule(where, e["rule"], r, r * se, e.get("key", False))
         elif meas == "overlap":
             if "ov" not in tc:
                 if not self.positions_optional:
@@ -156,7 +156,7 @@ class Gate:
         elif meas == "ts_number":
             a = sum(x[ch]["m"]["ts_number"] for x in entry["control"]["animals"])
             b = sum(x[ch]["m"]["ts_number"] for x in entry["mutant"]["animals"])
-            tol = self.rules["ts_number"]
+            tol = 0 if e.get("key") else self.rules["ts_number"]
             self._ok(abs(a - b) <= tol, where, f"control {a}, mutant {b} sites (± {tol})", (a - b) / max(tol, 1))
         elif meas == "ts_intensity":
             def sites(gt):
@@ -169,7 +169,7 @@ class Gate:
                 return  # too few sites to compare brightness (dim or absent by design)
             r = (mm / sm) / (mc / sc)
             dim = ts_levels.get(ch) in ("dim", "none") or mc / sc < 5
-            tol = max(self.rules["ts_intensity"] * (2 if dim else 1), 2 * math.sqrt(1 / mm + 1 / mc))
+            tol = self.rules["same"] if e.get("key") else max(self.rules["ts_intensity"] * (2 if dim else 1), 2 * math.sqrt(1 / mm + 1 / mc))
             self._ok(abs(r - 1) <= tol, where, f"mutant/control = {r:.3f}, expected 1 ± {tol:.3f}", (r - 1) / tol)
         elif meas == "ts_level":
             for gt, t in (("control", tc), ("mutant", tm)):

@@ -67,7 +67,7 @@ Channel 1 and channel 2 behave as the single probes above; the 56 ordered pairs 
 
 ## Tolerances
 
-- *same*: within ±10%, or within 2 standard errors of counting noise where counts are small.
+- *same*: within ±5%. Key readouts (68 checks: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6) are held to that exactly, and their site counts must match; other *same* checks may also differ by 2 standard errors of counting noise where counts are small.
 - *↓ 40–60%*: mutant 40%–60% of control (band widened by 2 standard errors for small counts).
 - Control means within ±20% of the spec's numbers (in brackets above).
 - TDP-43 overlap: within 4% (absolute) of the randomised-position control, in both genotypes.

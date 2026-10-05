@@ -16,7 +16,7 @@
   "celltype": "not-tested"
  },
  "rules": {
-  "same": 0.1,
+  "same": 0.05,
   "fall": [
    0.4,
    0.6
@@ -397,12 +397,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -437,7 +439,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -474,7 +477,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -1446,12 +1450,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -1615,7 +1621,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -1652,7 +1659,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -1741,7 +1749,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 4.0
+     "nominal_control": 4.0,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -2836,12 +2845,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -2979,7 +2990,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -3016,7 +3028,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -4231,12 +4244,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -4402,7 +4417,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -4439,7 +4455,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -4528,7 +4545,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 4.0
+     "nominal_control": 4.0,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -5812,12 +5830,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -5985,7 +6005,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -6022,7 +6043,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -6111,7 +6133,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 2.0
+     "nominal_control": 2.0,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -6635,12 +6658,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -6822,12 +6847,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -6991,12 +7018,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7183,12 +7212,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7378,12 +7409,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7396,7 +7429,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -7433,7 +7467,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -7569,12 +7604,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7736,12 +7773,14 @@
     {
      "channel": "ch1",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7905,7 +7944,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -7942,7 +7982,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8097,7 +8138,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 0.25
+     "nominal_control": 0.25,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -8154,7 +8196,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8191,7 +8234,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8351,7 +8395,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8388,7 +8433,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8543,7 +8589,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 0.25
+     "nominal_control": 0.25,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -8608,7 +8655,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8645,7 +8693,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8800,7 +8849,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 0.5
+     "nominal_control": 0.5,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -8861,7 +8911,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8898,7 +8949,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -8953,12 +9005,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -9056,7 +9110,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -9093,7 +9148,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -9251,7 +9307,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch1",
@@ -9288,7 +9345,8 @@
     {
      "channel": "ch1",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch1",
@@ -9443,7 +9501,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 0.25
+     "nominal_control": 0.25,
+     "key": true
     },
     {
      "channel": "ratio",
@@ -10307,12 +10366,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -10454,7 +10515,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -10491,7 +10553,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -11781,12 +11844,14 @@
     {
      "channel": "ch2",
      "measure": "ts_number",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
      "measure": "ts_intensity",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -11950,7 +12015,8 @@
      "measure": "count",
      "compartment": "nucleus",
      "rule": "same",
-     "nominal_control": 10.0
+     "nominal_control": 10.0,
+     "key": true
     },
     {
      "channel": "ch2",
@@ -11987,7 +12053,8 @@
     {
      "channel": "ch2",
      "measure": "share_distal",
-     "rule": "same"
+     "rule": "same",
+     "key": true
     },
     {
      "channel": "ch2",
@@ -12076,7 +12143,8 @@
      "measure": "region_ratio",
      "pool": "whole_cell",
      "rule": "same",
-     "nominal_control": 4.0
+     "nominal_control": 4.0,
+     "key": true
     },
     {
      "channel": "ratio",

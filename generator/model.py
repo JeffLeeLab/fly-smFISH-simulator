@@ -59,7 +59,7 @@ class Case:
     strand: str
     isoforms: list
     regions: list
-    geometry: dict          # genotype -> parsed geometry (shapely shapes + raw json)
+    geometry: dict          # (genotype, animal) -> parsed geometry (shapely shapes + raw json)
     params: dict
     mature_masks: dict = field(default_factory=dict)  # isoform name -> 8-bit mask
 
@@ -85,8 +85,8 @@ def _mature_mask(iso: Isoform, regions) -> int:
     return m
 
 
-def _geometry(case_id: str, genotype: str) -> dict:
-    raw = json.loads((SITE_DATA / case_id / f"geometry-{genotype}.json").read_text(encoding="utf-8"))
+def _geometry(case_id: str, genotype: str, animal: int) -> dict:
+    raw = json.loads((SITE_DATA / case_id / f"geometry-{genotype}-{animal}.json").read_text(encoding="utf-8"))
     return {
         "raw": raw,
         "nuclei": [shape(c["nucleus"]) for c in raw["cells"]],
@@ -109,7 +109,7 @@ def load_case(case_id: str, params: dict) -> Case:
     assert abs(sum(i.share for i in isoforms) - 1) < 1e-9, "isoform shares must sum to 1"
     regions = [Region(r["id"], r["lo"], r["hi"]) for r in sorted(g["probe_regions"], key=lambda r: int(r["id"][1:]))]
     case = Case(case_id, CASE_GENES[case_id], strand, isoforms, regions,
-                {gt: _geometry(case_id, gt) for gt in ("control", "mutant")}, params)
+                {(gt, a): _geometry(case_id, gt, a) for gt in ("control", "mutant") for a in range(1, params["animals"] + 1)}, params)
     case.mature_masks = {i.name: _mature_mask(i, regions) for i in isoforms}
     return case
 

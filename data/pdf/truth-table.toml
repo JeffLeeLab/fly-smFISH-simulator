@@ -8,7 +8,8 @@
 # 56 ordered pairs) and data/pdf/truth-table.md (the readable version to sign off).
 #
 # Written from the prose truth table and the simulation parameters in the spec; signed off by
-# the instructor after reading truth-table.md.
+# the instructor after reading truth-table.md. Amended the same day at the instructor's request:
+# "unchanged" tightened from ±10% to ±5%, held strictly for the key readouts below.
 
 case = "pdf"
 gene = "futsch"
@@ -43,7 +44,7 @@ terminals = [25, 12]
 
 # How the mutant compares with control. Bands are mutant / control.
 [rules]
-same = 0.10                  # "unchanged": within ±10% (spec: primary effects 40–60%, unchanged ±10%)
+same = 0.05                  # "unchanged": within ±5% (spec: primary effects 40–60%, unchanged ±5%)
 fall = [0.40, 0.60]          # primary effect: 40–60% lower
 fall_per_area = [0.25, 0.60] # lower after normalising to terminal area (mutant terminals ~20% smaller)
 rise_nc = [1.6, 2.4]         # nuclear:cytoplasmic ratio about doubles
@@ -51,6 +52,14 @@ nominal = 0.20               # control means within ±20% of the numbers above
 chance = 0.04                # TDP-43 overlap within 4 percentage points of the randomised-position control (or 2 SE, whichever is larger)
 ts_number = 2                # transcription-site number: within 2 nuclei of control (12 nuclei per genotype)
 ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% for dim sites)
+
+# The readouts the case's conclusions rest on. "Unchanged" is held to ±5% here with no
+# allowance for counting noise, and their transcription-site counts must match exactly. Other
+# "unchanged" checks (small decoy subsets) may also differ by up to 2 standard errors of
+# counting noise, which students see as spread in the plot.
+[key]
+single = ["F6:count:nucleus", "F6:share_distal", "F5:ts_number", "F5:ts_intensity"]
+region_ratio_whole_cell = ["F1+F6", "F3+F6", "F4+F6", "F8+F6", "F6+F1", "F6+F3", "F6+F4", "F6+F8"]
 
 # Mature (spliced, exported or not) RNA of every isoform behaves alike: stability.
 [mature]

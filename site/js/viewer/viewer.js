@@ -5,14 +5,16 @@
 // Layers per genotype, back to front, all additive like fluorescence:
 //   autofluorescence → blue channel (membrane + DAPI) → TDP-43 IF → smFISH 1 → smFISH 2
 // Grain sits on top in screen space. Green + magenta sum to white on molecules carrying both.
+// Every animal has its own neurons: the membrane, DAPI and TDP-43 nuclear images are rendered
+// by the generator (generator/render.py) from that animal's geometry; spots and TDP-43 puncta
+// are drawn live from the molecule data, so they stay sharp at any zoom.
 
-import { Application, CanvasSource, Container, Sprite, Texture, TilingSprite } from "pixi.js";
+import { Application, CanvasSource, Container, ImageSource, Sprite, Texture, TilingSprite } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { loadJSON } from "../data.js";
 import { copyCanvas } from "../export.js";
-import { autofluorescence, blueChannel, gaussianCanvas, grainCanvas, tdpNuclear } from "./textures.js";
+import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 
-const RES = 6;                 // px per µm for the pre-drawn blue and TDP-43 nuclear images
 const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
 const MIN_SIGMA_PX = 0.85;     // below this the spot is drawn larger and dimmer (same total light)
 const SPOT_GAIN = 0.95;
@@ -46,20 +48,55 @@ function imageSprite(img, tint, alpha) {
   return s;
 }
 
+async function loadImage(url) {
+  const img = new Image();
+  img.src = url;
+  await img.decode();
+  return img;
+}
+
+// A sprite showing one of the generator's images over the case frame (µm).
+function frameSprite(tint, alpha) {
+  const s = new Sprite(Texture.EMPTY);
+  s.tint = hex(tint);
+  s.alpha = alpha;
+  s.blendMode = "add";
+  return s;
+}
+
+function setImage(sprite, img, frame) {
+  const old = sprite.texture;
+  sprite.texture = new Texture({ source: new ImageSource({ resource: img, autoGenerateMipmaps: true }) });
+  if (old && old !== Texture.EMPTY) old.destroy(true);
+  sprite.position.set(frame[0], frame[1]);
+  sprite.scale.set((frame[2] - frame[0]) / img.naturalWidth);
+}
+
 export async function createViewer(root, opts) {
   const { caseId, mode, pair = null, regionIds = [] } = opts;
-  const geometry = {
-    control: await loadJSON(`data/${caseId}/geometry-control.json`),
-    mutant: await loadJSON(`data/${caseId}/geometry-mutant.json`),
-  };
-  const [bx0, by0, bx1, by1] = geometry.control.bounds;
-  const views = { whole: [bx0, by0, bx1, by1], ...geometry.control.views };
+  const firstAnimal = opts.animal || 1;
+  const geometryOf = n => Promise.all(GENOTYPES.map(g => loadJSON(`data/${caseId}/geometry-${g}-${n}.json`)));
+  const firstGeoms = await geometryOf(firstAnimal);
+  const frame = firstGeoms[0].frame;  // one frame for every animal of the case
+  const [bx0, by0, bx1, by1] = frame;
+  // fly-to boxes for an animal: the union of its control and mutant boxes, so both fields fit
+  function viewsFor(geoms) {
+    const out = {};
+    for (const k of Object.keys(geoms[0].views)) {
+      const bs = geoms.map(g => g.views[k]);
+      out[k] = [Math.min(...bs.map(b => b[0])), Math.min(...bs.map(b => b[1])), Math.max(...bs.map(b => b[2])), Math.max(...bs.map(b => b[3]))];
+    }
+    const bounds = geoms.map(g => g.bounds);
+    out.whole = [Math.min(...bounds.map(b => b[0])), Math.min(...bounds.map(b => b[1])), Math.max(...bounds.map(b => b[2])), Math.max(...bounds.map(b => b[3]))];
+    return out;
+  }
+  let views = viewsFor(firstGeoms);
   const bitOf = id => regionIds.indexOf(id);
 
   const state = {
     layout: "split",
     flicker: "control",
-    animal: opts.animal || 1,
+    animal: firstAnimal,
     visible: { blue: true, tdp: true, ch1: mode === "results", ch2: mode === "results" },
     tdpLut: opts.tdpLut || "yellow",
     tdpBrightness: opts.tdpBrightness ?? 1,
@@ -100,8 +137,7 @@ export async function createViewer(root, opts) {
   // ---------- one PixiJS application per field ----------
   const gaussCanvas = gaussianCanvas(64);
   const grain = grainCanvas(256, 7);
-  const auto = autofluorescence([bx0 - 20, by0 - 20, bx1 + 20, by1 + 20], 1, 11);
-  const blue = Object.fromEntries(GENOTYPES.map((g, i) => [g, blueChannel(geometry[g], RES, 101 + i)]));
+  const auto = autofluorescence([bx0 - 150, by0 - 150, bx1 + 150, by1 + 150], 0.5, 11);  // reaches past any view, so no edge shows
 
   async function makeField(el, index) {
     const app = new Application();
@@ -140,15 +176,19 @@ export async function createViewer(root, opts) {
       const w = new Container();
       const af = imageSprite(auto, "#8C9A9E", 0.05);
       const blueC = new Container();
-      blueC.addChild(imageSprite({ canvas: blue[g].membrane, x0: blue[g].x0, y0: blue[g].y0, res: RES }, BLUE.membrane, 0.55));
-      blueC.addChild(imageSprite({ canvas: blue[g].nuclei, x0: blue[g].x0, y0: blue[g].y0, res: RES }, BLUE.dapi, 0.62));
+      const membrane = frameSprite(BLUE.membrane, 1.0);
+      const dapi = frameSprite(BLUE.dapi, 0.9);
+      blueC.addChild(membrane, dapi);
       const tdp = new Container();
+      const tdpNuclear = frameSprite("#FFFFFF", 1.0);
+      const puncta = new Container();
+      tdp.addChild(tdpNuclear, puncta);
       const ch1 = new Container();
       const ch2 = new Container();
       w.addChild(af, blueC, tdp, ch1, ch2);
       w.visible = false;
       content.addChild(w);
-      worlds[g] = { root: w, blue: blueC, tdp, ch1, ch2 };
+      worlds[g] = { root: w, blue: blueC, membrane, dapi, tdp, tdpNuclear, puncta, ch1, ch2 };
     }
     const grainSprite = new TilingSprite({ texture: texture(grain), width: app.screen.width, height: app.screen.height });
     grainSprite.blendMode = "add";
@@ -165,15 +205,22 @@ export async function createViewer(root, opts) {
 
   // ---------- data for the current animal ----------
   async function loadAnimal(n) {
-    const data = Object.fromEntries(await Promise.all(GENOTYPES.map(async g =>
-      [g, await loadJSON(`data/${caseId}/molecules/${g}-${n}.json`)])));
+    const [geoms, data, images] = await Promise.all([
+      geometryOf(n),
+      Promise.all(GENOTYPES.map(g => loadJSON(`data/${caseId}/molecules/${g}-${n}.json`))).then(ds => Object.fromEntries(GENOTYPES.map((g, i) => [g, ds[i]]))),
+      Promise.all(GENOTYPES.flatMap(g => ["membrane", "dapi", "tdp43"].map(l => loadImage(`data/${caseId}/images/${g}-${n}-${l}.webp`))))
+        .then(imgs => Object.fromEntries(GENOTYPES.map((g, i) => [g, { membrane: imgs[i * 3], dapi: imgs[i * 3 + 1], tdp43: imgs[i * 3 + 2] }]))),
+    ]);
+    views = viewsFor(geoms);
     for (const f of fields) {
       for (const g of GENOTYPES) {
         const w = f.worlds[g];
         const d = data[g];
-        // TDP-43: nuclear signal + puncta
-        w.tdp.removeChildren().forEach(c => c.destroy());
-        w.tdp.addChild(imageSprite(tdpNuclear(geometry[g], d.tdp43.nuclear, RES, 300 + n), "#FFFFFF", 0.85));
+        setImage(w.membrane, images[g].membrane, frame);
+        setImage(w.dapi, images[g].dapi, frame);
+        setImage(w.tdpNuclear, images[g].tdp43, frame);
+        // TDP-43 puncta, drawn live
+        w.puncta.removeChildren().forEach(c => c.destroy());
         for (const [x, y, r, inten] of d.tdp43.puncta) {
           const s = new Sprite(f.gauss);
           s.anchor.set(0.5);
@@ -182,7 +229,7 @@ export async function createViewer(root, opts) {
           s.scale.set(size / 64);
           s.alpha = Math.min(1, 0.9 * inten);
           s.blendMode = "add";
-          w.tdp.addChild(s);
+          w.puncta.addChild(s);
         }
         // smFISH spots
         for (const ch of ["ch1", "ch2"]) {
@@ -215,9 +262,13 @@ export async function createViewer(root, opts) {
       for (const g of GENOTYPES) {
         const w = f.worlds[g];
         w.blue.visible = v.blue;
+        // the blue channel stays dim behind spots, so it never competes with them
+        w.membrane.alpha = anyFish ? 0.5 : 0.78;
+        w.dapi.alpha = anyFish ? 0.55 : 0.85;
         w.tdp.visible = v.tdp;
         w.tdp.alpha = state.tdpBrightness * (anyFish ? 0.4 : 1);
-        w.tdp.children.forEach(c => { c.tint = tdpColor; });
+        w.tdpNuclear.tint = tdpColor;
+        w.puncta.children.forEach(c => { c.tint = tdpColor; });
         w.ch1.visible = v.ch1;
         w.ch2.visible = v.ch2;
         w.ch1.children.forEach(c => { c.tint = hex(FISH_LUT.ch1.color); });

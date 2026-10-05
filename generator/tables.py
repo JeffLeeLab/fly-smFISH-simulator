@@ -93,23 +93,38 @@ def _summary(values):
     return {"mean": float(np.mean(xs)), "sd": float(np.std(xs, ddof=1)) if len(xs) > 1 else 0.0, "n": len(xs)}
 
 
-def compute(case, datasets) -> dict:
-    areas = {gt: case.geometry[gt]["terminal_area"] for gt in ("control", "mutant")}
+def channels_of(bits):
+    return {"ch1": (bits[0],)} if len(bits) == 1 else {"ch1": (bits[0],), "ch2": (bits[1],), "both": bits}
+
+
+def animal_entry(case, m) -> dict:
+    """Every selection's raw counts and measures for one animal: {selection: {channel: …}}."""
+    area = case.geometry[(m.genotype, m.animal)]["terminal_area"]
+    out = {}
+    for bits, ids in selections(case):
+        out["+".join(ids)] = {ch: _round({"raw": (raw := _raw(case, m, b)), "m": _measures(case, raw, area)})
+                              for ch, b in channels_of(bits).items()}
+    return out
+
+
+def assemble(case, entries, summary=True) -> dict:
+    """Tables from per-animal entries: entries[genotype] is the list of chosen animals' entries."""
     result = {}
     for bits, ids in selections(case):
-        chans = {"ch1": (bits[0],)} if len(bits) == 1 else {"ch1": (bits[0],), "ch2": (bits[1],), "both": bits}
-        entry = {"channels": list(chans)}
+        key = "+".join(ids)
+        chans = list(channels_of(bits))
+        entry = {"channels": chans}
         for gt in ("control", "mutant"):
-            animals = []
-            for m in (d for d in datasets if d.genotype == gt):
-                a = {}
-                for ch, b in chans.items():
-                    raw = _raw(case, m, b)
-                    a[ch] = {"raw": raw, "m": _measures(case, raw, areas[gt])}
-                animals.append(a)
-            entry[gt] = {
-                "animals": animals,
-                "summary": {ch: _summary([a[ch]["m"] for a in animals]) for ch in chans},
-            }
-        result["+".join(ids)] = _round(entry)
-    return {"terminal_area_um2": areas, "selections": result}
+            animals = [e[key] for e in entries[gt]]
+            entry[gt] = {"animals": animals}
+            if summary:
+                entry[gt]["summary"] = _round({ch: _summary([a[ch]["m"] for a in animals]) for ch in chans})
+        result[key] = entry
+    return {"selections": result}
+
+
+def compute(case, datasets) -> dict:
+    entries = {gt: [animal_entry(case, m) for m in datasets if m.genotype == gt] for gt in ("control", "mutant")}
+    out = assemble(case, entries)
+    out["terminal_area_um2"] = {gt: [case.geometry[(gt, m.animal)]["terminal_area"] for m in datasets if m.genotype == gt] for gt in ("control", "mutant")}
+    return out

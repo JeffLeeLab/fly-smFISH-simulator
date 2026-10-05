@@ -6,7 +6,7 @@ the two agree.
 """
 
 PDF = {
-    "seed": 202609280,           # base seed; the build searches upwards from here
+    "seed": 202609280,           # base seed for the candidate animals
     "animals": 3,
     "cells": 4,                  # s-LNvs per animal, all behaving alike
     "animal_sd": 0.10,           # multiplicative animal factor
@@ -33,7 +33,7 @@ PDF = {
     "granule_bias": 0.0,         # futsch mRNA is not recruited to TDP-43 puncta
     "overlap_um": 0.3,           # a spot overlaps TDP-43 within 0.3 µm of a punctum's edge
     "randomised_draws": 50,
-    "search": {"trials": 600, "finalists": 12},
+    "search": {"candidates": 120},  # candidate animals per slot; the build picks 3 per genotype
 }
 
 CASES = {"pdf": PDF}

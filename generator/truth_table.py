@@ -71,6 +71,19 @@ def channel_expectations(name, ids, regions, rules, single):
     return out, {"regions": list(ids), "mature": sorted(mature), "nascent": sorted(nascent), "mature_fraction": f}
 
 
+def mark_key(selections, key):
+    """Flag the key readouts: held to the 'same' tolerance with no allowance for noise."""
+    singles = {tuple(k.split(":")) for k in key.get("single", [])}
+    for sel_id, sel in selections.items():
+        for e in sel["expect"]:
+            regions = sel["channels"][e["channel"]]["regions"] if e["channel"] in sel["channels"] else []
+            sig = (regions[0], e["measure"], *([e["compartment"]] if "compartment" in e else [])) if len(regions) == 1 else None
+            if sig and sig in singles and e["rule"] == "same":
+                e["key"] = True
+            if e["measure"] == "region_ratio" and e["pool"] == "whole_cell" and sel_id in key.get("region_ratio_whole_cell", []):
+                e["key"] = True
+
+
 def expand(case: str) -> dict:
     rules, regions = load(case)
     ids = sorted(regions, key=lambda r: int(r[1:]))
@@ -91,6 +104,7 @@ def expand(case: str) -> dict:
                             "nominal_control": round(i2["mature_fraction"] / i1["mature_fraction"], 4)})
         selections[f"{a}+{b}"] = {"channels": {"ch1": i1, "ch2": i2, "both": ib}, "expect": exp}
 
+    mark_key(selections, rules.get("key", {}))
     return {
         "case": case,
         "gene": rules["gene"],
@@ -167,11 +181,12 @@ def render_md(t: dict, regions: dict) -> str:
         lines.append(f"| {a} + {b} | {', '.join('R' + m for m in ib['mature']) or '–'} | {', '.join('R' + m for m in ib['nascent']) or '–'} | "
                      f"{white} | {f'{ratio:g}, same' if ratio is not None else '–'} |")
     r = t["rules"]
+    n_key = sum(1 for s in sel.values() for e in s["expect"] if e.get("key"))
     lines += [
         "",
         "## Tolerances",
         "",
-        f"- *same*: within ±{r['same']:.0%}, or within 2 standard errors of counting noise where counts are small.",
+        f"- *same*: within ±{r['same']:.0%}. Key readouts ({n_key} checks: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6) are held to that exactly, and their site counts must match; other *same* checks may also differ by 2 standard errors of counting noise where counts are small.",
         f"- *↓ 40–60%*: mutant {1 - r['fall'][1]:.0%}–{1 - r['fall'][0]:.0%} of control (band widened by 2 standard errors for small counts).",
         f"- Control means within ±{r['nominal']:.0%} of the spec's numbers (in brackets above).",
         f"- TDP-43 overlap: within {r['chance']:.0%} (absolute) of the randomised-position control, in both genotypes.",

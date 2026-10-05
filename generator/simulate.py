@@ -103,7 +103,7 @@ def _uniform_in(geom, n, rng, prepared=True):
 
 def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
     p = case.params
-    g = case.geometry[m.genotype]
+    g = case.geometry[(m.genotype, m.animal)]  # every animal has its own neurons
     n = m.comp.size
     xy = np.zeros((n, 2))
 
@@ -150,16 +150,3 @@ def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
     shared = np.isin(m.comp, [COMP["axon"], COMP["terminals"]])
     m.chance = np.array([chance_by[(int(cp), -1 if sh else int(cl))] for cp, cl, sh in zip(m.comp, m.cell, shared)])
     return m
-
-
-def simulate(case: Case, seed: int, positions: bool = True) -> list:
-    """All datasets for a case: [control animal 1..n, mutant animal 1..n]."""
-    out = []
-    for gi, genotype in enumerate(("control", "mutant")):
-        for a in range(case.params["animals"]):
-            rng = np.random.default_rng([seed, gi, a])
-            m = draw(case, genotype, a + 1, rng)
-            if positions:
-                place(case, m, rng)
-            out.append(m)
-    return out
