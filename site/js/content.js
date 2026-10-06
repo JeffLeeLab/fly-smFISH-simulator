@@ -45,17 +45,17 @@ export const CASE_ORDER = ["nmj", "pdf", "mb"];
 export const STEPS = {
   1: { title: "Phenotype", layout: "story" },
   2: { title: "Anatomy", layout: "story" },
-  3: { title: "TDP-43 clue", layout: "workbench" },
+  3: { title: "TDP-43 dysfunction", layout: "workbench" },
   4: { title: "Hypotheses", layout: "workbench" },
-  5: { title: "Target + probe design", layout: "workbench" },
-  6: { title: "Reveal + compare", layout: "workbench" },
-  7: { title: "Revise", layout: "story" },
+  5: { title: "Target & probe design", layout: "workbench" },
+  6: { title: "Microscopy reveal", layout: "workbench" },
+  7: { title: "Interpret & revise", layout: "story" },
 };
 
 export const STAGES = [
-  { name: "Meet", steps: [1, 2] },
-  { name: "Clue", steps: [3, 4] },
-  { name: "Design", steps: [5] },
+  { name: "Introduction", steps: [1, 2] },
+  { name: "RBP clue", steps: [3, 4] },
+  { name: "Experimental design", steps: [5] },
   { name: "Observe", steps: [6] },
   { name: "Conclude", steps: [7] },
 ];

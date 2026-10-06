@@ -1,6 +1,6 @@
-/* App shell: two layouts on one token set.
-   Story (steps 1–2, 7 and the landing): full rail, single serif column, the document scrolls.
-   Workbench (steps 3–6): thin rail, fits 1280×720 without page scroll; only the side pane scrolls. */
+/* App shell: two layouts on one token set, with the same full progress rail in both.
+   Story (steps 1–2, 7 and the landing): single serif column, the document scrolls.
+   Workbench (steps 3–6): fits 1280×720 without page scroll; only the side pane scrolls. */
 
 :root {
   /* Fixed light neutrals for text on the charcoal viewer frame, in both themes (DESIGN.md). */
@@ -16,25 +16,35 @@
   grid-template-columns: var(--rail-w) minmax(0, 1fr);
   min-height: 100vh;
 }
-.app[data-layout="workbench"] { --rail-w: 40px; height: 100vh; overflow: hidden; }
+.app[data-layout="workbench"] { height: 100vh; overflow: hidden; }
 .view { min-width: 0; outline: none; }
 .app[data-layout="workbench"] .view { height: 100vh; overflow: hidden; }
 
 /* ---------- progress rail ---------- */
 .rail {
   position: sticky; top: 0; height: 100vh; overflow-y: auto;
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; gap: var(--sp-5);
+  padding: var(--sp-6) var(--sp-4) var(--sp-4) var(--sp-4);
   border-right: var(--hairline) solid var(--border);
 }
-.rail--full { gap: var(--sp-5); padding: var(--sp-6) var(--sp-4) var(--sp-4) var(--sp-4); }
 .rail__brand {
   font: 500 var(--fs-h3)/1.2 var(--font-serif); letter-spacing: -.01em;
   color: var(--text); text-decoration: none;
 }
 .rail__brand:hover { text-decoration: underline; text-decoration-thickness: 1px; }
-.rail__case { display: flex; flex-direction: column; gap: 2px; font: 400 var(--fs-ui)/1.4 var(--font-sans); }
-.rail__case span:last-child { font-weight: 600; }
-.rail__case span.t-muted { font-weight: 400; }
+/* the neuron-system box: a light clay tint; at the opening it is where the student is */
+.rail__case {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%;
+  padding: var(--sp-2) var(--sp-3) 10px;
+  font: 400 var(--fs-ui)/1.4 var(--font-sans); color: var(--text); text-align: left; text-decoration: none;
+  background: color-mix(in srgb, var(--accent) 13%, var(--field));
+  border: var(--hairline) solid color-mix(in srgb, var(--accent) 45%, var(--border));
+  border-radius: var(--r-pane); cursor: pointer;
+}
+.rail__case:hover { background: color-mix(in srgb, var(--accent) 22%, var(--field)); }
+.rail__case-name { font: 600 var(--fs-ui-lg)/1.3 var(--font-sans); }
+.rail__case-go { color: var(--accent-text); font-weight: 500; }
+.rail__case:hover .rail__case-go { text-decoration: underline; text-decoration-thickness: 1px; }
 .rail__stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-4); }
 .rail__stage-name { display: block; margin-bottom: var(--sp-1); }
 .rail__stage ol { list-style: none; margin: 0; padding: 0; }
@@ -52,28 +62,10 @@ a.rail__step:hover { color: var(--text); text-decoration: underline; text-decora
 .rail__why { display: block; padding: 0 0 4px 32px; font: 400 var(--fs-ui)/1.35 var(--font-sans); color: var(--text-2); }
 .rail__foot { margin-top: auto; display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-3); }
 .rail__theme { padding-left: 6px; }
-.rail__theme-dot, .rail__theme--dot::before {
+.rail__theme-dot {
   content: ""; width: 12px; height: 12px; border-radius: 50%; flex: none;
   border: 1.5px solid var(--text); background: linear-gradient(90deg, var(--text) 50%, transparent 50%);
 }
-
-.rail--compact { align-items: center; gap: var(--sp-3); padding: var(--sp-5) 0 var(--sp-4); }
-.rail__dots { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-.rail__gap { height: 6px; }
-.rail__dot {
-  display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
-  font: 500 var(--fs-label)/1 var(--font-mono); color: var(--text-2); text-decoration: none;
-  border: var(--hairline) solid var(--border);
-}
-.rail__dot.is-done { color: var(--text); border-color: var(--border-strong); }
-.rail__dot.is-locked { border-style: dashed; }
-.rail__dot:hover { background: var(--panel); }
-.rail__dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); font-weight: 600; }
-.rail__theme--dot {
-  display: grid; place-items: center; width: 24px; height: 24px; padding: 0;
-  background: transparent; border: var(--hairline) solid var(--border); border-radius: 50%;
-}
-.rail__theme--dot:hover { background: var(--panel); }
 
 /* ---------- notebook drawer ---------- */
 .nb-tab {
@@ -240,6 +232,73 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .ld-head line { stroke: var(--ink); stroke-width: 1.2; }
 .zt2-head { fill: var(--ink); }
 .zt2-line { stroke: var(--ink); stroke-width: 1.6; }
+
+/* ---------- step 2: the descent (scroll-driven; the stage stays pinned for three screens) ---------- */
+.descent { position: relative; height: 400vh; }
+.descent.is-still { height: auto; }
+.descent__stage {
+  position: sticky; top: 0; height: 100vh; min-height: 520px; overflow: hidden;
+  display: grid; grid-template-rows: minmax(0, 1fr) auto auto; color: var(--text);
+  --descent-grey: rgba(140, 132, 118, .3);
+}
+[data-theme="dark"] .descent__stage { --descent-grey: rgba(0, 0, 0, .3); }
+.descent.is-still .descent__stage { position: relative; }
+.descent__bg, .descent__bg i { position: absolute; inset: 0; }
+.descent__bg i { opacity: 0; }
+.bg-grey { background: var(--descent-grey); }
+.bg-charcoal { background: #22211F; }
+.bg-black { background: #000; }
+.descent__title { position: absolute; z-index: 3; top: var(--sp-6); left: var(--sp-7); }
+.descent__title h1 { margin: 0; }
+.descent__scene { position: relative; z-index: 1; min-height: 0; }
+.descent__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.descent__viewer {
+  position: absolute; inset: var(--sp-5) var(--sp-7) var(--sp-2); visibility: hidden;
+  display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 34px minmax(0, 1fr) 23px; gap: 0 6px;
+  padding: 8px; background: var(--viewer-frame); border-radius: var(--r-chip);
+}
+.descent__vtop { grid-column: 1 / -1; margin: 0; font: 400 var(--fs-ui)/28px var(--font-sans); color: var(--viewer-text-2); }
+.descent__vbar { grid-column: 1 / -1; margin: 0; align-self: end; text-align: right; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--viewer-text-3); }
+.descent__field { position: relative; background: #000; border-radius: var(--r-chip); overflow: hidden; }
+.descent__field canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.descent__labels { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.d-label { position: absolute; left: 0; top: 0; white-space: nowrap; font: 600 15px var(--font-sans); color: var(--text); }
+.d-label--part { font: 500 14px var(--font-sans); }
+.d-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.d-leader { fill: none; stroke: var(--viewer-text-2); stroke-width: 1.1; }
+.d-arrow { fill: var(--viewer-text-2); }
+/* brain regions are named on the paper, before the stage darkens: drawn in ink */
+.d-label--region { font: 500 14px var(--font-sans); }
+.d-leader--region { stroke: var(--ink); stroke-opacity: .7; }
+.d-arrow--region { fill: var(--ink); fill-opacity: .8; }
+.descent__caption { position: relative; z-index: 2; margin: 0; padding: var(--sp-3) var(--sp-7) 0; min-height: 2.8em; font: italic 400 22px/1.35 var(--font-serif); }
+.descent__controls { position: relative; z-index: 2; visibility: hidden; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-5); padding: var(--sp-2) var(--sp-7) var(--sp-5); min-height: 64px; }
+.descent__stage.is-dark { color: var(--viewer-text); }
+.is-dark .d-label, .is-dark .descent__caption { color: var(--viewer-text); }
+.is-dark .descent__controls .t-muted { color: var(--viewer-text-2); }
+.is-dark .descent__controls .layer { color: var(--viewer-text); border-color: #5E5D59; }
+.descent__after { padding-top: var(--sp-6); }
+/* world-space strokes keep one width on screen: --px is µm per screen pixel, set every frame */
+.descent__svg .d-ink { fill: none; stroke: var(--ink); stroke-width: calc(var(--px) * 1.3); }
+.descent__svg .d-beam { stroke: var(--ink); stroke-width: calc(var(--px) * 1.2); stroke-dasharray: calc(var(--px) * 4) calc(var(--px) * 3); opacity: .6; }
+.descent__svg .beam-box { stroke-width: calc(var(--px) * 1); }
+.d-brain { color: var(--ink); transition: color .4s; }
+.is-dark .d-brain { color: var(--viewer-text-2); }
+.brain-line, .brain-dash { fill: none; stroke: currentColor; stroke-width: calc(var(--px) * 1.3); stroke-linecap: round; }
+.brain-dash { stroke-width: calc(var(--px) * 1); stroke-dasharray: calc(var(--px) * 3) calc(var(--px) * 3); stroke-opacity: .7; }
+.nrn-fill { fill: var(--mem); fill-opacity: .42; stroke: var(--mem); stroke-width: calc(var(--px) * 1.2); }
+.nrn-nuc { fill: var(--dapi); fill-opacity: .55; }
+
+/* ---------- lane legend: the hero flies land here on the way to the assays ---------- */
+.story--landing { position: relative; }
+.legend { display: flex; gap: var(--sp-7); align-items: center; max-width: none; margin-top: calc(-1 * var(--sp-2)); }
+.legend__item { display: flex; align-items: center; gap: var(--sp-3); }
+.legend__fly { width: 40px; height: 67px; overflow: visible; stroke-width: .9px; }
+.legend__text { display: flex; flex-direction: column; gap: 2px; }
+.legend__name { font: 600 var(--fs-ui-lg)/1.3 var(--font-sans); color: var(--text); }
+.landing__choose { scroll-margin-top: var(--sp-6); }
+.landing__choose:focus { outline: none; }
+.legend-ghosts { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 2; }
 
 /* ---------- landing stations (shot F) ---------- */
 .stations { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--sp-4); max-width: none; }

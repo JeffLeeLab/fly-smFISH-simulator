@@ -31,7 +31,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 ## Operating Context
 
 - One live 2-hour session, run three groups at a time. Students use their own Windows and macOS laptops in current Chrome, Edge, Firefox or Safari, often with low-end integrated graphics. The minimum viewport is 1280×720, with trackpad pinch and scroll.
-- The flow has seven steps in five stages (Meet → Clue → Design → Observe → Conclude), with each step at its own hash URL so a group can recover after a refresh.
+- The flow has seven steps in five stages (Introduction → RBP clue → Experimental design → Observe → Conclude), with each step at its own hash URL so a group can recover after a refresh.
 - Students record notes in a lab notebook drawer stored in localStorage on their own browser. Nothing is uploaded.
 - Evidence leaves the site only as PNGs (viewer, plot and a 16:9 summary) and students' own screenshots, which go into a PowerPoint slide for Part 2. Every image is labelled "simulated".
 - A companion lecture covers RNA/RBP "Core Skills". FlyBase is the external reference students are sent to.

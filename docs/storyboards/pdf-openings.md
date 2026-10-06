@@ -19,7 +19,7 @@ Fly drawings: [flies.png](flies.png), from the flybody model (`generator/flies.p
 - **World.** Ivory paper, hand-inked outlines that boil 12 times a second, flat washes in ivory, warm grey and clay-tinted fills, light paper grain. Membrane blue is the only saturated colour, and only for the labelled neurons. Lights-off in the activity monitor is shown with warm grey, not a hue. During the descent the paper deepens from ivory to charcoal to black and the texture fades out, ending in the clean microscope field.
 - **Motif.** The pair: hTDP-43 WT on the left, ALS mutant on the right, from the hero to the assay lanes, the descent's final split and the viewer. The ending (summary PNG) shows the same pair.
 - **One persistent actor.** Hero flies → legend → the flies in the tubes → the WT fly → its head → its PDF neurons → the viewer's outline.
-- **Budget.** Directed animation 38.9 s (hero 9.6 s, chosen assay 15.3 s, descent 14 s), under the 40 s limit set at review. Every segment can be skipped and replayed; captions are 1–2 lines of HTML text; no audio. Reduced motion shows each segment's end frame.
+- **Budget.** Directed animation 38.9 s (hero 9.6 s, chosen assay 15.3 s, descent 14 s), under the 40 s limit set at review; the hero-to-legend flight is not counted, on scroll or when it runs by itself in a window too tall to scroll. Every segment can be skipped and replayed; captions are 1–2 lines of HTML text; no audio. Reduced motion shows each segment's end frame.
 - **Flies.** Dorsal view in the hero (a calm pair), side view in the tubes, frontal view for the descent. Neither hero fly ever shakes or differs in pose; the mutant only stands turned by 8° and slightly lower, so the pair reads as two animals rather than one drawing copied. Idle motion is grooming, small antenna twitches and the boil, never in sync between the two.
 
 ## 1 · Hero (`#/`), 9.6 s, plays once on load, then idles
@@ -62,9 +62,16 @@ E  8.2–9.6   caption fades up with a short clip wipe: "They look the same." Th
    idle (not counted): the flies groom in turn, never together; first bouts at 10.0 s and 12.5 s.
    Each bout: the front legs rise (0.5 s), rub together in front of the head for one or two cycles
    (never through it), then settle back to standing (0.9 s, slowing as the feet come down)
-   [transition out, on scroll: the two flies shrink into a WT | mutant legend at the top of the
-    assay scene (Flip); the caption completes: "Their behaviour isn't."]
+   [transition out, on scroll: the two flies fly and shrink into a WT | mutant legend at the top of
+    the assay scene (Flip); the caption completes: "Their behaviour isn't."]
 ```
+
+As built (transition out): the caption completes as soon as the page scrolls. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
+
+As built (flight): the stand-ins fly.
+- Their wings are half open as they take off and land (the first and last 5% of the transition) and beat in between. The beat alternates two drawings, wings swept forward and wings swept back, changing on twos (12 per second) in real time, with the two flies out of step. If the scroll pauses mid-way, a fly hovers there with its wings still beating. It is a stylised wingbeat: a real fly beats about 200 times a second.
+- The dorsal fly sprite has a "flap" sequence of three drawings (half open, forward, back), posed from flybody's wing joints; the legs keep the standing pose. The wings are drawn as membrane only, without veins, as on a beating wing. The drawings extend past the sprite's viewBox, which is still set by the fly on the ground, so the sprite's size doesn't change.
+- A window too tall to scroll never runs the scroll-driven transition. There the flies set off on their own 0.8 s after the hero sequence ends and fly for 2.2 s (power2.inOut), and the caption completes as usual. Replay flies them back up in 1.2 s before the hero sequence replays. This flight stands in for the scroll transition, which is paced by the user and not counted in the budget, so it isn't counted either; it blocks nothing, and the stations stay usable.
 
 Reduced motion: the end frame of E (flies labelled, caption shown).
 
@@ -81,7 +88,7 @@ F  ambient   three stations in a row, each split WT lane (left) | mutant lane (r
    [transition out, on click: the activity monitor expands into the stage (Flip); URL #/pdf/step-1]
 ```
 
-As built: the climbing vial (WT flies mostly past the line, mutants mostly low) and the T-maze (WT flies gathered in one arm, mutants split evenly) are still drawings, dimmed, marked "Not available in this build". The activity monitor's tiny actogram shows three days, with the night halves shaded. The station grows into the stage across the route change (its screen position is handed to step 1, which scales the stage up from there).
+As built: the climbing vial (WT flies mostly past the line, mutants mostly low) and the T-maze (WT flies gathered in one arm, mutants split evenly) are still drawings, dimmed, marked "Not available in this build". The activity monitor's tiny actogram shows three days, with the night halves shaded. The station grows into the stage across the route change (its screen position is handed to step 1, which scales the stage up from there). The mini monitor's flies walk as in step 1 (see the walking note in section 3).
 
 ## 3 · Chosen assay: activity monitor (`#/pdf/step-1`), 15.3 s (3.5 s before the group's action, 11.8 s after)
 
@@ -119,6 +126,13 @@ J  10.6–11.8 hold: flies rest and groom; badges appear ("Established: how the 
 
 As built: the marker sits on a fourth, partial row rather than on day 3, because a day-3 marker followed by the rest of day 3's bars would say the flies kept walking after their brains were taken. The Next button and the badges share the row under the caption, so they appear without scrolling on a 1280 × 720 screen. The counter keeps the real crossings from shot G and then adds the activity model's counts as the days run. A Skip button jumps to the end of G or of H–J, and Replay restarts the days.
 
+As built (walking, in the landing's mini monitor and in step 1's real-time walking; the time-lapse days are unchanged): a walk is not a glide.
+- Each walk is 1–3 bouts (one for a short walk), each at its own pace, 0.75–1.25× the walk's speed. Between bouts the fly either hesitates for 0.12–0.42 s with its legs still, or only slows to 45% of its speed.
+- It sets off within about 0.14 s and stops within about 0.18 s. The body surges once per tripod step (half a stride), at ±40% of its speed.
+- The opening walks in step 1 stay one steady bout, so the first beam crossing still lands during shot G (the WT fly's first crossing is at about 3.1 s, the mutant's at about 2.9 s).
+- Progress along each walk is computed up front at 120 Hz, so frozen frames (`?t=`) and the exact beam crossings are still functions of time. The gaits have their own seeded generator (seed + 7), so the draws that make the walk–pause schedules (when to pause, where to walk) are unchanged.
+- The leg drawings still follow the distance walked: the feet never slide, and the legs stand still during a hesitation. Bobbing of the body up and down is deliberately not modelled.
+
 Reduced motion: the finished actograms with the ZT2 marker, shown on click.
 
 ## 4 · Descent (`#/pdf/step-2`), scroll-driven, 14 s at a steady scroll (about three screens)
@@ -136,9 +150,10 @@ L  2.0–4.5   push-in on the head; the body turns semi-transparent (washes near
    reads:  2.3–4.3  we are going inside its head
 
 M  4.5–7.5   the brain outline draws on inside the head (central brain and optic lobes, frontal view,
-             after the reference schematic); then the PDF neurons appear in membrane blue on one
-             side, the only saturated colour on screen
-   reads:  4.8–6.2  the brain, inside the head
+             after the reference schematic); its two main regions are named with ink labels and
+             arrows, which clear as the camera starts to push in; then the PDF neurons appear in
+             membrane blue on one side, the only saturated colour on screen
+   reads:  4.8–6.2  the brain, inside the head (its regions named from 5.75 s)
            6.2–7.5  these blue cells are the PDF neurons
 
 N  7.5–10.5  push to the s-LNvs on one side; the neurons grow; labels appear one at a time along
@@ -151,7 +166,7 @@ N  7.5–10.5  push to the s-LNvs on one side; the neurons grow; labels appear o
 O  10.5–14.0 matched swap: the neuron outline (from the same geometry file the viewer opens with)
              settles at the viewer's opening position and scale; paper → black; the outline moves
              to the left half and the mutant's neurons slide in on the right; labels hTDP-43 WT |
-             hTDP-43 ALS mutant; the frame becomes the viewer (PixiJS) on the TDP-43 clue
+             hTDP-43 ALS mutant; the frame becomes the viewer (PixiJS) in step 3, TDP-43 dysfunction
    reads:  10.8–12.4 these neurons are what we will look at under the microscope
            12.4–14.0 two fields: WT left, mutant right
    badges: "Established: s-LNv anatomy and daily remodelling", "Simplified: cell bodies and axons enlarged"
@@ -159,6 +174,16 @@ O  10.5–14.0 matched swap: the neuron outline (from the same geometry file the
 ```
 
 Reduced motion: the labelled head–brain–neuron end frame and the "Next: the first clue" button.
+
+As built ([descent-frames.png](descent-frames.png)):
+- One 14 s timeline, set by the scroll position (the stage stays pinned for three screens). The camera is the SVG view box, in µm, with the origin at the centre of the head; strokes keep one width on screen at every zoom.
+- K opens on the WT fly standing in its tube, grown out of where it stood in step 1. The label "hTDP-43 WT" rides beside the fly. The turn morphs each body part from its side-view drawing to its front-view drawing; the ink boil is on only while the fly is small.
+- In L only the head and eyes stay drawn as we go in. The rest of the body and the antennae fade, so the head outline isn't lost among the body's, and the front view never reads as a face.
+- In M the brain follows a simplified frontal schematic (`site/js/brain.js`, after the reference pack, p. 3). The neurons grow out from their cell bodies (a widening circular mask), at the medial edge of the left medulla.
+- Once the brain has drawn on, M names its two main regions with ink labels and arrows, like the compartment labels in N: each arrow runs from the label's text to the region and ends in an arrowhead. "Central brain" appears at 5.75 s above the brain, its arrow pointing down into it. "Optic lobe" appears at 6.05 s below the optic lobe on the viewer's right (the one without the neurons, so the arrow stays clear of them), its arrow pointing up. Both fade out at 7.3–7.6 s, as the camera starts to push in towards the neurons at 7.5 s.
+- N labels the four compartments one at a time, in the viewer's names and order: "Nucleus", "Cell body", "Axon", "Dorsal terminals" (7.9, 8.5, 9.1 and 9.7 s). Each label sits to the left of the neuron, with an arrow from the edge of its text to the structure (drawn in screen space every frame, so it always starts at the text). Caption: "Four small PDF neurons (s-LNvs). Their dorsal terminals remodel every day."
+- O's frame is drawn from the viewer's own membrane and DAPI images (animal 1), tinted and added on black as the viewer does, at its "Whole neuron" scale, inside a frame laid out like the viewer's. On "Next: the first clue", step 3's viewer grows out of this frame, and the TDP-43 channel appears there: the clue.
+- Reduced motion shows the end of N (the labelled neurons, close up) with the badges and the Next button.
 
 ## Checks (from the storyboard rules)
 
@@ -170,7 +195,7 @@ Reduced motion: the labelled head–brain–neuron end frame and the "Next: the 
 
 ## Build notes
 
-- Flies: SVG drawings from `generator/flies.py` (dorsal, side and frontal; standing, walking and grooming by inverse kinematics on the legs). Walking and grooming become short frame sequences (8–12 drawings per cycle) played on twos; the body's travel is a smooth GSAP tween.
+- Flies: SVG drawings from `generator/flies.py` (dorsal, side and frontal; standing, walking and grooming by inverse kinematics on the legs). Walking and grooming become short frame sequences (8–12 drawings per cycle) played on twos; the dorsal fly also has a three-drawing flap sequence (wings half open, swept forward, swept back) for the flight to the legend. In the activity monitor the body's travel follows a seeded gait computed up front (see the walking note in section 3), not a tween.
 - Brain outline: a simplified frontal schematic traced from the reference pack (p. 3). The PDF neurons inside it come from `site/data/pdf/geometry-control-1.json`, the viewer's opening animal, so the final frame matches.
 - Actograms: drawn from a seeded activity model (two flies × three days, half-hour bins), shown as an "invented for this case" phenotype.
 - GSAP: timelines for the hero and assay; ScrollTrigger scrub for the descent; Flip for shared elements; MotionPath for the cassettes' flight; MorphSVG for the fly's turn; DrawSVG for leader lines and the brain outline. Deterministic: randomness only from the seeded PRNG.

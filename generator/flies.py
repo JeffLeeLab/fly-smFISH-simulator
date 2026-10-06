@@ -477,6 +477,22 @@ GROOM_IN = [k / 7 for k in range(6, 0, -1)]     # standing → rubbing, then cyc
 GROOM_OUT = [k / 11 for k in range(11)]         # cycle frame 0 → standing
 
 
+# Wings in flight, seen from above: (yaw, roll, pitch) in rad. Half open (taking off and
+# landing), then the two ends of the stroke: swept forward and swept back. Played on twos, the
+# two ends alternate as a stylised wingbeat (a real fly beats about 200 times a second).
+WING_POSES = {"open": (1.0, 0.7, -1.0), "fore": (0.0, -0.5, -1.0), "aft": (0.7, 0.5, -1.0)}
+
+
+def flying(fly, pose):
+    """The standing fly with both wings in one of WING_POSES; the legs stay as they are, so
+    only the wings are new drawings."""
+    q = standing(fly)
+    yaw, roll, pitch = WING_POSES[pose]
+    for side in ("left", "right"):
+        q[f"wing_yaw_{side}"], q[f"wing_roll_{side}"], q[f"wing_pitch_{side}"] = yaw, roll, pitch
+    return q
+
+
 # ---------- drawing ----------
 
 STYLE = {  # style attributes, so they travel into <use> instances and resolve against the page
@@ -571,13 +587,16 @@ GROOM_SEQS = {
     "groom_out": lambda fly: groom_settle(fly, GROOM_OUT),
 }
 SEQUENCES = {
-    "dorsal": {"stand": [standing], **GROOM_SEQS},
+    "dorsal": {"stand": [standing], **GROOM_SEQS,
+               "flap": [lambda fly, w=w: flying(fly, w) for w in ("open", "fore", "aft")]},
     "lateral": {"stand": [standing],
                 "walk": [lambda fly, k=k: walking(fly, 2 * math.pi * k / CYCLE) for k in range(CYCLE)],
                 **GROOM_SEQS},
     "frontal": {"stand": [standing]},
 }
 SCALE = 1000.0   # SVG units per world unit (cm): 1 unit = 10 µm
+OVERFLOW = {"flap"}   # drawn past the viewBox (spread wings), so the fly on the ground keeps its size
+BLURRED = {"flap"}    # beating wings: membrane only, no veins
 
 
 def write_sprite(fly, view, seqs):
@@ -587,11 +606,16 @@ def write_sprite(fly, view, seqs):
     inherited through <use>), so small flies can be drawn with finer lines."""
     posed = {name: [pose_vertices(fly, q, view) for q in (fns(fly) if callable(fns) else [f(fly) for f in fns])]
              for name, fns in seqs.items()}
-    bs = [bounds(p, view) for frames in posed.values() for p in frames]
     pad = 0.012
-    frame = (min(b[0] for b in bs) - pad, min(b[1] for b in bs) - pad, max(b[2] for b in bs) + pad, max(b[3] for b in bs) + pad)
-    vb = f"{frame[0] * SCALE:.1f} {-frame[3] * SCALE:.1f} {(frame[2] - frame[0]) * SCALE:.1f} {(frame[3] - frame[1]) * SCALE:.1f}"
-    drawn = {f"fly-{view}-{name}-{k}": paths(trace_pose(fly, parts, view, frame), SCALE)
+
+    def box(names):
+        bs = [bounds(p, view) for n in names for p in posed[n]]
+        return (min(b[0] for b in bs) - pad, min(b[1] for b in bs) - pad, max(b[2] for b in bs) + pad, max(b[3] for b in bs) + pad)
+    frame = box(posed)                                   # traced: every drawing
+    vf = box([n for n in posed if n not in OVERFLOW])    # the viewBox: the fly on the ground
+    vb = f"{vf[0] * SCALE:.1f} {-vf[3] * SCALE:.1f} {(vf[2] - vf[0]) * SCALE:.1f} {(vf[3] - vf[1]) * SCALE:.1f}"
+    drawn = {f"fly-{view}-{name}-{k}": paths([d for d in trace_pose(fly, parts, view, frame)
+                                               if not (name in BLURRED and d[2] == "vein")], SCALE)
              for name, frames in posed.items() for k, parts in enumerate(frames)}
     symbols = share_paths(view, drawn)
     meta = {

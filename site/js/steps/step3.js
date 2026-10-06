@@ -8,12 +8,14 @@ import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
 import { term } from "../glossary.js";
 import { tourOnce, runTour, VIEWER_TOUR } from "../tour.js";
+import { takeHandOff, growFrom } from "../handoff.js";
+import { loadGsap, reducedMotion } from "../gsap.js";
 
 export async function mount(root, ctx) {
   root.innerHTML = `
     <div class="bench">
       <header class="bench__head">
-        <div class="bench__title"><p class="t-label">Clue · Step 3</p><h1 class="t-h2">TDP-43 clue</h1></div>
+        <div class="bench__title"><p class="t-label">RBP clue · Step 3</p><h1 class="t-h2">TDP-43 dysfunction</h1></div>
         <div class="next-row">
           <span class="chip chip--mem">Membrane + DAPI</span>
           <span class="chip chip--tdp">TDP-43 IF</span>
@@ -38,6 +40,9 @@ export async function mount(root, ctx) {
 
   const unbind = bind(root, ctx.caseId);
   const host = root.querySelector("#viewer");
+  // arriving from the descent: the viewer grows out of its last frame (a matched swap)
+  const handRect = takeHandOff("viewer");
+  if (handRect && !reducedMotion()) loadGsap().then(gsap => growFrom(gsap, host, handRect, 0.7));
   if (!hasWebGL2()) {
     renderNoWebGL(host);
     return unbind;

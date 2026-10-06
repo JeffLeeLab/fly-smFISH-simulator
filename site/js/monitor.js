@@ -46,47 +46,96 @@ export function activity(kind, days, seed) {
 }
 
 // ---------- walking and pausing in real time (decision 5) ----------
-// A seeded walk–pause schedule: walks between points with smooth starts and stops, pauses (some
-// spent grooming, long enough to raise, rub and lower the legs), turning at the start of a walk. Most walks cross the beam. `first` fixes the
-// opening walk, so the beam is crossed when the storyboard needs it.
+// A walk is not a glide. The fly sets off and stops within a step or two, surges a little with
+// each tripod step, changes pace from one bout to the next and now and then hesitates mid-walk
+// (legs still) before carrying on. Each walk's progress is worked out up front at GAIT_HZ, so
+// a frozen frame and the beam crossings are still exact functions of time.
+const GAIT_HZ = 120;
+const smoothstep = u => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
+
+// Progress (0 → 1) along one walk of `dist` units at a mean speed near `v`, sampled at GAIT_HZ.
+// `calm` walks are one steady bout (the storyboard's opening walks, timed to the captions).
+function gait(r, dist, v, stride, calm = false) {
+  const n = calm || dist < 40 ? 1 : 1 + Math.floor(r() * (dist > 100 ? 3 : 2));   // 1–3 bouts
+  const w = Array.from({ length: n }, () => 0.6 + r());
+  const halt = Array.from({ length: n - 1 }, () => r() < 0.55);   // between bouts: a hesitation, or only a slow-down
+  const sum = w.reduce((a, b) => a + b, 0);
+  const vel = [];
+  for (let i = 0; i < n; i++) {
+    const d = dist * w[i] / sum, pace = calm ? 1 : 0.75 + 0.5 * r();
+    const lo0 = i === 0 || halt[i - 1] ? 0 : 0.45, lo1 = i === n - 1 || halt[i] ? 0 : 0.45;
+    const T = d / (pace * v) + 0.16, a = Math.min(0.14, T / 3), b = Math.min(0.18, T / 3);
+    const m = Math.max(2, Math.round(T * GAIT_HZ));
+    const bout = [];
+    let run = 0, phase = 0;
+    for (let k = 0; k < m; k++) {
+      const tau = (k + 0.5) / GAIT_HZ;
+      const env = Math.min(lo0 + (1 - lo0) * smoothstep(tau / a), lo1 + (1 - lo1) * smoothstep((T - tau) / b));
+      const u = env * (1 + 0.4 * Math.cos(2 * Math.PI * phase));   // one push per tripod step
+      bout.push(u);
+      run += u;
+      phase += u * pace * v / GAIT_HZ / (stride / 2);
+    }
+    bout.forEach(u => vel.push(u * d / dist / run));
+    if (halt[i]) for (let k = Math.round((0.12 + 0.3 * r()) * GAIT_HZ); k > 0; k--) vel.push(0);
+  }
+  const prog = new Float32Array(vel.length + 1);
+  for (let k = 0; k < vel.length; k++) prog[k + 1] = prog[k] + vel[k];
+  prog[vel.length] = 1;
+  return prog;
+}
+
+const progAt = (s, t) => {
+  const u = Math.min(s.prog.length - 1, Math.max(0, (t - s.t0) * GAIT_HZ));
+  const i = Math.min(s.prog.length - 2, Math.floor(u));
+  return s.prog[i] + (s.prog[i + 1] - s.prog[i]) * (u - i);
+};
+
+// A seeded walk–pause schedule: walks between points (see gait), pauses (some spent grooming,
+// long enough to raise, rub and lower the legs), turning at the start of a walk. Most walks
+// cross the beam. `first` fixes the opening walk, so the beam is crossed when the storyboard
+// needs it. `stride` is the fly's stride in the same units as x (for the steps' surges).
 export function walkPause(seed, o) {
-  const { until, xMin, xMax, beam, speed = [36, 68], pause = [0.5, 2.4], groom = 0.35, cross = 0.72 } = o;
-  const r = mulberry32(seed);
+  const { until, xMin, xMax, beam, speed = [36, 68], pause = [0.5, 2.4], groom = 0.35, cross = 0.72, stride = 15 } = o;
+  const r = mulberry32(seed), rg = mulberry32(seed + 7);   // the schedule, and the walks' gaits
   const segs = [];
   let t = o.from ?? 0, x = o.x, face = o.face ?? 1;
-  const push = (t1, x1, act) => {
-    if (act === "walk" && x1 !== x) face = Math.sign(x1 - x);
-    segs.push({ t0: t, t1, x0: x, x1, act, face });
-    t = t1; x = x1;
+  const stay = (t1, act) => { segs.push({ t0: t, t1, x0: x, x1: x, act, face }); t = t1; };
+  const walk = (x1, v, calm) => {
+    if (x1 !== x) face = Math.sign(x1 - x);
+    const prog = gait(rg, Math.abs(x1 - x), v, stride, calm);
+    segs.push({ t0: t, t1: t + (prog.length - 1) / GAIT_HZ, x0: x, x1, act: "walk", face, prog });
+    t = segs.at(-1).t1; x = x1;
   };
   if (o.first) {
-    push(o.first.t, x, "stand");
-    push(t + Math.abs(o.first.x - x) / o.first.speed, o.first.x, "walk");
+    stay(o.first.t, "stand");
+    walk(o.first.x, o.first.speed, true);
   }
   const far = () => (x < beam ? beam + 24 + r() * (xMax - beam - 24) : xMin + r() * (beam - 24 - xMin));
   const near = () => (x < beam ? xMin + r() * (beam - 24 - xMin) : beam + 24 + r() * (xMax - beam - 24));
   while (t < until) {
     const act = r() < groom ? "groom" : "stand";
-    const p = act === "groom" ? 2.2 + r() * 1.0 : pause[0] + r() * (pause[1] - pause[0]);
-    push(t + p, x, act);
+    stay(t + (act === "groom" ? 2.2 + r() * 1.0 : pause[0] + r() * (pause[1] - pause[0])), act);
     let target = r() < cross ? far() : near();
     if (Math.abs(target - x) < 30) target = x + (x < (xMin + xMax) / 2 ? 44 : -44);
-    const v = speed[0] + r() * (speed[1] - speed[0]);
-    push(t + Math.abs(target - x) / v, target, "walk");
+    walk(target, speed[0] + r() * (speed[1] - speed[0]), false);
   }
-  // beam crossings, exactly: a walk eases as x0 + (x1 − x0)(1 − cos πu)/2
+  // beam crossings, exactly: where each walk's progress passes the beam
   const crossings = [];
   for (const s of segs) {
     if (s.act !== "walk" || (s.x0 - beam) * (s.x1 - beam) >= 0) continue;
     const e = (beam - s.x0) / (s.x1 - s.x0);
-    crossings.push(s.t0 + (Math.acos(1 - 2 * e) / Math.PI) * (s.t1 - s.t0));
+    let k = 0;
+    while (k < s.prog.length - 2 && s.prog[k + 1] < e) k++;
+    crossings.push(s.t0 + (k + (e - s.prog[k]) / ((s.prog[k + 1] - s.prog[k]) || 1)) / GAIT_HZ);
   }
   return { segs, crossings, cursor: 0 };
 }
 
 // The fly's state at time t: position, facing, and which drawing to show. Leg frames follow the
-// distance walked, so the feet never slide; times are quantised to twos (12 per second).
-// `frames` is the sprite's frame counts (for grooming bouts).
+// distance walked, so the feet never slide (and stand still while the fly hesitates); drawings
+// change on twos (12 per second), the body moves every frame. `frames` is the sprite's frame
+// counts (for grooming bouts).
 export function walkAt(w, t, strideUnits, frames) {
   const { segs } = w;
   if (t < segs[0].t0) t = segs[0].t0;
@@ -95,9 +144,9 @@ export function walkAt(w, t, strideUnits, frames) {
   while (i < segs.length - 1 && segs[i].t1 <= t) i++;
   w.cursor = i;
   const s = segs[i];
-  const xAt = tt => s.x0 + (s.x1 - s.x0) * (1 - Math.cos(Math.PI * Math.min(1, Math.max(0, (tt - s.t0) / (s.t1 - s.t0 || 1))))) / 2;
-  const tq = Math.floor(t * 12) / 12;   // drawings change on twos; the body glides smoothly
   if (s.act === "walk") {
+    const xAt = tt => s.x0 + (s.x1 - s.x0) * progAt(s, tt);
+    const tq = Math.floor(t * 12) / 12;
     return { x: xAt(t), face: s.face, seq: "walk", frame: Math.floor(Math.abs(xAt(tq) - s.x0) / (strideUnits / 8)) };
   }
   if (s.act === "groom") {

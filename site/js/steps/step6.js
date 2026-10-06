@@ -20,7 +20,7 @@ export async function mount(root, ctx) {
   root.innerHTML = `
     <div class="bench">
       <header class="bench__head">
-        <div class="bench__title"><p class="t-label">Observe · Step 6</p><h1 class="t-h2">Reveal + compare</h1></div>
+        <div class="bench__title"><p class="t-label">Observe · Step 6</p><h1 class="t-h2">Microscopy reveal</h1></div>
         <div class="next-row">
           <span class="chip chip--ch1">smFISH 1 · <span class="t-data">${pair.ch1}</span></span>
           <span class="chip chip--ch2">smFISH 2 · <span class="t-data">${pair.ch2}</span></span>
@@ -80,8 +80,8 @@ export async function mount(root, ctx) {
     const s = caseState(id);
     const missing = s.shortlist.filter(m => !s.verdicts[m]).length;
     next.innerHTML = missing
-      ? `<span class="btn btn--lg" aria-disabled="true">Next: revise</span><span class="t-ui t-muted">${missing} mode${missing > 1 ? "s" : ""} still need${missing > 1 ? "" : "s"} a verdict. Unresolved counts.</span>`
-      : `<a class="btn btn--primary btn--lg" href="${href(id, 7)}">Next: revise</a>`;
+      ? `<span class="btn btn--lg" aria-disabled="true">Next: interpret &amp; revise</span><span class="t-ui t-muted">${missing} mode${missing > 1 ? "s" : ""} still need${missing > 1 ? "" : "s"} a verdict. Unresolved counts.</span>`
+      : `<a class="btn btn--primary btn--lg" href="${href(id, 7)}">Next: interpret &amp; revise</a>`;
   };
   gate();
   const off = onChange(k => { if (k === "case:" + id) gate(); });

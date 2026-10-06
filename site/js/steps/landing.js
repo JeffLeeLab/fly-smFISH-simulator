@@ -151,7 +151,7 @@ export async function mount(root) {
     <div class="story story--landing">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__text">
-          <p class="t-label">Meet · Step 1</p>
+          <p class="t-label">Introduction · Start</p>
           <h1 class="t-display" id="hero-title">Two flies, one human gene</h1>
           <p class="t-story t-muted">In both flies the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i> (${term("humanised", "humanised")}): the normal version, or one carrying an ALS-linked point mutation.</p>
           <p class="hero__caption"><span class="hero__cap1">They look the same.</span> <span class="hero__cap2">Their behaviour isn’t.</span></p>
@@ -164,9 +164,17 @@ export async function mount(root) {
           <span class="tag-sim hero__tag">Schematic</span>
         </div>
       </section>
-      <h2 class="t-h2">Choose your neuron system</h2>
+      <h2 class="t-h2 landing__choose" id="choose" tabindex="-1">Choose your neuron system</h2>
       <p class="t-story">Each group works with one system. Each assay compares hTDP-43 WT (left) with the ALS mutant (right).</p>
+      <div class="legend" role="list" aria-label="Lanes in every station">
+        ${FLIES.map(f => `
+        <span class="legend__item" role="listitem">
+          <svg class="legend__fly fly" data-fly="${f.id}" aria-hidden="true"><use href="#fly-dorsal-stand-0" filter="url(#ink-boil)"/></svg>
+          <span class="legend__text"><span class="legend__name">${f.label}</span><span class="t-ui t-muted">${f.id === "wt" ? "left" : "right"} lane</span></span>
+        </span>`).join("")}
+      </div>
       <ul class="stations" role="list">${stations()}</ul>
+      <svg class="legend-ghosts" aria-hidden="true">${FLIES.map(f => `<g class="fly" data-fly="${f.id}"><use href="#fly-dorsal-stand-0" filter="url(#ink-boil)"/></g>`).join("")}</svg>
     </div>`;
 
   const svg = root.querySelector(".hero__scene");
@@ -174,6 +182,8 @@ export async function mount(root) {
   const [meta, lateral] = await Promise.all([loadFlySprite("dorsal"), loadFlySprite("lateral")]);
   const drawMonitor = startMiniMonitor(root.querySelector(".station[data-case=pdf] svg"), lateral);
   root.querySelector(".station[data-case=pdf]").addEventListener("click", e => handOff("monitor", e.currentTarget.querySelector(".station__art")));
+  const legendFlies = [...root.querySelectorAll(".legend__fly")];
+  legendFlies.forEach(el => el.setAttribute("viewBox", meta.viewBox));
   const flies = FLIES.map(f => {
     const node = flyNode(meta, { x: f.x, y: FLY_Y, height: FLY_H, className: "fly" });
     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -270,9 +280,12 @@ export async function mount(root) {
   drawPoses();
 
   const controls = { skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
-  tl.eventCallback("onComplete", () => { controls.skip.hidden = true; controls.replay.hidden = false; });
+  const hooks = { done: () => {}, replay: () => {} };   // set by the hero-to-legend transition below
+  tl.eventCallback("onComplete", () => { controls.skip.hidden = true; controls.replay.hidden = false; hooks.done(); });
   controls.skip.addEventListener("click", () => { tl.progress(1); drawPoses(); });
-  controls.replay.addEventListener("click", () => { controls.replay.hidden = true; controls.skip.hidden = false; tl.restart(); drawPoses(); });
+  controls.replay.addEventListener("click", () => { controls.replay.hidden = true; controls.skip.hidden = false; hooks.replay(); tl.restart(); drawPoses(); });
+
+  let drawWings = null;   // the flying stand-ins' wingbeat (below)
 
   // ---------- fly frames: idle grooming on twos, from the seeded schedule ----------
   const t0 = performance.now();
@@ -285,16 +298,85 @@ export async function mount(root) {
       else fly.show("stand", 0);
     });
     drawMonitor(still ? 0 : t);
+    drawWings?.(t);
   };
   gsap.ticker.add(drawFlies);
   drawFlies();
 
-  // the second half of the caption completes as the page scrolls on to the assays
+  // ---------- scroll on to the assays: the hero flies shrink into the lane legend (shared element) ----------
+  // Scrubbed by scroll. While it runs, two stand-ins fly from the hero to the legend; both ends
+  // are measured every update in the page's own coordinates, so resizing can't break the match.
+  // They fly: wings half open as they take off and land, beating on twos in between, in real
+  // time, so a fly held mid-way by a paused scroll hovers. The caption completes as soon as the
+  // scroll starts. A window tall enough to show the whole page can't scroll, so there the flies
+  // set off on their own once the hero sequence has played.
+  const ghostSvg = root.querySelector(".legend-ghosts");
+  const ghosts = [...ghostSvg.querySelectorAll("g")];
+  const leaders = svg.querySelector(".leaders");
+  const [, , vw0, vh0] = meta.viewBox.split(" ").map(Number);
+  const rel = (m, x, y, base) => { const p = new DOMPoint(x, y).matrixTransform(m); return [p.x - base.left, p.y - base.top]; };
+  const legendState = { p: 0, cap: false };
+  function drawLegend() {
+    // down first, then across: the flies drop past the hero text before sliding to the legend
+    const p = legendState.p, e = gsap.parseEase("power2.inOut")(p), ex = gsap.parseEase("power2.in")(p), ey = gsap.parseEase("power2.out")(p);
+    const base = root.querySelector(".story--landing").getBoundingClientRect();
+    const moving = p > 0.001 && p < 0.999 && !still;
+    flies.forEach((fly, i) => {
+      const f = FLIES[i];
+      fly.el.style.visibility = (p >= 0.999 && !still) || moving ? "hidden" : "";
+      legendFlies[i].style.visibility = p >= 0.999 || still ? "" : "hidden";
+      ghosts[i].style.display = moving ? "" : "none";
+      if (!moving) return;
+      const m0 = svg.getScreenCTM(), m1 = legendFlies[i].getScreenCTM();
+      const [x0, y0] = rel(m0, f.x + f.dx, FLY_Y + f.dy, base), k0 = m0.a * FLY_H / vh0;
+      const [x1, y1] = rel(m1, 0, 0, base), k1 = m1.a;
+      const k = k0 * Math.pow(k1 / k0, e);
+      ghosts[i].setAttribute("transform", `translate(${(x0 + (x1 - x0) * ex).toFixed(1)} ${(y0 + (y1 - y0) * ey).toFixed(1)}) rotate(${(f.turn * (1 - e)).toFixed(2)}) scale(${k.toFixed(4)})`);
+      ghosts[i].style.strokeWidth = `${(1.4 - 0.5 * e).toFixed(2)}px`;
+    });
+    drawWings(clock());
+    leaders.style.opacity = String(Math.max(0, 1 - p / 0.25));
+    const cap = p > 0.06;
+    if (cap !== legendState.cap) {
+      legendState.cap = cap;
+      gsap.to(cap2, { autoAlpha: cap ? 1 : 0, duration: still ? 0 : cap ? 0.5 : 0.3, ease: "power2.out" });
+    }
+  }
+  const flap = meta.frames.flap ? n => `#fly-dorsal-flap-${n}` : null;
+  drawWings = t => {
+    const p = legendState.p;
+    ghosts.forEach((g, i) => {
+      if (g.style.display === "none") return;
+      const href = !flap ? flies[i].use.getAttribute("href")
+        : p < 0.05 || p > 0.95 ? flap(0)                          // half open: taking off, landing
+        : flap(1 + ((Math.floor(t * 12) + i) % 2));               // forward, back: on twos, out of step
+      if (g.firstElementChild.getAttribute("href") !== href) g.firstElementChild.setAttribute("href", href);
+    });
+  };
+  let smooth = null, auto = null;
+  const canScroll = () => document.documentElement.scrollHeight - window.innerHeight > 2;
+  // from the first scroll (never at load, even on a tall screen where the legend already shows)
+  // until the legend is 45% of the way up the screen, or the page's end if that comes first
   const st = window.ScrollTrigger.create({
-    trigger: root.querySelector(".hero"), start: "top -48",   // only after a real scroll, whatever the screen height
-    onEnter: () => gsap.to(cap2, { autoAlpha: 1, duration: 0.5, ease: "power2.out" }),
-    onLeaveBack: () => gsap.to(cap2, { autoAlpha: 0, duration: 0.3 }),
+    trigger: root.querySelector(".hero"), start: () => `top+=1 ${root.querySelector(".hero").getBoundingClientRect().top + window.scrollY}px`,
+    endTrigger: root.querySelector(".legend"), end: "clamp(top 45%)",
+    onUpdate: self => {
+      if (!canScroll()) return;
+      smooth?.kill();
+      smooth = gsap.to(legendState, { p: self.progress, duration: still ? 0 : 0.4, ease: "power3.out", onUpdate: drawLegend });
+    },
   });
+  hooks.done = () => {
+    if (canScroll() || frozen != null) return;
+    auto?.kill();
+    auto = gsap.to(legendState, { p: 1, duration: still ? 0 : 2.2, delay: still ? 0 : 0.8, ease: "power2.inOut", onUpdate: drawLegend });
+  };
+  hooks.replay = () => {
+    if (canScroll()) return;
+    auto?.kill();
+    auto = gsap.to(legendState, { p: 0, duration: 1.2, ease: "power2.inOut", onUpdate: drawLegend });
+  };
+  drawLegend();
 
   if (frozen != null) { tl.pause(frozen); controls.skip.hidden = true; }
   else if (still) { tl.progress(1); controls.skip.hidden = true; }
@@ -305,6 +387,8 @@ export async function mount(root) {
   return () => {
     gsap.ticker.remove(drawFlies);
     st.kill();
+    smooth?.kill();
+    auto?.kill();
     tl.kill();
     if (!still && frozen == null) stopBoil();
     delete window.__hero;

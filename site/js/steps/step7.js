@@ -17,7 +17,7 @@ export function mount(root, ctx) {
   root.innerHTML = `
     <div class="story">
       <p class="t-label story__eyebrow">Conclude · Step 7</p>
-      <h1 class="t-h1">Revise the explanation</h1>
+      <h1 class="t-h1">Interpret &amp; revise</h1>
       <section class="summary" aria-labelledby="sum-h">
         <h2 class="t-h3" id="sum-h">Experiment summary</h2>
         <dl class="summary__facts"></dl>

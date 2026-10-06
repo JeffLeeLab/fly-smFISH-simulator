@@ -11,7 +11,7 @@ import { href } from "../router.js";
 import { loadGsap, reducedMotion } from "../gsap.js";
 import { loadFlySprite, flyNode, groomFrame, startBoil, stopBoil, ensureBoilFilter } from "../fly.js";
 import { BINS, DAY_S, activity, walkPause, walkAt, crossingsBy, lastCrossing, timelapse, lapseAt, tube, tubeFly, actogramRows } from "../monitor.js";
-import { takeHandOff, growFrom } from "../handoff.js";
+import { handOff, takeHandOff, growFrom } from "../handoff.js";
 import { mulberry32 } from "../prng.js";
 
 const W = 960, HT = 458;
@@ -111,7 +111,7 @@ export async function mount(root, ctx) {
 
   root.innerHTML = `
     <div class="story story--assay">
-      <p class="t-label story__eyebrow">Meet · Step 1</p>
+      <p class="t-label story__eyebrow">Introduction · Step 1</p>
       <h1 class="t-h1">Activity monitor</h1>
       <div class="stage stage--assay">
         <svg class="assay" viewBox="0 0 ${W} ${HT}" role="img" aria-label="Activity monitor. Two glass tubes, hTDP-43 WT on the left and the ALS mutant on the right, each with one fly, food at the left end, a cotton plug at the right and an infrared beam across the middle. Below each tube, an actogram of beam crossings per half hour over three days of 12 hours light and 12 hours dark. By day the two flies are alike; at night the WT fly sleeps while the mutant keeps waking. Brains were collected at ZT2.">
@@ -154,7 +154,7 @@ export async function mount(root, ctx) {
     l.fly = tubeFly(flyNode, meta, { height: FLY_H });
     l.el.querySelector(".tube-flies").append(l.fly.g);
     l.groundY = TUBE.y + TUBE.h - 3 - l.fly.groundOffset;
-    l.w = walkPause(l.seed, { ...l.walk, until: 900, xMin: X_MIN, xMax: X_MAX, beam: BEAM });
+    l.w = walkPause(l.seed, { ...l.walk, until: 900, xMin: X_MIN, xMax: X_MAX, beam: BEAM, stride: l.fly.stride });
     l.beam = l.el.querySelector(".beam");
     l.count = l.el.querySelector(".counter-n");
     l.bars = [...l.el.querySelectorAll(".acto-bar")].map(el => ({ el, h: +el.dataset.h, base: +el.dataset.base }));
@@ -328,6 +328,8 @@ export async function mount(root, ctx) {
     tlG.play(0);
   }
   render();
+  // the descent (step 2) starts from the WT fly where it stands now
+  root.querySelector(".assay__controls a.btn").addEventListener("click", () => handOff("fly", lanes[0].fly.g));
   window.__assay = { tlG, tlH, clock, lanes };   // for review tooling
 
   return () => {

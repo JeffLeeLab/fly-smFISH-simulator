@@ -25,7 +25,7 @@ export function mount(root, ctx) {
   root.innerHTML = `
     <div class="bench">
       <header class="bench__head">
-        <div class="bench__title"><p class="t-label">Clue · Step 4</p><h1 class="t-h2">Hypotheses</h1></div>
+        <div class="bench__title"><p class="t-label">RBP clue · Step 4</p><h1 class="t-h2">Hypotheses</h1></div>
         <p class="t-ui t-muted"><span class="layer layer--established">Established</span> Mode definitions</p>
       </header>
       <section class="bench__main hyp-main" aria-labelledby="hyp-intro">
@@ -67,8 +67,8 @@ export function mount(root, ctx) {
     const n = s.shortlist.length;
     root.querySelector("#hyp-count").textContent = `${n} shortlisted${n < 2 ? ` · choose ${2 - n} more` : ""}`;
     root.querySelector("#hyp-next").innerHTML = n >= 2
-      ? `<a class="btn btn--primary btn--lg" href="${href(id, 5)}">Next: target + probe design</a>`
-      : `<span class="btn btn--lg" aria-disabled="true">Next: target + probe design</span><span class="t-ui t-muted">Shortlist at least two modes first.</span>`;
+      ? `<a class="btn btn--primary btn--lg" href="${href(id, 5)}">Next: target &amp; probe design</a>`
+      : `<span class="btn btn--lg" aria-disabled="true">Next: target &amp; probe design</span><span class="t-ui t-muted">Shortlist at least two modes first.</span>`;
   }
 
   const onPick = e => {

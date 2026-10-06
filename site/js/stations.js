@@ -42,7 +42,7 @@ export function startMiniMonitor(svg, meta) {
     return {
       x0: LANE_X[i], fly, beam: el.querySelector(".beam"),
       groundY: MINI.tubeY + MINI.tubeH - 1.5 - fly.groundOffset,
-      w: walkPause(l.seed, { x: l.x, face: l.face, until: 900, xMin: MINI.xMin, xMax: MINI.xMax, beam: MINI.beam, speed: [14, 26], pause: [0.6, 2.8] }),
+      w: walkPause(l.seed, { x: l.x, face: l.face, until: 900, xMin: MINI.xMin, xMax: MINI.xMax, beam: MINI.beam, speed: [14, 26], pause: [0.6, 2.8], stride: fly.stride }),
     };
   });
   return t => {

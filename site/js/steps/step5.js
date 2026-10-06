@@ -57,7 +57,7 @@ export async function mount(root, ctx) {
     <div class="bench bench--wide">
       <header class="target" aria-labelledby="target-name">
         <div class="target__name">
-          <p class="t-label">Design · Step 5</p>
+          <p class="t-label">Experimental design · Step 5</p>
           <h1 class="t-h2" id="target-name"><i>${esc(t.gene)}</i> <span class="target__arrow" aria-label="corresponds to">↔</span> human ${esc(t.orthologue)}</h1>
         </div>
         <div class="target__about">

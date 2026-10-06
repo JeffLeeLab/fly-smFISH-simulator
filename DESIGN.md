@@ -162,10 +162,16 @@ components:
     backgroundColor: "{colors.ivory-panel}"
     textColor: "{colors.ink-black}"
   rail-step-current:
-    backgroundColor: "{colors.clay}"
-    textColor: "{colors.on-clay}"
-    typography: "{typography.overlay}"
-    size: "24px"
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-black}"
+    typography: "{typography.ui}"
+    padding: "3px 0 3px 10px"
+  rail-case:
+    backgroundColor: "{colors.ivory-field}"
+    textColor: "{colors.ink-black}"
+    typography: "{typography.ui}"
+    rounded: "{rounded.pane}"
+    padding: "8px 12px 10px"
   viewer-frame:
     backgroundColor: "{colors.viewer-frame}"
     rounded: "{rounded.chip}"
@@ -198,7 +204,7 @@ Rejected outright (spec banned list): purple/blue gradients, glassmorphism, emoj
 The palette is warm neutrals with one restrained accent. All the saturated hues belong to the data.
 
 ### Primary
-- **Kiln Clay** (`clay`): the single UI accent, used for fills, the current-step marker, a selected verdict and focus rings. It is never used as text: clay on ivory is about 2.7:1. Text on clay is always near-black (`on-clay`, about 5.9:1), never white.
+- **Kiln Clay** (`clay`): the single UI accent, used for fills, the current-step marker, a selected verdict and focus rings. A light tint of it, mixed into the field colour, also marks the neuron-system box in the rail. It is never used as text: clay on ivory is about 2.7:1. Text on clay is always near-black (`on-clay`, about 5.9:1), never white.
 - **Fired Clay Ink** (`clay-ink`; dark theme `clay-ink-dark`): links and accent text, because clay itself can't be text (4.9:1 on ivory, 7.3:1 on charcoal).
 
 ### Neutral
@@ -240,7 +246,7 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 ### Hierarchy
 - **Display** (500, 46px, 1.04): the hero title only.
 - **Headline** (500, 40px, 1.05): step titles in the story layout.
-- **Title** (500, 28px): step titles in the workbench layout ("Reveal + compare").
+- **Title** (500, 28px): step titles in the workbench layout ("Microscopy reveal").
 - **Subtitle** (500, 18px): section heads inside a step.
 - **Story** (400, 18px, 1.6, max 70ch): the serif narrative in steps 1–2 and 7. The hero caption is the same face in italic at 22–24px.
 - **Body** (400, 16px, 1.55): sans body text, explanations and the glossary.
@@ -261,8 +267,8 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 
 There are two layouts on one token set.
 
-- **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title and subtitle beside the flies, never a centred hero.
-- **Workbench layout** (steps 3–6): the rail collapses to a 40px strip of numbered circles. The grid is `rail | viewer | side pane` (side pane about 292px), with the step header across the top and plot/table tabs under the viewer. Spacing is 12px between rows and 24px between columns. The viewer takes about two-thirds of the width. The side pane scrolls on its own; the viewer never does.
+- **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border; the workbench layout uses the same rail) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title and subtitle beside the flies, never a centred hero.
+- **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane about 292px), with the step header across the top and plot/table tabs under the viewer. Spacing is 12px between rows and 24px between columns. The viewer takes about two-thirds of the width beside the rail. The side pane scrolls on its own; the viewer never does.
 - **Step 5:** the compact target card, instructions, channel slots and full-width transcript map all fit within 1366×768. The accessible button list and the prediction rows go below the fold.
 
 Spacing uses a 4px base scale (`sp-1` to `sp-7`: 4, 8, 12, 16, 24, 32, 48). The minimum supported viewport is 1280×720, and every workbench screen is checked at that size and at 1920×1080. There is no phone layout. Spatial convention: control (hTDP-43 WT) is always on the left and the mutant on the right, in the hero, assays, split viewer and plot.
@@ -292,7 +298,7 @@ Corners are nearly square, in a strict three-step scale:
 - **3px** (`pane`): compare-pane fields, mode cards, verdict bars, segmented tabs and buttons (the boxed pane carried over from Direction C).
 - **8px** (`frame`): outer page frames only.
 
-Full circles appear only where the shape means something: the 24px numbered rail markers, the 8px channel dots inside chips, and data points in the plot. There are no pills, except the dashed "Simulated" / "Schematic" tag.
+Full circles appear only where the shape means something: the 8px channel dots inside chips, and data points in the plot. There are no pills, except the dashed "Simulated" / "Schematic" tag.
 
 On the transcript map, shape carries meaning: CDS is a tall block, UTR a shorter block in Stone, introns are hairlines with 5′→3′ chevrons, each TSS has a bent arrow, each 3′ end a triangle, and long introns have a break mark. Block height is the second cue alongside colour.
 
@@ -324,8 +330,11 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 A segmented bar of three equal parts (Ruled out · Supported · Unresolved) with a 1px `hairline` border, hairline dividers and 3px outer corners. The selected segment fills with clay and uses `on-clay` text at weight 600. Unselected segments are transparent with `ink-grey` text. All three verdicts look the same when selected: "unresolved" is a valid answer and must not look like a failure.
 
 ### Navigation (Progress Rail)
-- **Story rail:** stage names in Label style; under each, steps as UI rows with a mono step number in `stone`. The current step has a 2px clay left border and weight 600; completed steps use `ink-black`, and upcoming steps `ink-grey`.
-- **Workbench rail:** 24px circles with 1px hairline borders and mono numbers. The current step is a clay-filled circle with `on-clay` text.
+The same full rail, about 200px wide with a hairline right border, appears in every layout. From the top: the brand, the neuron-system box, the five stages with their steps, then the theme toggle and the "Simulated teaching data" tag.
+- **Neuron-system box:** a light clay tint over `ivory-field` (clay mixed 13% into the field colour, 22% on hover), a 1px border of clay mixed 45% into `hairline`, and 3px corners. The name is 14px at weight 600, and the action line is `clay-ink` accent text.
+  - At the opening no system is chosen. The box is a button reading "Choose a neuron system", with "to continue ↓" under it, and it marks where the student is (`aria-current="page"`). Clicking it scrolls to the opening's "Choose your neuron system" heading and focuses it.
+  - Once a system is chosen, the box is a link: "NEURON SYSTEM" in Label style, the system's name ("PDF neurons") and "Change system". It goes back to the opening, where a group can choose again. Notes are kept.
+- **Stages and steps:** stage names in Label style; under each, steps as UI rows with a mono step number in `stone`. The current step has a 2px clay left border and weight 600; completed steps use `ink-black`, and upcoming steps `ink-grey`. At the opening no step is highlighted, and every step is greyed and is not a link until a system is chosen.
 - **Locked steps** give a reason in words ("Choose two probe regions to see the results"), never just a padlock.
 
 ### Segmented Tabs
@@ -342,12 +351,14 @@ Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns a
 ### Do:
 - **Do** take every colour, size, radius and spacing value from `tokens.css` custom properties. Never hard-code them.
 - **Do** keep clay for fills, the current step, selected verdicts and focus rings, and put `on-clay` (#141413) text on it.
+- **Do** mark the neuron-system box in the rail with a light clay tint only, and keep the theme's normal text colour on it.
 - **Do** use the `-ink` channel variants on page surfaces (map, plot, chips) and the raw LUT colours only on black.
 - **Do** keep the ivory → charcoal → black order: viewer field black, surround charcoal, page by theme.
 - **Do** set every number in a table, plot, overlay or probe ID in IBM Plex Mono with tabular figures.
 - **Do** check every screen at 1280×720 and 1920×1080 in both themes, at WCAG AA (text 4.5:1, graphics 3:1).
 - **Do** follow the system theme by default, setting `data-theme` on `<html>`, and keep a manual toggle in localStorage (wrapped in try/catch).
-- **Do** use smooth, zero-velocity-start eases (smootherstep) and one main move at a time. Reduced motion shows the end frames.
+- **Do** use smooth, zero-velocity-start eases (smootherstep) for transitions, and one main move at a time. Reduced motion shows the end frames.
+- **Do** draw the flies on twos (12 drawings a second) with the body moving every frame. Walks have quick starts and stops, and feet never slide.
 - **Do** label every image, plot and animation as simulated or schematic.
 
 ### Don't:

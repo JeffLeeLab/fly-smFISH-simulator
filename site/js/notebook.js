@@ -2,7 +2,7 @@
 // In step 6 it docks into the side pane as the Compare tab (renderCompare), so there is one
 // notebook, not two. Everything is stored per browser; nothing is uploaded.
 
-import { CASES, MODES, MODE_GROUPS, VERDICTS, groupOf } from "./content.js";
+import { CASES, STEPS, MODES, MODE_GROUPS, VERDICTS, groupOf } from "./content.js";
 import { caseState, storage, onChange } from "./store.js";
 import { bind } from "./forms.js";
 import { href } from "./router.js";
@@ -101,11 +101,11 @@ function drawerBody(caseId) {
     </header>
     ${storageWarning()}
     <div class="nb-body">
-      ${section(3, "TDP-43 clue", pair2(area("clue.observation", "Observation", "What do you see?", 4), area("clue.interpretation", "Interpretation", "What could explain it?", 4)), seen(3))}
-      ${section(4, "Hypotheses", shortlist, seen(4))}
-      ${section(5, "Target + probe design", probe, seen(5))}
-      ${section(6, "Reveal + compare", renderCompare(caseId), seen(6))}
-      ${section(7, "Revise", revise, seen(7))}
+      ${section(3, STEPS[3].title, pair2(area("clue.observation", "Observation", "What do you see?", 4), area("clue.interpretation", "Interpretation", "What could explain it?", 4)), seen(3))}
+      ${section(4, STEPS[4].title, shortlist, seen(4))}
+      ${section(5, STEPS[5].title, probe, seen(5))}
+      ${section(6, STEPS[6].title, renderCompare(caseId), seen(6))}
+      ${section(7, STEPS[7].title, revise, seen(7))}
     </div>`;
 }
 

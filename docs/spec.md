@@ -146,11 +146,11 @@ Shared across cases:
 
 1. **Phenotype (engagement):** hero (knock-in sequence, two identical humanised flies), then a shared three-assay landing; each group picks one of three systems → individual pages (see *Openings*). Animate the fly *and* its behavioural assay (NMJ: a climbing defect, with shaking shown as part of the climbing animation; PDF neurons: activity/sleep trace; mushroom body: learning/memory test); these become the Part 2 organismal readouts.
 2. **Anatomy:** semi-transparent fruit fly with appropriate neurons highlighted; a scroll-driven descent that ends in the viewer (see *Openings*) (same blue colour scheme as neuronal membrane in the microscopy images). For the NMJ, zoom into the leg femur (synapses) and the VNC (motor neuron cell body).
-3. **First clue - TDP-43 pathology:** the descent lands in the viewer on TDP-43 IF in control vs mutant. Qualitative, by eye only. Record observation separately from interpretation (early practice).
+3. **TDP-43 dysfunction (the first clue):** the descent lands in the viewer on TDP-43 IF in control vs mutant. Qualitative, by eye only. Record observation separately from interpretation (early practice).
 4. **Hypotheses:** shortlist PTR modes consistent with the clue (need not be competing). The target gene is not yet known, so gene information cannot steer the hypotheses.
-5. **Target + probe design:** introduction of the TDP-43 target (function, orthologues, FlyBase link-out) above its transcript map (introns, annotated alternative exons, TSS, 3'PAS), with the probe track shown on the same map. Select two probe regions; optionally note, per shortlisted mode, what it would look like with these probes. Results open as soon as two regions are chosen. Groups can start a new pair at any time, as often as they like: exploration is never penalised (see *Target + probe design (step 5)*).
-6. **Reveal + compare** (one screen): control and mutant smFISH, 3 animals, count plot and table; TDP-43 channel remains toggle-able. Alongside, record observation vs interpretation and classify each shortlisted mode as *ruled out / supported / unresolved* (see *Reveal + compare (step 6)*).
-7. **Revise the explanation** → becomes Part 2 *Claim* and *Uncertainty*. No follow-up experiments on the website: students design them in Part 2 (instructor notes: *Decisive tests*; screen: *Revise (step 7)*).
+5. **Target & probe design:** introduction of the TDP-43 target (function, orthologues, FlyBase link-out) above its transcript map (introns, annotated alternative exons, TSS, 3'PAS), with the probe track shown on the same map. Select two probe regions; optionally note, per shortlisted mode, what it would look like with these probes. Results open as soon as two regions are chosen. Groups can start a new pair at any time, as often as they like: exploration is never penalised (see *Target & probe design (step 5)*).
+6. **Microscopy reveal** (one screen): control and mutant smFISH, 3 animals, count plot and table; TDP-43 channel remains toggle-able. Alongside, record observation vs interpretation and classify each shortlisted mode as *ruled out / supported / unresolved* (see *Microscopy reveal (step 6)*).
+7. **Interpret & revise** the explanation → becomes Part 2 *Claim* and *Uncertainty*. No follow-up experiments on the website: students design them in Part 2 (instructor notes: *Decisive tests*; screen: *Interpret & revise (step 7)*).
 
 ### Implementation spec
 
@@ -167,10 +167,10 @@ Paths in this document are relative to `docs/` unless stated otherwise.
 | `docs/references/` | `reference-pdf-neurons.pdf` (+ `.docx`), `dam-motion/` (activity-monitor schematic), `gene-models/` (FlyBase gene-model images) |
 | `docs/transcript_models_R6.json` | Transcript models, CDS and probe menus; source for the generator and the map. Probe IDs follow the menus in this spec |
 | `pyproject.toml`, `uv.lock`, `.python-version` (root) | Python environment for the generator and build scripts, managed with uv |
-| `site/` (root) | The static site served by GitHub Pages: `index.html`, `css/` (`tokens.css` copied in from `docs/style-directions/`), `js/`, `fonts/`, `vendor/` (pinned PixiJS 8.22.0, `pixi-viewport` 6.0.3, GSAP 3.15.0) and `data/<case>/` (public data only: transcript maps without the answer key, geometry, pre-computed tables, molecule positions and masks, and `images/` with the rendered membrane, DAPI and TDP-43 nuclear images), `data/flies/` (fly drawing sprites) and `textures/` (paper and wash images for the story layer). Story-layer scripts: `js/fly.js` (fly sprites and the ink boil), `js/gsap.js` (loads the pinned GSAP), `js/monitor.js` (the activity monitor's tubes, fly motion and seeded activity model), `js/stations.js` (the three landing stations) and `js/handoff.js` (shared elements across a route change) |
+| `site/` (root) | The static site served by GitHub Pages: `index.html`, `css/` (`tokens.css` copied in from `docs/style-directions/`), `js/`, `fonts/`, `vendor/` (pinned PixiJS 8.22.0, `pixi-viewport` 6.0.3, GSAP 3.15.0) and `data/<case>/` (public data only: transcript maps without the answer key, geometry, pre-computed tables, molecule positions and masks, and `images/` with the rendered membrane, DAPI and TDP-43 nuclear images), `data/flies/` (fly drawing sprites) and `textures/` (paper and wash images for the story layer). Story-layer scripts: `js/fly.js` (fly sprites and the ink boil), `js/gsap.js` (loads the pinned GSAP), `js/monitor.js` (the activity monitor's tubes, fly motion and seeded activity model), `js/stations.js` (the three landing stations), `js/brain.js` (the frontal brain schematic for the descent) and `js/handoff.js` (shared elements across a route change) |
 | `generator/` (root) | Python scripts, run with uv as `uv run python -m generator.<script>`: `public_models`, `geometry_pdf`, `truth_table`, `build` (generator and tables), `validate` (the gate) and `flies` (fly drawings from flybody, written to `site/data/flies/`) |
 | `data/<case>/` (root) | Never served: the truth table (`truth-table.toml`, the rules the instructor signs off; `truth-table.json` and `.md`, expanded from it) and full molecule records (`generated/`, rebuilt by the generator and not committed) |
-| `tools/` (root) | `serve.py` (local server without caching), `contact-sheet.sh` and `frozen-time.sh` (animation review loop) |
+| `tools/` (root) | `serve.py` (local server without caching), `contact-sheet.sh` and `frozen-time.sh` (animation review loop) and `review-shots.sh` (screenshots of every step in both themes and at both sizes) |
 | `.github/workflows/pages.yml` | Deploys `site/` to GitHub Pages after checking that the generated data is up to date and the validation gate passes |
 
 Mockups and screenshots in `docs/` are design records and are not served.
@@ -193,9 +193,9 @@ Build one case completely before the others, so every shared part (data pipeline
 - *Order of work:*
 	1. **Scaffold:** repository (the uv environment is already set up), `tokens.css`, self-hosted fonts and libraries, hash routes, progress rail, notebook shell, light/dark theme, GitHub Pages and offline test.
 	2. **Data:** PDF geometry (control and mutant templates), the PDF truth table as a machine-readable file (signed off by the instructor), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the PDF truth table.
-	3. **Screens 3–7:** viewer (split view, flicker, fly-to, LUTs incl. TDP-43 dimming, overlay, PNG copy), TDP-43 clue, hypotheses cards, target card and map with probe track, reveal + compare with plot and table, revise with summary PNG.
+	3. **Screens 3–7:** viewer (split view, flicker, fly-to, LUTs incl. TDP-43 dimming, overlay, PNG copy), TDP-43 dysfunction, hypotheses cards, target card and map with probe track, microscopy reveal with plot and table, interpret & revise with summary PNG.
 	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders); the PDF descent ending in the viewer.
-	5. **Review loop:** Playwright recordings, contact sheets and dead-stretch checks for the animations; screenshots of every step at 1280×720 and 1920×1080 in both themes.
+	5. **Review loop:** Playwright recordings, contact sheets and dead-stretch checks for the animations; screenshots of every step at 1280×720 and 1920×1080 in both themes (`tools/review-shots.sh`). Each run is recorded in [review.md](review.md).
 - *Exit: manual assessment* (instructor, ideally with one or two colleagues or students who haven't seen the spec):
 	- **Science:** the PDF truth table is reproduced, e.g. F6 + F5 shows flat transcription sites and fewer cytoplasmic spots; each decoy gives its designed result; no step gives the answer away.
 	- **Usability:** a FISH-naive first-time user gets from the hero to the summary PNG without help; the decoder legend and "How two-colour smFISH works" are enough to read the images.
@@ -309,7 +309,7 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 
 **All systems**
 - **Flies** (hero, assays and the whole-fly overview in step 2): drawn from the [flybody](https://github.com/TuragaLab/flybody) body model ([Vaxenburg et al. 2025, *Nature*](https://doi.org/10.1038/s41586-025-09029-4); code and assets Apache-2.0, credited on the site). The flies are there to show the phenotypes, not to teach anatomy, so the mesh is a starting point rather than a target: they are simplified until they sit in the site's illustration style instead of looking like a 3D render.
-	- A Python script (run with uv) projects the per-segment OBJ meshes to fixed 2D views and simplifies each part to a few smooth SVG paths: head, thorax, abdomen, wings and halteres, and each leg as coxa, femur, tibia and tarsus, with joint pivots read from `fruitfly.xml` so the legs can be posed for walking, grooming and climbing.
+	- A Python script (run with uv) projects the per-segment OBJ meshes to fixed 2D views and simplifies each part to a few smooth SVG paths: head, thorax, abdomen, wings and halteres, and each leg as coxa, femur, tibia and tarsus, with joint pivots read from `fruitfly.xml` so the legs can be posed for walking, grooming and climbing, and the wings for flight (three drawings of the dorsal fly: wings half open, swept forward and swept back; membrane only, without veins).
 	- Keep the body plan and proportions (head, thorax, abdomen; six legs; two wings). Drop bristles, ocelli, claws, mouthparts and eye facets.
 	- Draw them in the site's inks and washes from `tokens.css`, with the same boil filter as the other illustrations (see *Art direction*).
 	- The raw meshes (up to about 30 MB each) are downloaded by the script and not committed; only the SVG output is.
@@ -424,20 +424,25 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 | Stage | Steps | Gate to next stage |
 | --- | --- | --- |
-| Meet | 1 Phenotype · 2 Anatomy | none |
-| Clue | 3 TDP-43 clue · 4 Hypotheses | at least 2 modes shortlisted |
-| Design | 5 Target + probe design | two probe regions chosen (predictions optional) |
-| Observe | 6 Reveal + compare | every shortlisted mode classified ("unresolved" counts) |
-| Conclude | 7 Revise → Part 2 | none |
+| Introduction | 1 Phenotype · 2 Anatomy | none |
+| RBP clue | 3 TDP-43 dysfunction · 4 Hypotheses | at least 2 modes shortlisted |
+| Experimental design | 5 Target & probe design | two probe regions chosen (predictions optional) |
+| Observe | 6 Microscopy reveal | every shortlisted mode classified ("unresolved" counts) |
+| Conclude | 7 Interpret & revise → Part 2 | none |
 
-- Vertical rail on the left in story steps; collapses to a thin strip in steps 3–6 to free room for the viewer and map.
+- Vertical rail on the left, the same full rail (about 200 px wide) in every layout. The workbench steps 3–6 still fit 1280×720 without page scroll.
+- Each page's label names its stage and step ("RBP clue · Step 3"); the opening's reads "Introduction · Start".
+- **Neuron-system box**, under the brand, in a light clay tint (clay at 13% over the field colour, a clay-tinted hairline border, the pane radius):
+	- At the opening, before a system is chosen, it reads "Choose a neuron system / to continue ↓". It marks where the group is, so no step is highlighted, and every step is greyed and not a link until a system is chosen. Clicking it scrolls to the opening's "Choose your neuron system" heading and moves focus there (smooth, unless reduced motion is set).
+	- With a system chosen, it reads "Neuron system / PDF neurons / Change system" and links to the opening, where a group can start again and choose a system. Notes are kept.
+- The current step has a 2 px clay left border.
 - **Own pace:** groups are never rushed; no instructor unlocks, no countdown.
 - Back is always allowed; locked steps state the reason ("Choose two probe regions to see the results"), not just a padlock.
 - No limits on attempts: groups can return to step 5 and start a new pair as often as they like.
 - Each case and step has a hash URL (e.g. `#/nmj/step-5`) so a group can recover after a refresh.
 
 **Lab notebook**
-- A persistent drawer on the right, collapsed to a tab in story steps, filled step by step. In step 6 it docks into the right column as the *Compare* tab, so there is one notebook, not two.
+- A persistent drawer on the right, collapsed to a tab in story steps, filled step by step, with one section per step titled with the step's name. In step 6 it docks into the right column as the *Compare* tab, so there is one notebook, not two.
 
 | Step | Entry |
 | --- | --- |
@@ -447,15 +452,15 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 | 6 | *Observation* and *Interpretation* fields; one card per shortlisted mode: ruled out / supported / unresolved, with an optional evidence line (evidence images are the students' own screenshots) |
 | 7 | Claim + Uncertainty, carried into Part 2 via the summary PNG |
 
-- **Export: PNG only.** "Copy summary as PNG" in step 7 (case, probe pair, mode verdicts, Claim, Uncertainty; see *Revise (step 7)*) for the Part 2 slide, alongside viewer and plot PNGs and the students' own screenshots. No files to save or import.
+- **Export: PNG only.** "Copy summary as PNG" in step 7 (case, probe pair, mode verdicts, Claim, Uncertainty; see *Interpret & revise (step 7)*) for the Part 2 slide, alongside viewer and plot PNGs and the students' own screenshots. No files to save or import.
 
 **Screen layouts**
 - **Steps 1–2 (story):** single column about 70 characters wide, with a full-width stage for animations and the fly.
-- **Step 3 (clue):** the viewer layout below, with only membrane + DAPI and TDP-43 channels; no Plot | Table tabs (qualitative).
-- **Step 4 (hypotheses):** mode cards in three groups (see *Steps 3–4: clue and hypotheses*).
-- **Step 5 (target + probe design):** compact target card; one line of instructions with the "How two-colour smFISH works" link; a row with the two channel slots (coloured by the current LUTs), swap and "Show results"; then the transcript map with its probe track at full width, all within 1366×768. Below the fold: the accessible button list and the optional prediction rows.
-- **Step 6 (reveal + compare):** viewer about two-thirds of the width; right column with channel toggles, decoder legend and animal selector (1–3), switching to the mode cards via a *Viewer | Compare* tab; **Plot | Table** tabs under the viewer.
-- **Step 7 (revise):** single column: experiment summary, Claim, Uncertainty, Part 2 preview, "Copy summary as PNG" (see *Revise (step 7)*).
+- **Step 3 (TDP-43 dysfunction):** the viewer layout below, with only membrane + DAPI and TDP-43 channels; no Plot | Table tabs (qualitative).
+- **Step 4 (hypotheses):** mode cards in three groups (see *Steps 3–4: TDP-43 dysfunction and hypotheses*).
+- **Step 5 (target & probe design):** compact target card; one line of instructions with the "How two-colour smFISH works" link; a row with the two channel slots (coloured by the current LUTs), swap and "Show results"; then the transcript map with its probe track at full width, all within 1366×768. Below the fold: the accessible button list and the optional prediction rows.
+- **Step 6 (microscopy reveal):** viewer about two-thirds of the width; right column with channel toggles, decoder legend and animal selector (1–3), switching to the mode cards via a *Viewer | Compare* tab; **Plot | Table** tabs under the viewer.
+- **Step 7 (interpret & revise):** single column: experiment summary, Claim, Uncertainty, Part 2 preview, "Copy summary as PNG" (see *Interpret & revise (step 7)*).
 - **Genotype comparison:** synced split view (control | mutant, linked pan and zoom) by default, plus a flicker key in the viewer toolbar to switch genotype in place.
 
 **Count plot**
@@ -485,7 +490,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 #### Openings (steps 1–2)
 
-**Budget:** under 40 s of directed animation per case (set at the storyboard review; PDF: 38.9 s, see [storyboards/pdf-openings.md](storyboards/pdf-openings.md)), skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
+**Budget:** under 40 s of directed animation per case (set at the storyboard review; PDF: 38.9 s, see [storyboards/pdf-openings.md](storyboards/pdf-openings.md); the hero-to-legend flight is not counted, whether the user's scroll drives it or, in a window too tall to scroll, it runs by itself), skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
 
 | Segment | Time |
 | --- | --- |
@@ -502,7 +507,10 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **No visible defect:** matches the mild real phenotype (Chang & Morton 2017) and doesn't favour any one case.
 - **Knock-in sequence, with the flies present throughout:** the flies keep grooming and walking while a thin leader line draws from each fly to a small locus strip beside it; a human TDP-43 cassette flies in, parts into one copy per fly, and each copy knocks the fly TBPH cassette out of its chromosome and takes its place; then one point change is marked on the mutant's strip only (residue unspecified, marked by ink weight and a label rather than a data colour). The chromosome lines are labelled "genomic DNA". The knocked-in loci stay on screen with the flies, which look the same; the mutant only stands at a slightly different angle, so the pair doesn't read as one drawing copied. Caption: "They look the same."
 - Storyboard: 0 s finished frame (flies + title) → 0.8–1.6 s leader lines draw to each fly's locus → 1.6–6.6 s knock-in: a human *TDP-43* cassette flies in, parts into one copy per fly and knocks the fly *TBPH* cassette out of the chromosome → 6.6–8.2 s mutation mark + genotype labels settle → 8.2–9.6 s the caption lands; the loci stay.
-- **Scroll into the landing:** the two hero flies shrink into a WT | mutant legend at the top of the assay scene (shared-element transition), and the caption completes: "Their behaviour isn't."
+- **Scroll into the landing:** the two hero flies fly and shrink into a WT | mutant legend at the top of the assay scene (shared-element transition), and the caption completes: "Their behaviour isn't."
+	- Their wings are half open as they take off and land (the first and last 5% of the transition) and beat in between: two drawings, wings swept forward and wings swept back, changing 12 times a second in real time, the two flies out of step. A fly held mid-way by a paused scroll hovers, wings still beating. This is a stylised wingbeat; a real fly beats about 200 times a second.
+	- The transition runs from the first scroll until the legend is 45% of the way up the screen, or to the end of the page if that comes first.
+	- In a window too tall for the page to scroll, the flies set off on their own 0.8 s after the hero sequence ends and fly for 2.2 s. Replay flies them back up (1.2 s) before the hero sequence replays. This flight stands in for the scroll transition, which is paced by the user and not counted in the budget either, so it isn't counted; it blocks nothing, and the stations stay usable.
 
 **Three-assay landing (shared by all groups)**
 - Three assay stations, each with a WT lane (left) and mutant lane (right), running a calm ambient loop in which the behavioural difference is visible:
@@ -514,8 +522,9 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 **Descent into anatomy (step 2)**
 - The camera pushes in on one fly from the chosen assay; its body turns semi-transparent and the neurons appear in membrane blue, the only saturated colour on screen. Blue means "the labelled neuron" from here to the viewer.
-- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; PDF – head → s-LNvs → dorsal terminals; mushroom body – head → cell-body cluster → calyx, peduncle and lobes.
-- The descent ends in the viewer on the TDP-43 clue (step 3). The background deepens ivory → charcoal → black during the push-in, and the paper grain, washes and boiling ink fade out with it, so students move from the drawn story into the clean microscope (in both themes).
+- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; PDF – head → brain → s-LNvs → dorsal terminals; mushroom body – head → cell-body cluster → calyx, peduncle and lobes.
+- PDF: once the brain has drawn on, its two main regions are named with ink labels and arrows ("Central brain" above the brain, "Optic lobe" below the lobe that has no neurons, so its arrow stays clear of them). They clear as the camera pushes in towards the neurons.
+- The descent ends in the viewer on the TDP-43 IF clue (step 3, TDP-43 dysfunction). The background deepens ivory → charcoal → black during the push-in, and the paper grain, washes and boiling ink fade out with it, so students move from the drawn story into the clean microscope (in both themes).
 - The SVG neuron outline at the end of the descent matches the PixiJS viewer's opening frame (same outline, position and scale), so the hand-over is a matched swap, not a cross-fade.
 - Compartment labels use the same names and order as the viewer's fly-to buttons and the plot's x-axis.
 - **Three-layer badges** introduced here and reused wherever a claim appears: *Established*, *Simplified* ("axon shortened", "cell bodies enlarged"), *Invented for this case* (e.g. the sleep phenotype).
@@ -531,9 +540,9 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Tools:** GSAP ScrollTrigger (scroll), Flip (shared-element transitions), MotionPath (the knock-in cassettes), MorphSVG (the fly's turn in the descent), DrawSVG (leader lines, axons).
 - **Storyboard first:** each segment is written as shots with timed "reads" (what the viewer must understand, in order, one at a time) before any animation code, following the storyboard format in [ClaudeAnimationBase's `ANIMATION_GUIDE.md`](https://github.com/JohnHeibel/ClaudeAnimationBase) (process reference only).
 
-#### Steps 3–4: clue and hypotheses
+#### Steps 3–4: TDP-43 dysfunction and hypotheses
 
-**TDP-43 clue (step 3)**
+**TDP-43 dysfunction (step 3)**
 - **Viewer contents:** membrane + DAPI and TDP-43 IF only; smFISH channels don't exist yet. Control | mutant split view with the flicker key.
 - **Qualitative only:** observation by eye; no TDP-43 plot, table or measurements.
 - **Viewer tour** runs here, the first time the viewer opens (zoom and fly-to, channels, flicker); replayable.
@@ -545,13 +554,13 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 	- *Nucleus:* splicing / alternative exon / intron retention; nuclear export / retention.
 	- *Cytoplasm:* RNA stability; localisation / transport; translation; granule incorporation.
 	- *Both:* isoform-specific regulation; cell-type-specific regulation.
-- **Selecting:** at least 2 modes, no maximum; each selected card has an optional "because…" line.
+- **Selecting:** at least 2 modes, no maximum; each selected card has an optional "because…" line. "Next: target & probe design" stays disabled until two modes are shortlisted.
 - **Before the gene:** hypotheses come from the clue alone. Going back to edit the shortlist after seeing the target is allowed but not prompted.
 - **Carry-forward:** the shortlist becomes the step 5 prediction rows and the step 6 mode cards, with identical names and order everywhere.
 
-#### Steps 5–7: target and probe design, results, revise
+#### Steps 5–7: target & probe design, microscopy reveal, interpret & revise
 
-**Target + probe design (step 5)** – mockup: `mockups/step5-target-probe-map.html` (open in a browser; mockup controls switch gene, UTR colour and theme)
+**Target & probe design (step 5)** – mockup: `mockups/step5-target-probe-map.html` (open in a browser; mockup controls switch gene, UTR colour and theme)
 - **Target card** (same template per case), **compact**: a header strip above the map, so the map and probe track fit on a laptop screen without scrolling. Left: gene name ↔ human orthologue (*stai* ↔ STMN2, *futsch* ↔ MAP1B, *unc-13* ↔ UNC13A). Right: 2 lines of function, including where in this neuron the protein works (compartment names as in the anatomy step), then one line of small three-layer badges (*Established*: function, orthology; *Invented for this case*: target–neuron–behaviour link) and links (FlyBase, orthologue, a neutral "read more" with no emphasis on the STMN2/UNC13A cryptic-exon literature). Draft text: see *Student-facing text*.
 - **One page, one map:** the target card sits above the transcript map, and the probe track is shown on the map from the start (the clue and hypotheses already came first, so there is no reason to hide it).
 - **Orientation:** every gene is drawn 5′→3′, left to right. Minus-strand genes (*unc-13*) carry the note "Minus strand, shown 5′→3′. FlyBase displays this gene reversed."
@@ -569,14 +578,14 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Results:** a "Show results" button appears as soon as two regions are chosen. No lock, no confirmation and no limit on attempts.
 - **Starting again:** "Choose a new pair" returns to a fresh map: no record of earlier pairs, nothing greyed out, predictions cleared (they belong to a pair). Observation, interpretation, mode verdicts and the claim are kept, as they are about the biology and often build up across pairs (to be reassessed at the pilot build). Earlier attempts survive only in the students' own screenshots (the viewer overlay names the probe pair).
 
-**Reveal + compare (step 6)**
+**Microscopy reveal (step 6)**
 - **Opening view:** "Show results" opens the whole neuron with all four channels on, control | mutant split view, animal 1; Plot | Table tabs under the viewer. "Choose a new pair" returns to step 5 with a fresh map.
 - **Decoder legend:** region level only (see *Viewer features*).
 - **Compare panel** (a *Viewer | Compare* tab in the right column, so the viewer and plot stay in view): *Observation* and *Interpretation* fields, then one card per shortlisted mode in the step 4 groups, each with a verdict (ruled out / supported / unresolved), an optional evidence line and the group's step 5 prediction for that mode, if they wrote one.
 - **Shortlist only:** modes can't be added here; students add any new ones in their PowerPoint.
-- **Gate to step 7:** every shortlisted mode has a verdict; "unresolved" is a valid verdict.
+- **Gate to step 7:** every shortlisted mode has a verdict; "unresolved" is a valid verdict. "Next: interpret & revise" stays disabled until then.
 
-**Revise (step 7)**
+**Interpret & revise (step 7)**
 - **Layout:** back to the calm single-column story layout.
 - **Experiment summary (read-only):** case, gene, the current probe pair with its channel colours, and the mode verdicts grouped as supported / ruled out / unresolved.
 - **Claim:** "Our leading explanation", 1–2 sentences of free text; the supported modes are listed above as prompts, not pre-filled.
@@ -594,6 +603,7 @@ Adapted from [motion-video-kit](https://github.com/echris6/motion-video-kit) (MI
 - **One persistent actor:** the chosen fly zooms into the anatomy view, and the highlighted neuron becomes the outline in the PixiJS viewer. No run of unrelated reveals.
 - **Speed change and hierarchy:** motion slows into a readable landing and leaves quickly, with no constant-rate drift. One main move at a time, with supporting staggers and fine detail (legs, grooming); 1–2 reading targets at once.
 - **Grounded in real flies:** keyframes come from trajectories traced from real assay videos (climbing in walk–pause bouts, slips, uneven speeds). Avoid generic motion: the same fade-up stagger everywhere, back/elastic eases, identical durations, flies moving in sync.
+	- Until footage is traced, a seeded walk–pause model stands in (the landing's mini monitor and step 1's real-time walking; the time-lapse days are separate). A walk is not a glide: it is one to three bouts, each at its own pace, and between bouts the fly either hesitates briefly with its legs still or only slows. It sets off and stops within a step or two, and the body surges a little with each tripod step. The legs follow the distance walked, so the feet never slide. Progress is computed up front, so frozen frames and beam crossings stay functions of time.
 - **Holds allowed:** unlike adverts, the phenotype needs time to be watched. Keep holds alive with small idle motion (grooming) rather than freezing.
 - **Clean transitions:** frame 0 is a finished image. The old label leaves before the new one enters, so text never collides mid-transition. Eases start at zero velocity (smootherstep) so parts don't pop. Settled text meets WCAG AA contrast. `gsap.matchMedia()` gives still end-point frames when reduced motion is set.
 - **Labelled:** animations are labelled "schematic / simulated", like the images.

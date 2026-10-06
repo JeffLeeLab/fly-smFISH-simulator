@@ -36,7 +36,7 @@ function layoutFor(r) {
 
 function drawRail() {
   const s = route.caseId ? caseState(route.caseId) : caseState("none");
-  renderRail(rail, route, s, layoutFor(route));
+  renderRail(rail, route, s);
 }
 
 function pick(r) {
@@ -96,7 +96,7 @@ async function show(r) {
   unmount = () => {};
   view.replaceChildren();
   window.scrollTo(0, 0);
-  const ctx = { ...r, case: c, stage: r.caseId ? stageOf(r.step) : "Meet", reason: choice.reason };
+  const ctx = { ...r, case: c, stage: r.caseId ? stageOf(r.step) : "Introduction", reason: choice.reason };
   let cleanup;
   try {
     cleanup = (await mod.mount(view, ctx)) || (() => {});
