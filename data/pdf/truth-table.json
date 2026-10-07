@@ -1,9 +1,9 @@
 {
  "case": "pdf",
  "gene": "futsch",
- "status": "draft",
+ "status": "signed-off",
  "signed_off_by": "Jeff Lee (instructor)",
- "signed_off_on": "2026-10-05",
+ "signed_off_on": "2026-10-07",
  "source": "data/pdf/truth-table.toml",
  "verdicts": {
   "transport": "ruled-out",

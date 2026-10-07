@@ -13,13 +13,13 @@
 # Amended 2026-10-07 at the instructor's request (TDP-43 granules and aggregates): futsch mRNA rides
 # on TDP-43 transport granules in the axon and terminals, at the same share in both genotypes, and
 # never in the mutant's aggregates; overlap is measured per compartment against granules only.
-# Verdicts unchanged. Back to draft until the instructor signs off the amended table.
+# Verdicts unchanged. The amended table was signed off by the instructor on 2026-10-07.
 
 case = "pdf"
 gene = "futsch"
-status = "draft"
+status = "signed-off"
 signed_off_by = "Jeff Lee (instructor)"
-signed_off_on = "2026-10-05"
+signed_off_on = "2026-10-07"
 
 # The coverage row for this case (spec, *Coverage*).
 [verdicts]

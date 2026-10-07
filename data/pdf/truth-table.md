@@ -1,4 +1,4 @@
-# Truth table: PDF – *futsch* (draft)
+# Truth table: PDF – *futsch* (signed-off)
 
 Generated from `data/pdf/truth-table.toml` and the probe menu by `uv run python -m generator.truth_table pdf`. Every entry compares the hTDP-43 mutant with hTDP-43 WT (control). Sign off by editing the `.toml`, not this file.
 
