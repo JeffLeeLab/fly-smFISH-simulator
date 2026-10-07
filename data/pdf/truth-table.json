@@ -1,7 +1,7 @@
 {
  "case": "pdf",
  "gene": "futsch",
- "status": "signed-off",
+ "status": "draft",
  "signed_off_by": "Jeff Lee (instructor)",
  "signed_off_on": "2026-10-05",
  "source": "data/pdf/truth-table.toml",
@@ -31,6 +31,7 @@
   ],
   "nominal": 0.2,
   "chance": 0.04,
+  "above": 0.1,
   "ts_number": 2,
   "ts_intensity": 0.15
  },
@@ -100,6 +101,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -248,6 +261,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -331,6 +356,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -488,6 +525,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -634,6 +683,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -736,6 +797,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -929,6 +1002,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -992,6 +1077,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -1158,6 +1255,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -1224,6 +1333,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -1287,6 +1408,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -1402,6 +1535,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -1602,6 +1747,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -1670,6 +1827,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -1733,6 +1902,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -1849,6 +2030,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -2039,6 +2232,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -2102,6 +2307,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -2302,6 +2519,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -2487,6 +2716,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -2676,6 +2917,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -3039,6 +3292,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -3389,6 +3654,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -3531,6 +3808,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -3594,6 +3883,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -3752,6 +4053,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -3950,6 +4263,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4016,6 +4341,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4079,6 +4416,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -4196,6 +4545,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -4398,6 +4759,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4466,6 +4839,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4529,6 +4914,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -4647,6 +5044,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -4842,6 +5251,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4908,6 +5329,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -4971,6 +5404,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -5093,6 +5538,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -5159,6 +5616,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -5222,6 +5691,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -5337,6 +5818,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -5535,6 +6028,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -5601,6 +6106,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -5664,6 +6181,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -5782,6 +6311,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -5986,6 +6527,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -6054,6 +6607,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -6117,6 +6682,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -6236,6 +6813,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -6432,6 +7021,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -6498,6 +7099,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -6561,6 +7174,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -6722,6 +7347,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -7085,6 +7722,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -7276,6 +7925,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -7475,6 +8136,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -7840,6 +8513,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -7993,6 +8678,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8059,6 +8756,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8122,6 +8831,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -8242,6 +8963,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -8444,6 +9177,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8510,6 +9255,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8573,6 +9330,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -8704,6 +9473,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8770,6 +9551,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -8833,6 +9626,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -8957,6 +9762,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -9159,6 +9976,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -9356,6 +10185,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -9422,6 +10263,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -9485,6 +10338,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -9645,6 +10510,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -10004,6 +10881,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -10193,6 +11082,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -10564,6 +11465,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -10753,6 +11666,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -10896,6 +11821,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -10959,6 +11896,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch2",
@@ -11110,6 +12059,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -11301,6 +12262,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -11367,6 +12340,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -11430,6 +12415,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -11552,6 +12549,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -11618,6 +12627,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -11681,6 +12702,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -11796,6 +12829,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",
@@ -11996,6 +13041,18 @@
     },
     {
      "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -12064,6 +13121,18 @@
     },
     {
      "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch2",
      "measure": "ts_number",
      "rule": "same"
     },
@@ -12127,6 +13196,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "both",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "both",
@@ -12243,6 +13324,18 @@
      "measure": "overlap",
      "compartment": "cellbody",
      "rule": "chance"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "axon",
+     "rule": "above_same"
+    },
+    {
+     "channel": "ch1",
+     "measure": "overlap",
+     "compartment": "terminals",
+     "rule": "above_same"
     },
     {
      "channel": "ch1",

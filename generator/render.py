@@ -9,7 +9,11 @@ Realism comes from modelling the label and the optics, not from detail (docs/spe
   membranes and a dark nucleus.
 - DAPI: mottled chromatin with bright chromocentres, a dimmer nucleolus and a brighter rim.
 - TDP-43: finely speckled nucleoplasm that leaves the nucleolus out, scaled by each nucleus's
-  intensity (lower in the mutant). Its puncta are drawn live by the viewer from the data.
+  level (lower in the mutant), and a much dimmer diffuse signal through the cell-body cytoplasm
+  and the neurites (also lower in the mutant), on the same grey-per-level scale as the nucleus.
+  The mutant's aggregates are drawn in too: irregular bodies with bright and dark patches, at the
+  brightness the generator gave each, with a highlight roll-off so their texture survives.
+  The small, round transport granules are drawn live by the viewer from the data.
 - Optics: point-spread blur, an out-of-focus haze from the maximum-intensity projection, uneven
   labelling, and shot noise that scales with the signal (zero where there is no signal, so the
   image edges never show). Spots are drawn live by the viewer, so they stay sharp at any zoom.
@@ -186,11 +190,42 @@ def dapi(cv, skel, rng):
     return optics(out, rng, photons=55, haze=0.12) / 0.95
 
 
-def tdp43(cv, skel, nuclear, rng):
+def cytoplasm_texture(cv, c, rng):
+    """Diffuse cytoplasmic TDP-43: finely speckled, on the nucleus's scale (same mean per level)."""
+    cyto = c["soma"].difference(c["nucleus"])
+    m = mask(cv, c["soma"]) * (1 - mask(cv, c["nucleus"], 0.15))
+    n = int(cyto.area * 5)
+    speck = splat(cv, points_in(cyto, n, rng), rng.uniform(0.1, 0.6, n).astype(np.float32), 0.18)
+    speck /= np.percentile(speck[m > 0.5], 95) + 1e-9
+    return (0.62 + 0.45 * np.clip(speck, 0, 1.5)) * m
+
+
+def tdp43(cv, skel, levels, neurite_level, rng):
     out = cv.zeros()
-    for c, v in zip(skel["cells"], nuclear):
-        out += nucleus_texture(cv, c, rng, "tdp") * v
-    return optics(out, rng, photons=40, haze=0.12) / 1.3
+    for c, v, cy in zip(skel["cells"], levels["nuclear"], levels["cytoplasmic"]):
+        out += nucleus_texture(cv, c, rng, "tdp") * v + cytoplasm_texture(cv, c, rng) * cy
+    # neurites: a filled tube per fibre (max-composited, like the membrane), dimmer than the cell body
+    layer, fill = cv.zeros(), cv.zeros()
+    for f in skel["fibres"]:
+        layer[:] = 0
+        stamp(layer, cv, {**f, "b": 1.0, "v": np.ones_like(f["v"])}, {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}[f["kind"]])
+        np.maximum(fill, layer, out=fill)
+    level = neurite_level * float(np.mean(levels["cytoplasmic"]))
+    fill *= level * 0.8 * uneven(cv, rng, 0.7, 1.1, scale_um=0.4)
+    somata = sum(mask(cv, c["soma"]) for c in skel["cells"])
+    out += fill * np.clip(1 - somata, 0, 1)
+    if levels["aggregates"]:
+        # shared fine and coarse patchiness; each aggregate is scaled to its mean grey (×1.3: optics divides it out)
+        fine = blur(rng.standard_normal((cv.h, cv.w)).astype(np.float32), 0.15 * RES)
+        coarse = blur(rng.standard_normal((cv.h, cv.w)).astype(np.float32), 0.45 * RES)
+        tex = np.clip(1 + 0.42 * fine / fine.std() + 0.45 * coarse / coarse.std(), 0.1, None)
+        for a in levels["aggregates"]:
+            body = mask(cv, a["shape"], 0.06)
+            piece = body * tex
+            out += piece * (1.3 * a["grey"] * body.sum() / piece.sum())
+    img = optics(out, rng, photons=40, haze=0.12) / 1.3
+    knee = 0.7  # highlight roll-off: the nucleus is untouched, aggregates keep their texture below white
+    return np.where(img < knee, img, knee + (1 - knee) * np.tanh((img - knee) / (1 - knee)))
 
 
 def save(img, path):
@@ -199,9 +234,9 @@ def save(img, path):
     Image.fromarray(a, mode="L").save(path, "WEBP", quality=88, method=6)
 
 
-def render_animal(case_dir, frame, skel, genotype, animal, nuclear, seed):
+def render_animal(case_dir, frame, skel, genotype, animal, levels, neurite_level, seed):
     cv = Canvas(frame)
     rng = lambda k: np.random.default_rng([seed, ("control", "mutant").index(genotype), animal, k])
     save(membrane(cv, skel, rng(1)), case_dir / "images" / f"{genotype}-{animal}-membrane.webp")
     save(dapi(cv, skel, rng(2)), case_dir / "images" / f"{genotype}-{animal}-dapi.webp")
-    save(tdp43(cv, skel, nuclear, rng(3)), case_dir / "images" / f"{genotype}-{animal}-tdp43.webp")
+    save(tdp43(cv, skel, levels, neurite_level, rng(3)), case_dir / "images" / f"{genotype}-{animal}-tdp43.webp")

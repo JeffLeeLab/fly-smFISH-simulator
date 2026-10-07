@@ -10,8 +10,8 @@ the choice is deterministic, so the same inputs always give the same animals and
 
 Writes:
   site/data/<case>/tables.json                       every single probe and ordered pair
-  site/data/<case>/molecules/<genotype>-<n>.json     positions, detection masks, brightness, TDP-43 puncta
-  site/data/<case>/images/<genotype>-<n>-<layer>.webp  membrane, DAPI and TDP-43 nuclear images
+  site/data/<case>/molecules/<genotype>-<n>.json     positions, detection masks, brightness, TDP-43 granules
+  site/data/<case>/images/<genotype>-<n>-<layer>.webp  membrane, DAPI and TDP-43 images (diffuse signal and aggregates)
   data/<case>/generated/records-<genotype>-<n>.json  full molecule records (private, not committed)
 
     uv run python -m generator.build pdf
@@ -110,7 +110,8 @@ def public_molecules(case, m):
         "i": np.round(m.intensity[seen], 3).tolist(),
         "tdp43": {
             "nuclear": m.tdp43["nuclear"],
-            "puncta": [[round(x, 3), round(y, 3), round(r, 3), round(i, 3)] for x, y, r, i, _ in m.tdp43["puncta"]],
+            "cytoplasmic": m.tdp43["cytoplasmic"],
+            "granules": [[round(x, 3), round(y, 3), round(r, 3), round(i, 3)] for x, y, r, i, _ in m.tdp43["granules"]],
         },
     }
 
@@ -126,9 +127,9 @@ def private_records(case, m):
             {
                 "compartment": COMPARTMENTS[c], "cell": int(cl) + 1, "isoform": case.isoforms[i].name,
                 "nascent": bool(n), "regions": [r.id for b, r in enumerate(case.regions) if mk >> b & 1],
-                "x": round(float(x), 3), "y": round(float(y), 3), "overlaps_tdp43": bool(o),
+                "x": round(float(x), 3), "y": round(float(y), 3), "on_granule": bool(gr), "overlaps_granule": bool(o),
             }
-            for c, cl, i, n, mk, x, y, o in zip(m.comp, m.cell, m.iso, m.nascent, m.mask, m.x, m.y, m.overlap)
+            for c, cl, i, n, mk, x, y, gr, o in zip(m.comp, m.cell, m.iso, m.nascent, m.mask, m.x, m.y, m.on_granule, m.overlap)
         ],
     }
 
@@ -169,7 +170,7 @@ def main(argv) -> int:
             public, skel = geometry_pdf.build(g, a)
             assert abs(public["terminals"]["area_um2"] - case.geometry[(g, a)]["terminal_area"]) < 0.05, \
                 f"geometry-{g}-{a}.json is out of date: run generator.geometry_pdf"
-            render.render_animal(out, frame, skel, g, a, m.tdp43["nuclear"], case.params["seed"])
+            render.render_animal(out, frame, skel, g, a, m.tdp43, case.params["tdp43"]["neurite_level"], case.params["seed"])
         n = sum(int((m.mask > 0).sum()) for m in datasets.values())
         print(f"{case_id}: animals {dict((f'{g}-{a}', k) for (g, a), k in choice.items())}, {gate.checked} checks passed, "
               f"{n} visible molecules, {time.time() - t0:.0f} s")

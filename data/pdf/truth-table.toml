@@ -10,17 +10,21 @@
 # Written from the prose truth table and the simulation parameters in the spec; signed off by
 # the instructor after reading truth-table.md. Amended the same day at the instructor's request:
 # "unchanged" tightened from ±10% to ±5%, held strictly for the key readouts below.
+# Amended 2026-10-07 at the instructor's request (TDP-43 granules and aggregates): futsch mRNA rides
+# on TDP-43 transport granules in the axon and terminals, at the same share in both genotypes, and
+# never in the mutant's aggregates; overlap is measured per compartment against granules only.
+# Verdicts unchanged. Back to draft until the instructor signs off the amended table.
 
 case = "pdf"
 gene = "futsch"
-status = "signed-off"
+status = "draft"
 signed_off_by = "Jeff Lee (instructor)"
 signed_off_on = "2026-10-05"
 
 # The coverage row for this case (spec, *Coverage*).
 [verdicts]
 transport = "ruled-out"
-granule = "ruled-out"
+granule = "ruled-out"       # futsch rides on TDP-43 granules at the same share in both genotypes, and never in aggregates
 isoform = "ruled-out"
 splicing = "ruled-out"
 export = "unresolved"      # an export block is ruled out (nuclear counts flat), but failed export + fast nuclear decay is not
@@ -50,6 +54,7 @@ fall_per_area = [0.25, 0.60] # lower after normalising to terminal area (mutant 
 rise_nc = [1.6, 2.4]         # nuclear:cytoplasmic ratio about doubles
 nominal = 0.20               # control means within ±20% of the numbers above
 chance = 0.04                # TDP-43 overlap within 4 percentage points of the randomised-position control (or 2 SE, whichever is larger)
+above = 0.10                 # "above chance": at least 10 percentage points over the randomised-position level (less 2 SE)
 ts_number = 2                # transcription-site number: within 2 nuclei of control (12 nuclei per genotype)
 ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% for dim sites)
 
@@ -71,7 +76,10 @@ terminals_per_area = "fall_per_area"
 nc_ratio = "rise_nc"         # looks like RNA held back in the nucleus, until the nuclear count is checked
 share_distal = "same"        # share of cytoplasmic RNA in axon + terminals: transport ruled out
 region_ratio = "same"        # any region-to-region ratio in any compartment: isoform-specific ruled out
-tdp43_overlap = "chance"     # both genotypes: granule incorporation ruled out
+# Share of spots on TDP-43 transport granules (aggregates aren't counted), per compartment. Granule
+# cargo in the axon and terminals, at the same share in both genotypes: futsch is a granule cargo, but
+# incorporation doesn't change, so granule incorporation is ruled out. No cargo in the cell body.
+tdp43_overlap = { cellbody = "chance", axon = "above_same", terminals = "above_same" }
 
 # Nascent RNA: production unchanged; no intron retention, no splicing change.
 [nascent]

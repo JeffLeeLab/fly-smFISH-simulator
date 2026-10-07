@@ -50,7 +50,7 @@ class Gate:
             "nuclei": sum(len(r["cells"]) for r in raws),
         }
         if "overlap" in raws[0]:
-            t["ov"] = [sum(r["overlap"][i] for r in raws) for i in range(3)]
+            t["ov"] = {name: [sum(r["overlap"][name][i] for r in raws) for i in range(3)] for name in raws[0]["overlap"]}
         return t
 
     @staticmethod
@@ -146,13 +146,30 @@ class Gate:
                 if not self.positions_optional:
                     self._ok(False, where, "no overlap results (molecules were not placed)")
                 return
+            comp = e["compartment"]
+            share = {}
             for gt, t in (("control", tc), ("mutant", tm)):
-                k, n, expected = t["ov"]
+                k, n, expected = t["ov"][comp]
                 if n == 0:
                     continue
                 obs, q = k / n, expected / n
-                tol = max(self.rules["chance"], 2 * math.sqrt(max(q * (1 - q), 1e-9) / n))
-                self._ok(abs(obs - q) <= tol, f"{where} {gt}", f"overlap {obs:.3f} vs randomised {q:.3f} (± {tol:.3f})", (obs - q) / tol)
+                share[gt] = (obs, k)
+                if e["rule"] == "chance":
+                    tol = max(self.rules["chance"], 2 * math.sqrt(max(q * (1 - q), 1e-9) / n))
+                    self._ok(abs(obs - q) <= tol, f"{where} {gt}", f"overlap {obs:.3f} vs randomised {q:.3f} (± {tol:.3f})", (obs - q) / tol)
+                elif e["rule"] == "above_same":
+                    need = self.rules["above"] - 2 * math.sqrt(max(obs * (1 - obs), 1e-9) / n)
+                    self._ok(obs - q >= need, f"{where} {gt}", f"overlap {obs:.3f} vs randomised {q:.3f}, expected at least {need:.3f} above",
+                             min(0.0, (obs - q - need) / self.rules["above"]))
+                else:
+                    self._ok(False, where, f"unknown overlap rule {e['rule']}")
+            if e["rule"] == "above_same" and len(share) == 2:
+                (pc, kc), (pm, km) = share["control"], share["mutant"]
+                if kc and km:
+                    r = pm / pc
+                    self.ratio_rule(f"{where} share", "same", r, r * math.sqrt((1 - pm) / km + (1 - pc) / kc))
+                else:
+                    self._ok(False, where, f"no spots on granules (control {kc}, mutant {km})")
         elif meas == "ts_number":
             a = sum(x[ch]["m"]["ts_number"] for x in entry["control"]["animals"])
             b = sum(x[ch]["m"]["ts_number"] for x in entry["mutant"]["animals"])

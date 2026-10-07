@@ -8,8 +8,9 @@ both = carries both), the raw counts the measures are built from, and the measur
   share_distal  (axon + terminals) / (cell body + axon + terminals)
   ts_number     nuclei with a transcription site (at least ts_detect_min nascent molecules)
   ts_intensity  mean nascent molecules per counted site
-  overlap       share of cell-body spots within the overlap distance of a TDP-43 punctum,
-                with the randomised-position level (`chance`) for the same spots
+  overlap       per compartment (cell body, axon, terminals): share of spots within the overlap
+                distance of a TDP-43 transport granule (aggregates aren't counted), with the
+                randomised-position level (`chance`) for the same spots
 Mean and SD across animals are added per genotype. The site, plot and table read only this.
 """
 
@@ -18,6 +19,8 @@ import itertools
 import numpy as np
 
 from .model import COMP, mask_has
+
+OVERLAP_COMPARTMENTS = ("cellbody", "axon", "terminals")
 
 
 def selections(case):
@@ -44,8 +47,10 @@ def _raw(case, m, bits):
         "terminals": int((mature & (m.comp == COMP["terminals"])).sum()),
     }
     if m.overlap is not None:
-        cb = mature & (m.comp == COMP["cellbody"])
-        raw["overlap"] = [int((m.overlap & cb).sum()), int(cb.sum()), round(float(m.chance[cb].sum()), 4)]
+        raw["overlap"] = {}
+        for name in OVERLAP_COMPARTMENTS:
+            here = mature & (m.comp == COMP[name])
+            raw["overlap"][name] = [int((m.overlap & here).sum()), int(here.sum()), round(float(m.chance[here].sum()), 4)]
     return raw
 
 
@@ -67,8 +72,8 @@ def _measures(case, raw, area):
         "ts_level": sum(c["ts"] for c in cells) / n,
     }
     if "overlap" in raw:
-        k, total, expected = raw["overlap"]
-        out["overlap"] = {"observed": k / total if total else None, "chance": expected / total if total else None}
+        out["overlap"] = {name: {"observed": k / total if total else None, "chance": expected / total if total else None}
+                          for name, (k, total, expected) in raw["overlap"].items()}
     return out
 
 

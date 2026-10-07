@@ -55,7 +55,8 @@ def channel_expectations(name, ids, regions, rules, single):
         add(measure="per_area", compartment="terminals", rule=rules["mature"]["terminals_per_area"])
         add(measure="nc_ratio", rule=rules["mature"]["nc_ratio"])
         add(measure="share_distal", rule=rules["mature"]["share_distal"])
-        add(measure="overlap", compartment="cellbody", rule=rules["mature"]["tdp43_overlap"])
+        for comp, rule in rules["mature"]["tdp43_overlap"].items():
+            add(measure="overlap", compartment=comp, rule=rule)
     else:
         for comp in COMPARTMENTS:
             add(measure="count", compartment=comp, rule="none", note="no spots away from transcription sites")
@@ -120,7 +121,9 @@ def expand(case: str) -> dict:
 
 # ---------- readable version for sign-off ----------
 
-WORD = {"same": "same", "fall": "↓ 40–60%", "fall_per_area": "↓ (per area)", "rise_nc": "↑ ×2", "chance": "chance", "none": "none"}
+WORD = {"same": "same", "fall": "↓ 40–60%", "fall_per_area": "↓ (per area)", "rise_nc": "↑ ×2", "chance": "chance", "none": "none",
+        "above_same": "above chance, same share"}
+SHORT = {"cellbody": "cell body", "axon": "axon", "terminals": "terminals"}
 
 
 def render_md(t: dict, regions: dict) -> str:
@@ -129,7 +132,7 @@ def render_md(t: dict, regions: dict) -> str:
         f"# Truth table: {t['case'].upper()} – *{t['gene']}* ({t['status']})",
         "",
         f"Generated from `{t['source']}` and the probe menu by `uv run python -m generator.truth_table {t['case']}`. "
-        "Every entry compares the ALS mutant with hTDP-43 WT (control). Sign off by editing the `.toml`, not this file.",
+        "Every entry compares the hTDP-43 mutant with hTDP-43 WT (control). Sign off by editing the `.toml`, not this file.",
         "",
         "## Verdicts",
         "",
@@ -138,7 +141,7 @@ def render_md(t: dict, regions: dict) -> str:
         "",
         "## Single probes",
         "",
-        "Counts: nucleus and cell body per cell, axon and terminals per animal (four cells). N:C = nucleus / cell body. Distal share = (axon + terminals) / all cytoplasmic RNA. TS = transcription sites.",
+        "Counts: nucleus and cell body per cell, axon and terminals per animal (four cells). N:C = nucleus / cell body. Distal share = (axon + terminals) / all cytoplasmic RNA. TDP-43 overlap = share of spots on TDP-43 transport granules (aggregates not counted), against the randomised-position level. TS = transcription sites.",
         "",
         "| Region | Type | Mature in | Nascent in | Nucleus | Cell body | Axon | Terminals | Per area | N:C | Distal share | TDP-43 overlap | TS |",
         "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
@@ -158,11 +161,16 @@ def render_md(t: dict, regions: dict) -> str:
             return w
 
         ts = by.get(("ts_level", None), {}).get("level", "–")
+        groups = {}
+        for e in s["expect"]:
+            if e["measure"] == "overlap":
+                groups.setdefault(e["rule"], []).append(SHORT[e["compartment"]])
+        overlap = "; ".join(f"{', '.join(c)}: {WORD.get(r, r)}" for r, c in groups.items()) or "–"
         mat = ", ".join("R" + m for m in info["mature"]) or "–"
         nas = ", ".join("R" + m for m in info["nascent"]) or "–"
         lines.append(f"| {rid} | {regions[rid]['label']} | {mat} | {nas} | {cell('count', 'nucleus')} | {cell('count', 'cellbody')} | "
                      f"{cell('count', 'axon')} | {cell('count', 'terminals')} | {cell('per_area', 'terminals')} | {cell('nc_ratio')} | "
-                     f"{cell('share_distal')} | {cell('overlap', 'cellbody')} | {ts}, same |")
+                     f"{cell('share_distal')} | {overlap} | {ts}, same |")
     lines += [
         "",
         "## Pairs",
@@ -189,7 +197,7 @@ def render_md(t: dict, regions: dict) -> str:
         f"- *same*: within ±{r['same']:.0%}. Key readouts ({n_key} checks: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6) are held to that exactly, and their site counts must match; other *same* checks may also differ by 2 standard errors of counting noise where counts are small.",
         f"- *↓ 40–60%*: mutant {1 - r['fall'][1]:.0%}–{1 - r['fall'][0]:.0%} of control (band widened by 2 standard errors for small counts).",
         f"- Control means within ±{r['nominal']:.0%} of the spec's numbers (in brackets above).",
-        f"- TDP-43 overlap: within {r['chance']:.0%} (absolute) of the randomised-position control, in both genotypes.",
+        f"- TDP-43 overlap, against transport granules only: *chance* is within {r['chance']:.0%} (absolute) of the randomised-position control, in both genotypes; *above chance, same share* is at least {r['above']:.0%} (absolute, less 2 standard errors) above it in both genotypes, with the mutant's share within ±{r['same']:.0%} of control's (or 2 standard errors of counting noise).",
         f"- Transcription sites: number within {r['ts_number']} nuclei of control; intensity within ±{r['ts_intensity']:.0%}.",
         "",
     ]

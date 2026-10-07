@@ -3,13 +3,18 @@
 // genotype in place). World units are µm, so the scale bar is exact for spots and granules.
 //
 // Layers per genotype, back to front, all additive like fluorescence:
-//   autofluorescence → blue channel (membrane + DAPI) → TDP-43 IF → smFISH 1 → smFISH 2
+//   autofluorescence → blue channel (membrane + DAPI) → TDP-43 IF (image, then granules) → smFISH 1 → smFISH 2
 // Grain sits on top in screen space. Green + magenta sum to white on molecules carrying both.
-// Every animal has its own neurons: the membrane, DAPI and TDP-43 nuclear images are rendered
-// by the generator (generator/render.py) from that animal's geometry; spots and TDP-43 puncta
-// are drawn live from the molecule data, so they stay sharp at any zoom.
+// smFISH 1, smFISH 2 and TDP-43 are each a LUT layer, as in an imaging program: their contents
+// are drawn untinted and added up inside the layer, where light stops at full intensity, and the
+// layer is then coloured with the channel's LUT. So stacked spots saturate at the channel's
+// colour and never drift towards white; only different channels mix.
+// Every animal has its own neurons: the membrane, DAPI and TDP-43 images (diffuse nuclear and
+// cytoplasmic signal, and the mutant's aggregates) are rendered by the generator
+// (generator/render.py) from that animal's geometry; spots and TDP-43 transport granules are
+// drawn live from the molecule data, so they stay sharp at any zoom.
 
-import { Application, CanvasSource, Container, ImageSource, Sprite, Texture, TilingSprite } from "pixi.js";
+import { Application, CanvasSource, Container, Filter, GlProgram, ImageSource, Rectangle, Sprite, Texture, TilingSprite, UniformGroup, defaultFilterVert } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { loadJSON } from "../data.js";
 import { copyCanvas } from "../export.js";
@@ -19,10 +24,12 @@ import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
 const MIN_SIGMA_PX = 0.85;     // below this the spot is drawn larger and dimmer (same total light)
 const SPOT_GAIN = 0.95;
+const TDP_DIM = 0.4;           // TDP-43 while an smFISH channel is on, so magenta on yellow doesn't sum to a false white
+const GRANULE_DIM = 0.55;      // granules are faint already: dimmed less, so a spot inside one still shows (no whiter than over a nucleus)
 const MAX_SCALE = 60;          // px per µm
 const SCALE_STEPS = [0.5, 1, 2, 5, 10, 20, 50];
 const GENOTYPES = ["control", "mutant"];
-export const GENOTYPE_LABEL = { control: "hTDP-43 WT", mutant: "hTDP-43 ALS mutant" };
+export const GENOTYPE_LABEL = { control: "hTDP-43 WT", mutant: "hTDP-43 mutant" };
 
 export const TDP_LUTS = {
   yellow: { label: "Yellow", color: "#FFD63C" },
@@ -33,6 +40,43 @@ export const FISH_LUT = { ch1: { color: "#46E66E", name: "Green" }, ch2: { color
 const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
 
 const hex = c => parseInt(c.slice(1), 16);
+const rgb = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16) / 255);
+
+// A channel's display: intensity (the brightest component of the untinted layer, already clamped
+// at 1) times the display gain, clamped again, times the LUT colour; added to what lies below.
+const LUT_FRAG = `
+in vec2 vTextureCoord;
+out vec4 finalColor;
+uniform sampler2D uTexture;
+uniform vec3 uColor;
+uniform float uGain;
+
+void main()
+{
+    vec4 c = texture(uTexture, vTextureCoord);
+    float i = min(1.0, max(max(c.r, c.g), c.b) * uGain);
+    finalColor = vec4(uColor * i, i);
+}
+`;
+
+function lutLayer(frame) {
+  const layer = new Container();
+  const filter = new Filter({
+    glProgram: GlProgram.from({ vertex: defaultFilterVert, fragment: LUT_FRAG, name: "lut-layer" }),
+    resources: { lut: new UniformGroup({ uColor: { value: new Float32Array(3), type: "vec3<f32>" }, uGain: { value: 1, type: "f32" } }) },
+    blendMode: "add",
+    resolution: "inherit",
+  });
+  layer.filters = [filter];
+  layer.filterArea = new Rectangle(frame[0], frame[1], frame[2] - frame[0], frame[3] - frame[1]);  // skips a bounds pass
+  layer.lut = filter.resources.lut.uniforms;
+  return layer;
+}
+
+function setLut(layer, color, gain = 1) {
+  layer.lut.uColor.set(rgb(color));
+  layer.lut.uGain = gain;
+}
 const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function texture(canvas) {
@@ -181,16 +225,18 @@ export async function createViewer(root, opts) {
       const membrane = frameSprite(BLUE.membrane, 1.0);
       const dapi = frameSprite(BLUE.dapi, 0.9);
       blueC.addChild(membrane, dapi);
-      const tdp = new Container();
+      const tdp = lutLayer(frame);
       const tdpNuclear = frameSprite("#FFFFFF", 1.0);
-      const puncta = new Container();
-      tdp.addChild(tdpNuclear, puncta);
-      const ch1 = new Container();
-      const ch2 = new Container();
+      const granules = new Container();
+      tdp.addChild(tdpNuclear, granules);
+      const ch1 = lutLayer(frame), ch2 = lutLayer(frame);
+      const spots = { ch1: new Container(), ch2: new Container() };  // inside the layers, so their dimming comes before the clamp
+      ch1.addChild(spots.ch1);
+      ch2.addChild(spots.ch2);
       w.addChild(af, blueC, tdp, ch1, ch2);
       w.visible = false;
       content.addChild(w);
-      worlds[g] = { root: w, blue: blueC, membrane, dapi, tdp, tdpNuclear, puncta, ch1, ch2 };
+      worlds[g] = { root: w, blue: blueC, membrane, dapi, tdp, tdpNuclear, granules, ch1, ch2, spots };
     }
     const grainSprite = new TilingSprite({ texture: texture(grain), width: app.screen.width, height: app.screen.height });
     grainSprite.blendMode = "add";
@@ -222,21 +268,22 @@ export async function createViewer(root, opts) {
         setImage(w.membrane, images[g].membrane, frame);
         setImage(w.dapi, images[g].dapi, frame);
         setImage(w.tdpNuclear, images[g].tdp43, frame);
-        // TDP-43 puncta, drawn live
-        w.puncta.removeChildren().forEach(c => c.destroy());
-        for (const [x, y, r, inten] of d.tdp43.puncta) {
+        // TDP-43 transport granules, drawn live: soft, round, a little larger than a spot
+        w.granules.removeChildren().forEach(c => c.destroy());
+        for (const [x, y, r, peak] of d.tdp43.granules) {
           const s = new Sprite(f.gauss);
           s.anchor.set(0.5);
           s.position.set(x, y);
-          const size = 6 * Math.max(SIGMA_UM, r * 0.75);
-          s.scale.set(size / 64);
-          s.alpha = Math.min(1, 0.9 * inten);
+          s.sigmaUm = Math.max(SIGMA_UM, r * 0.75);
+          s.peak = Math.min(1, peak);
+          s.scale.set((6 * s.sigmaUm) / 64);
+          s.alpha = s.peak;
           s.blendMode = "add";
-          w.puncta.addChild(s);
+          w.granules.addChild(s);
         }
         // smFISH spots
         for (const ch of ["ch1", "ch2"]) {
-          w[ch].removeChildren().forEach(c => c.destroy());
+          w.spots[ch].removeChildren().forEach(c => c.destroy());
           if (mode !== "results" || !pair) continue;
           const bit = bitOf(pair[ch]);
           if (bit < 0) continue;
@@ -247,7 +294,7 @@ export async function createViewer(root, opts) {
             s.position.set(d.x[i], d.y[i]);
             s.alpha = Math.min(1, SPOT_GAIN * d.i[i]);
             s.blendMode = "add";
-            w[ch].addChild(s);
+            w.spots[ch].addChild(s);
           }
         }
       }
@@ -262,7 +309,7 @@ export async function createViewer(root, opts) {
   function applyStyle() {
     const v = state.visible;
     const anyFish = v.ch1 || v.ch2;
-    const tdpColor = hex(TDP_LUTS[state.tdpLut].color);
+    const tdpColor = TDP_LUTS[state.tdpLut].color;
     for (const f of fields) {
       for (const g of GENOTYPES) {
         const w = f.worlds[g];
@@ -270,14 +317,17 @@ export async function createViewer(root, opts) {
         // the blue channel stays dim behind spots, so it never competes with them
         w.membrane.alpha = anyFish ? 0.5 : 0.78;
         w.dapi.alpha = anyFish ? 0.55 : 0.85;
+        // brightness and the smFISH dimming act before the clamp; above full scale they become the layer's display gain
+        const img = state.tdpBrightness * (anyFish ? TDP_DIM : 1), gr = state.tdpBrightness * (anyFish ? GRANULE_DIM : 1);
+        const gain = Math.max(1, img, gr);
         w.tdp.visible = v.tdp;
-        w.tdp.alpha = state.tdpBrightness * (anyFish ? 0.4 : 1);
-        w.tdpNuclear.tint = tdpColor;
-        w.puncta.children.forEach(c => { c.tint = tdpColor; });
+        w.tdpNuclear.alpha = img / gain;
+        w.granules.alpha = gr / gain;
+        setLut(w.tdp, tdpColor, gain);
         w.ch1.visible = v.ch1;
         w.ch2.visible = v.ch2;
-        w.ch1.children.forEach(c => { c.tint = hex(FISH_LUT.ch1.color); });
-        w.ch2.children.forEach(c => { c.tint = hex(FISH_LUT.ch2.color); });
+        setLut(w.ch1, FISH_LUT.ch1.color);
+        setLut(w.ch2, FISH_LUT.ch2.color);
       }
     }
     labelFields();
@@ -308,9 +358,15 @@ export async function createViewer(root, opts) {
     const size = (6 * SIGMA_UM * k) / 64;
     for (const g of GENOTYPES) {
       for (const ch of ["ch1", "ch2"]) {
-        const c = f.worlds[g][ch];
+        const c = f.worlds[g].spots[ch];
         c.alpha = 1 / (k * k);
         c.children.forEach(sp => sp.scale.set(size));
+      }
+      // TDP-43 granules: the same conserved-light rule, each at its own size
+      for (const sp of f.worlds[g].granules.children) {
+        const kg = Math.max(1, MIN_SIGMA_PX / (sp.sigmaUm * s));
+        sp.scale.set((6 * sp.sigmaUm * kg) / 64);
+        sp.alpha = sp.peak / (kg * kg);
       }
     }
     // live scale bar: the smallest round length that spans at least 80 px

@@ -8,7 +8,7 @@
 import { mulberry32 } from "./prng.js";
 
 const SHAPES = ["circle", "square", "triangle"];
-const GENO = [["control", "WT"], ["mutant", "ALS"]];
+const GENO = [["control", "WT"], ["mutant", "Mutant"]];
 const COMP_LABEL = { nucleus: "Nucleus", cellbody: "Cell body", axon: "Axon", terminals: "Dorsal terminals" };
 
 const fmt = (v, d = 1) => (v == null ? "–" : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(d));
@@ -55,8 +55,12 @@ export const MEASURES = {
   overlap: {
     label: "TDP-43 overlap",
     axis: "share",
-    note: "Share of cell-body spots on TDP-43 puncta. Dashed band: the share expected by chance, if the same spots were placed at random in the cell body.",
-    cats: [{ id: "overlap", label: "Cell body", fly: "cellbody", animal: a => a.m.overlap?.observed ?? null, sub: null, chance: a => a.m.overlap?.chance ?? null }],
+    note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
+    cats: ["cellbody", "axon", "terminals"].map(c => ({
+      id: `overlap-${c}`, label: COMP_LABEL[c], fly: c, sub: null,
+      animal: a => a.m.overlap?.[c]?.observed ?? null,
+      chance: a => a.m.overlap?.[c]?.chance ?? null,
+    })),
   },
 };
 
@@ -193,15 +197,17 @@ export function tableHTML(entry, pair) {
     ["Share in axon + terminals", a => a.m.share_distal, 3],
     ["Transcription sites (of 4 nuclei)", a => a.m.ts_number],
     ["Molecules per transcription site", a => a.m.ts_intensity],
-    ["TDP-43 overlap, cell body", a => a.m.overlap?.observed, 3],
-    ["… expected by chance", a => a.m.overlap?.chance, 3],
+    ...["cellbody", "axon", "terminals"].flatMap(c => [
+      [`On TDP-43 granules, ${COMP_LABEL[c].toLowerCase()}`, a => a.m.overlap?.[c]?.observed, 3],
+      ["… expected by chance", a => a.m.overlap?.[c]?.chance, 3],
+    ]),
   ];
   return `
     <table class="rtable">
       <caption>Mean ± SD across 3 animals · simulated data</caption>
       <thead>
         <tr><th rowspan="2" scope="col">Measure</th>${chans.map(([, l]) => `<th colspan="2" scope="colgroup">${l}</th>`).join("")}</tr>
-        <tr>${chans.map(() => `<th scope="col">WT</th><th scope="col">ALS</th>`).join("")}</tr>
+        <tr>${chans.map(() => `<th scope="col">WT</th><th scope="col">Mutant</th>`).join("")}</tr>
       </thead>
       <tbody>${rows.map(([label, f, d]) => `<tr><th scope="row">${label}</th>${chans.map(([ch]) =>
         `<td>${cell("control", ch, f, d)}</td><td>${cell("mutant", ch, f, d)}</td>`).join("")}</tr>`).join("")}</tbody>
