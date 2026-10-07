@@ -218,7 +218,7 @@ The palette is warm neutrals with one restrained accent. All the saturated hues 
 - **Viewer Surround** (`viewer-frame`; dark theme `viewer-frame-dark`) and **Field Black** (`viewer-field`): the frame around the microscope field, and the field itself. The field is black in both themes.
 
 ### Data Channels
-Each of these means the same thing in the viewer, the transcript map, the plot, the chips and the exported PNGs.
+Each of these means the same thing in the viewer, the transcript map, the plot, the probe strip, the chips and the exported PNGs.
 - **smFISH Green** (`lut-green`) and **smFISH Magenta** (`lut-magenta`): the viewer LUTs for probe channels 1 and 2, blended additively.
 - **Merge White** (`lut-merge`): a molecule carrying both regions. White is reserved for this, so no other channel may default to white or grey.
 - **TDP-43 Yellow** (`lut-tdp-yellow`): the default TDP-43 IF LUT, dimmed to 40% while any smFISH channel is on (`--tdp-with-fish: .4`) so it doesn't add up to a false white. The default is still provisional until the pilot.
@@ -250,16 +250,16 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 - **Subtitle** (500, 18px): section heads inside a step.
 - **Story** (400, 18px, 1.6, max 70ch): the serif narrative in steps 1–2 and 7. The hero caption is the same face in italic at 22–24px.
 - **Body** (400, 16px, 1.55): sans body text, explanations and the glossary.
-- **UI Large** (500, 14px): mode-card titles, field text and table headers.
+- **UI Large** (500, 14px): mode-card titles, field text.
 - **UI** (400, 13px): controls, chips, tabs, verdict buttons, predictions and evidence lines. This is the minimum size for anything interactive.
 - **Label** (600, 11px, 0.08em, uppercase): eyebrows ("OBSERVE · STEP 6"), rail stage names and mode-group labels.
-- **Data** (Plex Mono 400, 13px, tabular figures): counts, coordinates, probe IDs and ± values in tables.
+- **Data** (Plex Mono 400, 13px, tabular figures): counts, coordinates, probe IDs and ± values in plot tooltips.
 - **Overlay** (Plex Mono 400, 11px): text burned into the viewer, scale-bar labels and plot ticks.
 
 ### Named Rules
 **The Size Floor Rule.** Body text is at least 16px, UI text and controls at least 13px, and burned-in overlays and plot ticks at least 11px (mono). Nothing goes smaller. If a screen doesn't fit, cut content, not type size.
 
-**The Three Voices Rule.** The serif argues, the sans operates and the mono counts. A number in a sentence of the story can stay serif, but a number in a table, plot, overlay or ID is always mono.
+**The Three Voices Rule.** The serif argues, the sans operates and the mono counts. A number in a sentence of the story can stay serif, but a number in a plot, overlay or ID is always mono.
 
 **The Crisp Text Rule.** All text is live HTML or SVG text in these three fonts. Text is never painted into artwork and never given the ink-boil filter.
 
@@ -268,8 +268,8 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 There are two layouts on one token set.
 
 - **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border; the workbench layout uses the same rail) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title and subtitle beside the flies, never a centred hero.
-- **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane about 292px; step 5's is 5% narrower, so the map gets the width), with the step header across the top and plot/table tabs under the viewer. Spacing is 12px between rows and 24px between columns. The viewer takes about two-thirds of the width beside the rail. The side pane scrolls on its own; the viewer never does.
-- **Step 5:** a workbench like steps 3, 4 and 6. The gene card runs across the head. The main column holds the transcript map (a header with title, isoform count and scale toggle, the map, one legend box) and, directly under the legend box, the "How two-colour smFISH works" help link. The side pane (hairline left rule, scrolling on its own; `clamp(277px, 19vw, 342px)`, against `clamp(292px, 20vw, 360px)` elsewhere) reads top to bottom: "Your pair" (its label row aligned with the map header line), a one-line instruction, two channel slots side by side, Swap channels, a full-width Show results, then "Predictions (optional)". The map is drawn at its column's pixel width and redrawn on resize, so its 11–12px text never shrinks. At 1280×720 everything down to Show results fits on screen; the predictions start below it and scroll in the side pane.
+- **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane `clamp(277px, 19vw, 342px)`), with the step header across the top. In step 6 the viewer fills the main column and the plot sits in a drawer docked under it. Spacing is 12px between rows and 24px between columns. The main column (the viewer, in steps 3 and 6) takes the width between the rail and the side pane. The side pane scrolls on its own; the viewer never does.
+- **Step 5:** a workbench like steps 3, 4 and 6. The gene card runs across the head. The main column holds the transcript map (a header with title, isoform count and scale toggle, the map, one legend box) and, directly under the legend box, the "How two-colour smFISH works" help link. The side pane (hairline left rule, scrolling on its own; `clamp(277px, 19vw, 342px)`, as on every workbench step) reads top to bottom: "Your pair" (its label row aligned with the map header line), a one-line instruction, two channel slots side by side, Swap channels, a full-width Show results, then "Predictions (optional)". The map is drawn at its column's pixel width and redrawn on resize, so its 11–12px text never shrinks. At 1280×720 everything down to Show results fits on screen; the predictions start below it and scroll in the side pane.
 
 Spacing uses a 4px base scale (`sp-1` to `sp-7`: 4, 8, 12, 16, 24, 32, 48). The minimum supported viewport is 1280×720, and every workbench screen is checked at that size and at 1920×1080. There is no phone layout. Spatial convention: control (hTDP-43 WT) is always on the left and the mutant on the right, in the hero, assays, split viewer and plot.
 
@@ -289,7 +289,7 @@ The story layer gets its depth from subtle parallax between the fly, the apparat
 
 **The No-Shadow Rule.** No `box-shadow` or drop shadows on any surface, card, popover or button. If something needs to stand out, use a tonal fill or a hairline.
 
-**The Texture Stops at the Data Rule.** Grain, washes and the ink boil exist only in the story artwork. The transcript map, plot, tables, notebook and viewer are always crisp, because a wobbly line suggests imprecision.
+**The Texture Stops at the Data Rule.** Grain, washes and the ink boil exist only in the story artwork. The transcript map, plot, notebook and viewer are always crisp, because a wobbly line suggests imprecision.
 
 ## Shapes
 
@@ -321,8 +321,11 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 - **Gene card (step 5):** `ivory-field` background, 1px `hairline` border, 3px corners, in two cells divided by a vertical hairline (a horizontal one below 900px, where they stack). Left: the two names in 28px serif (the fly gene in italic, joined by "↔"), each with a one-line caption under it ("Fly gene · FlyBase ↗", "Human orthologue · NCBI Gene ↗"), the links in clay-ink with an authored SVG out-arrow. There are no uppercase labels above the names. Right of a vertical hairline: the function text, with no label. Extra space beneath the card (24px in all) before the map and side pane begin.
 - **Map legend (step 5):** one box under the transcript map, in the same `ivory-field`, hairline and 3px corner treatment. It holds the key and, beneath it, one line of 11px `ink-grey` small print joining the strand and scale notes.
 - **Channel slot (step 5, `.pslot`):** two side by side in the side pane (equal columns, 8px gap), 3px corners. Empty: dashed `hairline-strong` border. The slot the next click fills: solid border in its channel ink (`green-ink` or `magenta-ink`) on `ivory-field`. Filled: about 9% of the ink mixed over `ivory-field`, with a solid ink border. Contents: a top row of channel dot and "smFISH 1" / "smFISH 2" (13px sans 600, sentence case) with the SVG × clear button at its right, then a row with the region ID (16px Plex Mono 500) and the length (13px mono, `ink-grey`), wrapping if narrow. The empty text "Click a region on the map" wraps to two lines. Swap channels is a ghost button with an SVG left–right swap-arrows icon; disabled, it is `stone` with no hover fill. A locked Show results is a solid tonal button (`ivory-panel` fill, `hairline` border, `ink-grey` text) with a reason line under it.
-- **Help card:** a `ivory-field` sheet on a `hairline-strong` border with a small arrow, opened from the question-in-circle link, which sits in the main column under the map's legend box. The card opens below the link, or above it when there is more room above, aligned with the map column's left edge and kept inside the workbench; the arrow points at the link from either side. No shadow.
-- **Icons:** authored SVG line icons at 1.4–1.5px stroke (question-in-circle, ×, swap arrows, out-arrow). Text glyphs are never used as icons.
+- **Help card:** shared by step 5's "How two-colour smFISH works" and step 6's probe card. An `ivory-field` sheet on a `hairline-strong` border with a small arrow, opened by hover, keyboard focus or a click (which pins it). In step 5 it opens from the question-in-circle link, which sits in the main column under the map's legend box. The card opens below the link, or above it when there is more room above, aligned with the map column's left edge and kept inside the workbench; the arrow points at the link from either side. No shadow.
+- **Probe strip (step 6 head):** `ivory-field` fill, 1px `hairline` border, 3px corners (`hairline-strong` on hover or while its card is open). It holds the key ("● smFISH 1 · F6", 13px sans, IDs in mono) and a drawing of the transcript rows in step 5's compressed coordinates, without names or probe track, `clamp(200px, 24vw, 440px)` wide and redrawn at its pixel width. The pair's regions are channel-ink bands (16% tint) under a 2px ink bracket, the region ID above in 11px mono 600 in the channel ink. Its help card, "Your probe pair", holds the step 5 map read-only.
+- **Plot drawer (step 6):** docked under the viewer. The toolbar row is always visible: a "Show plot" / "Hide plot" toggle with a chevron icon at the left, the channel segmented control and measure drop-down, and "Copy plot as PNG" at the right. Opening slides it up (0.26s; none under reduced motion) to `clamp(230px, 34vh, 360px)`. Each compartment sits in its own band, every other one tinted `ivory-panel`, with its name at the top (12px sans 600) and "WT" | "Mutant" at the foot (11px mono). Exact values come from a hover tooltip, not a table.
+- **Viewer brightness (steps 3 and 6):** a 60px TDP-43 brightness slider with a small sun icon on the "TDP-43 IF" channel row, between the name and Solo; the LUT select is on the line below.
+- **Icons:** authored SVG line icons at 1.4–1.5px stroke (question-in-circle, ×, swap arrows, out-arrow, chevron, sun). Text glyphs are never used as icons.
 - **Shadow Strategy:** none (see Elevation & Depth).
 
 ### Inputs / Fields
@@ -342,9 +345,9 @@ The same full rail, about 200px wide with a hairline right border, appears in ev
 - **Locked steps** give a reason in words ("Choose two probe regions to see the results"), never just a padlock.
 
 ### Segmented Tabs
-Plot | Table use a single 1px hairline box with 3px corners. The selected tab fills with `ivory-panel` at weight 600. The plot's channel and measure toggles use the same pattern, separated by a 1px divider.
+Segmented controls (the plot's channel control, the animal selector, the map's scale toggle) use a single 1px hairline box with 3px corners. The selected option fills with `ivory-panel` at weight 600.
 
-The step 6 side-pane switch, Viewer controls | Compare, is a larger, full-width variant: each tab takes half the pane, with 14px text and a 34px height. The track is `ivory-panel` with a `hairline-strong` border and 3px inner padding. The selected tab is raised in `ivory-field` with a 1px `hairline` outline (no shadow) and weight 600; unselected tabs are `ink-grey` at weight 500. In the dark theme the selected tab fills with `charcoal-hairline` and has no outline.
+The step 6 side-pane switch, Viewer controls | Compare, is a larger, full-width variant: each tab takes half the pane, with 14px text, a 34px height and 8px side padding; the labels never wrap. The track is `ivory-panel` with a `hairline-strong` border and 3px inner padding. The selected tab is raised in `ivory-field` with a 1px `hairline` outline (no shadow) and weight 600; unselected tabs are `ink-grey` at weight 500. In the dark theme the selected tab fills with `charcoal-hairline` and has no outline.
 
 ### Microscope Viewer (signature)
 A `viewer-frame` surround (2px corners, 8px padding) holding a black field, split control | mutant with a 6px gap. Toolbar and legend text use fixed light neutrals (`#E8E6DC`, `#B0AEA5`) whatever the theme, because they sit on charcoal. Burned-in overlays (probe IDs with LUT dots, genotype, animal, "simulated") are 11px mono at the top left. The live scale bar is fixed to the bottom right. The decoder legend is a single line of 13px italic serif under the field.
@@ -360,7 +363,7 @@ Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns a
 - **Do** mark the neuron-system box in the rail with a light clay tint only, and keep the theme's normal text colour on it.
 - **Do** use the `-ink` channel variants on page surfaces (map, plot, chips) and the raw LUT colours only on black.
 - **Do** keep the ivory → charcoal → black order: viewer field black, surround charcoal, page by theme.
-- **Do** set every number in a table, plot, overlay or probe ID in IBM Plex Mono with tabular figures.
+- **Do** set every number in a plot, overlay or probe ID in IBM Plex Mono with tabular figures.
 - **Do** check every screen at 1280×720 and 1920×1080 in both themes, at WCAG AA (text 4.5:1, graphics 3:1).
 - **Do** follow the system theme by default, setting `data-theme` on `<html>`, and keep a manual toggle in localStorage (wrapped in try/catch).
 - **Do** use smooth, zero-velocity-start eases (smootherstep) for transitions, and one main move at a time. Reduced motion shows the end frames.
@@ -371,7 +374,7 @@ Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns a
 - **Don't** use `box-shadow`, glassmorphism, gradients on chrome, or purple/blue gradients anywhere.
 - **Don't** use white text on clay, or clay as text.
 - **Don't** use a data-channel hue (green, magenta, yellow, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.
-- **Don't** apply grain, washes or the ink-boil filter to the map, plot, tables, notebook or viewer.
+- **Don't** apply grain, washes or the ink-boil filter to the map, plot, notebook or viewer.
 - **Don't** use emoji, stock icon sets, mascots, or flies with faces or expressions.
 - **Don't** centre the hero, use Inter, or repeat the same fade-up stagger across sections.
 - **Don't** use bounce, elastic or back eases, or animate layout properties (transform and opacity only).

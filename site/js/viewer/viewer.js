@@ -390,15 +390,29 @@ export async function createViewer(root, opts) {
     return Math.min(f.app.screen.width / (x1 - x0), f.app.screen.height / (y1 - y0));
   }
 
+  // What the student is looking at (world units, viewport coordinates). When a field changes size
+  // (the plot drawer opening, a window resize, split ↔ flicker), this is fitted again, so the
+  // picture rescales instead of being cropped. Set by fly-to, panning, zooming and the keys.
+  let aim = null, resizing = false;
+  const look = f => ({ cx: f.vp.center.x, cy: f.vp.center.y, w: f.app.screen.width / f.vp.scale.x, h: f.app.screen.height / f.vp.scale.x });
+
   function onResize(f) {
-    f.vp.resize(f.app.screen.width, f.app.screen.height);
-    f.grainSprite.width = f.app.screen.width;
-    f.grainSprite.height = f.app.screen.height;
+    resizing = true;
+    const { width: w, height: h } = f.app.screen;
+    f.vp.resize(w, h);
+    f.grainSprite.width = w;
+    f.grainSprite.height = h;
     const min = fitScale(f, views.whole) * 0.92;
     f.vp.clampZoom({ minScale: min, maxScale: MAX_SCALE });
     const m = 30;
     f.vp.clamp({ left: -m, right: bx1 - bx0 + m, top: -m, bottom: by1 - by0 + m, underflow: "center" });
+    if (aim && w > 1 && h > 1) {
+      f.vp.setZoom(Math.min(MAX_SCALE, Math.max(min, Math.min(w / aim.w, h / aim.h))), true);
+      f.vp.moveCenter(aim.cx, aim.cy);
+    }
     updateZoomDependent(f);
+    f.app.render();   // a resized canvas is blank until drawn: draw now, before the page paints
+    resizing = false;
   }
 
   let syncing = false;
@@ -420,6 +434,8 @@ export async function createViewer(root, opts) {
     const f0 = fields[0];
     const scale = Math.min(MAX_SCALE, fitScale(f0, box) * (name === "whole" ? 0.92 : 0.9));
     const cx = (box[0] + box[2]) / 2 - bx0, cy = (box[1] + box[3]) / 2 - by0;  // viewport coordinates
+    const pad = name === "whole" ? 0.92 : 0.9;
+    aim = { cx, cy, w: (box[2] - box[0]) / pad, h: (box[3] - box[1]) / pad };
     for (const f of fields) {
       if (animate && !reduceMotion()) {
         f.vp.animate({ position: { x: cx, y: cy }, scale, time: 650, ease: "easeInOutSine", removeOnInterrupt: true });
@@ -433,7 +449,7 @@ export async function createViewer(root, opts) {
 
   for (const f of fields) {
     onResize(f);
-    const on = () => { updateZoomDependent(f); syncFrom(f); };
+    const on = () => { updateZoomDependent(f); syncFrom(f); if (!resizing && f.app.screen.width > 1) aim = look(f); };
     f.vp.on("moved", on);
     f.vp.on("zoomed", on);
   }
@@ -479,11 +495,11 @@ export async function createViewer(root, opts) {
       const f = fields.find(x => x.app.canvas === document.activeElement) || fields[0];
       const step = 40 / f.vp.scale.x;
       const moves = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
-      if (moves[e.key]) { e.preventDefault(); f.vp.moveCenter(f.vp.center.x + moves[e.key][0], f.vp.center.y + moves[e.key][1]); updateZoomDependent(f); syncFrom(f); }
+      if (moves[e.key]) { e.preventDefault(); f.vp.moveCenter(f.vp.center.x + moves[e.key][0], f.vp.center.y + moves[e.key][1]); updateZoomDependent(f); syncFrom(f); aim = look(f); }
       if (e.key === "+" || e.key === "=" || e.key === "-") {
         e.preventDefault();
         f.vp.setZoom(f.vp.scale.x * (e.key === "-" ? 1 / 1.25 : 1.25), true);
-        updateZoomDependent(f); syncFrom(f);
+        updateZoomDependent(f); syncFrom(f); aim = look(f);
       }
     }
   };

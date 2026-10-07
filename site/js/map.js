@@ -6,7 +6,8 @@
 // channel is free, hovering or focusing a region previews it in that channel's ink. The map is
 // drawn at its column's pixel width (one SVG unit per CSS pixel, so its text keeps its size) and
 // redrawn when the column changes width. Given a column to fill (fitTo), the isoform rows spread
-// out and the exons thicken to use its height, within limits.
+// out and the exons thicken to use its height, within limits. Read-only (step 6's probe-map card):
+// the same drawing with the pair in its inks, but the regions can't be chosen.
 // Ported from docs/mockups/step5-target-probe-map.html.
 
 import { term } from "./glossary.js";
@@ -72,7 +73,7 @@ function buildAxis(g, width, scale) {
 
 const RH_MIN = 32, RH_MAX = 52;   // isoform row pitch, px
 
-export function createMap(host, g, { onPick, fitTo = null }) {
+export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly = false }) {
   // the name gutter fits the longest isoform name (Plex Mono 12px: 7.2px a character) or the
   // two-line track label, whichever is wider, so the map keeps the rest of the width
   const names = g.transcripts.map(t => t.name);
@@ -124,7 +125,7 @@ export function createMap(host, g, { onPick, fitTo = null }) {
     drawnWidth = host.clientWidth;
     const W = Math.max(420, (drawnWidth || 996) - LW - 16);   // below that, the SVG scales down
     const hC = Math.round(Math.min(22, Math.max(16, RH * 0.45))), hU = Math.round(hC * 0.56), half = hC / 2;   // CDS, UTR heights
-    const next = !state.pair.ch1 ? "ch1" : !state.pair.ch2 ? "ch2" : null;
+    const next = readOnly ? null : !state.pair.ch1 ? "ch1" : !state.pair.ch2 ? "ch2" : null;
     const ax = buildAxis(g, W, state.scale);
     const X = x => LW + ax.map(x);
 
@@ -242,7 +243,7 @@ export function createMap(host, g, { onPick, fitTo = null }) {
       const ch = state.pair.ch1 === q.p.id ? "ch1" : state.pair.ch2 === q.p.id ? "ch2" : "";
       const py = 10 + q.row * 26 + 14;
       if (ch) el("rect", { x: q.x0, y: py, width: Math.max(2, q.x1 - q.x0), height: yBottom - py, class: `tmap__band tmap__band--${ch}` }, bands);
-      const gp = el("g", {
+      const gp = el("g", readOnly ? { class: `tmap__probe is-static${ch ? ` is-${ch}` : ""}`, "data-region": q.p.id } : {
         class: `tmap__probe${ch ? ` is-${ch}` : ""}`, tabindex: 0, role: "button", "data-region": q.p.id,
         "aria-pressed": String(!!ch),
         "aria-label": `Probe region ${q.p.id}, ${fmt(q.p.length_nt)} nt${ch ? `, in smFISH ${ch === "ch1" ? 1 : 2}` : ""}`,
@@ -268,8 +269,10 @@ export function createMap(host, g, { onPick, fitTo = null }) {
         gp.addEventListener("mouseleave", off);
         gp.addEventListener("blur", off);
       }
-      gp.addEventListener("click", () => onPick(q.p.id));
-      gp.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(q.p.id); } });
+      if (!readOnly) {
+        gp.addEventListener("click", () => onPick(q.p.id));
+        gp.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(q.p.id); } });
+      }
       gp.addEventListener("mouseenter", ev => tip(ev, `<b>${q.p.id}</b> · ${fmt(q.p.length_nt)} nt<br>${g.chrom}:${fmt(q.p.lo)}–${fmt(q.p.hi)}`));
       gp.addEventListener("mousemove", moveTip);
       gp.addEventListener("mouseleave", hideTip);
@@ -318,4 +321,61 @@ export function createMap(host, g, { onPick, fitTo = null }) {
     setPair(pair) { state.pair = { ...pair }; render(); },
     destroy() { ro.disconnect(); },
   };
+}
+
+// The probe strip (step 6 header): the map's rows in its compressed coordinates, drawn small and
+// without names or the probe track; the pair's two regions are ink bands under a bracket and ID.
+// Drawn at `width` px; returns the height used.
+export function drawStrip(svg, g, pair, width) {
+  const LAB = 11, PITCH = 5, SPLIT = 2, hC = 3, hU = 2;
+  const ax = buildAxis(g, width - 2, "comp");
+  const X = x => 1 + ax.map(x);
+  const tx = [...g.transcripts].sort((a, b) => a.name.localeCompare(b.name, "en", { numeric: true }));
+  const others = [];
+  for (const k in g.overlapping_same_strand_genes) for (const t of g.overlapping_same_strand_genes[k]) others.push(t);
+  svg.replaceChildren();
+  const bands = el("g", {}, svg), rowsG = el("g", {}, svg), heads = el("g", {}, svg);
+  let y = LAB + 4 + PITCH / 2;
+  const row = t => {
+    const exs = t.exons.map(e => toT(g, ...e)).sort((a, b) => a[0] - b[0]);
+    el("line", { x1: X(exs[0][0]), x2: X(exs[exs.length - 1][1]), y1: y, y2: y, class: "strip__intron" }, rowsG);
+    const cds = t.cds ? toT(g, ...t.cds) : null;
+    for (const e of exs) {
+      const parts = cds && overlaps(e, cds)
+        ? [[e[0], Math.max(e[0], cds[0]), false], [Math.max(e[0], cds[0]), Math.min(e[1], cds[1]), true], [Math.min(e[1], cds[1]), e[1], false]]
+        : [[e[0], e[1], false]];
+      for (const [a, b, isC] of parts) {
+        if (b <= a) continue;
+        const h = isC ? hC : hU;
+        el("rect", { x: X(a), y: y - h / 2, width: Math.max(1, X(b) - X(a)), height: h, class: isC ? "strip__cds" : "strip__utr" }, rowsG);
+      }
+    }
+    y += PITCH;
+  };
+  tx.forEach(row);
+  if (others.length) { y += SPLIT; others.forEach(row); }
+  const bottom = y - PITCH / 2 + 2;
+  // the two regions: an ink band through every row, a bracket and the ID above (pushed apart if close)
+  const chosen = ["ch1", "ch2"].map(ch => {
+    const p = g.probe_regions.find(r => r.id === pair[ch]);
+    if (!p) return null;
+    const [a, b] = toT(g, p.lo, p.hi);
+    const x0 = X(a), x1 = Math.max(X(b), X(a) + 2);
+    return { ch, id: p.id, x0, x1, cx: (x0 + x1) / 2 };
+  }).filter(Boolean);
+  if (chosen.length === 2) {
+    const [l, r] = chosen[0].cx <= chosen[1].cx ? chosen : [chosen[1], chosen[0]];
+    const need = 24 - (r.cx - l.cx);
+    if (need > 0) { l.lx = l.cx - need / 2; r.lx = r.cx + need / 2; }
+  }
+  for (const c of chosen) {
+    el("rect", { x: c.x0, y: LAB + 3, width: c.x1 - c.x0, height: bottom - LAB - 3, class: `strip__band strip__band--${c.ch}` }, bands);
+    el("path", { d: `M${c.x0},${LAB + 6} L${c.x0},${LAB + 3} L${c.x1},${LAB + 3} L${c.x1},${LAB + 6}`, class: `strip__bracket strip__bracket--${c.ch}` }, heads);
+    const lx = Math.min(width - 9, Math.max(9, c.lx ?? c.cx));
+    el("text", { x: lx, y: LAB - 2, "text-anchor": "middle", class: `strip__id strip__id--${c.ch}` }, heads).textContent = c.id;
+  }
+  svg.setAttribute("viewBox", `0 0 ${width} ${bottom}`);
+  svg.setAttribute("width", width);
+  svg.setAttribute("height", bottom);
+  return bottom;
 }

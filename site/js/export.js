@@ -67,6 +67,6 @@ export async function copyCanvas(canvas, filename, button) {
 
 // Resolved colours for a light, slide-ready export, whatever the current theme.
 export const LIGHT = {
-  bg: "#FFFFFF", text: "#141413", text2: "#3D3D3A", grid: "#DEDBD2", ch1: "#1F8A4C", ch2: "#B0328F", both: "#3D3D3A",
+  bg: "#FFFFFF", text: "#141413", text2: "#3D3D3A", grid: "#DEDBD2", band: "#F1EFE8", ch1: "#1F8A4C", ch2: "#B0328F", both: "#3D3D3A",
   serif: "Newsreader, Georgia, serif", sans: "'Instrument Sans', system-ui, sans-serif", mono: "'IBM Plex Mono', ui-monospace, monospace",
 };

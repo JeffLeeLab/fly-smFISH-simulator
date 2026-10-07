@@ -688,7 +688,7 @@
       },
       "ui-large": {
         "displayName": "UI Large",
-        "purpose": "Card titles, field text, table headers."
+        "purpose": "Card titles and field text."
       },
       "ui": {
         "displayName": "UI",
@@ -801,7 +801,7 @@
       "name": "Segmented Tabs",
       "kind": "nav",
       "refersTo": "tab-segmented",
-      "description": "Viewer controls | Compare, Plot | Table.",
+      "description": "Viewer controls | Compare; the ordinary segmented control (plot channel, animal selector, scale toggle).",
       "html": "<div class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"false\">Viewer</button><button role=\"tab\" aria-selected=\"true\" class=\"on\">Compare</button></div>",
       "css": ".ds-tabs{display:inline-flex;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);overflow:hidden} .ds-tabs button{background:transparent;border:0;padding:4px 12px;font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text-2, #3D3D3A);cursor:pointer} .ds-tabs button.on{background:var(--panel, #E8E6DC);color:var(--text, #141413);font-weight:600} .ds-tabs button:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:-2px}"
     },
@@ -863,7 +863,7 @@
       },
       {
         "name": "The Three Voices Rule",
-        "body": "The serif argues, the sans operates and the mono counts. A number in a sentence of the story can stay serif, but a number in a table, plot, overlay or ID is always mono.",
+        "body": "The serif argues, the sans operates and the mono counts. A number in a sentence of the story can stay serif, but a number in a plot, overlay or ID is always mono.",
         "section": "typography"
       },
       {
@@ -883,7 +883,7 @@
       },
       {
         "name": "The Texture Stops at the Data Rule",
-        "body": "Grain, washes and the ink boil exist only in the story artwork. The transcript map, plot, tables, notebook and viewer are always crisp, because a wobbly line suggests imprecision.",
+        "body": "Grain, washes and the ink boil exist only in the story artwork. The transcript map, plot, notebook and viewer are always crisp, because a wobbly line suggests imprecision.",
         "section": "elevation"
       }
     ],
@@ -893,7 +893,7 @@
       "**Do** mark the neuron-system box in the rail with a light clay tint only, and keep the theme's normal text colour on it.",
       "**Do** use the `-ink` channel variants on page surfaces (map, plot, chips) and the raw LUT colours only on black.",
       "**Do** keep the ivory → charcoal → black order: viewer field black, surround charcoal, page by theme.",
-      "**Do** set every number in a table, plot, overlay or probe ID in IBM Plex Mono with tabular figures.",
+      "**Do** set every number in a plot, overlay or probe ID in IBM Plex Mono with tabular figures.",
       "**Do** check every screen at 1280×720 and 1920×1080 in both themes, at WCAG AA (text 4.5:1, graphics 3:1).",
       "**Do** follow the system theme by default, setting `data-theme` on `<html>`, and keep a manual toggle in localStorage (wrapped in try/catch).",
       "**Do** use smooth, zero-velocity-start eases (smootherstep) for transitions, and one main move at a time. Reduced motion shows the end frames.",
@@ -904,7 +904,7 @@
       "**Don't** use `box-shadow`, glassmorphism, gradients on chrome, or purple/blue gradients anywhere.",
       "**Don't** use white text on clay, or clay as text.",
       "**Don't** use a data-channel hue (green, magenta, yellow, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.",
-      "**Don't** apply grain, washes or the ink-boil filter to the map, plot, tables, notebook or viewer.",
+      "**Don't** apply grain, washes or the ink-boil filter to the map, plot, notebook or viewer.",
       "**Don't** use emoji, stock icon sets, mascots, or flies with faces or expressions.",
       "**Don't** centre the hero, use Inter, or repeat the same fade-up stagger across sections.",
       "**Don't** use bounce, elastic or back eases, or animate layout properties (transform and opacity only).",

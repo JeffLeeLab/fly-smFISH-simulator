@@ -11,22 +11,17 @@ import { href, go } from "../router.js";
 import { transcripts } from "../data.js";
 import { createMap } from "../map.js";
 import { term } from "../glossary.js";
-
-// line icons, drawn in currentColor at the UI stroke weight
-const X_ICON = `<svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`;
-const SWAP_ICON = `<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 4.5h10M12 4.5L9.5 2M12 4.5L9.5 7M12 9.5H2M2 9.5L4.5 7M2 9.5L4.5 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const Q_ICON = `<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.75" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.25 6.3a1.8 1.8 0 1 1 2.7 1.55c-.6.35-.95.75-.95 1.4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11.45" r=".85" fill="currentColor"/></svg>`;
-const OUT_ICON = `<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M3.5 1.5h5v5M8.5 1.5l-7 7" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+import { popCard } from "../popcard.js";
+import { OUT_ICON, Q_ICON, SWAP_ICON, X_ICON } from "../icons.js";
 
 // "How two-colour smFISH works": a made-up gene with regions A and B, never the case gene.
-// A help card under the map's legend: hovering opens it, a click (or Enter) keeps it open,
-// and Esc, its close button or a click elsewhere hides it.
+// A help card under the map's legend (popcard.js).
 const HOWTO = `
   <span class="howto">
-    <button type="button" class="howto__btn" aria-expanded="false" aria-controls="howto-card">${Q_ICON}How two-colour smFISH works</button>
-    <div class="howto__card" id="howto-card" role="group" aria-labelledby="howto-h" hidden>
-      <div class="howto__head"><h2 class="howto__title" id="howto-h">How two-colour smFISH works</h2>
-        <button type="button" class="howto__close" aria-label="Close">${X_ICON}</button></div>
+    <button type="button" class="howto__btn popcard__trigger" aria-expanded="false" aria-controls="howto-card">${Q_ICON}How two-colour smFISH works</button>
+    <div class="popcard howto__card" id="howto-card" role="group" aria-labelledby="howto-h" hidden>
+      <div class="popcard__head"><h2 class="popcard__title" id="howto-h">How two-colour smFISH works</h2>
+        <button type="button" class="popcard__close" aria-label="Close">${X_ICON}</button></div>
       <div class="howto__body">
         <svg viewBox="0 0 340 200" role="img" aria-label="A made-up gene with region A on exon 2 and region B on exon 3. A molecule with both regions shows a white spot, one with only A a green spot, one with only B a magenta spot; nascent RNA at the transcription site makes one bright nuclear spot.">
           <text x="0" y="12">made-up gene</text>
@@ -67,7 +62,7 @@ export async function mount(root, ctx) {
   const models = await transcripts(id);
 
   root.innerHTML = `
-    <div class="bench bench--probe">
+    <div class="bench">
       <header class="target" aria-labelledby="target-name">
         <p class="t-label">Experimental design · Step 5</p>
         <div class="gene">
@@ -168,73 +163,9 @@ export async function mount(root, ctx) {
   };
   root.addEventListener("click", onClick);
   refresh();
-  const offHowto = howto(root.querySelector(".howto"));
+  const offHowto = popCard(root.querySelector(".howto"));
 
   return () => { unbind(); offHowto(); map.destroy(); root.removeEventListener("click", onClick); };
-}
-
-// The help card: fixed to the viewport (the map column scrolls), under its button or, when
-// there is more room, above it; kept inside the workbench (clear of the notebook tab), with its
-// arrow on the button.
-function howto(wrap) {
-  const btn = wrap.querySelector(".howto__btn"), card = wrap.querySelector(".howto__card");
-  let pinned = false, timer = null;
-  const place = () => {
-    const b = btn.getBoundingClientRect();
-    const bench = wrap.closest(".bench");
-    const right = bench ? bench.getBoundingClientRect().right - parseFloat(getComputedStyle(bench).paddingRight) : window.innerWidth - 16;
-    card.style.maxHeight = "";
-    const w = card.offsetWidth, h = card.offsetHeight;
-    const below = window.innerHeight - b.bottom - 26, above = b.top - 26;
-    const up = h > below && above > below;
-    const minLeft = wrap.closest(".bench__main")?.getBoundingClientRect().left ?? 16;   // aligned with the map column
-    const left = Math.max(minLeft, Math.min(right - w, b.left));
-    card.dataset.side = up ? "above" : "below";
-    card.style.left = `${left}px`;
-    card.style.top = `${up ? Math.max(16, b.top - 10 - Math.min(h, above)) : b.bottom + 10}px`;
-    card.style.maxHeight = `${up ? above : below}px`;
-    card.style.setProperty("--arrow", `${b.left + Math.min(b.width / 2, 18) - left}px`);
-  };
-  const open = () => {
-    clearTimeout(timer);
-    if (!card.hidden) return;
-    card.hidden = false;
-    btn.setAttribute("aria-expanded", "true");
-    place();
-  };
-  const close = () => {
-    clearTimeout(timer);
-    card.hidden = true;
-    pinned = false;
-    btn.setAttribute("aria-expanded", "false");
-  };
-  const later = (fn, ms) => { clearTimeout(timer); timer = setTimeout(fn, ms); };
-
-  // hover (mouse only): a short delay each way, so passing over the button doesn't flash it and
-  // the pointer can cross the gap into the card
-  wrap.addEventListener("pointerenter", e => { if (e.pointerType === "mouse" && !pinned) later(open, 120); });
-  wrap.addEventListener("pointerleave", e => { if (e.pointerType === "mouse" && !pinned) later(close, 220); });
-  btn.addEventListener("click", () => {
-    if (pinned) close();
-    else { open(); pinned = true; }
-  });
-  wrap.querySelector(".howto__close").addEventListener("click", () => { close(); btn.focus(); });
-  const onDoc = e => { if (!card.hidden && !wrap.contains(e.target) && !e.target.closest?.(".gl-tip")) close(); };
-  const onKey = e => {
-    if (e.key === "Escape" && !card.hidden) { const back = card.contains(document.activeElement); close(); if (back) btn.focus(); }
-  };
-  const onMove = () => { if (!card.hidden) place(); };
-  document.addEventListener("click", onDoc);
-  document.addEventListener("keydown", onKey);
-  window.addEventListener("scroll", onMove, { passive: true, capture: true });
-  window.addEventListener("resize", onMove);
-  return () => {
-    clearTimeout(timer);
-    document.removeEventListener("click", onDoc);
-    document.removeEventListener("keydown", onKey);
-    window.removeEventListener("scroll", onMove, { capture: true });
-    window.removeEventListener("resize", onMove);
-  };
 }
 
 // "Choose a new pair": a fresh map, predictions cleared (they belong to a pair).

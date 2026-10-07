@@ -1,5 +1,6 @@
-// Step 6 results: the SuperPlot and the table, both read from the pre-computed tables
-// (site/data/<case>/tables.json), so the validation gate covers everything shown.
+// Step 6 results: the SuperPlot, read from the pre-computed tables (site/data/<case>/tables.json),
+// so the validation gate covers everything shown. Exact values appear on hover and in a table
+// for screen readers.
 // SuperPlot (Lord et al. 2020): sub-units (cells) as faint small points, the 3 animal means as
 // large points, mean ± SD across animals. Animals are told apart by shape, never by colour:
 // colour belongs to the channel. Genotype is shown by position and label; control on the left.
@@ -109,57 +110,81 @@ function shapePath(shape, x, y, r) {
 const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
 const sd = xs => (xs.length > 1 ? Math.sqrt(xs.reduce((a, b) => a + (b - mean(xs)) ** 2, 0) / (xs.length - 1)) : 0);
 
+// Exact values, for the hover on a genotype's column and the screen-reader table: unit and decimals.
+const UNIT = { count: " spots", per_area: " per 100 µm²", ts: " molecules" };
+const digits = measure => (measure === "count" || measure === "ts" || measure === "per_area" ? 1 : 3);
+
+// One category × genotype: the animals' values, their mean ± SD, and the chance level if any.
+function summary(entry, channel, c, g) {
+  const animals = entry[g].animals.map(an => an[channel]);
+  const vals = animals.map(c.animal).filter(v => v != null);
+  const ch = c.chance ? animals.map(c.chance).filter(v => v != null) : [];
+  return { animals, vals, mu: vals.length ? mean(vals) : null, s: sd(vals), chance: ch.length ? mean(ch) : null, chLo: Math.min(...ch), chHi: Math.max(...ch) };
+}
+
 // Returns SVG markup. `pal` holds colours (CSS variables on screen, resolved values for export).
+// Each compartment sits in its own band (every other one tinted), named at the top; WT | Mutant
+// along the foot of the band.
 export function plotSVG({ entry, channel, measure, yMax, width, height, pal, seed = 1, font = 1 }) {
   const m = MEASURES[measure];
-  const L = 52 * font, R = 10, T = 10, B = 40 * font;
-  const pw = width - L - R, ph = height - T - B;
-  const y = v => T + ph - (Math.min(v, yMax) / yMax) * ph;
+  const L = 52 * font, R = 10, T = 4, HEAD = 26 * font, B = 24 * font;
+  const pw = width - L - R, top = T + HEAD, ph = height - top - B;
+  const y = v => top + ph - (Math.min(v, yMax) / yMax) * ph;
   const rand = mulberry32(seed);
   const nCat = m.cats.length;
   const catW = pw / Math.max(nCat, 2);
   const x0 = L + (pw - catW * nCat) / 2;
   const fs = 11 * font;
+  const d = digits(measure);
   const parts = [];
 
+  m.cats.forEach((c, ci) => {
+    if (pal.band && ci % 2 === 0) parts.push(`<rect x="${x0 + catW * ci}" y="${T}" width="${catW}" height="${HEAD + ph + B}" fill="${pal.band}"/>`);
+  });
   for (const t of ticks(yMax)) {
     parts.push(`<line x1="${L}" x2="${L + pw}" y1="${y(t)}" y2="${y(t)}" stroke="${pal.grid}" stroke-width="1"/>`);
     parts.push(`<text x="${L - 6}" y="${y(t) + fs * 0.35}" text-anchor="end" font-size="${fs}" font-family="${pal.mono}" fill="${pal.text2}">${+t.toFixed(3)}</text>`);
   }
-  parts.push(`<text transform="translate(${12 * font},${T + ph / 2}) rotate(-90)" text-anchor="middle" font-size="${fs}" font-family="${pal.sans}" fill="${pal.text2}">${m.axis}</text>`);
+  parts.push(`<text transform="translate(${12 * font},${top + ph / 2}) rotate(-90)" text-anchor="middle" font-size="${fs}" font-family="${pal.sans}" fill="${pal.text2}">${m.axis}</text>`);
 
   m.cats.forEach((c, ci) => {
     const cx = x0 + catW * (ci + 0.5);
-    parts.push(`<g class="splot__cat" data-fly="${c.fly}" tabindex="0" role="button" aria-label="Show ${c.label} in the viewer">
-      <rect x="${cx - catW / 2}" y="${T + ph + 2}" width="${catW}" height="${B - 2}" fill="transparent"/>
-      <text x="${cx}" y="${T + ph + 15 * font}" text-anchor="middle" font-size="${12 * font}" font-weight="600" font-family="${pal.sans}" fill="${pal.text}">${c.label}</text></g>`);
+    // both genotypes' values, shown when the name has keyboard focus (the columns' hover, for keys)
+    const both = GENO.map(([g, short]) => {
+      const sm = summary(entry, channel, c, g);
+      return sm.mu == null ? "" : `&#10;${short}: ${fmt(sm.mu, d)} ± ${fmt(sm.s, d)}${UNIT[measure] || ""}${sm.chance != null ? `, chance ${fmt(sm.chance, 3)}` : ""}`;
+    }).join("");
+    parts.push(`<g class="splot__cat" data-fly="${c.fly}" data-tip="${c.label}${both}&#10;(mean ± SD, n = 3 animals)" tabindex="0" role="button" aria-label="Show ${c.label} in the viewer">
+      <rect x="${cx - catW / 2}" y="${T}" width="${catW}" height="${HEAD}" fill="transparent"/>
+      <text x="${cx}" y="${T + 17 * font}" text-anchor="middle" font-size="${12 * font}" font-weight="600" font-family="${pal.sans}" fill="${pal.text}">${c.label}</text></g>`);
     GENO.forEach(([g, short], gi) => {
-      const gx = cx + (gi ? 1 : -1) * Math.min(catW * 0.22, 70);
-      parts.push(`<text x="${gx}" y="${T + ph + 30 * font}" text-anchor="middle" font-size="${fs}" font-family="${pal.mono}" fill="${pal.text2}">${short}</text>`);
-      const animals = entry[g].animals.map(an => an[channel]);
+      const gx = cx + (gi ? 1 : -1) * Math.min(catW * 0.21, 64);
+      const colW = Math.min(catW * 0.4, 96);
+      parts.push(`<text x="${gx}" y="${top + ph + 16 * font}" text-anchor="middle" font-size="${fs}" font-family="${pal.mono}" fill="${pal.text2}">${short}</text>`);
+      const sm = summary(entry, channel, c, g);
+      const { animals } = sm;
+      // the column: hovering it (off the points) gives the exact mean ± SD
+      if (sm.mu != null) {
+        const tip = `${short} · ${c.label}&#10;${fmt(sm.mu, d)} ± ${fmt(sm.s, d)}${UNIT[measure] || ""} (mean ± SD, n = ${sm.vals.length} animals)${sm.chance != null ? `&#10;expected by chance: ${fmt(sm.chance, 3)}` : ""}`;
+        parts.push(`<rect class="splot__col" x="${gx - colW / 2}" y="${top}" width="${colW}" height="${ph}" fill="transparent" data-tip="${tip}"/>`);
+      }
       // chance band (TDP-43 overlap)
-      if (c.chance) {
-        const ch = animals.map(c.chance).filter(v => v != null);
-        if (ch.length) {
-          const lo = Math.min(...ch), hi = Math.max(...ch), mu = mean(ch);
-          parts.push(`<rect x="${gx - 30}" y="${y(hi) - 2}" width="60" height="${Math.max(4, y(lo) - y(hi) + 4)}" fill="${pal.text2}" opacity=".10"/>`);
-          parts.push(`<line x1="${gx - 30}" x2="${gx + 30}" y1="${y(mu)}" y2="${y(mu)}" stroke="${pal.text2}" stroke-width="1.5" stroke-dasharray="4 3"/>`);
-        }
+      if (sm.chance != null) {
+        parts.push(`<rect x="${gx - 30}" y="${y(sm.chHi) - 2}" width="60" height="${Math.max(4, y(sm.chLo) - y(sm.chHi) + 4)}" fill="${pal.text2}" opacity=".10" pointer-events="none"/>`);
+        parts.push(`<line x1="${gx - 30}" x2="${gx + 30}" y1="${y(sm.chance)}" y2="${y(sm.chance)}" stroke="${pal.text2}" stroke-width="1.5" stroke-dasharray="4 3" pointer-events="none"/>`);
       }
       // sub-units
       animals.forEach((a, ai) => {
         if (!c.sub) return;
         for (const v of c.sub(a)) {
           const jx = gx + (rand() - 0.5) * Math.min(catW * 0.3, 40);
-          parts.push(`<path d="${shapePath(SHAPES[ai], jx, y(v), 2.4 * font)}" fill="${pal.ink}" opacity=".35"/>`);
+          parts.push(`<path d="${shapePath(SHAPES[ai], jx, y(v), 2.4 * font)}" fill="${pal.ink}" opacity=".35" pointer-events="none"/>`);
         }
       });
       // mean ± SD across animals
-      const vals = animals.map(c.animal).filter(v => v != null);
-      if (vals.length) {
-        const mu = mean(vals), s = sd(vals);
-        parts.push(`<line x1="${gx}" x2="${gx}" y1="${y(mu + s)}" y2="${y(Math.max(0, mu - s))}" stroke="${pal.text}" stroke-width="1.5"/>`);
-        parts.push(`<line x1="${gx - 16}" x2="${gx + 16}" y1="${y(mu)}" y2="${y(mu)}" stroke="${pal.text}" stroke-width="2.2"/>`);
+      if (sm.mu != null) {
+        parts.push(`<line x1="${gx}" x2="${gx}" y1="${y(sm.mu + sm.s)}" y2="${y(Math.max(0, sm.mu - sm.s))}" stroke="${pal.text}" stroke-width="1.5" pointer-events="none"/>`);
+        parts.push(`<line x1="${gx - 16}" x2="${gx + 16}" y1="${y(sm.mu)}" y2="${y(sm.mu)}" stroke="${pal.text}" stroke-width="2.2" pointer-events="none"/>`);
       }
       // animal means
       animals.forEach((a, ai) => {
@@ -167,7 +192,8 @@ export function plotSVG({ entry, channel, measure, yMax, width, height, pal, see
         if (v == null) return;
         const ax = gx + (ai - 1) * 10 * font;
         const cells = c.sub ? c.sub(a).length : null;
-        parts.push(`<path class="splot__pt" data-animal="${ai + 1}" data-tip="${short} · animal ${ai + 1} · ${fmt(v, measure === "count" || measure === "ts" ? 1 : 3)}${cells != null ? ` · ${cells} ${measure === "ts" ? "nuclei" : "cells"}` : ""}" tabindex="-1"
+        const extra = measure === "ts" ? ` · sites in ${a.m.ts_number} of ${cells} nuclei` : cells != null ? ` · ${cells} cells` : "";
+        parts.push(`<path class="splot__pt" data-animal="${ai + 1}" data-tip="${short} · animal ${ai + 1} · ${fmt(v, d)}${UNIT[measure] || ""}${extra}" tabindex="-1"
           d="${shapePath(SHAPES[ai], ax, y(v), 5.2 * font)}" fill="${pal.ink}" stroke="${pal.bg}" stroke-width="${1.5 * font}"/>`);
       });
     });
@@ -175,41 +201,19 @@ export function plotSVG({ entry, channel, measure, yMax, width, height, pal, see
   return parts.join("");
 }
 
+// The same numbers as a table for screen readers (the plot's text alternative).
+export function plotTable(entry, pair, channel, measure) {
+  const m = MEASURES[measure], d = digits(measure);
+  const chance = m.cats.some(c => c.chance);
+  return `<table class="vh"><caption>${plotTitle(pair, channel, measure)}</caption>
+    <thead><tr><th scope="col">Compartment</th><th scope="col">Genotype</th><th scope="col">Mean ± SD${UNIT[measure] ? ` (${UNIT[measure].trim()})` : ""}</th>${chance ? `<th scope="col">Expected by chance</th>` : ""}</tr></thead>
+    <tbody>${m.cats.flatMap(c => GENO.map(([g, short]) => {
+      const sm = summary(entry, channel, c, g);
+      return `<tr><th scope="row">${c.label}</th><td>${short}</td><td>${sm.mu == null ? "–" : `${fmt(sm.mu, d)} ± ${fmt(sm.s, d)}`}</td>${chance ? `<td>${sm.chance == null ? "–" : fmt(sm.chance, 3)}</td>` : ""}</tr>`;
+    })).join("")}</tbody></table>`;
+}
+
 export function plotTitle(pair, channel, measure) {
   const who = channel === "ch1" ? `${pair.ch1} (smFISH 1)` : channel === "ch2" ? `${pair.ch2} (smFISH 2)` : `${pair.ch1} + ${pair.ch2} (white, both regions)`;
   return `${who} · ${MEASURES[measure].label} · mean ± SD, n = 3 animals · simulated data`;
-}
-
-export function tableHTML(entry, pair) {
-  const chans = [["ch1", `smFISH 1 · ${pair.ch1}`], ["ch2", `smFISH 2 · ${pair.ch2}`], ["both", "Both (white)"]];
-  const cell = (g, ch, f, d = 1) => {
-    const vals = entry[g].animals.map(a => f(a[ch])).filter(v => v != null);
-    if (!vals.length) return "–";
-    return `${fmt(mean(vals), d)} ± ${fmt(sd(vals), d)}`;
-  };
-  const rows = [
-    ["Nucleus (per cell)", a => a.m.count.nucleus],
-    ["Cell body (per cell)", a => a.m.count.cellbody],
-    ["Axon (4 cells)", a => a.m.count.axon],
-    ["Dorsal terminals (4 cells)", a => a.m.count.terminals],
-    ["Terminals per 100 µm²", a => a.m.per_area],
-    ["N:C ratio", a => a.m.nc_ratio, 3],
-    ["Share in axon + terminals", a => a.m.share_distal, 3],
-    ["Transcription sites (of 4 nuclei)", a => a.m.ts_number],
-    ["Molecules per transcription site", a => a.m.ts_intensity],
-    ...["cellbody", "axon", "terminals"].flatMap(c => [
-      [`On TDP-43 granules, ${COMP_LABEL[c].toLowerCase()}`, a => a.m.overlap?.[c]?.observed, 3],
-      ["… expected by chance", a => a.m.overlap?.[c]?.chance, 3],
-    ]),
-  ];
-  return `
-    <table class="rtable">
-      <caption>Mean ± SD across 3 animals · simulated data</caption>
-      <thead>
-        <tr><th rowspan="2" scope="col">Measure</th>${chans.map(([, l]) => `<th colspan="2" scope="colgroup">${l}</th>`).join("")}</tr>
-        <tr>${chans.map(() => `<th scope="col">WT</th><th scope="col">Mutant</th>`).join("")}</tr>
-      </thead>
-      <tbody>${rows.map(([label, f, d]) => `<tr><th scope="row">${label}</th>${chans.map(([ch]) =>
-        `<td>${cell("control", ch, f, d)}</td><td>${cell("mutant", ch, f, d)}</td>`).join("")}</tr>`).join("")}</tbody>
-    </table>`;
 }
