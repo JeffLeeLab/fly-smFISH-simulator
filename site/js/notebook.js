@@ -79,9 +79,7 @@ function drawerBody(caseId) {
   const chip = (k, cls) => s.pair[k]
     ? `<span class="chip ${cls}">smFISH ${k === "ch1" ? 1 : 2} · <span class="t-data">${esc(s.pair[k])}</span></span>`
     : `<span class="chip">smFISH ${k === "ch1" ? 1 : 2} · empty</span>`;
-  const probe = `
-    <div class="nb-chips">${chip("ch1", "chip--ch1")}${chip("ch2", "chip--ch2")}</div>
-    ${area("features", "Features that could let this gene make different RNAs (optional)", "Which features on the map could do this?", 2)}`;
+  const probe = `<div class="nb-chips">${chip("ch1", "chip--ch1")}${chip("ch2", "chip--ch2")}</div>`;
 
   const unresolved = s.shortlist.filter(m => s.verdicts[m] === "unresolved");
   const revise = `

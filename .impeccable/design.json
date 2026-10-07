@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-04T21:59:04.265190+00:00",
+  "generatedAt": "2026-10-06T13:41:32.031239+00:00",
   "title": "Design System: smFISH Simulator",
   "extensions": {
     "colorMeta": {
@@ -734,6 +734,11 @@
         "name": "texture-subtle",
         "value": "displace .9 · frequency .03 · wash .28 · grain .22 light / .12 dark",
         "purpose": "Chosen 'subtle' texture strength, story layer only."
+      },
+      {
+        "name": "drawings-on-twos",
+        "value": "12 drawings/s",
+        "purpose": "Fly drawings (walk, groom, wingbeat) change on twos, in step with the ink boil; the body moves every frame, and feet never slide."
       }
     ],
     "breakpoints": [
@@ -796,7 +801,7 @@
       "name": "Segmented Tabs",
       "kind": "nav",
       "refersTo": "tab-segmented",
-      "description": "Viewer | Compare, Plot | Table.",
+      "description": "Viewer controls | Compare, Plot | Table.",
       "html": "<div class=\"ds-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"false\">Viewer</button><button role=\"tab\" aria-selected=\"true\" class=\"on\">Compare</button></div>",
       "css": ".ds-tabs{display:inline-flex;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-pane, 3px);overflow:hidden} .ds-tabs button{background:transparent;border:0;padding:4px 12px;font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text-2, #3D3D3A);cursor:pointer} .ds-tabs button.on{background:var(--panel, #E8E6DC);color:var(--text, #141413);font-weight:600} .ds-tabs button:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:-2px}"
     },
@@ -804,9 +809,17 @@
       "name": "Progress Rail",
       "kind": "nav",
       "refersTo": "rail-step-current",
-      "description": "Story rail: stages and steps; current step has a 2px clay left rule.",
-      "html": "<nav class=\"ds-rail\"><div class=\"h\">Clue</div><a class=\"done\"><i>3</i>TDP-43 clue</a><a class=\"now\" aria-current=\"step\"><i>4</i>Hypotheses</a><div class=\"h\">Design</div><a><i>5</i>Target + probe design</a></nav>",
-      "css": ".ds-rail{font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);width:180px} .ds-rail .h{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2, #3D3D3A);margin:12px 0 4px} .ds-rail a{display:flex;gap:8px;padding:3px 0 3px 10px;border-left:2px solid transparent;color:var(--text-2, #3D3D3A);text-decoration:none;cursor:pointer} .ds-rail a i{font:500 11px var(--font-mono, \"IBM Plex Mono\", monospace);font-style:normal;color:var(--muted, #87867F);width:12px} .ds-rail a.done{color:var(--text, #141413)} .ds-rail a.now{border-left-color:var(--accent, #D97757);color:var(--text, #141413);font-weight:600} .ds-rail a:hover{color:var(--text, #141413)}"
+      "description": "The same full rail in every layout: brand, neuron-system box, stages and steps; the current step has a 2px clay left rule.",
+      "html": "<nav class=\"ds-rail\"><a class=\"ds-rail-brand\">smFISH Simulator</a><a class=\"ds-rail-case\"><span class=\"l\">Neuron system</span><span class=\"n\">PDF neurons</span><span class=\"g\">Change system</span></a><div class=\"h\">RBP clue</div><a class=\"s done\"><i>3</i>TDP-43 dysfunction</a><a class=\"s now\" aria-current=\"step\"><i>4</i>Hypotheses</a><div class=\"h\">Experimental design</div><a class=\"s\"><i>5</i>Target &amp; probe design</a></nav>",
+      "css": ".ds-rail{font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);width:168px;display:flex;flex-direction:column} .ds-rail-brand{font:500 20px/1.2 var(--font-serif, Newsreader, Georgia, serif);letter-spacing:-.01em;color:var(--text, #141413);text-decoration:none;margin-bottom:16px} .ds-rail-case{display:flex;flex-direction:column;gap:2px;padding:8px 12px 10px;margin-bottom:8px;color:var(--text, #141413);text-decoration:none;cursor:pointer;background:color-mix(in srgb, var(--accent, #D97757) 13%, var(--field, #F6F4EE));border:1px solid color-mix(in srgb, var(--accent, #D97757) 45%, var(--border, #C9C6BC));border-radius:var(--r-pane, 3px)} .ds-rail-case:hover{background:color-mix(in srgb, var(--accent, #D97757) 22%, var(--field, #F6F4EE))} .ds-rail-case:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:2px} .ds-rail-case .l{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase} .ds-rail-case .n{font:600 14px/1.3 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif)} .ds-rail-case .g{color:var(--accent-text, #A8492C);font-weight:500} .ds-rail-case:hover .g{text-decoration:underline;text-decoration-thickness:1px} .ds-rail .h{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2, #3D3D3A);margin:12px 0 4px} .ds-rail a.s{display:flex;gap:8px;padding:3px 0 3px 10px;border-left:2px solid transparent;color:var(--text-2, #3D3D3A);text-decoration:none;cursor:pointer} .ds-rail a.s i{font:500 11px var(--font-mono, \"IBM Plex Mono\", monospace);font-style:normal;color:var(--muted, #87867F);width:12px} .ds-rail a.s.done{color:var(--text, #141413)} .ds-rail a.s.now{border-left-color:var(--accent, #D97757);color:var(--text, #141413);font-weight:600} .ds-rail a.s:hover{color:var(--text, #141413);text-decoration:underline;text-decoration-thickness:1px}"
+    },
+    {
+      "name": "Neuron-system Box",
+      "kind": "custom",
+      "refersTo": "rail-case",
+      "description": "Top of the rail. At the opening it marks where the student is and scrolls to the stations; once a system is chosen it names it and leads back to the opening.",
+      "html": "<div class=\"ds-case-pair\"><button class=\"ds-case\" aria-current=\"page\"><span class=\"n\">Choose a neuron system</span><span class=\"g\">to continue ↓</span></button><a class=\"ds-case\"><span class=\"l\">Neuron system</span><span class=\"n\">PDF neurons</span><span class=\"g\">Change system</span></a></div>",
+      "css": ".ds-case-pair{display:flex;gap:16px;align-items:flex-start} .ds-case{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:168px;padding:8px 12px 10px;font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text, #141413);text-align:left;text-decoration:none;cursor:pointer;background:color-mix(in srgb, var(--accent, #D97757) 13%, var(--field, #F6F4EE));border:1px solid color-mix(in srgb, var(--accent, #D97757) 45%, var(--border, #C9C6BC));border-radius:var(--r-pane, 3px)} .ds-case:hover{background:color-mix(in srgb, var(--accent, #D97757) 22%, var(--field, #F6F4EE))} .ds-case:focus-visible{outline:2px solid var(--accent, #D97757);outline-offset:2px} .ds-case .l{font-weight:600;font-size:11px;letter-spacing:.08em;text-transform:uppercase} .ds-case .n{font:600 14px/1.3 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif)} .ds-case .g{color:var(--accent-text, #A8492C);font-weight:500} .ds-case:hover .g{text-decoration:underline;text-decoration-thickness:1px}"
     },
     {
       "name": "Viewer Frame",
@@ -877,12 +890,14 @@
     "dos": [
       "**Do** take every colour, size, radius and spacing value from `tokens.css` custom properties. Never hard-code them.",
       "**Do** keep clay for fills, the current step, selected verdicts and focus rings, and put `on-clay` (#141413) text on it.",
+      "**Do** mark the neuron-system box in the rail with a light clay tint only, and keep the theme's normal text colour on it.",
       "**Do** use the `-ink` channel variants on page surfaces (map, plot, chips) and the raw LUT colours only on black.",
       "**Do** keep the ivory → charcoal → black order: viewer field black, surround charcoal, page by theme.",
       "**Do** set every number in a table, plot, overlay or probe ID in IBM Plex Mono with tabular figures.",
       "**Do** check every screen at 1280×720 and 1920×1080 in both themes, at WCAG AA (text 4.5:1, graphics 3:1).",
       "**Do** follow the system theme by default, setting `data-theme` on `<html>`, and keep a manual toggle in localStorage (wrapped in try/catch).",
-      "**Do** use smooth, zero-velocity-start eases (smootherstep) and one main move at a time. Reduced motion shows the end frames.",
+      "**Do** use smooth, zero-velocity-start eases (smootherstep) for transitions, and one main move at a time. Reduced motion shows the end frames.",
+      "**Do** draw the flies on twos (12 drawings a second) with the body moving every frame. Walks have quick starts and stops, and feet never slide.",
       "**Do** label every image, plot and animation as simulated or schematic."
     ],
     "donts": [

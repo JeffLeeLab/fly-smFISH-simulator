@@ -17,7 +17,7 @@ Fly drawings: [flies.png](flies.png), from the flybody model (`generator/flies.p
 
 - **Logline.** Two flies that look the same carry the same human gene, one with a single change; their nights differ, so we look inside their brains.
 - **World.** Ivory paper, hand-inked outlines that boil 12 times a second, flat washes in ivory, warm grey and clay-tinted fills, light paper grain. Membrane blue is the only saturated colour, and only for the labelled neurons. Lights-off in the activity monitor is shown with warm grey, not a hue. During the descent the paper deepens from ivory to charcoal to black and the texture fades out, ending in the clean microscope field.
-- **Motif.** The pair: hTDP-43 WT on the left, ALS mutant on the right, from the hero to the assay lanes, the descent's final split and the viewer. The ending (summary PNG) shows the same pair.
+- **Motif.** The pair: hTDP-43 WT on the left, the mutant on the right (named "ALS mutant" in the openings and "hTDP-43 mutant" from the descent's final split on), from the hero to the assay lanes, the split and the viewer. The ending (summary PNG) shows the same pair.
 - **One persistent actor.** Hero flies → legend → the flies in the tubes → the WT fly → its head → its PDF neurons → the viewer's outline.
 - **Budget.** Directed animation 38.9 s (hero 9.6 s, chosen assay 15.3 s, descent 14 s), under the 40 s limit set at review; the hero-to-legend flight is not counted, on scroll or when it runs by itself in a window too tall to scroll. Every segment can be skipped and replayed; captions are 1–2 lines of HTML text; no audio. Reduced motion shows each segment's end frame.
 - **Flies.** Dorsal view in the hero (a calm pair), side view in the tubes, frontal view for the descent. Neither hero fly ever shakes or differs in pose; the mutant only stands turned by 8° and slightly lower, so the pair reads as two animals rather than one drawing copied. Idle motion is grooming, small antenna twitches and the boil, never in sync between the two.
@@ -119,12 +119,11 @@ I  8.4–10.6  the clock runs on into day 4 and stops at ZT2 (0.23 s), where a t
    reads:  8.7–10.6  the time the brains were taken: two hours after lights on
    caption: "Brains for the microscope were collected at ZT2, two hours after lights on."
 
-J  10.6–11.8 hold: flies rest and groom; badges appear ("Established: how the monitor works",
-             "Invented for this case: the sleep phenotype"); the "Next: look inside the brain" button
+J  10.6–11.8 hold: flies rest and groom; the "Next: look inside the brain" button
    reads:  10.8–11.8 where to go next (the hold continues, untimed, until the group moves on)
 ```
 
-As built: the marker sits on a fourth, partial row rather than on day 3, because a day-3 marker followed by the rest of day 3's bars would say the flies kept walking after their brains were taken. The Next button and the badges share the row under the caption, so they appear without scrolling on a 1280 × 720 screen. The counter keeps the real crossings from shot G and then adds the activity model's counts as the days run. A Skip button jumps to the end of G or of H–J, and Replay restarts the days.
+As built: the marker sits on a fourth, partial row rather than on day 3, because a day-3 marker followed by the rest of day 3's bars would say the flies kept walking after their brains were taken. The Next button sits in the row under the caption, so it appears without scrolling on a 1280 × 720 screen. The counter keeps the real crossings from shot G and then adds the activity model's counts as the days run. A Skip button jumps to the end of G or of H–J, and Replay restarts the days.
 
 As built (walking, in the landing's mini monitor and in step 1's real-time walking; the time-lapse days are unchanged): a walk is not a glide.
 - Each walk is 1–3 bouts (one for a short walk), each at its own pace, 0.75–1.25× the walk's speed. Between bouts the fly either hesitates for 0.12–0.42 s with its legs still, or only slows to 45% of its speed.
@@ -137,7 +136,7 @@ Reduced motion: the finished actograms with the ZT2 marker, shown on click.
 
 ## 4 · Descent (`#/pdf/step-2`), scroll-driven, 14 s at a steady scroll (about three screens)
 
-Scrubbing back and forth always gives the same frame. Compartment labels use the viewer's names and order.
+Scrubbing back and forth always gives the same frame. Compartment labels use the viewer's names and order, except that the terminals are glossed "(synapses)" here.
 
 ```
 K  0.0–2.0   [transition in: shared element, the WT fly from its tube]  the tube and monitor wipe away
@@ -152,24 +151,24 @@ L  2.0–4.5   push-in on the head; the body turns semi-transparent (washes near
 M  4.5–7.5   the brain outline draws on inside the head (central brain and optic lobes, frontal view,
              after the reference schematic); its two main regions are named with ink labels and
              arrows, which clear as the camera starts to push in; then the PDF neurons appear in
-             membrane blue on one side, the only saturated colour on screen
+             membrane blue on both sides of the brain, the only saturated colour on screen; the
+             right side's fade out as the camera starts to push in
    reads:  4.8–6.2  the brain, inside the head (its regions named from 5.75 s)
            6.2–7.5  these blue cells are the PDF neurons
 
-N  7.5–10.5  push to the s-LNvs on one side; the neurons grow; labels appear one at a time along
-             them: "cell bodies", "axon", "dorsal terminals"; paper → charcoal; grain, washes and
-             boil fade out
+N  7.5–10.5  push to the s-LNvs on the left; the neurons grow; labels appear one at a time along
+             them: "cell bodies", "axon", "dorsal terminals (synapses)"; paper → charcoal; grain,
+             washes and boil fade out
    reads:  7.8–8.6  cell bodies (where the nuclei are)
            8.6–9.4  axon
-           9.4–10.5 dorsal terminals, which remodel every day
+           9.4–10.5 dorsal terminals (synapses), which remodel every day
 
 O  10.5–14.0 matched swap: the neuron outline (from the same geometry file the viewer opens with)
              settles at the viewer's opening position and scale; paper → black; the outline moves
              to the left half and the mutant's neurons slide in on the right; labels hTDP-43 WT |
-             hTDP-43 ALS mutant; the frame becomes the viewer (PixiJS) in step 3, TDP-43 dysfunction
+             hTDP-43 mutant; the frame becomes the viewer (PixiJS) in step 3, TDP-43 dysfunction
    reads:  10.8–12.4 these neurons are what we will look at under the microscope
            12.4–14.0 two fields: WT left, mutant right
-   badges: "Established: s-LNv anatomy and daily remodelling", "Simplified: cell bodies and axons enlarged"
    [transition out: route to #/pdf/step-3 with the viewer's opening frame identical to O's last frame]
 ```
 
@@ -177,13 +176,14 @@ Reduced motion: the labelled head–brain–neuron end frame and the "Next: the 
 
 As built ([descent-frames.png](descent-frames.png)):
 - One 14 s timeline, set by the scroll position (the stage stays pinned for three screens). The camera is the SVG view box, in µm, with the origin at the centre of the head; strokes keep one width on screen at every zoom.
-- K opens on the WT fly standing in its tube, grown out of where it stood in step 1. The label "hTDP-43 WT" rides beside the fly. The turn morphs each body part from its side-view drawing to its front-view drawing; the ink boil is on only while the fly is small.
+- K opens on the WT fly standing in its tube, grown out of where it stood in step 1. The fly food fills the tube's whole rounded left end and the cotton plug its right end, clipped to the tube outline, at step 1's proportions (food 15% of the tube length, plug 13%). The label "hTDP-43 WT" rides beside the fly. The turn morphs each body part from its side-view drawing to its front-view drawing; the ink boil is on only while the fly is small.
 - In L only the head and eyes stay drawn as we go in. The rest of the body and the antennae fade, so the head outline isn't lost among the body's, and the front view never reads as a face.
-- In M the brain follows a simplified frontal schematic (`site/js/brain.js`, after the reference pack, p. 3). The neurons grow out from their cell bodies (a widening circular mask), at the medial edge of the left medulla.
-- Once the brain has drawn on, M names its two main regions with ink labels and arrows, like the compartment labels in N: each arrow runs from the label's text to the region and ends in an arrowhead. "Central brain" appears at 5.75 s above the brain, its arrow pointing down into it. "Optic lobe" appears at 6.05 s below the optic lobe on the viewer's right (the one without the neurons, so the arrow stays clear of them), its arrow pointing up. Both fade out at 7.3–7.6 s, as the camera starts to push in towards the neurons at 7.5 s.
-- N labels the four compartments one at a time, in the viewer's names and order: "Nucleus", "Cell body", "Axon", "Dorsal terminals" (7.9, 8.5, 9.1 and 9.7 s). Each label sits to the left of the neuron, with an arrow from the edge of its text to the structure (drawn in screen space every frame, so it always starts at the text). Caption: "Four small PDF neurons (s-LNvs). Their dorsal terminals remodel every day."
+- In M the brain follows a simplified frontal schematic (`site/js/brain.js`, after the reference pack, p. 3). The neurons grow out from their cell bodies (a widening circular mask), at the medial edge of the left medulla. The right side's neurons are the same WT geometry mirrored about the brain's midline, and they grow in step with the left's from 6.2 s (caption: "In blue, the PDF neurons on both sides of the brain."). They fade out at 7.3–7.7 s (power1.in), together with the region labels, starting before the camera closes in on the left neurons at 7.5 s, so the 7.8 s caption only ever shows one group. Only the left group is zoomed into, labelled and carried into the viewer.
+- Once the brain has drawn on, M names its two main regions with ink labels and arrows, like the compartment labels in N: each arrow runs from the label's text to the region and ends in an arrowhead. "Central brain" appears at 5.75 s above the brain, its arrow pointing down into it. "Optic lobe" appears at 6.05 s below the optic lobe on the viewer's right, its arrow pointing up into the lobe's outer part, which stays clear of the neurons. Both fade out at 7.3–7.6 s, as the camera starts to push in towards the neurons at 7.5 s.
+- N labels the four compartments one at a time, in the viewer's names and order: "Nucleus", "Cell body", "Axon", "Dorsal terminals (synapses)" (7.9, 8.5, 9.1 and 9.7 s; the gloss in brackets is the one place the label differs from the viewer's "Dorsal terminals"). Each label sits to the left of the neuron, with an arrow from the edge of its text to the structure (drawn in screen space every frame, so it always starts at the text). Caption: "Four small PDF neurons (s-LNvs). Their dorsal terminals (synapses) remodel every day."
+- The last caption (12.4 s) reads "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)." The two fields at the end are labelled "hTDP-43 WT" and "hTDP-43 mutant", matching the step 3 viewer. The openings say "ALS mutant"; the microscopy steps say "hTDP-43 mutant", because the fly carries an ALS-linked point mutation.
 - O's frame is drawn from the viewer's own membrane and DAPI images (animal 1), tinted and added on black as the viewer does, at its "Whole neuron" scale, inside a frame laid out like the viewer's. On "Next: the first clue", step 3's viewer grows out of this frame, and the TDP-43 channel appears there: the clue.
-- Reduced motion shows the end of N (the labelled neurons, close up) with the badges and the Next button.
+- Reduced motion shows the end of N (the labelled neurons, close up) with the Next button.
 
 ## Checks (from the storyboard rules)
 

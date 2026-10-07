@@ -52,7 +52,7 @@ export async function mount(root, ctx) {
       </section>
       <aside class="bench__side" aria-label="Viewer controls and compare">
         <div class="seg side-tabs" role="tablist" aria-label="Side pane">
-          <button type="button" role="tab" aria-selected="true" aria-controls="pane-viewer" id="tab-viewer">Viewer</button>
+          <button type="button" role="tab" aria-selected="true" aria-controls="pane-viewer" id="tab-viewer">Viewer controls</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="pane-compare" id="tab-compare">Compare</button>
         </div>
         <div id="pane-viewer" role="tabpanel" aria-labelledby="tab-viewer"></div>

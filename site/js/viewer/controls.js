@@ -1,5 +1,6 @@
 // Side-pane controls for the viewer: channel toggles with solo, the TDP-43 LUT and
-// brightness (dimmed to 40% automatically while any smFISH channel is on), and the animal.
+// brightness (dimmed to 40%, its granules to 55%, automatically while any smFISH channel is on),
+// and the animal.
 // LUT and brightness choices are kept per browser.
 
 import { read, write } from "../store.js";
@@ -35,7 +36,7 @@ export function renderControls(el, viewer, { mode, pair }) {
                 <label>${term("lut", "LUT")} <select class="select" data-act="lut">${Object.entries(TDP_LUTS).map(([v, l]) => `<option value="${v}">${l.label}</option>`).join("")}</select></label>
                 <label>Brightness <input type="range" min="0.2" max="1.6" step="0.1" data-act="bright"></label>
               </div>
-              ${mode === "results" ? `<p class="vctl__note">Shown at 40% while an smFISH channel is on, so it doesn’t add up to a false white.</p>` : ""}` : ""}
+              ${mode === "results" ? `<p class="vctl__note">Dimmed while smFISH is on, to avoid a false white.</p>` : ""}` : ""}
             </li>`).join("")}
         </ul>
       </div>

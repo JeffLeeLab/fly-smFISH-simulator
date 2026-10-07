@@ -26,7 +26,6 @@ export function mount(root, ctx) {
     <div class="bench">
       <header class="bench__head">
         <div class="bench__title"><p class="t-label">RBP clue · Step 4</p><h1 class="t-h2">Hypotheses</h1></div>
-        <p class="t-ui t-muted"><span class="layer layer--established">Established</span> Mode definitions</p>
       </header>
       <section class="bench__main hyp-main" aria-labelledby="hyp-intro">
         <p class="t-body" id="hyp-intro">Which ways of regulating RNA could explain the TDP-43 clue? Shortlist at least two. They don’t have to compete: several can be true at once. The cards are grouped by where TDP-43 acts.</p>

@@ -268,8 +268,8 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 There are two layouts on one token set.
 
 - **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border; the workbench layout uses the same rail) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title and subtitle beside the flies, never a centred hero.
-- **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane about 292px), with the step header across the top and plot/table tabs under the viewer. Spacing is 12px between rows and 24px between columns. The viewer takes about two-thirds of the width beside the rail. The side pane scrolls on its own; the viewer never does.
-- **Step 5:** the compact target card, instructions, channel slots and full-width transcript map all fit within 1366×768. The accessible button list and the prediction rows go below the fold.
+- **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane about 292px; step 5's is 5% narrower, so the map gets the width), with the step header across the top and plot/table tabs under the viewer. Spacing is 12px between rows and 24px between columns. The viewer takes about two-thirds of the width beside the rail. The side pane scrolls on its own; the viewer never does.
+- **Step 5:** a workbench like steps 3, 4 and 6. The gene card runs across the head. The main column holds the transcript map (a header with title, isoform count and scale toggle, the map, one legend box) and, directly under the legend box, the "How two-colour smFISH works" help link. The side pane (hairline left rule, scrolling on its own; `clamp(277px, 19vw, 342px)`, against `clamp(292px, 20vw, 360px)` elsewhere) reads top to bottom: "Your pair" (its label row aligned with the map header line), a one-line instruction, two channel slots side by side, Swap channels, a full-width Show results, then "Predictions (optional)". The map is drawn at its column's pixel width and redrawn on resize, so its 11–12px text never shrinks. At 1280×720 everything down to Show results fits on screen; the predictions start below it and scroll in the side pane.
 
 Spacing uses a 4px base scale (`sp-1` to `sp-7`: 4, 8, 12, 16, 24, 32, 48). The minimum supported viewport is 1280×720, and every workbench screen is checked at that size and at 1920×1080. There is no phone layout. Spatial convention: control (hTDP-43 WT) is always on the left and the mutant on the right, in the hero, assays, split viewer and plot.
 
@@ -298,9 +298,9 @@ Corners are nearly square, in a strict three-step scale:
 - **3px** (`pane`): compare-pane fields, mode cards, verdict bars, segmented tabs and buttons (the boxed pane carried over from Direction C).
 - **8px** (`frame`): outer page frames only.
 
-Full circles appear only where the shape means something: the 8px channel dots inside chips, and data points in the plot. There are no pills, except the dashed "Simulated" / "Schematic" tag.
+Full circles appear only where the shape means something: the 8px channel dots inside chips, and data points in the plot. There are no pills, except the dashed "Simulated" / "Schematic" tag. The "Simulated" tag is also the app's disclosure that the case is simulated and partly invented, in place of per-claim layer badges.
 
-On the transcript map, shape carries meaning: CDS is a tall block, UTR a shorter block in Stone, introns are hairlines with 5′→3′ chevrons, each TSS has a bent arrow, each 3′ end a triangle, and long introns have a break mark. Block height is the second cue alongside colour.
+On the transcript map, shape carries meaning: CDS is a tall block (16–22px), UTR a shorter block in Stone (about 0.56 × the CDS height, 9–12px), introns are hairlines with 5′→3′ chevrons, each TSS has a bent arrow, each 3′ end a triangle, and long introns have a break mark. Block height is the second cue alongside colour.
 
 ## Components
 
@@ -318,7 +318,11 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 
 ### Cards / Containers
 - **Mode card:** `ivory-field` background, 1px `hairline` border, 3px corners, padding 8px 10px. It holds a group label (Label style), a title (UI Large), a verdict bar, the group's step 5 prediction in italic `ink-grey`, and an evidence line under a dashed hairline.
-- **Target card (step 5):** a compact header strip above the map, not a boxed card, separated by hairlines.
+- **Gene card (step 5):** `ivory-field` background, 1px `hairline` border, 3px corners, in two cells divided by a vertical hairline (a horizontal one below 900px, where they stack). Left: the two names in 28px serif (the fly gene in italic, joined by "↔"), each with a one-line caption under it ("Fly gene · FlyBase ↗", "Human orthologue · NCBI Gene ↗"), the links in clay-ink with an authored SVG out-arrow. There are no uppercase labels above the names. Right of a vertical hairline: the function text, with no label. Extra space beneath the card (24px in all) before the map and side pane begin.
+- **Map legend (step 5):** one box under the transcript map, in the same `ivory-field`, hairline and 3px corner treatment. It holds the key and, beneath it, one line of 11px `ink-grey` small print joining the strand and scale notes.
+- **Channel slot (step 5, `.pslot`):** two side by side in the side pane (equal columns, 8px gap), 3px corners. Empty: dashed `hairline-strong` border. The slot the next click fills: solid border in its channel ink (`green-ink` or `magenta-ink`) on `ivory-field`. Filled: about 9% of the ink mixed over `ivory-field`, with a solid ink border. Contents: a top row of channel dot and "smFISH 1" / "smFISH 2" (13px sans 600, sentence case) with the SVG × clear button at its right, then a row with the region ID (16px Plex Mono 500) and the length (13px mono, `ink-grey`), wrapping if narrow. The empty text "Click a region on the map" wraps to two lines. Swap channels is a ghost button with an SVG left–right swap-arrows icon; disabled, it is `stone` with no hover fill. A locked Show results is a solid tonal button (`ivory-panel` fill, `hairline` border, `ink-grey` text) with a reason line under it.
+- **Help card:** a `ivory-field` sheet on a `hairline-strong` border with a small arrow, opened from the question-in-circle link, which sits in the main column under the map's legend box. The card opens below the link, or above it when there is more room above, aligned with the map column's left edge and kept inside the workbench; the arrow points at the link from either side. No shadow.
+- **Icons:** authored SVG line icons at 1.4–1.5px stroke (question-in-circle, ×, swap arrows, out-arrow). Text glyphs are never used as icons.
 - **Shadow Strategy:** none (see Elevation & Depth).
 
 ### Inputs / Fields
@@ -338,13 +342,15 @@ The same full rail, about 200px wide with a hairline right border, appears in ev
 - **Locked steps** give a reason in words ("Choose two probe regions to see the results"), never just a padlock.
 
 ### Segmented Tabs
-Viewer | Compare and Plot | Table use a single 1px hairline box with 3px corners. The selected tab fills with `ivory-panel` at weight 600. The plot's channel and measure toggles use the same pattern, separated by a 1px divider.
+Plot | Table use a single 1px hairline box with 3px corners. The selected tab fills with `ivory-panel` at weight 600. The plot's channel and measure toggles use the same pattern, separated by a 1px divider.
+
+The step 6 side-pane switch, Viewer controls | Compare, is a larger, full-width variant: each tab takes half the pane, with 14px text and a 34px height. The track is `ivory-panel` with a `hairline-strong` border and 3px inner padding. The selected tab is raised in `ivory-field` with a 1px `hairline` outline (no shadow) and weight 600; unselected tabs are `ink-grey` at weight 500. In the dark theme the selected tab fills with `charcoal-hairline` and has no outline.
 
 ### Microscope Viewer (signature)
 A `viewer-frame` surround (2px corners, 8px padding) holding a black field, split control | mutant with a 6px gap. Toolbar and legend text use fixed light neutrals (`#E8E6DC`, `#B0AEA5`) whatever the theme, because they sit on charcoal. Burned-in overlays (probe IDs with LUT dots, genotype, animal, "simulated") are 11px mono at the top left. The live scale bar is fixed to the bottom right. The decoder legend is a single line of 13px italic serif under the field.
 
 ### Transcript Map (signature)
-Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns as hairlines. A chosen probe takes its channel's ink colour as a translucent band through every isoform row. Hover keeps the matching isoforms lit and fades the rest (opacity, about 150ms). Every clickable target is at least 24px wide, whatever its drawn width.
+Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns as hairlines. A chosen probe takes its channel's ink colour as a translucent band through every isoform row. Hover keeps the matching isoforms lit and fades the rest (opacity, about 150ms). Every clickable target is at least 24px wide, whatever its drawn width. A "Probe regions" gutter label (Label style, on two lines: "Probe" / "regions") names the probe row. The gutter is sized to the longest isoform name (Plex Mono 12px) or that label, whichever is wider, so the map takes the rest of the column. The map also fills the column's height: the isoform row pitch grows from 32px to fill it (less 8px of air), up to 52px, and CDS and UTR blocks thicken with it; it refits on resize. Hovering or focusing a region previews the next channel: a 1.5px dashed bracket in that channel's ink, the ID in the same ink and two dashed guide lines down the region's edges, with no fill. Committed regions keep the solid 2.5px bracket and the tinted band. Every intron break carries its length; a label that would collide drops to a second line.
 
 ## Do's and Don'ts
 

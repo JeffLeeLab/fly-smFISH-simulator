@@ -4,7 +4,7 @@
 //   K 0–2      the WT fly leaves its tube and turns to face us (side view → front view, MorphSVG)
 //   L 2–4.5    the camera pushes into its head, which turns see-through; the paper greys
 //   M 4.5–7.5  the brain draws on inside the head (central brain and optic lobe named); the PDF
-//              neurons grow out in membrane blue
+//              neurons grow out in membrane blue on both sides (the right side a mirror image)
 //   N 7.5–10.5 push to the s-LNvs; cell body, axon, dorsal terminals; paper → charcoal
 //   O 10.5–14  the neurons settle where the viewer will open; black; the mutant's slide in on
 //              the right and the microscope images come up under the outlines (matched swap)
@@ -24,14 +24,14 @@ const NS = "http://www.w3.org/2000/svg";
 const DUR = 14;
 const FLY_K = 10;                              // µm per fly-sprite unit (life size)
 const FRONT_HEAD_Y = 5.8;                      // the head's centre in the front-view sprite
-const TUBE = { x0: -8500, y0: 1340, w: 17000, h: 2520 };   // the tube the fly comes from (µm)
+const TUBE = { x0: -8500, y0: 1340, w: 17000, h: 2520 };   // the tube the fly comes from (µm); food and plug fill its ends, as in step 1
 const FLY_START = { x: -1500, y: TUBE.y0 + TUBE.h - 60 - 118 * FLY_K };   // thorax, feet on the glass
 const FLY_END = { x: 0, y: -FRONT_HEAD_Y * FLY_K };                          // head centre at 0,0
 const STILL_T = 10.2;                          // reduced motion: the labelled neurons
 const HEAD_PARTS = new Set(["head", "eye"]);   // the antennae go too: from the front they would make a face
 const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
 // brain regions, named while the whole brain is on screen: [name, anchor, label point, side] in
-// brain µm. The optic lobe named is the one without the neurons, so its arrow stays clear of them.
+// brain µm. The optic lobe arrow points into the lobe's outer part, clear of the neurons.
 const REGIONS = [
   ["Central brain", [0, -98], [0, -196], "above"],
   ["Optic lobe", [292, 92], [300, 196], "below"],
@@ -42,10 +42,10 @@ const CAPTIONS = [
   [0.3, "We follow the hTDP-43 WT fly."],
   [2.3, "Into its head."],
   [4.8, "Inside the head: the brain."],
-  [6.2, "In blue, the PDF neurons on one side of the brain."],
-  [7.8, "Four small PDF neurons (s-LNvs). Their dorsal terminals remodel every day."],
+  [6.2, "In blue, the PDF neurons on both sides of the brain."],
+  [7.8, "Four small PDF neurons (s-LNvs). Their dorsal terminals (synapses) remodel every day."],
   [10.8, "These are the neurons you will look at under the microscope."],
-  [12.4, "hTDP-43 WT on the left, the ALS mutant on the right."],
+  [12.4, "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)."],
 ];
 
 const ringsD = mp => mp.coordinates.map(poly => poly.map(r => "M" + r.map(p => `${p[0]},${p[1]}`).join("L") + "Z").join("")).join("");
@@ -112,7 +112,7 @@ export async function mount(root, ctx) {
     ["Nucleus", nearest(cN.nucleus, [cN.nucleus_centre[0] - 12, cN.nucleus_centre[1]]), [nb[0] - 10, cN.nucleus_centre[1]]],
     ["Cell body", nearest(cC.cytoplasm, [cC.nucleus_centre[0] - 20, cC.nucleus_centre[1] + 3]), [nb[0] - 10, cC.nucleus_centre[1] + 5]],
     ["Axon", [axonMid[0] - 1.6, axonMid[1]], [axonMid[0] - 26, axonMid[1] - 2]],
-    ["Dorsal terminals", nearest(geoC.terminals.shape, [tb[0] + 10, tb[1] + 3]), [tb[0] - 10, tb[1] - 3]],
+    ["Dorsal terminals (synapses)", nearest(geoC.terminals.shape, [tb[0] + 10, tb[1] + 3]), [tb[0] - 10, tb[1] - 3]],
   ];
   const lead = PARTS.map(() => ({ k: 0 })), rlead = REGIONS.map(() => ({ k: 0 }));
 
@@ -125,23 +125,26 @@ export async function mount(root, ctx) {
           <div class="descent__scene">
             <div class="descent__viewer" aria-hidden="true">
               <p class="descent__vtop">Simulated confocal images · membrane + DAPI</p>
-              ${["hTDP-43 WT", "hTDP-43 ALS mutant"].map((l, i) => `
+              ${["hTDP-43 WT", "hTDP-43 mutant"].map((l, i) => `
                 <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
               <p class="descent__vbar">2D maximum-intensity projection (simulated)</p>
             </div>
-            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears, and on one side four PDF neurons in blue, each with a cell body, an axon running up and medially, and dorsal terminals. They end as two microscope fields: WT left, mutant right.">
+            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears with the PDF neurons in blue on both sides; we close in on the four on the left, each with a cell body, an axon running up and medially, and dorsal terminals (synapses). They end as two microscope fields: WT left, mutant right.">
               <defs>
                 <filter id="descent-boil" x="-5%" y="-5%" width="110%" height="110%">
                   <feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="3"/>
                   <feDisplacementMap in="SourceGraphic" scale="2" xChannelSelector="R" yChannelSelector="G"/>
                 </filter>
                 <clipPath id="tube-wipe"><rect class="tube-wipe" x="${TUBE.x0 - 600}" y="${TUBE.y0 - 2000}" width="${TUBE.w + 1200}" height="${TUBE.h + 4000}"/></clipPath>
+                <clipPath id="tube-inside"><rect x="${TUBE.x0}" y="${TUBE.y0}" width="${TUBE.w}" height="${TUBE.h}" rx="${TUBE.h / 2}"/></clipPath>
                 <clipPath id="nrn-grow"><circle class="nrn-grow" cx="${cellsAt[0]}" cy="${cellsAt[1]}" r="0"/></clipPath>
               </defs>
               <g class="d-tube" clip-path="url(#tube-wipe)">
                 <rect class="tube-glass" x="${TUBE.x0}" y="${TUBE.y0}" width="${TUBE.w}" height="${TUBE.h}" rx="${TUBE.h / 2}"/>
-                <rect class="tube-food" x="${TUBE.x0 + 300}" y="${TUBE.y0 + 120}" width="2200" height="${TUBE.h - 240}" rx="900"/>
-                <rect class="tube-plug" x="${TUBE.x0 + TUBE.w - 2300}" y="${TUBE.y0 + 120}" width="2000" height="${TUBE.h - 240}" rx="300"/>
+                <g clip-path="url(#tube-inside)">
+                  <rect class="tube-food" x="${TUBE.x0}" y="${TUBE.y0}" width="${TUBE.w * 0.15}" height="${TUBE.h}"/>
+                  <rect class="tube-plug" x="${TUBE.x0 + TUBE.w * 0.87}" y="${TUBE.y0}" width="${TUBE.w * 0.13}" height="${TUBE.h}"/>
+                </g>
                 <rect class="d-ink" x="${TUBE.x0}" y="${TUBE.y0}" width="${TUBE.w}" height="${TUBE.h}" rx="${TUBE.h / 2}" fill="none"/>
                 <line class="d-beam" x1="0" y1="${TUBE.y0 - 260}" x2="0" y2="${TUBE.y0 + TUBE.h + 260}"/>
                 <rect class="beam-box" x="-140" y="${TUBE.y0 - 420}" width="280" height="200" rx="20"/>
@@ -149,6 +152,9 @@ export async function mount(root, ctx) {
               </g>
               <g class="d-brain">${BRAIN.map(([d, kind]) => `<path class="brain-${kind}" d="${d}"/>`).join("")}</g>
               <g class="d-fly fly"></g>
+              <g class="d-mirror" transform="scale(-1 1) translate(${NEURON_AT.x} ${NEURON_AT.y})">
+                <g clip-path="url(#nrn-grow)">${neuronMarkup(geoC, "nrn--wt")}</g>
+              </g>
               <g class="d-neurons" transform="translate(${NEURON_AT.x} ${NEURON_AT.y})">
                 <g clip-path="url(#nrn-grow)">${neuronMarkup(geoC, "nrn--wt")}</g>
                 <g class="d-mutant">${neuronMarkup(geoM, "nrn--mut")}</g>
@@ -164,16 +170,12 @@ export async function mount(root, ctx) {
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
           <div class="descent__controls">
             <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: the first clue</a>
-            <ul class="badges" role="list">
-              <li><span class="layer layer--established">Established</span><span class="t-ui t-muted">s-LNv anatomy and daily remodelling</span></li>
-              <li><span class="layer layer--simplified">Simplified</span><span class="t-ui t-muted">Cell bodies and axons enlarged</span></li>
-            </ul>
           </div>
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">The PDF neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, which remodel every day.</p>
-        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will find four compartments: nucleus, cell body, axon and dorsal terminals.</p>
+        <p class="t-story">The PDF neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day.</p>
+        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will find four compartments: nucleus, cell body, axon and dorsal terminals (synapses).</p>
         <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: the first clue</a></p>
       </div>
     </div>`;
@@ -273,7 +275,7 @@ export async function mount(root, ctx) {
     gsap.set([".descent__title", flyLabel], { autoAlpha: 1 });
     gsap.set(".brain-line", { drawSVG: "0%" });
     gsap.set(".nrn-grow", { attr: { r: 0 } });
-    gsap.set([".d-brain", ".nrn"], { opacity: 1 });
+    gsap.set([".d-brain", ".nrn", ".d-mirror"], { opacity: 1 });
     tl = gsap.timeline({ paused: true, onUpdate: draw, defaults: { ease: "power2.inOut", immediateRender: false } });
     const camTo = (from, to, at, dur, ease = "power2.inOut") => tl.fromTo(cam, stop(from), { ...stop(to), duration: dur, ease }, at);
 
@@ -307,6 +309,8 @@ export async function mount(root, ctx) {
         .fromTo(rlead[i], { k: 0 }, { k: 1, duration: 0.35, ease: "power2.out" }, at + 0.12);
     });
     tl.fromTo([...regionLabels, ...rLeaders, ...rArrows], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.3)
+    // the right side's neurons (a mirror image of the left's) go before the camera closes in on the left
+      .fromTo(".d-mirror", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power1.in" }, 7.3)
     // N 7.5–10.5: close in on the s-LNvs; labels one at a time; paper → charcoal; the drawing fades
       .fromTo(look, { wash: 6, ink: 30 }, { wash: 0, ink: 0, duration: 0.8 }, 7.5)
       .fromTo(".bg-charcoal", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 7.5)

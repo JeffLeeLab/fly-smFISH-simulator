@@ -43,7 +43,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 - Out of scope: real image data, probe thermodynamics, user accounts, server storage, follow-up experiments, target protein readout, cell-type comparisons and glia.
 - No lock on the student's path and no limit on attempts. Exploring is never penalised, groups can always go back, and locked steps say why they are locked.
 - The site must never give the answer away. PTR-mode names do not appear in case text, there are no hints about traps or decoys, the plot has no p-values or significance stars, and the public JSON hides which isoforms each region detects.
-- Each claim on screen is tagged with one of three layers: *Established*, *Simplified* or *Invented for this case*.
+- Every claim in the spec and the instructor material is classified in one of three layers: *Established*, *Simplified* or *Invented for this case*. The student screens show no per-claim layer badges: repeated on every screen, they cluttered the view without informing. The dashed "Simulated" pill ("Simulated teaching data" in the rail footer on every screen, "Simulated" on the activity monitor) is how students are told that the case is simulated and partly invented, and it meets the *Invented for this case* disclosure.
 - Terminology follows the spec glossary, in British English with short sentences.
 - Open questions are listed in the spec: whether verdicts carry over between probe pairs, the TDP-43 default LUT colour, and the default zoom when results open.
 
@@ -66,7 +66,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 1. **Narrow, don't solve.** Every screen supports reasoning from evidence. None of them reveals the answer.
 2. **One truth, everywhere.** The viewer, map, plot and table read the same pre-computed data, so they cannot disagree.
-3. **Honest about what is simulated.** Say what is established, what is simplified and what is invented. Label every image and animation as simulated.
+3. **Honest about what is simulated.** Say what is established, what is simplified and what is invented: the instructor material classifies each claim, and the "Simulated" pill tells students the case is partly invented. Label every image and animation as simulated.
 4. **Exploring is free.** No penalties, no locks without a reason, no time pressure. A new probe pair is always one click away.
 5. **Readable by a novice.** A FISH-naive student must be able to read the images using only the decoder legend and the "How two-colour smFISH works" explainer.
 
@@ -74,6 +74,6 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 - WCAG AA contrast in both light and dark themes. Minimum text sizes: body ≥16 px, UI text ≥13 px, overlays and plot ticks ≥11 px.
 - Reduced motion shows still end frames. The opening animations stay under 40 seconds and can be skipped and replayed.
-- The transcript map has a keyboard-accessible button list that mirrors it, with click targets at least 24 px wide.
+- The transcript map's probe regions are themselves keyboard-operable buttons (Tab to a region; Enter or Space chooses or removes it), focus stays on the region when the map redraws, click targets are at least 24 px wide, and each channel slot has a × button that clears its region.
 - Fallback states for missing WebGL 2 and for blocked localStorage (copying PNGs still works).
 - Genotype is always shown by position and label, never by colour alone. Control is always on the left.

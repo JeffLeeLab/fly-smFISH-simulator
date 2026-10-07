@@ -57,7 +57,7 @@ export function blankCase() {
     because: {},                                    // step 4: mode id -> "because…"
     pair: { ch1: null, ch2: null },                 // step 5: region ids
     predictions: {},                                // step 5: mode id -> { text, cantTest } (cleared with a new pair)
-    features: "",                                   // step 5 (optional)
+    features: "",                                   // retired (was step 5); kept so saved notebooks load
     results: { observation: "", interpretation: "" },// step 6
     verdicts: {},                                   // step 6: mode id -> "ruled-out" | "supported" | "unresolved"
     evidence: {},                                   // step 6: mode id -> one line
