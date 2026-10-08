@@ -1,4 +1,4 @@
-// Step 1, chosen case (PDF neurons): the activity monitor. The landing station grows into the
+// Step 1, chosen case (Pdf neurons): the activity monitor. The landing station grows into the
 // stage, the group starts the light–dark days and watches each fly's actogram build, and the
 // brain-collection time is marked (docs/storyboards/pdf-openings.md, shots G–J).
 //

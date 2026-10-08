@@ -58,7 +58,7 @@ export async function mount(root, ctx) {
           </div>
           <label class="results__measure"><span class="vh">Measure</span>
             <select class="select" data-act="measure">${Object.entries(MEASURES).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>
-          <button type="button" class="btn results__png" data-act="plot-png">Copy plot as PNG</button>
+          <button type="button" class="btn results__png" data-act="plot-png">Copy as PNG</button>
         </div>
         <div class="results__plot" id="results-plot" hidden>
           <p class="results__title"></p>

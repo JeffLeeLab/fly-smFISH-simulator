@@ -1,4 +1,4 @@
-// The activity monitor (PDF case): the tube drawing, the flies' motion and the seeded activity
+// The activity monitor (Pdf case): the tube drawing, the flies' motion and the seeded activity
 // model, shared by the landing station (small, live) and step 1 (the chosen assay).
 // docs/storyboards/pdf-openings.md, shots F–J.
 //

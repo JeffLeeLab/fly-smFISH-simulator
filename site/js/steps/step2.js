@@ -3,7 +3,7 @@
 // sets one 14 s timeline, so scrubbing back and forth always gives the same frame.
 //   K 0–2      the WT fly leaves its tube and turns to face us (side view → front view, MorphSVG)
 //   L 2–4.5    the camera pushes into its head, which turns see-through; the paper greys
-//   M 4.5–7.5  the brain draws on inside the head (central brain and optic lobe named); the PDF
+//   M 4.5–7.5  the brain draws on inside the head (central brain and optic lobe named); the Pdf
 //              neurons grow out in membrane blue on both sides (the right side a mirror image)
 //   N 7.5–10.5 push to the s-LNvs; cell body, axon, dorsal terminals; paper → charcoal
 //   O 10.5–14  the neurons settle where the viewer will open; black; the mutant's slide in on
@@ -42,8 +42,8 @@ const CAPTIONS = [
   [0.3, "We follow the hTDP-43 WT fly."],
   [2.3, "Into its head."],
   [4.8, "Inside the head: the brain."],
-  [6.2, "In blue, the PDF neurons on both sides of the brain."],
-  [7.8, "Four small PDF neurons (s-LNvs). Their dorsal terminals (synapses) remodel every day."],
+  [6.2, "In blue, the Pdf neurons on both sides of the brain."],
+  [7.8, "Four small Pdf neurons (s-LNvs). Their dorsal terminals (synapses) remodel every day."],
   [10.8, "These are the neurons you will look at under the microscope."],
   [12.4, "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)."],
 ];
@@ -118,7 +118,7 @@ export async function mount(root, ctx) {
 
   root.innerHTML = `
     <div class="descent-page">
-      <section class="descent" aria-label="Descent from the fly into its PDF neurons">
+      <section class="descent" aria-label="Descent from the fly into its Pdf neurons">
         <div class="descent__stage">
           <div class="descent__bg" aria-hidden="true"><i class="bg-grey"></i><i class="bg-charcoal"></i><i class="bg-black"></i></div>
           <div class="descent__title"><p class="t-label">Introduction · Step 2</p><h1 class="t-h1">Anatomy</h1></div>
@@ -129,7 +129,7 @@ export async function mount(root, ctx) {
                 <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
               <p class="descent__vbar">2D maximum-intensity projection (simulated)</p>
             </div>
-            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears with the PDF neurons in blue on both sides; we close in on the four on the left, each with a cell body, an axon running up and medially, and dorsal terminals (synapses). They end as two microscope fields: WT left, mutant right.">
+            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears with the Pdf neurons in blue on both sides; we close in on the four on the left, each with a cell body, an axon running up and medially, and dorsal terminals (synapses). They end as two microscope fields: WT left, mutant right.">
               <defs>
                 <filter id="descent-boil" x="-5%" y="-5%" width="110%" height="110%">
                   <feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="3"/>
@@ -174,7 +174,7 @@ export async function mount(root, ctx) {
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">The PDF neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day.</p>
+        <p class="t-story">The Pdf neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day.</p>
         <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will find four compartments: nucleus, cell body, axon and dorsal terminals (synapses).</p>
         <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: the first clue</a></p>
       </div>
@@ -297,7 +297,7 @@ export async function mount(root, ctx) {
       .fromTo(look, { wash: 30, ink: 62 }, { wash: 6, ink: 30, duration: 2.0 }, 2.0)
       .fromTo(".bg-grey", { opacity: 0 }, { opacity: 1, duration: 2.5 }, 2.0);
     camTo("fly", "head", 2.0, 2.5);
-    // M 4.5–7.5: the brain draws on; the PDF neurons grow out from their cell bodies
+    // M 4.5–7.5: the brain draws on; the Pdf neurons grow out from their cell bodies
     camTo("head", "brain", 4.6, 1.0, "power1.inOut");
     tl.fromTo(".brain-line", { drawSVG: "0%" }, { drawSVG: "100%", duration: 1.3, stagger: 0.08, ease: "power1.inOut" }, 4.5)
       .fromTo(".brain-dash", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 5.5)

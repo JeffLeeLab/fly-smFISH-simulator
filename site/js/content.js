@@ -5,7 +5,7 @@
 export const CASES = {
   pdf: {
     id: "pdf",
-    system: "PDF neurons",
+    system: "Pdf neurons",
     cells: "s-LNvs",
     phenotype: "Sleep and daily rhythm",
     assay: "Activity monitor",
@@ -15,7 +15,7 @@ export const CASES = {
     target: {
       gene: "futsch",
       orthologue: "MAP1B",
-      function: "A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these PDF neurons: cell bodies, axons and dorsal terminals, which remodel every day.",
+      function: "A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these Pdf neurons: cell bodies, axons and dorsal terminals, which remodel every day.",
       flybase: "https://flybase.org/reports/FBgn0259108",
       orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/4131",
     },
@@ -39,7 +39,7 @@ export const CASES = {
   },
 };
 
-// Landing order follows the spec's case order: NMJ, PDF, mushroom body.
+// Landing order follows the spec's case order: NMJ, Pdf, mushroom body.
 export const CASE_ORDER = ["nmj", "pdf", "mb"];
 
 export const STEPS = {

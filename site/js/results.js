@@ -17,7 +17,7 @@ const fmt = (v, d = 1) => (v == null ? "–" : Math.abs(v) >= 100 ? v.toFixed(0)
 // Each measure: categories along the x-axis, and how to read animals and sub-units from the tables.
 export const MEASURES = {
   count: {
-    label: "Spots per compartment",
+    label: "Spots in each compartment",
     axis: "spots",
     note: "Nucleus and cell body: per cell. Axon and dorsal terminals: per animal (all four cells).",
     cats: ["nucleus", "cellbody", "axon", "terminals"].map(c => ({
@@ -26,14 +26,8 @@ export const MEASURES = {
       sub: c === "nucleus" || c === "cellbody" ? a => a.raw.cells.map(x => x[c]) : null,
     })),
   },
-  per_area: {
-    label: "Per terminal area",
-    axis: "per 100 µm²",
-    note: "Dorsal-terminal spots per 100 µm² of terminal area (mutant terminals are slightly smaller).",
-    cats: [{ id: "terminals", label: "Dorsal terminals", fly: "terminals", animal: a => a.m.per_area, sub: null }],
-  },
   nc_ratio: {
-    label: "N:C ratio",
+    label: "Nucleus vs cell body (N:C)",
     axis: "ratio",
     note: "Nuclear spots divided by cell-body spots. Small points: single cells.",
     cats: [{
@@ -42,8 +36,8 @@ export const MEASURES = {
     }],
   },
   share_distal: {
-    label: "Share in axon + terminals",
-    axis: "share",
+    label: "Proportion in axon + terminals",
+    axis: "proportion",
     note: "(Axon + dorsal terminals) / (cell body + axon + dorsal terminals).",
     cats: [{ id: "distal", label: "Axon + dorsal terminals", fly: "terminals", animal: a => a.m.share_distal, sub: null }],
   },
@@ -54,7 +48,7 @@ export const MEASURES = {
     cats: [{ id: "ts", label: "Transcription sites", fly: "nucleus", animal: a => a.m.ts_level, sub: a => a.raw.cells.map(x => x.ts) }],
   },
   overlap: {
-    label: "TDP-43 overlap",
+    label: "Spots in TDP-43 granules",
     axis: "share",
     note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
     cats: ["cellbody", "axon", "terminals"].map(c => ({
@@ -111,8 +105,8 @@ const mean = xs => xs.reduce((a, b) => a + b, 0) / xs.length;
 const sd = xs => (xs.length > 1 ? Math.sqrt(xs.reduce((a, b) => a + (b - mean(xs)) ** 2, 0) / (xs.length - 1)) : 0);
 
 // Exact values, for the hover on a genotype's column and the screen-reader table: unit and decimals.
-const UNIT = { count: " spots", per_area: " per 100 µm²", ts: " molecules" };
-const digits = measure => (measure === "count" || measure === "ts" || measure === "per_area" ? 1 : 3);
+const UNIT = { count: " spots", ts: " molecules" };
+const digits = measure => (measure === "count" || measure === "ts" ? 1 : 3);
 
 // One category × genotype: the animals' values, their mean ± SD, and the chance level if any.
 function summary(entry, channel, c, g) {

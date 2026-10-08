@@ -1,4 +1,4 @@
-"""PDF neuron (s-LNv) geometry, one per genotype and animal, in µm:
+"""Pdf neuron (s-LNv) geometry, one per genotype and animal, in µm:
 site/data/pdf/geometry-<genotype>-<animal>.json.
 
 Representative, not exact anatomy (docs/spec.md, *Geometry references*), drawn after the

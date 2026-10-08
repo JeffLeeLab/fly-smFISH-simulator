@@ -20,13 +20,13 @@
 	- Correct control is humanised WT, not a wild-type fly (a design point for students).
 	- Teaches why *Drosophila* is a powerful model for human disease: a human gene can replace its fly orthologue at the endogenous locus.
 	- Real basis: [Chang & Morton 2017, *PLoS One*](https://pubmed.ncbi.nlm.nih.gov/28686708/) (hTDP-43 WT, G294A, M337V knock-ins). Reported phenotype is mild (faster age-related climbing decline; no TDP-43 accumulation), so stronger TDP-43 pathology, sleep and memory phenotypes are invented case details.
-	- **Membrane label:** motor neuron, PDF neuron or mushroom body membranes are labelled by a neuron-type-specific GAL4 driver driving UAS-mCD8::BFP.
+	- **Membrane label:** motor neuron, Pdf neuron or mushroom body membranes are labelled by a neuron-type-specific GAL4 driver driving UAS-mCD8::BFP.
 
 **ALS and the three Drosophila neuron systems**
 - ALS symptoms are not solely motor; students can look up the clinical symptoms in Part 2.
 - Each group gets one fly system with an ALS-like **model phenotype that motivates investigation** (not implying each human symptom maps onto one PTR mechanism) and one target gene, unique per group:
 	- Motor neuron (adult leg NMJ) - locomotor dysfunction - *stai*
-	- PDF neuron (s-LNv) - sleep and circadian rhythm dysfunction - *futsch*
+	- Pdf neuron (s-LNv) - sleep and circadian rhythm dysfunction - *futsch*
 	- Mushroom body neuron (Kenyon cell) - cognitive and memory impairment - *unc-13*
 - Each group works with one system only; cell-type comparisons are not part of the pilot (see *Future implementation ideas*).
 - **All adult.** The NMJ is in the adult leg (femur), with the motor neuron cell body in the VNC. Boutons are best studied at larval NMJs but also occur in the less-studied adult leg. The motor neuron is drawn shorter than it really is so the whole cell fits one view (both stated simplifications).
@@ -60,7 +60,7 @@
 	- Intron, alternative exons, TSS, 3'PAS ![stai gene model](references/gene-models/stai-gene-model.png)
 	- FlyBase isoforms stai-RA–RE: 3 TSSs (RC/RE; RA/RB; RD), a cassette exon skipped only in RA, and a long 3'UTR in RB and RD.
 	- The same-strand gene CG31642 is nested in a stai intron, so intron probes placed there also detect CG31642 mRNA (probe-design trap).
-- **[futsch](https://flybase.org/search/futsch) (MAP1B) → PDF neurons**: microtubule-binding protein for synaptic bouton formation at the NMJ; expression regulated by [TBPH](https://flybase.org/search/TBPH). In PDF neurons: microtubules in the s-LNv dorsal terminals, which remodel daily (Fernández et al. 2008).
+- **[futsch](https://flybase.org/search/futsch) (MAP1B) → Pdf neurons**: microtubule-binding protein for synaptic bouton formation at the NMJ; expression regulated by [TBPH](https://flybase.org/search/TBPH). In Pdf neurons: microtubules in the s-LNv dorsal terminals, which remodel daily (Fernández et al. 2008).
 	- Introns, 3 alternative TSSs/first exons, alternative 3'PAS (short vs long 3'UTR) ![futsch gene model](references/gene-models/futsch-gene-model.png)
 	- FlyBase isoforms futsch-RC, -RE and -RF encode the same protein and differ only in TSS and 3' end. Only RE has the long 3'UTR, whose distal part overlaps Gr2a on the same strand.
 	- NMJ literature is background only: TDP-43 overexpression shifts futsch mRNA from the NMJ to cell bodies and out of polysomes (Coyne et al. 2014); TBPH loss lowers Futsch protein via a UG-rich 5'UTR element (Romano et al. 2016).
@@ -80,7 +80,7 @@
 **Channels:** membrane (GAL4 > mCD8::BFP) + DAPI in one fixed blue channel, told apart by shape; smFISH 1 and 2, TDP-43 IF (technical details in *Viewer features*).
 - **TDP-43 IF (simulated)** is first shown alone as a clue (control vs mutant) before probe selection, then kept as a toggle. Needed for granule incorporation and target–TDP-43 co-localisation.
 	- Phenotype differs by neuron system (invented), giving each group a different handle (see *Case truth tables*).
-	- **Must not give the answer away:** point to several modes at once, e.g. nuclear depletion (LOF → splicing/export) *and* cytoplasmic aggregates (GOF → sequestration). In the PDF case the clue has four parts: nuclear and diffuse cytoplasmic loss (→ splicing/export and stability/translation/transport), aggregates (→ sequestration/GOF), and transport granules that are equal in both genotypes.
+	- **Must not give the answer away:** point to several modes at once, e.g. nuclear depletion (LOF → splicing/export) *and* cytoplasmic aggregates (GOF → sequestration). In the Pdf case the clue has four parts: nuclear and diffuse cytoplasmic loss (→ splicing/export and stability/translation/transport), aggregates (→ sequestration/GOF), and transport granules that are equal in both genotypes.
 
 **Multiple plausible PTR modes per system**
 - Students may conclude "we cannot distinguish these explanations yet"; this rewards challenge and guides Part 2.
@@ -94,21 +94,22 @@
 **Case truth tables (instructor answer key)**
 
 Shared across cases:
-- **One probe** (constitutive reference S7, F6 or U7): fewer mutant target spots at synapses, still fewer after normalising to terminal size or number. Other single probes differ by design (e.g. S1 bouton counts are unchanged; U4 lobe counts rise; intron probes show no synaptic spots).
+- **One probe** (constitutive reference S7, F6 or U7): fewer mutant target spots at synapses. Other single probes differ by design (e.g. S1 bouton counts are unchanged; U4 lobe counts rise; intron probes show no synaptic spots).
 - **TDP-43 IF clue:** nuclear depletion *and* cytoplasmic puncta (granules, aggregates or both) in every case, so LOF and GOF both stay open.
-- **Three stories:** RNA redistributed (NMJ), lost (PDF), or the wrong isoform (mushroom body).
+- **Three stories:** RNA redistributed (NMJ), lost (Pdf), or the wrong isoform (mushroom body).
 - **Numbers:** see *Simulation parameters*.
 
 *NMJ – stai: RNA stuck on the way*
 - **TDP-43 clue:** mild nuclear loss; puncta along the axon and in boutons.
-- **One probe:** fewer bouton spots, even per bouton; whole-cell count unchanged.
+- **One probe:** fewer bouton spots; whole-cell count unchanged.
 - **Informative pair:** S7 (last exon) + S8 (long 3'UTR). The missing bouton molecules are the long-3'UTR isoforms (stai-RB, -RD), which sit on TDP-43 puncta in the axon. The long:short ratio in the cell body is unchanged, so "less long isoform made" is ruled out.
 - **Supported:** isoform-specific transport; granule incorporation.
 - **Ruled out:** splicing (the STMN2 prior: S1, S2, S4 and S6 give a clean null, and starting a new pair lets the group recover); nuclear export; stability (whole-cell count unchanged).
 - **Unresolved → Part 2:** an RNA-specific stall in TDP-43 granules, or general failure of microtubule transport (stathmin itself regulates microtubules, so the defect could feed itself).
-- **Confounds and traps:** the mutant has fewer boutons (normalise per bouton); S3 also detects CG31642 mRNA, which looks like intron retention but is equal in both genotypes.
+- **Confound and trap:** S3 also detects CG31642 mRNA, which looks like intron retention but is equal in both genotypes.
+- **Bouton number (instructor only; outside the students' scope):** the mutant has fewer boutons (20 → 15), visible in the images but never measured. Bouton spots are set as a compartment total, so the fall holds per bouton too (3.0 → 1.9).
 
-*PDF neurons – futsch: RNA made but not kept*
+*Pdf neurons – futsch: RNA made but not kept*
 - **TDP-43 clue:** nuclear loss, less diffuse cytoplasmic signal, and irregular aggregates around the nucleus. Small round transport granules are equal in both genotypes.
 - **One probe:** fewer spots in the cell body, axon and terminals, while the nuclear count stays flat, so the nuclear:cytoplasmic ratio doubles. This looks like RNA held back in the nucleus.
 - **Informative pair:** F6 (exon) + F5 (13-kb intron). Transcription sites are unchanged, so production looks normal; there are no intron-positive spots away from transcription sites; the share of cytoplasmic RNA reaching terminals is normal.
@@ -118,7 +119,7 @@ Shared across cases:
 - **Instructor key (never stated to students):** *Invented for this case*: the soluble cytoplasmic TDP-43 keeps futsch mRNA stable, so its loss (0.16 → 0.08 of the control nuclear level) is why futsch falls in the mutant. The TDP-43 the mutant lost from the nucleus and cell-body cytoplasm is drawn into the aggregates (*Simplified*). In a maximum-intensity projection brightness shows concentration, not amount, and aggregates are dense, so a few small ones can hold it. Total cytoplasmic TDP-43 (diffuse + aggregates) rises while the soluble pool falls.
 - **Caveat worth raising:** transcription-site brightness is only a stand-in for production; with 12 nuclei per genotype it is usable.
 - **Sampling time:** ZT2, when s-LNv dorsal terminals are most branched (they remodel daily; Fernández et al. 2008).
-- **Confound:** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising.
+- **Confound (instructor only; outside the students' scope):** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising. The site does not plot per-area counts; the truth table still checks the fall per area.
 
 *Mushroom body – unc-13: the wrong isoform*
 - **TDP-43 clue:** nuclear loss in Kenyon cells; many small puncta across the dense neuropil.
@@ -130,7 +131,7 @@ Shared across cases:
 
 **Coverage** (✓ supported, ✗ ruled out, ? unresolved, ~ ambiguous)
 
-| Mode | NMJ – stai | PDF – futsch | Mushroom body – unc-13 |
+| Mode | NMJ – stai | Pdf – futsch | Mushroom body – unc-13 |
 | --- | --- | --- | --- |
 | Transport / localisation | ✓ | ✗ | ✗ |
 | Granule incorporation | ✓ | ✗ (same share on granules) | ✗ (chance overlap) |
@@ -145,7 +146,7 @@ Shared across cases:
 
 ### A possible sequence
 
-1. **Phenotype (engagement):** hero (knock-in sequence, two identical humanised flies), then a shared three-assay landing; each group picks one of three systems → individual pages (see *Openings*). Animate the fly *and* its behavioural assay (NMJ: a climbing defect, with shaking shown as part of the climbing animation; PDF neurons: activity/sleep trace; mushroom body: learning/memory test); these become the Part 2 organismal readouts.
+1. **Phenotype (engagement):** hero (knock-in sequence, two identical humanised flies), then a shared three-assay landing; each group picks one of three systems → individual pages (see *Openings*). Animate the fly *and* its behavioural assay (NMJ: a climbing defect, with shaking shown as part of the climbing animation; Pdf neurons: activity/sleep trace; mushroom body: learning/memory test); these become the Part 2 organismal readouts.
 2. **Anatomy:** semi-transparent fruit fly with appropriate neurons highlighted; a scroll-driven descent that ends in the viewer (see *Openings*) (same blue colour scheme as neuronal membrane in the microscopy images). For the NMJ, zoom into the leg femur (synapses) and the VNC (motor neuron cell body).
 3. **TDP-43 dysfunction (the first clue):** the descent lands in the viewer on TDP-43 IF in control vs mutant. Qualitative, by eye only. Record observation separately from interpretation (early practice).
 4. **Hypotheses:** shortlist PTR modes consistent with the clue (need not be competing). The target gene is not yet known, so gene information cannot steer the hypotheses.
@@ -180,7 +181,7 @@ Mockups and screenshots in `docs/` are design records and are not served.
 
 Static site for designing two-colour smFISH experiments on TDP-43 target mRNAs and exploring simulated images of Drosophila neurons. All images and numbers are labelled as simulated teaching data.
 
-- **In scope:** three adult cases (leg motor neuron NMJ – *stai*, PDF neurons – *futsch*, mushroom body – *unc-13*), animated phenotype/assay introduction, probe placement on real FlyBase transcript maps, TDP-43 IF channel, configurable LUTs, zoomable viewer, count tables and plots supplied with the simulated data, lab notebook, PNG export.
+- **In scope:** three adult cases (leg motor neuron NMJ – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*), animated phenotype/assay introduction, probe placement on real FlyBase transcript maps, TDP-43 IF channel, configurable LUTs, zoomable viewer, count tables and plots supplied with the simulated data, lab notebook, PNG export.
 - **Out of scope:** real image data, probe thermodynamics and length limits (any annotated region can be a probe region), chromatic offset, user accounts, server-side storage, follow-up experiments, target protein output, glia and cell-type comparisons (see *Future implementation ideas*), unlabelled neighbouring cells.
 
 #### Build phases
@@ -189,16 +190,16 @@ Build one case completely before the others, so every shared part (data pipeline
 
 **Phase 0 – Style direction (done).** Direction A with C's compare pane, subtle texture, dark `#1F1E1C`, revised text sizes; frozen in `style-directions/tokens.css` (see [Style directions review](style-directions/Style%20directions%20review.md)).
 
-**Phase 1 – PDF neurons (*futsch*), start to finish.** Every step from the hero to the summary PNG, working for this one case.
-- *Why PDF first:* it has the least connectome support (geometry traced from reference images), the widest range of intron sizes on its map (13 kb vs 63 nt), a daily-remodelling terminal arbor at ZT2, and four cells per animal, so it tests the hardest parts of geometry, map and plot early.
+**Phase 1 – Pdf neurons (*futsch*), start to finish.** Every step from the hero to the summary PNG, working for this one case.
+- *Why Pdf first:* it has the least connectome support (geometry traced from reference images), the widest range of intron sizes on its map (13 kb vs 63 nt), a daily-remodelling terminal arbor at ZT2, and four cells per animal, so it tests the hardest parts of geometry, map and plot early.
 - *Order of work:*
 	1. **Scaffold:** repository (the uv environment is already set up), `tokens.css`, self-hosted fonts and libraries, hash routes, progress rail, notebook shell, light/dark theme, GitHub Pages and offline test.
-	2. **Data:** PDF geometry (control and mutant templates), the PDF truth table as a machine-readable file (signed off by the instructor), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the PDF truth table.
+	2. **Data:** Pdf geometry (control and mutant templates), the Pdf truth table as a machine-readable file (signed off by the instructor), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the Pdf truth table.
 	3. **Screens 3–7:** viewer (split view, flicker, fly-to, LUTs incl. TDP-43 dimming, overlay, PNG copy), TDP-43 dysfunction, hypotheses cards, gene card and map with probe track, microscopy reveal with plot, interpret & revise with summary PNG.
-	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders); the PDF descent ending in the viewer.
+	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders); the Pdf descent ending in the viewer.
 	5. **Review loop:** Playwright recordings, contact sheets and dead-stretch checks for the animations; screenshots of every step at 1280×720 and 1920×1080 in both themes (`tools/review-shots.sh`). Each run is recorded in [review.md](review.md).
 - *Exit: manual assessment* (instructor, ideally with one or two colleagues or students who haven't seen the spec):
-	- **Science:** the PDF truth table is reproduced, e.g. F6 + F5 shows flat transcription sites and fewer cytoplasmic spots; each decoy gives its designed result; no step gives the answer away.
+	- **Science:** the Pdf truth table is reproduced, e.g. F6 + F5 shows flat transcription sites and fewer cytoplasmic spots; each decoy gives its designed result; no step gives the answer away.
 	- **Usability:** a FISH-naive first-time user gets from the hero to the summary PNG without help; the decoder legend and "How two-colour smFISH works" are enough to read the images.
 	- **Design:** banned list, contrast in both themes, text-size rule, colour belongs to the data, texture stops at the data.
 	- **Motion:** under 40 s of directed animation; reduced motion gives still end frames.
@@ -217,18 +218,18 @@ Build one case completely before the others, so every shared part (data pipeline
 Data generation is separate from display, so images and numbers always agree. A generator script creates every molecule once from a fixed seed and pre-computes every probe result; the website only reads and draws that data.
 
 0. **Case truth table** (see *Case truth tables*): per case, which PTR modes are active, plus the expected result for every single probe and every probe pair, decoys included. Active modes combine into one coherent molecule set. The generator implements it; instructors use it as the answer key.
-	- Stored per case in `data/<case>/`: `truth-table.toml` holds the rules (verdicts, isoform mix, counts per compartment, how each measure changes in the mutant, tolerances, the designed transcription-site look of each region); `generator.truth_table` expands it with the probe menu's `mature_in` / `nascent_in` into `truth-table.json`, covering every single probe and all 56 ordered pairs, and `truth-table.md` to read. It is drafted from the prose tables in *Case truth tables* and signed off by the instructor (in the `.toml`) before the validation gate relies on it. The PDF table was amended on 2026-10-07 (TDP-43 layer and per-compartment overlap), and the instructor signed off the amended table on the same day.
-0.5. **Geometry** (built before the generator; see *Geometry references*): one file per case, genotype and animal, in µm, shared by generator and viewer, so it lives in `site/data/<case>/geometry-<genotype>-<animal>.json` (PDF: written by `generator.geometry_pdf`). All animals of a case share one image frame.
+	- Stored per case in `data/<case>/`: `truth-table.toml` holds the rules (verdicts, isoform mix, counts per compartment, how each measure changes in the mutant, tolerances, the designed transcription-site look of each region); `generator.truth_table` expands it with the probe menu's `mature_in` / `nascent_in` into `truth-table.json`, covering every single probe and all 56 ordered pairs, and `truth-table.md` to read. It is drafted from the prose tables in *Case truth tables* and signed off by the instructor (in the `.toml`) before the validation gate relies on it. The Pdf table was amended on 2026-10-07 (TDP-43 layer and per-compartment overlap), and the instructor signed off the amended table on the same day.
+0.5. **Geometry** (built before the generator; see *Geometry references*): one file per case, genotype and animal, in µm, shared by generator and viewer, so it lives in `site/data/<case>/geometry-<genotype>-<animal>.json` (Pdf: written by `generator.geometry_pdf`). All animals of a case share one image frame.
 	- Closed, non-overlapping named shapes: nucleus, cell body cytoplasm, dendrites, axon (with centreline), each bouton or terminal. Mushroom body: one cell-body cluster (30 nuclei), calyx, peduncle and the three lobe systems as shared regions.
 	- Minimum neurite width 0.5 µm, so spots fit inside; axons wider (see *Geometry references*).
-	- Every animal has its own neurons: cell arrangement and sizes, axon path, weaving and branching vary from animal to animal, while the genotype difference stays systematic (NMJ: 20 vs 15 boutons; PDF: s-LNv dorsal terminals at ZT2, each mutant arbor about 20% shorter than the control mean).
+	- Every animal has its own neurons: cell arrangement and sizes, axon path, weaving and branching vary from animal to animal, while the genotype difference stays systematic (NMJ: 20 vs 15 boutons, for the images only; Pdf: s-LNv dorsal terminals at ZT2, each mutant arbor about 20% shorter than the control mean).
 	- Key coordinates (nucleus centres and radii, terminal area and length) and fly-to views stored in the same file.
 1. **Generator** (Python with NumPy and Shapely, run with uv: `generator.build`): produces one JSON file per case, genotype and animal. Which regions a molecule carries is worked out from exon coordinates (mature RNA) and from the polymerase position along the pre-mRNA (nascent RNA: a region counts once the polymerase has passed its midpoint), not from the hand-written `mature_in` / `nascent_in` lists, so the gate also checks the menu annotations. Counts are Poisson draws, so a given set of three animals may not reproduce the truth table. The build draws a pool of candidate animals (120) for each of the six slots (genotype × animal 1–3), each from its own seed, and chooses the combination that passes every check and matches most closely, like choosing representative animals from a larger set. Every animal shown is a genuine draw; the choice is deterministic, so the same inputs always give the same animals and files. Each molecule records its gene (the target, or an overlapping same-strand gene such as CG31642), isoform, the transcript regions it carries (nascent and intron-retained molecules include intron regions), position in µm inside its geometry compartment, compartment, and whether it is nascent or in a granule. A TDP-43 protein layer (diffuse nuclear and cytoplasmic intensity fields, transport granule positions and aggregate outlines) is generated from the same seed so target mRNA–TDP-43 co-localisation is consistent.
 2. **Detection** (pre-computed by the generator): for each molecule and each of the 8 probe regions, whether it is detected, stored as an 8-bit mask per molecule. **Pilot: detection efficiency is 1.0**, so a molecule is detected by a region if and only if it carries it (not introduced to students; see *Future implementation ideas*). The browser only filters by this mask.
 3. **Viewer**: draws anatomy, spots and background.
-4. **Tables and summary** (pre-computed): for each single probe and all 56 ordered probe assignments per case (28 pairs × channel order, so a channel swap only swaps columns). Per compartment and channel: single- and double-positive counts; nuclear:cytoplasmic ratio; share of cytoplasmic RNA in axon and terminals; counts per terminal unit (per bouton at the NMJ; per terminal area for PDF neurons; per lobe system for the mushroom body); transcription-site number and intensity; overlap with TDP-43 transport granules per compartment vs a randomised-position control. Mean ± SD over 3 animals, plus the per-animal means and per-unit values the count plot needs (see *Count plot*).
+4. **Tables and summary** (pre-computed): for each single probe and all 56 ordered probe assignments per case (28 pairs × channel order, so a channel swap only swaps columns). Per compartment and channel: single- and double-positive counts; nuclear:cytoplasmic ratio; share of cytoplasmic RNA in axon and terminals; counts per terminal unit (per bouton at the NMJ; per terminal area for Pdf neurons; per lobe system for the mushroom body; computed for the answer key, not plotted for students); transcription-site number and intensity; overlap with TDP-43 transport granules per compartment vs a randomised-position control. Mean ± SD over 3 animals, plus the per-animal means and per-unit values the count plot needs (see *Count plot*).
 5. **Validation** (build gate, `generator.validate`): compares every pre-computed result with the truth table's expected results; any mismatch fails the build. Where counts are small, a band is widened by two standard errors of counting noise, so "unchanged" means no difference beyond what the counts can resolve, and never more than the stated tolerance where they can. It runs in the Pages workflow; with `--signed` it also fails until the instructor has signed off the truth table.
-	- *Measures* (`generator/tables.py`): counts in the nucleus and cell body are per cell (mean of the cells), in shared compartments (axon and terminals at the PDF neurons) per animal; the nuclear count excludes the transcription site, which is reported separately (number of nuclei with a site of at least 2 nascent molecules, and mean molecules per site); N:C is nucleus / cell body; the distal share is (axon + terminals) / all cytoplasmic RNA; TDP-43 overlap is, per compartment (cell body, axon, dorsal terminals), the share of mature spots within 0.3 µm of a transport granule's edge (aggregates are not counted), against the randomised-position level (the expected share for uniform positions in the same compartment, computed from areas). The PDF truth table expects the cell body at chance in both genotypes, and the axon and terminals at least 10 percentage points above chance (less 2 SE; tolerance `above = 0.10`), with the mutant's share within ±5% of control's (or 2 SE of counting noise).
+	- *Measures* (`generator/tables.py`): counts in the nucleus and cell body are per cell (mean of the cells), in shared compartments (axon and terminals at the Pdf neurons) per animal; the nuclear count excludes the transcription site, which is reported separately (number of nuclei with a site of at least 2 nascent molecules, and mean molecules per site); N:C is nucleus / cell body; the distal share is (axon + terminals) / all cytoplasmic RNA; TDP-43 overlap is, per compartment (cell body, axon, dorsal terminals), the share of mature spots within 0.3 µm of a transport granule's edge (aggregates are not counted), against the randomised-position level (the expected share for uniform positions in the same compartment, computed from areas). The Pdf truth table expects the cell body at chance in both genotypes, and the axon and terminals at least 10 percentage points above chance (less 2 SE; tolerance `above = 0.10`), with the mutant's share within ±5% of control's (or 2 SE of counting noise).
 
 Molecules do not depend on probe choice, so every group, and every new attempt, gets the same result for the same choice.
 
@@ -289,11 +290,11 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 
 | Input | Purpose | Sources |
 | --- | --- | --- |
-| Connectome skeletons, projected to 2D (where available) | Proportion check | FlyWire or MaleCNS (Kenyon cell types γ, α′/β′, α/β); MANC (motor neuron cell body in the VNC). Not used for PDF neurons: the connectome lacks the exact cells needed |
-| Reference images: schematics, EM renders, confocal max projections with scale bars | Shape to trace (PDF neurons); appearance: membrane texture, varicosities, bouton size (~1–2 µm) | Open-access papers or Virtual Fly Brain; adult femur NMJ images; mushroom body regions as in de Queiroz et al. 2025; PDF neurons: `references/reference-pdf-neurons.pdf` (see *PDF neurons* below) |
-| Annotated compartment sketch over a reference image | Compartment boundaries and labels; simplifications (shortened motor neuron axon with break symbol); bouton numbers per genotype | Instructor. PDF neurons: done (`references/reference-pdf-neurons.pdf`, p. 6). NMJ and mushroom body: to do before Phase 2 |
+| Connectome skeletons, projected to 2D (where available) | Proportion check | FlyWire or MaleCNS (Kenyon cell types γ, α′/β′, α/β); MANC (motor neuron cell body in the VNC). Not used for Pdf neurons: the connectome lacks the exact cells needed |
+| Reference images: schematics, EM renders, confocal max projections with scale bars | Shape to trace (Pdf neurons); appearance: membrane texture, varicosities, bouton size (~1–2 µm) | Open-access papers or Virtual Fly Brain; adult femur NMJ images; mushroom body regions as in de Queiroz et al. 2025; Pdf neurons: `references/reference-pdf-neurons.pdf` (see *Pdf neurons* below) |
+| Annotated compartment sketch over a reference image | Compartment boundaries and labels; simplifications (shortened motor neuron axon with break symbol); bouton numbers per genotype | Instructor. Pdf neurons: done (`references/reference-pdf-neurons.pdf`, p. 6). NMJ and mushroom body: to do before Phase 2 |
 
-**PDF neurons (s-LNvs)**
+**Pdf neurons (s-LNvs)**
 - **Reference pack:** `references/reference-pdf-neurons.pdf` (source: `.docx` alongside), annotated by the instructor:
 
 | Page | Content | Use |
@@ -322,9 +323,9 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 
 Starting values for the generator; tune after the pilot. Counts are mean mature molecules per cell (Poisson draws).
 
-- **Shared:** n = 3 animals per genotype, each with a multiplicative animal factor (SD 10%). Detection efficiency is 1.0 in the pilot (every molecule carrying a region is detected). Each spot's intensity varies by about ±10% (seeded), for realism. One transcription site per nucleus (paired homologues), active in 80–90% of nuclei; nascent transcripts per site follow production and gene length. Primary effects are 40–60%; "unchanged" means within ±5% (tightened from ±10% in the Phase 1 build at the instructor's request). The key readouts each case's conclusions rest on are held to ±5% with no allowance for counting noise (PDF: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6); small decoy subsets may also differ by two standard errors of counting noise, which shows as spread in the plot. A spot overlaps TDP-43 if it lies within 0.3 µm of a transport granule's edge (aggregates are not counted); overlap is worked out per compartment, and the randomised control places the same number of spots uniformly in the same compartment.
+- **Shared:** n = 3 animals per genotype, each with a multiplicative animal factor (SD 10%). Detection efficiency is 1.0 in the pilot (every molecule carrying a region is detected). Each spot's intensity varies by about ±10% (seeded), for realism. One transcription site per nucleus (paired homologues), active in 80–90% of nuclei; nascent transcripts per site follow production and gene length. Primary effects are 40–60%; "unchanged" means within ±5% (tightened from ±10% in the Phase 1 build at the instructor's request). The key readouts each case's conclusions rest on are held to ±5% with no allowance for counting noise (Pdf: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6); small decoy subsets may also differ by two standard errors of counting noise, which shows as spread in the plot. A spot overlaps TDP-43 if it lies within 0.3 µm of a transport granule's edge (aggregates are not counted); overlap is worked out per compartment, and the randomised control places the same number of spots uniformly in the same compartment.
 
-**NMJ – stai** (1 motor neuron; 20 boutons in control, 15 in mutant). Long = RB : RD (60:40); short = RA : RC : RE (35:15:50).
+**NMJ – stai** (1 motor neuron; 20 boutons in control, 15 in mutant, for the images only). Long = RB : RD (60:40); short = RA : RC : RE (35:15:50).
 
 | Compartment | Control (long %) | Mutant (long %) |
 | --- | --- | --- |
@@ -337,7 +338,7 @@ Starting values for the generator; tune after the pilot. Counts are mean mature 
 - Transcription site (S5): about 12 nascent transcripts in both genotypes. CG31642 (S3 trap): about 20 mRNAs in the cell body in both genotypes.
 - TDP-43: nuclear signal 1.0 → 0.7; puncta in cell body 5 → 10, axon 5 → 25, boutons 2 → 8.
 
-**PDF – futsch** (4 s-LNvs; ZT2; mutant terminals slightly less branched). Isoforms RC : RF : RE = 50 : 25 : 25 in both genotypes.
+**Pdf – futsch** (4 s-LNvs; ZT2; mutant terminals slightly less branched). Isoforms RC : RF : RE = 50 : 25 : 25 in both genotypes.
 
 | Compartment | Control | Mutant |
 | --- | --- | --- |
@@ -444,7 +445,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - Each page's label names its stage and step ("RBP clue · Step 3"); the opening's reads "Introduction · Start".
 - **Neuron-system box**, under the brand, in a light clay tint (clay at 13% over the field colour, a clay-tinted hairline border, the pane radius):
 	- At the opening, before a system is chosen, it reads "Choose a neuron system / to continue ↓". It marks where the group is, so no step is highlighted, and every step is greyed and not a link until a system is chosen. Clicking it scrolls to the opening's "Choose your neuron system" heading and moves focus there (smooth, unless reduced motion is set).
-	- With a system chosen, it reads "Neuron system / PDF neurons / Change system" and links to the opening, where a group can start again and choose a system. Notes are kept.
+	- With a system chosen, it reads "Neuron system / Pdf neurons / Change system" and links to the opening, where a group can start again and choose a system. Notes are kept.
 - The current step has a 2 px clay left border.
 - **Own pace:** groups are never rushed; no instructor unlocks, no countdown.
 - Back is always allowed; locked steps state the reason ("Choose two probe regions to see the results"), not just a padlock.
@@ -476,14 +477,14 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 **Count plot**
 - **SuperPlot** ([Lord et al. 2020, *JCB*](https://doi.org/10.1083/jcb.202001064)): sub-units as faint small points where they exist (boutons at the NMJ; s-LNv nuclei and cell bodies; Kenyon cell nuclei and cell bodies; the three lobe systems), otherwise animal points only (e.g. the single motor neuron's cell body and axon; shared calyx and peduncle); the 3 animal means as large points, mean ± SD across animals. No box plots (3 points per box) and no bars. Teaching point: the animal, not the cell, is the unit of replication. Animals are told apart by marker shape (circle, square, triangle; sub-units share their animal's shape), never by colour, which belongs to the channel.
 - **x-axis:** compartments in anatomical order (nucleus → cell body → axon → terminals), control and mutant side by side within each, so the cross-compartment pattern is visible in one plot. Genotype labels read "WT" | "Mutant" (see *Spatial convention* in *Openings*).
-- **Drawer:** the plot sits in a drawer under the viewer, closed by default on first visit; open or closed is remembered per browser. Its toolbar row is always visible: a "Show plot" / "Hide plot" toggle (chevron icon) at the left, the channel and measure toggles, and "Copy plot as PNG" at the right. Opening slides the drawer up (0.26 s; no animation under reduced motion) to `clamp(230px, 34vh, 360px)`. The viewer shrinks to make room and refits what was in view, never cropping. Choosing a channel or measure while the drawer is closed opens it. There is still no page scroll at 1280×720.
+- **Drawer:** the plot sits in a drawer under the viewer, closed by default on first visit; open or closed is remembered per browser. Its toolbar row is always visible: a "Show plot" / "Hide plot" toggle (chevron icon) at the left, the channel and measure toggles, and "Copy as PNG" at the right. Opening slides the drawer up (0.26 s; no animation under reduced motion) to `clamp(230px, 34vh, 360px)`. The viewer shrinks to make room and refits what was in view, never cropping. Choosing a channel or measure while the drawer is closed opens it. There is still no page scroll at 1280×720.
 - **Demarcation:** each compartment sits in its own band, and every other band is tinted (`ivory-panel` on screen, #F1EFE8 in the light PNG export). The compartment name is at the top of its band (12 px sans 600; still a button that flies the viewer there), and "WT" | "Mutant" runs along the foot of the band (11 px mono).
-- **Toggles** in the drawer's toolbar row: channel (smFISH 1 · ID / smFISH 2 · ID / Both, segmented) and measure (counts, per terminal unit, N:C ratio, share in axon + terminals, transcription sites, TDP-43 overlap; a drop-down, so the row fits 1280 px). The TDP-43 overlap measure has three x-axis categories (cell body, axon, dorsal terminals), each with its own dashed chance band. Its note reads: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment." Only one plot is shown at a time. *Transcription sites* (nascent molecules per nucleus, nuclei as sub-units) was added in the Phase 1 build: without it, an intron probe such as F5 has nothing to plot.
-- **Fixed y-scale per measure**, so switching channel never rescales silently. The TDP-43 overlap measure shows the randomised-position control as a dashed reference band.
+- **Toggles** in the drawer's toolbar row: channel (smFISH 1 · ID / smFISH 2 · ID / Both, segmented) and measure ("Spots in each compartment", "Nucleus vs cell body (N:C)", "Proportion in axon + terminals", "Transcription sites", "Spots in TDP-43 granules"; a drop-down, so the row fits 1280 px). The Spots in TDP-43 granules measure has three x-axis categories (cell body, axon, dorsal terminals), each with its own dashed chance band. Its note reads: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment." Only one plot is shown at a time. *Transcription sites* (nascent molecules per nucleus, nuclei as sub-units) was added in the Phase 1 build: without it, an intron probe such as F5 has nothing to plot.
+- **Fixed y-scale per measure**, so switching channel never rescales silently. The Spots in TDP-43 granules measure shows the randomised-position control as a dashed reference band.
 - **Colour:** points take the channel's LUT colour (darker in light mode); genotype is shown by position and label, not colour.
 - **No p-values or asterisks:** students judge effect size against spread, and a star would act as a hint.
 - **Linking:** click a compartment → the viewer flies there; click an animal's point → the viewer switches to that animal; hover → animal, value, n cells (the Transcription sites measure adds "sites in N of M nuclei").
-- **Exact values:** there is no table view. Hovering a genotype's column shows a two-line tooltip, e.g. "WT · Cell body" / "84.8 ± 5.4 spots (mean ± SD, n = 3 animals)", with "expected by chance: 0.081" added for the TDP-43 overlap measure. With the keyboard, Tab to a compartment's name shows both genotypes' values. A visually hidden table carries the current plot's numbers for screen readers.
+- **Exact values:** there is no table view. Hovering a genotype's column shows a two-line tooltip, e.g. "WT · Cell body" / "84.8 ± 5.4 spots (mean ± SD, n = 3 animals)", with "expected by chance: 0.081" added for the Spots in TDP-43 granules measure. With the keyboard, Tab to a compartment's name shows both genotypes' values. A visually hidden table carries the current plot's numbers for screen readers.
 - Reads the same pre-computed tables (`tables.json`), so the validation gate covers it.
 
 **Screenshots and export**
@@ -503,7 +504,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 #### Openings (steps 1–2)
 
-**Budget:** under 40 s of directed animation per case (set at the storyboard review; PDF: 38.9 s, see [storyboards/pdf-openings.md](storyboards/pdf-openings.md); the hero-to-legend flight is not counted, whether the user's scroll drives it or, in a window too tall to scroll, it runs by itself), skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
+**Budget:** under 40 s of directed animation per case (set at the storyboard review; Pdf: 38.9 s, see [storyboards/pdf-openings.md](storyboards/pdf-openings.md); the hero-to-legend flight is not counted, whether the user's scroll drives it or, in a window too tall to scroll, it runs by itself), skippable and replayable; captions of 1–2 lines; no audio; single fly age throughout (no age slider).
 
 | Segment | Time |
 | --- | --- |
@@ -531,18 +532,18 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 **Three-assay landing (shared by all groups)**
 - Three assay stations, each with a WT lane (left) and mutant lane (right), running a calm ambient loop in which the behavioural difference is visible:
 	- *Climbing vial* (NMJ case) → climbing-index bar. Mutant flies also shake (a slight leg tremor) as part of the climbing animation; the hero flies stay identical and never shake.
-	- *Activity monitor* (PDF case) → actogram, with ZT2 marked ("brains collected here"). A dashed "Simulated" pill at the bottom right of the stage marks the invented sleep phenotype. Content reference: `references/dam-motion/` (a 10-s GSAP schematic of the Drosophila Activity Monitor, with a deterministic `?render` mode and `render-dam-video.mjs` for WebM export). Use it for the mechanics (tubes, infrared beam, food and plug, beam-crossing counts) only: its colours and Helvetica don't follow `tokens.css`, and it loads GSAP from a CDN, which the site must not.
+	- *Activity monitor* (Pdf case) → actogram, with ZT2 marked ("brains collected here"). A dashed "Simulated" pill at the bottom right of the stage marks the invented sleep phenotype. Content reference: `references/dam-motion/` (a 10-s GSAP schematic of the Drosophila Activity Monitor, with a deterministic `?render` mode and `render-dam-video.mjs` for WebM export). Use it for the mechanics (tubes, infrared beam, food and plug, beam-crossing counts) only: its colours and Helvetica don't follow `tokens.css`, and it loads GSAP from a CDN, which the site must not.
 	- *T-maze* (mushroom body case) → performance index.
 - Hover brings a station forward; click expands it into the chosen case (shared-element transition), where the group does one real action (tap the vial down; start the light–dark days; run odour + shock training) and watches the readout build.
 - These readouts become the Part 2 organismal readouts.
 
 **Descent into anatomy (step 2)**
 - The camera pushes in on one fly from the chosen assay; its body turns semi-transparent and the neurons appear in membrane blue, the only saturated colour on screen. Blue means "the labelled neuron" from here to the viewer.
-- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; PDF – head → brain → s-LNvs → dorsal terminals; mushroom body – head → cell-body cluster → calyx, peduncle and lobes.
-- PDF: once the brain has drawn on, its two main regions are named with ink labels and arrows ("Central brain" above the brain, "Optic lobe" below the optic lobe on the viewer's right, its arrow pointing into the lobe's outer part, clear of the neurons). The PDF neurons then grow out in blue on both sides of the brain (the right side a mirror image of the left). The labels and the right side's neurons clear as the camera pushes in, so only the left group is zoomed into, labelled and carried into the viewer.
+- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; Pdf – head → brain → s-LNvs → dorsal terminals; mushroom body – head → cell-body cluster → calyx, peduncle and lobes.
+- Pdf: once the brain has drawn on, its two main regions are named with ink labels and arrows ("Central brain" above the brain, "Optic lobe" below the optic lobe on the viewer's right, its arrow pointing into the lobe's outer part, clear of the neurons). The Pdf neurons then grow out in blue on both sides of the brain (the right side a mirror image of the left). The labels and the right side's neurons clear as the camera pushes in, so only the left group is zoomed into, labelled and carried into the viewer.
 - The descent ends in the viewer on the TDP-43 IF clue (step 3, TDP-43 dysfunction). The background deepens ivory → charcoal → black during the push-in, and the paper grain, washes and boiling ink fade out with it, so students move from the drawn story into the clean microscope (in both themes).
 - The SVG neuron outline at the end of the descent matches the PixiJS viewer's opening frame (same outline, position and scale), so the hand-over is a matched swap, not a cross-fade.
-- Compartment labels use the same names and order as the viewer's fly-to buttons and the plot's x-axis. The one exception is the step 2 gloss "(synapses)": the descent's label reads "Dorsal terminals (synapses)", the 7.8 s caption says "Their dorsal terminals (synapses) remodel every day." and the story text says the axons "end in the dorsal terminals, where their synapses are" and lists "four compartments: nucleus, cell body, axon and dorsal terminals (synapses)". *Simplified*: the arbor holds many synapses and also releases PDF peptide partly outside them. The viewer's fly-to button and the plot axis keep "Dorsal terminals".
+- Compartment labels use the same names and order as the viewer's fly-to buttons and the plot's x-axis. The one exception is the step 2 gloss "(synapses)": the descent's label reads "Dorsal terminals (synapses)", the 7.8 s caption says "Their dorsal terminals (synapses) remodel every day." and the story text says the axons "end in the dorsal terminals, where their synapses are" and lists "four compartments: nucleus, cell body, axon and dorsal terminals (synapses)". *Simplified*: the arbor holds many synapses and also releases Pdf peptide partly outside them. The viewer's fly-to button and the plot axis keep "Dorsal terminals".
 - **No per-claim layer badges on the student screens.** The *Established* / *Simplified* / *Invented for this case* badges were removed from steps 1, 2, 4 and 5: repeated on every screen, they cluttered the view without telling students anything. The spec keeps the layer annotations (e.g. *Simplified*: "axon shortened", "cell bodies enlarged"; *Invented for this case*: the sleep phenotype). The dashed "Simulated" pill stands in for the *Invented for this case* badge: it tells students that the case details, phenotype, images and counts are simulated teaching material. It sits in the rail footer on every screen ("Simulated teaching data") and at the bottom right of step 1's activity monitor ("Simulated"), on the invented sleep phenotype itself.
 - **Illustration style:** the simplified flybody outlines (see *Geometry references*) drawn as semi-transparent ink outlines with soft washes on ivory, in the illustration texture (see *Art direction*); neurons in blue.
 
@@ -635,7 +636,7 @@ Adapted from [motion-video-kit](https://github.com/echris6/motion-video-kit) (MI
 
 Students zoom through one continuous neuron, from the cell body to its synaptic terminals; only labelled cells are shown. Each case opens with the whole neuron in frame (for the mushroom body, the cell-body cluster, calyx, peduncle and three lobe systems). The motor neuron's axon is drawn fictitiously short so its VNC cell body and femur boutons fit one frame. Cell bodies and axons are enlarged in every case (see *Geometry references*), so the scale bar is true for spot and granule sizes, but the anatomy is only roughly to scale.
 
-- **Zoom and navigation**: `pixi-viewport` with zoom limits (minimum zoom fits the whole neuron) and buttons that fly to each case's compartments: nucleus, cell body, axon and terminals (NMJ: cell body in the VNC, boutons in the femur; PDF: s-LNv dorsal terminals; mushroom body: calyx, peduncle and the three lobe systems).
+- **Zoom and navigation**: `pixi-viewport` with zoom limits (minimum zoom fits the whole neuron) and buttons that fly to each case's compartments: nucleus, cell body, axon and terminals (NMJ: cell body in the VNC, boutons in the femur; Pdf: s-LNv dorsal terminals; mushroom body: calyx, peduncle and the three lobe systems).
 - **Semantic zoom**: membrane channel only when zoomed out; spots, nuclear envelope and granules appear as students zoom in. Built as conserved light: below about 0.85 px per PSF σ a spot is drawn larger and dimmer by the same area factor, so single spots fade out at the whole-neuron view while dense cell bodies and transcription sites still glow.
 - **Projection notice**: fixed label beside the viewport: "2D maximum-intensity projection (simulated)".
 - **Live scale bar**: fixed to the screen, outside the zoomable world. On every zoom event it picks a round length (0.5, 1, 2, 5, 10, 20 or 50 µm) that spans at least 80 screen pixels.
@@ -661,10 +662,10 @@ Realism comes from modelling optics and detection, not from the renderer. Spots 
 - **Background**: shot and read noise grain, plus uneven autofluorescence in muscle and neural tissue.
 - **Nascent RNA**: intron probes show nuclear transcription sites, often one per nucleus because homologous chromosomes pair in fly somatic cells. Intron-retained transcripts appear as intron + exon spots away from transcription sites. Each nascent molecule is unspliced RNA from its isoform's TSS to a random polymerase position (up to that isoform's 3' end) and carries every region in that stretch. So 5' probes give brighter transcription sites than 3' probes, exon probes also label transcription sites, and a downstream promoter's exon appears in upstream-promoter nascent RNA (nested promoters).
 - **Variability**: Poisson molecule counts plus a per-animal factor, n = 3 animals per genotype.
-- **TDP-43 IF** (PDF case; four kinds of signal, needing their own blurred texture rather than the Gaussian spot sprite for the first, second and fourth):
+- **TDP-43 IF** (Pdf case; four kinds of signal, needing their own blurred texture rather than the Gaussian spot sprite for the first, second and fourth):
 	- *Diffuse nuclear* signal, 1.0 in control → 0.4 in the mutant, so the nuclear loss is clear in step 3.
 	- *Diffuse cytoplasmic* signal through the cell-body cytoplasm and, more dimly, the neurites, finely speckled, on the same grey-per-level scale as the nucleus (0.16 → 0.08 of the control nuclear level; neurites 0.75 of the cell-body level). *Invented for this case*: this soluble pool keeps futsch mRNA stable; it is never stated to students.
-	- *Transport granules*: small, round, soft puncta, larger than a spot so that an smFISH spot can sit visibly inside one (radius 0.28–0.38 µm, a Gaussian of σ = 0.75 × radius, about 0.6 µm across), dimmer than spots and aggregates (peak 0.45 on the nuclear grey scale) but above the diffuse signal, and the same in both genotypes (about 1 per cell body; a fixed density along the neurites). Drawn live as sprites; zoomed out, each follows the conserved-light rule at its own size. *Established*: TDP-43 forms motile mRNA transport granules in axons (Alami et al. 2014, *Neuron*), and futsch mRNA sits in TDP-43 complexes (Coyne et al. 2014). They are equal in both genotypes on purpose, so the PDF case doesn't show a transport defect (that is the NMJ story).
+	- *Transport granules*: small, round, soft puncta, larger than a spot so that an smFISH spot can sit visibly inside one (radius 0.28–0.38 µm, a Gaussian of σ = 0.75 × radius, about 0.6 µm across), dimmer than spots and aggregates (peak 0.45 on the nuclear grey scale) but above the diffuse signal, and the same in both genotypes (about 1 per cell body; a fixed density along the neurites). Drawn live as sprites; zoomed out, each follows the conserved-light rule at its own size. *Established*: TDP-43 forms motile mRNA transport granules in axons (Alami et al. 2014, *Neuron*), and futsch mRNA sits in TDP-43 complexes (Coyne et al. 2014). They are equal in both genotypes on purpose, so the Pdf case doesn't show a transport defect (that is the NMJ story).
 	- *Aggregates* (mutant only): irregular, lobed bodies with bright and dark patches inside, within 3 µm of the nucleus (1–3 per cell, each 1.5–4 µm²), rendered into the TDP-43 image with a highlight roll-off so their texture survives below white. Their brightness is set directly (mean image grey about 1.0 before the roll-off, ±10% per aggregate), not from a mass balance. The TDP-43 the mutant lost from the nucleus and cell-body cytoplasm is drawn into them (*Simplified*); in a maximum-intensity projection brightness shows concentration, not amount, and aggregates are dense, so a few small ones can hold it. Total cytoplasmic TDP-43 is higher in the mutant, as in "TDP-43 moves to the cytoplasm in ALS", while the soluble pool falls. WT cell bodies have no aggregates, only the odd small granule.
 	- *No futsch mRNA inside aggregates*: *Simplified*. RNA-free TDP-43 is the aggregation-prone form (Maharana et al. 2018, *Science*; Mann et al. 2019, *Neuron*). In a real maximum-intensity projection, spots above or below an aggregate would still project onto it, so an empty aggregate is a simplification.
 	- *Granule cargo*: 25% of axonal and 15% of terminal futsch mRNA rides on a granule, in both genotypes. Cargo molecules are offset from the granule centre (SD 0.15 µm), so several RNAs on one granule mostly stay apart as separate spots inside its glow; two in one granule can still merge into one brighter spot, as in a real image. The share is the same because binding, not decay, sets it (molecules move in and out of dynamic granules).
@@ -678,7 +679,7 @@ British English; short sentences; no PTR-mode names in case text (mode names app
 | Case | Name line | Function (2 lines, incl. where it works) |
 | --- | --- | --- |
 | NMJ | *stai* (stathmin) ↔ STMN2 | Binds tubulin and regulates microtubules; needed for axonal transport and for the growth and stability of synaptic boutons. In this motor neuron: cell body, axon and boutons. |
-| PDF | *futsch* ↔ MAP1B | A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these PDF neurons: cell bodies, axons and dorsal terminals, which remodel every day. |
+| Pdf | *futsch* ↔ MAP1B | A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these Pdf neurons: cell bodies, axons and dorsal terminals, which remodel every day. |
 | Mushroom body | *unc-13* ↔ UNC13A | A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, calyx, peduncle and lobes. |
 
 **Mode cards (step 4)** – one plain-language definition each, *Established* layer
@@ -752,7 +753,7 @@ Each team submits a single-slide experimental plan:
 
 **Decisive tests (instructor notes; not offered to students)**
 - **NMJ – stai:** live imaging of an MS2-tagged long-3'UTR reporter in leg axons shows the stall but not its cause. Separating an RNA-specific stall from general transport failure needs an unrelated axonal cargo as a comparison, or removal of the TDP-43-binding (UG-rich) sites from the long 3'UTR.
-- **PDF – futsch:** where and how fast the RNA is lost: transcription shut-off in explanted brains followed by an smFISH time course of nuclear and cytoplasmic counts, or cell-type-specific metabolic labelling (TU-tagging). As an intervention, knocking down nuclear (Rrp6, exosome) or cytoplasmic (Pacman/Xrn1) decay in PDF neurons could tell the two routes apart.
+- **Pdf – futsch:** where and how fast the RNA is lost: transcription shut-off in explanted brains followed by an smFISH time course of nuclear and cytoplasmic counts, or cell-type-specific metabolic labelling (TU-tagging). As an intervention, knocking down nuclear (Rrp6, exosome) or cytoplasmic (Pacman/Xrn1) decay in Pdf neurons could tell the two routes apart.
 - **Mushroom body – unc-13:** production vs decay per isoform group. U3 transcription sites report group-1 production, and a pulse–chase with isoform-specific readout reports decay. Group 2 has no private intron, so only kinetics can separate its production from its stabilisation.
 
 **Idea (not implemented):** two follow-up experiment tokens to test the intervention, forcing prioritisation rather than guessing what the instructor wants:
@@ -764,7 +765,7 @@ Each team submits a single-slide experimental plan:
 ## Future implementation ideas
 
 - **Target protein output** as a follow-up, so the translation mode becomes testable.
-- **Cell-type comparisons**, e.g. small vs large PDF neurons, or neuron vs glia.
+- **Cell-type comparisons**, e.g. small vs large Pdf neurons, or neuron vs glia.
 - **Glia:** invented target expression in glial processes, with spots assigned to neuron or glia.
 - **Follow-up experiments on the website** (e.g. an extra probe pair or a time course), currently left to Part 2.
 - **Follow-up tokens** for Part 2 (see *Idea* above).

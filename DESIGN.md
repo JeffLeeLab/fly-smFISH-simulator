@@ -340,7 +340,7 @@ A segmented bar of three equal parts (Ruled out · Supported · Unresolved) with
 The same full rail, about 200px wide with a hairline right border, appears in every layout. From the top: the brand, the neuron-system box, the five stages with their steps, then the theme toggle and the "Simulated teaching data" tag.
 - **Neuron-system box:** a light clay tint over `ivory-field` (clay mixed 13% into the field colour, 22% on hover), a 1px border of clay mixed 45% into `hairline`, and 3px corners. The name is 14px at weight 600, and the action line is `clay-ink` accent text.
   - At the opening no system is chosen. The box is a button reading "Choose a neuron system", with "to continue ↓" under it, and it marks where the student is (`aria-current="page"`). Clicking it scrolls to the opening's "Choose your neuron system" heading and focuses it.
-  - Once a system is chosen, the box is a link: "NEURON SYSTEM" in Label style, the system's name ("PDF neurons") and "Change system". It goes back to the opening, where a group can choose again. Notes are kept.
+  - Once a system is chosen, the box is a link: "NEURON SYSTEM" in Label style, the system's name ("Pdf neurons") and "Change system". It goes back to the opening, where a group can choose again. Notes are kept.
 - **Stages and steps:** stage names in Label style; under each, steps as UI rows with a mono step number in `stone`. The current step has a 2px clay left border and weight 600; completed steps use `ink-black`, and upcoming steps `ink-grey`. At the opening no step is highlighted, and every step is greyed and is not a link until a system is chosen.
 - **Locked steps** give a reason in words ("Choose two probe regions to see the results"), never just a padlock.
 

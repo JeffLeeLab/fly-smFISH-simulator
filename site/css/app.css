@@ -201,7 +201,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .scene-small { font: 400 12.5px var(--font-sans); fill: var(--text-2); }
 .scene-gene { font: 500 13px var(--font-sans); fill: var(--text); }
 
-/* ---------- the activity monitor (PDF step 1 and its landing station) ---------- */
+/* ---------- the activity monitor (Pdf step 1 and its landing station) ---------- */
 .assay, .station__art svg { --assay-night: rgba(43, 42, 39, .13); }
 [data-theme="dark"] .assay, [data-theme="dark"] .station__art svg { --assay-night: rgba(0, 0, 0, .34); }
 .stage--assay { background: transparent; min-height: 0; overflow: hidden; }
