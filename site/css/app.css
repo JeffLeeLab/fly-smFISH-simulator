@@ -651,9 +651,8 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .howto__body b { font-weight: 600; }
 .howto svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--text-2); }
 
-/* ---------- step 7: Part 2 slide preview ---------- */
+/* ---------- step 7: the Part 1 summary slide, the starting point for Part 2 ---------- */
 .slide { display: flex; flex-direction: column; gap: var(--sp-3); max-width: 880px !important; }
-.slide__cap { display: flex; flex-direction: column; gap: 2px; }
 .slide__svg { display: block; width: 100%; height: auto; border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip); background: #fff; }
 
 /* ---------- glossary terms (hover / tap) ---------- */

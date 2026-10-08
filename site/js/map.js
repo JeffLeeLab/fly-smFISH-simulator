@@ -379,3 +379,71 @@ export function drawStrip(svg, g, pair, width) {
   svg.setAttribute("height", bottom);
   return bottom;
 }
+
+// The pair on the Part 1 summary slide (summary.js): the map's rows in its compressed coordinates
+// with their names, start and end marks, and the pair's two regions as ink bands under a bracket
+// and ID (the probe track's other regions are left out). Markup with inline colours from the
+// palette P, so one string serves the page preview and the PNG. Returns { svg, height }.
+export function slideMap(g, pair, { x, y, width, P }) {
+  const FS = 20, PITCH = 38, SPLIT = 20, hC = 18, hU = 10, half = hC / 2;
+  const tx = [...g.transcripts].sort((a, b) => a.name.localeCompare(b.name, "en", { numeric: true }));
+  const others = [];
+  for (const k in g.overlapping_same_strand_genes) for (const t of g.overlapping_same_strand_genes[k]) others.push(t);
+  const LW = Math.ceil(Math.max(...tx.concat(others).map(t => t.name.length * FS * 0.6))) + 28;   // Plex Mono: 0.6 em a character
+  const ax = buildAxis(g, width - LW - 12, "comp");
+  const X = v => x + LW + ax.map(v);
+  const out = [];
+  const bandTop = y + 30;
+  let ry = y + 66;
+  const row = t => {
+    const exs = t.exons.map(e => toT(g, ...e)).sort((a, b) => a[0] - b[0]);
+    const x0 = X(exs[0][0]), x1 = X(exs[exs.length - 1][1]);
+    out.push(`<text x="${x + LW - 18}" y="${ry + 7}" text-anchor="end" font-family="${P.mono}" font-size="${FS}" fill="${P.text}">${t.name}</text>`);
+    out.push(`<line x1="${x0}" x2="${x1}" y1="${ry}" y2="${ry}" stroke="${P.intron}" stroke-width="2"/>`);
+    const cds = t.cds ? toT(g, ...t.cds) : null;
+    for (const e of exs) {
+      const parts = cds && overlaps(e, cds)
+        ? [[e[0], Math.max(e[0], cds[0]), false], [Math.max(e[0], cds[0]), Math.min(e[1], cds[1]), true], [Math.min(e[1], cds[1]), e[1], false]]
+        : [[e[0], e[1], false]];
+      for (const [a, b, isC] of parts) {
+        if (b <= a) continue;
+        const h = isC ? hC : hU;
+        out.push(`<rect x="${X(a)}" y="${ry - h / 2}" width="${Math.max(1.5, X(b) - X(a))}" height="${h}" fill="${isC ? P.cds : P.utr}"/>`);
+      }
+    }
+    // TSS: bent arrow at the 5′ end; 3′ end: triangle
+    const up = ry - half;
+    out.push(`<path d="M${x0},${up} L${x0},${up - 11} L${x0 + 12},${up - 11}" fill="none" stroke="${P.text2}" stroke-width="2"/>`);
+    out.push(`<path d="M${x0 + 9},${up - 15.5} L${x0 + 14},${up - 11} L${x0 + 9},${up - 6.5} Z" fill="${P.text2}"/>`);
+    out.push(`<path d="M${x1 - 5},${ry + half + 2} L${x1 + 5},${ry + half + 2} L${x1},${ry + half + 9} Z" fill="${P.text2}"/>`);
+    ry += PITCH;
+  };
+  tx.forEach(row);
+  if (others.length) {
+    const dy = ry - PITCH / 2 + SPLIT / 2;
+    out.push(`<line x1="${x}" x2="${x + width}" y1="${dy}" y2="${dy}" stroke="${P.grid}" stroke-width="2" stroke-dasharray="3 6"/>`);
+    ry += SPLIT;
+    others.forEach(row);
+  }
+  const bottom = ry - PITCH + half + 10;
+  // the two regions: an ink band through every row, a bracket and the ID above (pushed apart if close)
+  const chosen = ["ch1", "ch2"].map(ch => {
+    const p = g.probe_regions.find(r => r.id === pair[ch]);
+    if (!p) return null;
+    const [a, b] = toT(g, p.lo, p.hi);
+    const x0 = X(a), x1 = Math.max(X(b), X(a) + 3);
+    return { ch, id: p.id, x0, x1, cx: (x0 + x1) / 2 };
+  }).filter(Boolean);
+  if (chosen.length === 2) {
+    const [l, r] = chosen[0].cx <= chosen[1].cx ? chosen : [chosen[1], chosen[0]];
+    const need = 52 - (r.cx - l.cx);
+    if (need > 0) { l.lx = l.cx - need / 2; r.lx = r.cx + need / 2; }
+  }
+  const bands = chosen.map(c => {
+    const ink = P[c.ch];
+    return `<rect x="${c.x0}" y="${bandTop}" width="${c.x1 - c.x0}" height="${bottom - bandTop}" fill="${ink}" fill-opacity=".14"/>
+      <path d="M${c.x0},${bandTop + 7} L${c.x0},${bandTop} L${c.x1},${bandTop} L${c.x1},${bandTop + 7}" fill="none" stroke="${ink}" stroke-width="3"/>
+      <text x="${c.lx ?? c.cx}" y="${bandTop - 9}" text-anchor="middle" font-family="${P.mono}" font-size="22" font-weight="500" fill="${ink}">${c.id}</text>`;
+  });
+  return { svg: bands.join("") + out.join(""), height: bottom - y };
+}

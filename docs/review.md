@@ -35,3 +35,17 @@ Nothing else needed changing: steps 3–7 read correctly at both sizes in both t
 | 5 | Rail, design check | The automated design check flagged the neuron-system box's 2 px clay left border as a "side-tab" accent. | Fixed: the border was removed; the box keeps its clay tint and clay-tinted hairline. |
 
 **Still to do before the manual assessment:** the offline copy test, and the browser matrix (Edge, Firefox, Safari) from the spec's device list.
+
+## 2026-10-08: step 7 revision (Part 1 summary)
+
+**Screenshots.** A targeted run, not the full `tools/review-shots.sh` set: step 7 full-page at 1280×720 and 1920×1080 in light and dark, with a filled-in notebook; the copied PNG rendered through the real export path (`svgToCanvas`) at 1920×1080; two stress states (all eight modes shortlisted, a ~400-character claim and a long uncertainty; a blank claim and uncertainty). No console errors.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Slide, eight shortlisted modes | The verdicts were cut off silently once the space ran out (one of four unresolved modes showed). | Fixed: the three groups are set side by side when stacking doesn't fit, and any mode that still doesn't fit is counted ("+ n more"). |
+| 2 | Locator | The fly's antennae made a face at this size. | Fixed: removed, as in step 2. |
+| 3 | Locator | The head ring sat on the head's outline, and the inset frame was heavier than the slide's hairlines. | Fixed: wider ring; frame and zoom lines in the border-strong grey. |
+| 4 | Long claim, blank fields | A long claim is cut at four lines with an ellipsis; the uncertainty fits. Blank fields show dashed placeholders. | OK. |
+| 5 | Page, dark theme | The slide preview stays white, as it previews a white slide. | OK. |
+
+The full `tools/review-shots.sh` run is still to do with the next round.

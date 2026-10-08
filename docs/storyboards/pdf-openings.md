@@ -17,7 +17,7 @@ Fly drawings: [flies.png](flies.png), from the flybody model (`generator/flies.p
 
 - **Logline.** Two flies that look the same carry the same human gene, one with a single change; their nights differ, so we look inside their brains.
 - **World.** Ivory paper, hand-inked outlines that boil 12 times a second, flat washes in ivory, warm grey and clay-tinted fills, light paper grain. Membrane blue is the only saturated colour, and only for the labelled neurons. Lights-off in the activity monitor is shown with warm grey, not a hue. During the descent the paper deepens from ivory to charcoal to black and the texture fades out, ending in the clean microscope field.
-- **Motif.** The pair: hTDP-43 WT on the left, the mutant on the right (named "ALS mutant" in the openings and "hTDP-43 mutant" from the descent's final split on), from the hero to the assay lanes, the split and the viewer. The ending (summary PNG) shows the same pair.
+- **Motif.** The pair: hTDP-43 WT on the left, the mutant on the right (named "ALS mutant" in the openings and "hTDP-43 mutant" from the descent's final split on), from the hero to the assay lanes, the split and the viewer. The ending (the Part 1 summary PNG, step 7) names the pair ("hTDP-43 WT vs hTDP-43 mutant") and echoes the descent with a locator: the fly from the front, its brain enlarged, the Pdf neurons in blue.
 - **One persistent actor.** Hero flies → legend → the flies in the tubes → the WT fly → its head → its Pdf neurons → the viewer's outline.
 - **Budget.** Directed animation 38.9 s (hero 9.6 s, chosen assay 15.3 s, descent 14 s), under the 40 s limit set at review; the hero-to-legend flight is not counted, on scroll or when it runs by itself in a window too tall to scroll. Every segment can be skipped and replayed; captions are 1–2 lines of HTML text; no audio. Reduced motion shows each segment's end frame.
 - **Flies.** Dorsal view in the hero (a calm pair), side view in the tubes, frontal view for the descent. Neither hero fly ever shakes or differs in pose; the mutant only stands turned by 8° and slightly lower, so the pair reads as two animals rather than one drawing copied. Idle motion is grooming, small antenna twitches and the boil, never in sync between the two.
@@ -191,7 +191,7 @@ As built ([descent-frames.png](descent-frames.png)):
 - Each read has time to land before the next; no two reads overlap: yes, see the times above.
 - A transition at every seam: Flip (hero → legend, station → stage), clip wipe and shared fly (assay → descent), matched swap (descent → viewer).
 - Text: captions are 1–2 lines of crisp HTML, never painted into the artwork.
-- The ending rhymes with the opening: the summary PNG (step 7) shows the hero's WT | mutant pair.
+- The ending rhymes with the opening: the Part 1 summary PNG (step 7) names the pair and echoes the descent with a locator: the fly from the front, its brain enlarged, the Pdf neurons in blue.
 
 ## Build notes
 

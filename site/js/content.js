@@ -9,7 +9,6 @@ export const CASES = {
     cells: "s-LNvs",
     phenotype: "Sleep and daily rhythm",
     assay: "Activity monitor",
-    readout: "activity and sleep (actogram)",
     available: true,
     // Shown from step 5 on: the target gene is unknown during steps 1–4.
     target: {

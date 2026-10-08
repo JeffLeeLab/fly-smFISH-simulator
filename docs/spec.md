@@ -4,7 +4,7 @@
 - Feedback session design for the course outline (*L4 Core Skills in MCB outline*, in the instructor's notes; not in this repo): 2 hours, three groups, student-led interactive smFISH data interpretation and experimental design, with general RNA/RBP biology.
 - Theme: dysfunctional post-transcriptional regulation (PTR) in humanised TDP-43 ALS *Drosophila* models (see *Teaching genotype*).
 - **Part 1:** run simulated smFISH experiments in flies carrying wild-type vs ALS-mutant human TDP-43, interpret how the images differ, and hypothesise which PTR modes are dysfunctional.
-- **Part 2:** devise a mechanistically justified intervention and its decisive test, using the RNA/RBP "Core Skills" from the companion lecture (not a comprehensive treatment programme).
+- **Part 2:** based on their reading of the microscopy, students design experiments (not limited to microscopy or smFISH) that dissect the mechanism of the TDP-43-linked failure of post-transcriptional regulation further, and propose potential interventions (not a comprehensive treatment programme). It is open-ended. The topics come from the RNA/RBP "Core Skills" companion lecture or from review reading.
 - **Design principle: narrow the hypotheses, don't solve the case.** Multiple PTR modes may remain plausible; the unresolved ones seed Part 2. Prediction is lightweight, not the end goal.
 
 ### The Biology
@@ -146,13 +146,13 @@ Shared across cases:
 
 ### A possible sequence
 
-1. **Phenotype (engagement):** hero (knock-in sequence, two identical humanised flies), then a shared three-assay landing; each group picks one of three systems → individual pages (see *Openings*). Animate the fly *and* its behavioural assay (NMJ: a climbing defect, with shaking shown as part of the climbing animation; Pdf neurons: activity/sleep trace; mushroom body: learning/memory test); these become the Part 2 organismal readouts.
+1. **Phenotype (engagement):** hero (knock-in sequence, two identical humanised flies), then a shared three-assay landing; each group picks one of three systems → individual pages (see *Openings*). Animate the fly *and* its behavioural assay (NMJ: a climbing defect, with shaking shown as part of the climbing animation; Pdf neurons: activity/sleep trace; mushroom body: learning/memory test); students may draw on them in Part 2.
 2. **Anatomy:** semi-transparent fruit fly with appropriate neurons highlighted; a scroll-driven descent that ends in the viewer (see *Openings*) (same blue colour scheme as neuronal membrane in the microscopy images). For the NMJ, zoom into the leg femur (synapses) and the VNC (motor neuron cell body).
 3. **TDP-43 dysfunction (the first clue):** the descent lands in the viewer on TDP-43 IF in control vs mutant. Qualitative, by eye only. Record observation separately from interpretation (early practice).
 4. **Hypotheses:** shortlist PTR modes consistent with the clue (need not be competing). The target gene is not yet known, so gene information cannot steer the hypotheses.
 5. **Target & probe design:** introduction of the TDP-43 target (function, orthologues, FlyBase link-out) above its transcript map (introns, annotated alternative exons, TSS, 3'PAS), with the probe track shown on the same map. Select two probe regions; optionally note, per shortlisted mode, what it would look like with these probes. Results open as soon as two regions are chosen. Groups can start a new pair at any time, as often as they like: exploration is never penalised (see *Target & probe design (step 5)*).
 6. **Microscopy reveal** (one screen): control and mutant smFISH, 3 animals, count plot; TDP-43 channel remains toggle-able. Alongside, record observation vs interpretation and classify each shortlisted mode as *ruled out / supported / unresolved* (see *Microscopy reveal (step 6)*).
-7. **Interpret & revise** the explanation → becomes Part 2 *Claim* and *Uncertainty*. No follow-up experiments on the website: students design them in Part 2 (instructor notes: *Decisive tests*; screen: *Interpret & revise (step 7)*).
+7. **Interpret & revise** the explanation → gives the *Claim* and *Uncertainty*, the starting point for Part 2. No follow-up experiments on the website: students design them in Part 2 (instructor notes: *Example Part 2 directions*; screen: *Interpret & revise (step 7)*).
 
 ### Implementation spec
 
@@ -211,7 +211,7 @@ Build one case completely before the others, so every shared part (data pipeline
 - **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path.
 - **Shared:** the NMJ and mushroom body cases reuse the same four-class TDP-43 layer (diffuse nuclear, diffuse cytoplasmic, transport granules, aggregates). The NMJ's extra mutant puncta along the axon and in boutons are stalled transport granules carrying cargo, not aggregates, which keeps the cases' stories distinct.
 - **Shared:** all three landing stations live; cross-case check that the student-facing template is identical and the *Coverage* table holds across the three cases.
-- **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, decisive tests) as a separate document.
+- **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
 
 #### Architecture
 
@@ -311,7 +311,7 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 - Terminals at ZT2, when branching is greatest. The mutant template is slightly less branched (e.g. about 20% less total terminal length).
 
 **All systems**
-- **Flies** (hero, assays and the whole-fly overview in step 2): drawn from the [flybody](https://github.com/TuragaLab/flybody) body model ([Vaxenburg et al. 2025, *Nature*](https://doi.org/10.1038/s41586-025-09029-4); code and assets Apache-2.0, credited on the site). The flies are there to show the phenotypes, not to teach anatomy, so the mesh is a starting point rather than a target: they are simplified until they sit in the site's illustration style instead of looking like a 3D render.
+- **Flies** (hero, assays, the whole-fly overview in step 2 and the locator on the step 7 summary slide, drawn from the front with the antennae removed, as in step 2): drawn from the [flybody](https://github.com/TuragaLab/flybody) body model ([Vaxenburg et al. 2025, *Nature*](https://doi.org/10.1038/s41586-025-09029-4); code and assets Apache-2.0, credited on the site). The flies are there to show the phenotypes, not to teach anatomy, so the mesh is a starting point rather than a target: they are simplified until they sit in the site's illustration style instead of looking like a 3D render.
 	- A Python script (run with uv) projects the per-segment OBJ meshes to fixed 2D views and simplifies each part to a few smooth SVG paths: head, thorax, abdomen, wings and halteres, and each leg as coxa, femur, tibia and tarsus, with joint pivots read from `fruitfly.xml` so the legs can be posed for walking, grooming and climbing, and the wings for flight (three drawings of the dorsal fly: wings half open, swept forward and swept back; membrane only, without veins).
 	- Keep the body plan and proportions (head, thorax, abdomen; six legs; two wings). Drop bristles, ocelli, claws, mouthparts and eye facets.
 	- Draw them in the site's inks and washes from `tokens.css`, with the same boil filter as the other illustrations (see *Art direction*).
@@ -461,9 +461,9 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 | 4 | Shortlisted modes, each with an optional "because…" |
 | 5 | Current probe pair and any predictions (replaced when a new pair is started; earlier attempts live in the students' screenshots) |
 | 6 | *Observation* and *Interpretation* fields; one card per shortlisted mode: ruled out / supported / unresolved, with an optional evidence line (evidence images are the students' own screenshots) |
-| 7 | Claim + Uncertainty, carried into Part 2 via the summary PNG |
+| 7 | Claim + Uncertainty, carried into Part 2 via the Part 1 summary PNG |
 
-- **Export: PNG only.** "Copy summary as PNG" in step 7 (case, probe pair, mode verdicts, Claim, Uncertainty; see *Interpret & revise (step 7)*) for the Part 2 slide, alongside viewer and plot PNGs and the students' own screenshots. No files to save or import.
+- **Export: PNG only.** "Copy summary as PNG" in step 7 (case and genotypes, neuron locator, probe pair on the transcript map, mode verdicts, Claim, Uncertainty; see *Interpret & revise (step 7)*) for the group's Part 2 presentation, alongside viewer and plot PNGs and the students' own screenshots. No files to save or import.
 
 **Screen layouts**
 - **Steps 1–2 (story):** single column about 70 characters wide, with a full-width stage for animations and the fly.
@@ -471,7 +471,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Step 4 (hypotheses):** mode cards in three groups (see *Steps 3–4: TDP-43 dysfunction and hypotheses*).
 - **Step 5 (target & probe design):** a workbench like steps 3, 4 and 6, not a full-width page. Head: the compact gene card. Main (left): the transcript map (its header, the map with its probe track and the legend box), with the "How two-colour smFISH works" help link directly under the legend box. Side pane (right, scrolling on its own), top to bottom: "Your pair"; the instruction "Click two regions on the map. The first fills smFISH 1, the second smFISH 2."; two channel slots side by side (coloured by the current LUTs), smFISH 1 left and smFISH 2 right; *Swap channels*; a full-width "Show results"; then "Predictions (optional)".
 - **Step 6 (microscopy reveal):** the viewer fills the main column, with the plot in a collapsible drawer docked under it (see *Count plot*); right column with channel toggles, decoder legend and animal selector (1–3), switching to the mode cards via a *Viewer controls | Compare* tab. Head: the probe strip and "Choose a new pair" (see *Microscopy reveal (step 6)*). The side pane on every workbench step (3–6) is `clamp(277px, 19vw, 342px)` wide.
-- **Step 7 (interpret & revise):** single column: experiment summary, Claim, Uncertainty, Part 2 preview, "Copy summary as PNG" (see *Interpret & revise (step 7)*).
+- **Step 7 (interpret & revise):** single column: experiment summary (with the read-only transcript map), Claim, Uncertainty, Starting point for Part 2 (the Part 1 summary slide), "Copy summary as PNG" (see *Interpret & revise (step 7)*).
 - **Genotype comparison:** synced split view (control | mutant, linked pan and zoom) by default, plus a flicker key in the viewer toolbar to switch genotype in place.
 
 **Count plot**
@@ -535,7 +535,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 	- *Activity monitor* (Pdf case) → actogram, with ZT2 marked ("brains collected here"). A dashed "Simulated" pill at the bottom right of the stage marks the invented sleep phenotype. Content reference: `references/dam-motion/` (a 10-s GSAP schematic of the Drosophila Activity Monitor, with a deterministic `?render` mode and `render-dam-video.mjs` for WebM export). Use it for the mechanics (tubes, infrared beam, food and plug, beam-crossing counts) only: its colours and Helvetica don't follow `tokens.css`, and it loads GSAP from a CDN, which the site must not.
 	- *T-maze* (mushroom body case) → performance index.
 - Hover brings a station forward; click expands it into the chosen case (shared-element transition), where the group does one real action (tap the vial down; start the light–dark days; run odour + shock training) and watches the readout build.
-- These readouts become the Part 2 organismal readouts.
+- Students may draw on these readouts in Part 2.
 
 **Descent into anatomy (step 2)**
 - The camera pushes in on one fly from the chosen assay; its body turns semi-transparent and the neurons appear in membrane blue, the only saturated colour on screen. Blue means "the labelled neuron" from here to the viewer.
@@ -610,12 +610,15 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 **Interpret & revise (step 7)**
 - **Layout:** back to the calm single-column story layout.
-- **Experiment summary (read-only):** case, gene, the current probe pair with its channel colours, and the mode verdicts grouped as supported / ruled out / unresolved.
+- **Experiment summary (read-only):** a facts row (case, gene, probe pair chips), then the step 5 transcript map (the same drawing as step 6's "Your probe pair" card: scale toggle and legend, the pair in its channel inks; regions can't be chosen), then the mode verdicts grouped as supported / ruled out / unresolved.
 - **Claim:** "Our leading explanation", 1–2 sentences of free text; the supported modes are listed above as prompts, not pre-filled.
 - **Uncertainty:** "The strongest remaining alternative": a dropdown of the group's unresolved modes (plus "other") and one line on why it isn't excluded yet.
-- **Readout reminder:** one line pointing back to the opening assay (e.g. "Organismal readout available: climbing index") for the Part 2 *Readouts*.
-- **Part 2 preview:** a 16:9 preview of the summary slide (below), with Claim and Uncertainty filled in; Intervention, Controls, Readouts (with the organismal readout as a hint) and Failure criterion are empty boxes completed in PowerPoint. The preview and the copied PNG are the same drawing.
-- **"Copy summary as PNG":** 16:9 at 1920×1080, light background for white slides, text sized for a slide, small WT | mutant fly pair from the hero in the header (the ending echoes the opening), footer "Simulated teaching data · case · date". Empty fields appear as blank placeholders, so copying always works.
+- **Starting point for Part 2:** a heading, one line ("What would you test next, and how might you intervene?"), then a 16:9 preview of the Part 1 summary slide (below), then the "Copy summary as PNG" button with the note "Your Part 1 summary · 1920 × 1080, for a white slide". The preview and the copied PNG are the same drawing. Part 2 is open: groups design and present it in their own slides, and the site gives no template.
+- **"Copy summary as PNG":** the **Part 1 summary** slide (eyebrow "Part 1 summary"), 16:9 at 1920×1080, light background for white slides, text sized for a slide. Top to bottom:
+	- **Header:** title "system · gene" (e.g. "Pdf neurons · *futsch*") and the genotypes "hTDP-43 WT vs hTDP-43 mutant". Top right, a **locator**: the fly from the front (flybody drawing; antennae removed, as in step 2, because from the front they would make a face) with its head ringed, and the brain enlarged beside it in a framed inset, the case's neurons drawn on both sides in the anatomy blue and labelled (Pdf: "s-LNvs"). It is the step 2 descent in one picture.
+	- **Probe pair:** the key (● smFISH 1 · region, ● smFISH 2 · region) and the transcript rows with their isoform names, transcription-start and 3′-end marks, in the map's compressed coordinates, the overlapping same-strand gene's rows below a dashed divider. The pair's two regions are channel-ink bands under a bracket and region ID. The probe track's other regions are left out. Noted "Isoforms 5′ → 3′ · introns compressed".
+	- **Below:** mode verdicts on the left (supported / ruled out / unresolved), Claim and Uncertainty on the right, each set at the largest size that fits. A long shortlist sets the three verdict groups side by side. A mode that still doesn't fit is counted ("+ 2 more"), never dropped silently. A long Claim is cut with an ellipsis.
+	- **Footer:** "Simulated teaching data · case · date". Empty fields appear as blank placeholders, so copying always works.
 - **Navigation:** "← Back to results" (step 6) and "Try another pair" (step 5). No gate; nothing is required.
 
 #### Motion principles
@@ -740,25 +743,22 @@ The same folder runs on GitHub Pages and on a laptop with no internet connection
 
 ## Part 2
 
-> **What would you change, and what result would convince you that this change rescued the proposed mechanism?**
+> **What would you test next, and how might you intervene?**
 
-Each team submits a single-slide experimental plan:
+Part 2 is open-ended. Starting from their interpretation of the microscopy, each group designs new experiments (not limited to microscopy or smFISH) to dissect the mechanism of the TDP-43-linked failure of post-transcriptional regulation further, beginning with the hypotheses left unresolved, and proposes potential interventions. The experiments, new hypotheses and therapeutic ideas are the group's own: grounded in the evidence, but creative. The topics are discussed in the companion lecture beforehand or given out as review reading.
 
-- **Claim:** our leading explanation.
-- **Uncertainty:** the strongest remaining alternative (the mode left *unresolved* in Part 1).
-- **Intervention:** one specific molecular change.
-- **Controls:** what makes the comparison interpretable.
-- **Readouts:** one molecular and one cellular/organismal outcome (organismal assays as introduced in the Part 1 phenotype animation).
-- **Failure criterion:** a result that would undermine our explanation.
+Each group presents Part 2 in its own PowerPoint, structured as it chooses. The Part 1 summary slide (step 7), with the Claim and the Uncertainty (the unresolved mode), is the starting point. The site gives no template. Students may draw on the organismal assays from the openings.
 
-**Decisive tests (instructor notes; not offered to students)**
+**Example Part 2 directions (instructor notes; not offered to students)**
+
+Three strands: (a) the unresolved hypothesis: alternative experiments that tell the remaining explanations apart; (b) trans-acting factors and cis-acting elements, e.g. does TDP-43 regulate other regulators of RNA stability, such as the CCR4–NOT deadenylase; where does TDP-43 bind the target (iCLIP), would mutating that site restore the defect, and how would you test it; (c) interventions, e.g. improving RNA stability overall.
+
+Worked example: having seen that RNA stability may be affected in the mutant, a group might measure decay directly with metabolic labelling (4sU-seq, SLAM-seq), a transcription shut-off chase (actinomycin D) or smFISH TransQuant.
+
+Per-case example directions:
 - **NMJ – stai:** live imaging of an MS2-tagged long-3'UTR reporter in leg axons shows the stall but not its cause. Separating an RNA-specific stall from general transport failure needs an unrelated axonal cargo as a comparison, or removal of the TDP-43-binding (UG-rich) sites from the long 3'UTR.
 - **Pdf – futsch:** where and how fast the RNA is lost: transcription shut-off in explanted brains followed by an smFISH time course of nuclear and cytoplasmic counts, or cell-type-specific metabolic labelling (TU-tagging). As an intervention, knocking down nuclear (Rrp6, exosome) or cytoplasmic (Pacman/Xrn1) decay in Pdf neurons could tell the two routes apart.
 - **Mushroom body – unc-13:** production vs decay per isoform group. U3 transcription sites report group-1 production, and a pulse–chase with isoform-specific readout reports decay. Group 2 has no private intron, so only kinetics can separate its production from its stabilisation.
-
-**Idea (not implemented):** two follow-up experiment tokens to test the intervention, forcing prioritisation rather than guessing what the instructor wants:
-
-> "Which result would most change your interpretation?"
 
 ---
 
@@ -768,5 +768,4 @@ Each team submits a single-slide experimental plan:
 - **Cell-type comparisons**, e.g. small vs large Pdf neurons, or neuron vs glia.
 - **Glia:** invented target expression in glial processes, with spots assigned to neuron or glia.
 - **Follow-up experiments on the website** (e.g. an extra probe pair or a time course), currently left to Part 2.
-- **Follow-up tokens** for Part 2 (see *Idea* above).
 - **Detection efficiency below 1.0** (e.g. 0.9, so some doubly labelled molecules show only one colour), once students are familiar with the basic readout.

@@ -1,18 +1,27 @@
-// Step 7: revise the explanation → Part 2 Claim and Uncertainty, with a preview of the Part 2
-// slide and "Copy summary as PNG". No gate; nothing is required.
+// Step 7: revise the explanation → Claim and Uncertainty, the starting point for Part 2: the
+// experiment summary (with the pair on the read-only transcript map), a preview of the Part 1
+// summary slide and "Copy summary as PNG". No gate; nothing is required.
 
 import { MODES, VERDICTS } from "../content.js";
 import { caseState, onChange } from "../store.js";
 import { bind } from "../forms.js";
 import { href } from "../router.js";
-import { summarySVG, SLIDE } from "../summary.js";
+import { loadJSON, transcripts } from "../data.js";
+import { createMap } from "../map.js";
+import { loadFlySprite } from "../fly.js";
+import { summarySVG, slideFly, SLIDE } from "../summary.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
-export function mount(root, ctx) {
+export async function mount(root, ctx) {
   const id = ctx.caseId;
   const c = ctx.case;
+  const [g, flyMeta, geo] = await Promise.all([transcripts(id), loadFlySprite("frontal"), loadJSON(`data/${id}/geometry-control-1.json`)]);
+  const art = {
+    fly: { viewBox: flyMeta.viewBox.split(" ").map(Number), markup: slideFly(document.getElementById("fly-frontal-stand-0").innerHTML) },
+    geo,
+  };
 
   root.innerHTML = `
     <div class="story">
@@ -21,6 +30,7 @@ export function mount(root, ctx) {
       <section class="summary" aria-labelledby="sum-h">
         <h2 class="t-h3" id="sum-h">Experiment summary</h2>
         <dl class="summary__facts"></dl>
+        <div class="summary__map"></div>
         <div class="summary__verdicts"></div>
       </section>
       <section class="revise" aria-label="Claim and uncertainty">
@@ -32,12 +42,12 @@ export function mount(root, ctx) {
         <label class="field"><span class="field__label">Why it isn’t excluded yet</span>
           <input class="input" data-bind="uncertainty.why" placeholder="What would you still need to see?"></label>
       </section>
-      <p class="t-story">Organismal readout available for Part 2: ${esc(c.readout)}.</p>
-      <figure class="slide">
-        <figcaption class="slide__cap"><span class="t-h3">Part 2 preview</span><span class="t-ui t-muted">Claim and Uncertainty come from this page; the other four you complete in PowerPoint.</span></figcaption>
-        <svg class="slide__svg" viewBox="0 0 ${SLIDE.W} ${SLIDE.H}" role="img" aria-label="Preview of the Part 2 summary slide"></svg>
-        <p class="next-row"><button class="btn btn--primary btn--lg" type="button" data-act="summary-png">Copy summary as PNG</button><span class="t-ui t-muted">1920 × 1080, for a white slide</span></p>
-      </figure>
+      <section class="slide" aria-labelledby="p2-h">
+        <h2 class="t-h3" id="p2-h">Starting point for Part 2</h2>
+        <p class="t-story">What would you test next, and how might you intervene?</p>
+        <svg class="slide__svg" viewBox="0 0 ${SLIDE.W} ${SLIDE.H}" role="img" aria-label="Preview of your Part 1 summary slide"></svg>
+        <p class="next-row"><button class="btn btn--primary btn--lg" type="button" data-act="summary-png">Copy summary as PNG</button><span class="t-ui t-muted">Your Part 1 summary · 1920 × 1080, for a white slide</span></p>
+      </section>
       <p class="next-row">
         <a class="btn btn--lg" href="${href(id, 6)}">← Back to results</a>
         <a class="btn btn--lg" href="${href(id, 5)}">Try another pair</a>
@@ -66,9 +76,12 @@ export function mount(root, ctx) {
     sel.value = s.uncertainty.mode || "";
   }
 
+  const map = createMap(root.querySelector(".summary__map"), g, { readOnly: true });
+  map.setPair(caseState(id).pair);
+
   const date = new Date().toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
   const slide = root.querySelector(".slide__svg");
-  const drawSlide = () => { slide.innerHTML = `<rect width="100%" height="100%" fill="${LIGHT.bg}"/>${summarySVG({ c, s: caseState(id), date })}`; };
+  const drawSlide = () => { slide.innerHTML = `<rect width="100%" height="100%" fill="${LIGHT.bg}"/>${summarySVG({ c, s: caseState(id), date, g, art })}`; };
   let pending = 0;
   const drawSoon = () => { cancelAnimationFrame(pending); pending = requestAnimationFrame(drawSlide); };
 
@@ -82,8 +95,8 @@ export function mount(root, ctx) {
   });
   root.querySelector("[data-act=summary-png]").addEventListener("click", async e => {
     const button = e.currentTarget; // currentTarget is cleared once the handler awaits
-    const canvas = await svgToCanvas(summarySVG({ c, s: caseState(id), date }), SLIDE.W, SLIDE.H, LIGHT.bg);
+    const canvas = await svgToCanvas(summarySVG({ c, s: caseState(id), date, g, art }), SLIDE.W, SLIDE.H, LIGHT.bg);
     await copyCanvas(canvas, `smFISH-${id}-summary.png`, button);
   });
-  return () => { unbind(); off(); cancelAnimationFrame(pending); };
+  return () => { unbind(); off(); map.destroy(); cancelAnimationFrame(pending); };
 }

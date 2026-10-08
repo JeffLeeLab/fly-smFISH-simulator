@@ -20,9 +20,9 @@ How the room uses laptops is undecided: a group may share one laptop with one pe
 
 ## Product Purpose
 
-The smFISH Simulator lets students design probes against real FlyBase transcript maps, look at simulated confocal images of control vs ALS-mutant neurons, and reason from the evidence to a claim. The aim is to **narrow the hypotheses, not solve the case**: each case rules out at least one mode, supports one or two, and leaves one unresolved on purpose. The unresolved mode becomes the starting point for Part 2, where students design an intervention.
+The smFISH Simulator lets students design probes against real FlyBase transcript maps, look at simulated confocal images of control vs ALS-mutant neurons, and reason from the evidence to a claim. The aim is to **narrow the hypotheses, not solve the case**: each case rules out at least one mode, supports one or two, and leaves one unresolved on purpose. The unresolved mode becomes the starting point for Part 2, where students design experiments to dissect the mechanism further and propose interventions.
 
-Success: a FISH-naive group gets from the opening to the summary PNG without help. They separate observation from interpretation, give every shortlisted mode a justified verdict, and leave with a claim and an honest uncertainty for their Part 2 slide.
+Success: a FISH-naive group gets from the opening to the summary PNG without help. They separate observation from interpretation, give every shortlisted mode a justified verdict, and leave with a claim and an honest uncertainty for their Part 2 presentation.
 
 ## Positioning
 
@@ -33,7 +33,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 - One live 2-hour session, run three groups at a time. Students use their own Windows and macOS laptops in current Chrome, Edge, Firefox or Safari, often with low-end integrated graphics. The minimum viewport is 1280×720, with trackpad pinch and scroll.
 - The flow has seven steps in five stages (Introduction → RBP clue → Experimental design → Observe → Conclude), with each step at its own hash URL so a group can recover after a refresh.
 - Students record notes in a lab notebook drawer stored in localStorage on their own browser. Nothing is uploaded.
-- Evidence leaves the site only as PNGs (viewer, plot and a 16:9 summary) and students' own screenshots, which go into a PowerPoint slide for Part 2. Every image is labelled "simulated".
+- Evidence leaves the site only as PNGs (viewer, plot and a 16:9 Part 1 summary) and students' own screenshots, which go into the group's own PowerPoint for Part 2. Every image is labelled "simulated".
 - A companion lecture covers RNA/RBP "Core Skills". FlyBase is the external reference students are sent to.
 
 ## Capabilities and Constraints
