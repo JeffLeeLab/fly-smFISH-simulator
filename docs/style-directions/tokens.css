@@ -53,7 +53,7 @@
   --ch1: #46E66E;         /* smFISH 1, viewer LUT (green) */
   --ch2: #EB46E1;         /* smFISH 2, viewer LUT (magenta) */
   --ch-merge: #FFFFFF;    /* both regions on one molecule */
-  --tdp: #FFD63C;         /* TDP-43 IF default LUT (yellow); see --tdp-with-fish */
+  --tdp: #FF4B3A;         /* TDP-43 IF default LUT (red-orange); see --tdp-with-fish */
   --tdp-with-fish: .4;    /* TDP-43 intensity while any smFISH channel is on (avoids false "white") */
   --mem: #5F78C0;         /* membrane (mCD8::BFP) + anatomy neurons */
   --dapi: #5A78EB;

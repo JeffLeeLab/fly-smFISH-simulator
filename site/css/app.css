@@ -320,9 +320,6 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .locked { max-width: var(--measure); padding: var(--sp-7) var(--sp-7); display: flex; flex-direction: column; gap: var(--sp-4); }
 .app[data-layout="workbench"] .locked { height: 100vh; justify-content: center; }
 
-/* ---------- scaffold placeholders (removed as each stage lands) ---------- */
-.todo-art { display: grid; place-items: center; padding: var(--sp-4); text-align: center; font: 400 var(--fs-ui)/1.4 var(--font-sans); color: var(--text-2); background: transparent; border: var(--hairline) dashed var(--border-strong); }
-
 /* ---------- step 4: hypotheses ---------- */
 .hyp-main { overflow-y: auto; display: flex; flex-direction: column; gap: var(--sp-4); scrollbar-width: thin; }
 .hyp-main > .t-body { max-width: var(--measure); }

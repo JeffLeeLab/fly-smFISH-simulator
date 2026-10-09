@@ -10,7 +10,7 @@ Style-direction phase for [the spec](../spec.md). Mockups only: fake data, no re
 - [x] **Texture strength**: subtle
 - [x] **Dark background**: `#1F1E1C`
 - [x] **Text-size rule**: body ≥16 px, UI text and controls ≥13 px, overlays and plot ticks ≥11 px
-- [ ] **TDP-43 colour**: yellow stays the default for now, dimmed to ~40% while smFISH is on; students can switch LUT (yellow, cyan, red-orange), change brightness and solo channels. Confirm in the pilot.
+- [x] **TDP-43 colour**: dimmed to ~40% while smFISH is on; students can switch LUT, change brightness and solo channels. Decided 2026-10-09: red-orange `#FF4B3A` is the default; yellow and cyan stay as options.
 - Frozen tokens: `tokens.css` (this folder).
 
 ## Chosen direction

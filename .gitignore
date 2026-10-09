@@ -6,3 +6,5 @@ __pycache__/
 data/*/generated/
 # flybody meshes (downloaded by generator.flies; Apache-2.0, not committed)
 data/flybody/
+.impeccable/questions/
+.impeccable/review/

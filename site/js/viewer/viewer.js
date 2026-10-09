@@ -24,7 +24,7 @@ import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
 const MIN_SIGMA_PX = 0.85;     // below this the spot is drawn larger and dimmer (same total light)
 const SPOT_GAIN = 0.95;
-const TDP_DIM = 0.4;           // TDP-43 while an smFISH channel is on, so magenta on yellow doesn't sum to a false white
+const TDP_DIM = 0.4;           // TDP-43 while an smFISH channel is on, so a spot on it doesn't sum to a false white
 const GRANULE_DIM = 0.55;      // granules are faint already: dimmed less, so a spot inside one still shows (no whiter than over a nucleus)
 const MAX_SCALE = 60;          // px per µm
 const SCALE_STEPS = [0.5, 1, 2, 5, 10, 20, 50];
@@ -32,9 +32,9 @@ const GENOTYPES = ["control", "mutant"];
 export const GENOTYPE_LABEL = { control: "hTDP-43 WT", mutant: "hTDP-43 mutant" };
 
 export const TDP_LUTS = {
+  "red-orange": { label: "Red-orange", color: "#FF4B3A" },
   yellow: { label: "Yellow", color: "#FFD63C" },
   cyan: { label: "Cyan", color: "#3CDCFF" },
-  "red-orange": { label: "Red-orange", color: "#FF4B3A" },
 };
 export const FISH_LUT = { ch1: { color: "#46E66E", name: "Green" }, ch2: { color: "#EB46E1", name: "Magenta" } };
 const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
@@ -143,7 +143,7 @@ export async function createViewer(root, opts) {
     flicker: "control",
     animal: firstAnimal,
     visible: { blue: true, tdp: true, ch1: mode === "results", ch2: mode === "results" },
-    tdpLut: opts.tdpLut || "yellow",
+    tdpLut: opts.tdpLut || "red-orange",
     tdpBrightness: opts.tdpBrightness ?? 1,
     solo: null,
   };

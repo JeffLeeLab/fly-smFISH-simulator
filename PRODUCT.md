@@ -45,7 +45,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 - The site must never give the answer away. PTR-mode names do not appear in case text, there are no hints about traps or decoys, the plot has no p-values or significance stars, and the public JSON hides which isoforms each region detects.
 - Every claim in the spec and the instructor material is classified in one of three layers: *Established*, *Simplified* or *Invented for this case*. The student screens show no per-claim layer badges: repeated on every screen, they cluttered the view without informing. The dashed "Simulated" pill ("Simulated teaching data" in the rail footer on every screen, "Simulated" on the activity monitor) is how students are told that the case is simulated and partly invented, and it meets the *Invented for this case* disclosure.
 - Terminology follows the spec glossary, in British English with short sentences.
-- Open questions are listed in the spec: whether verdicts carry over between probe pairs, the TDP-43 default LUT colour, and the default zoom when results open.
+- The three open questions were settled on 2026-10-09 (see the spec): verdicts carry over between probe pairs, the TDP-43 default LUT is red-orange, and results open at the whole-neuron view.
 
 ## Brand Commitments
 

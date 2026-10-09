@@ -8,7 +8,7 @@ import { FISH_LUT, TDP_LUTS } from "./viewer.js";
 import { term } from "../glossary.js";
 import { SUN_ICON } from "../icons.js";
 
-export const viewerPrefs = () => ({ tdpLut: "yellow", tdpBrightness: 1, ...(read("viewer") || {}) });
+export const viewerPrefs = () => ({ tdpLut: "red-orange", tdpBrightness: 1, ...(read("viewer") || {}) });
 
 export function renderControls(el, viewer, { mode, pair }) {
   const rows = [];

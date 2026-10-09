@@ -49,3 +49,13 @@ Nothing else needed changing: steps 3–7 read correctly at both sizes in both t
 | 5 | Page, dark theme | The slide preview stays white, as it previews a white slide. | OK. |
 
 The full `tools/review-shots.sh` run is still to do with the next round.
+
+## 2026-10-09: TDP-43 default LUT changed to red-orange
+
+**Screenshots.** `tools/review-shots.sh` run for pdf: all steps at 1280×720 and 1920×1080, light and dark. Sheets inspected for this change: step 3, step 6 and the end of step 2 (membrane + DAPI only, so unaffected).
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Viewer, step 6 | The red-orange granules stay distinct from the green and magenta spots. Transcription sites still read white. | OK. |
+| 2 | Viewer, steps 3 and 6 | Nuclei read violet (red-orange plus DAPI blue; pink-violet in step 3, where TDP-43 is undimmed). | OK. Worth watching in the manual assessment whether magenta-only spots inside nuclei lose contrast. |
+| 3 | Controls | The red-orange TDP-43 dot sits beside the clay checkbox and slider. It is redder and more saturated, so distinguishable, but close. | OK. Worth watching in the manual assessment. |

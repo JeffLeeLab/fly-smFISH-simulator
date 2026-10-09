@@ -28,7 +28,7 @@ colors:
   lut-green: "#46E66E"
   lut-magenta: "#EB46E1"
   lut-merge: "#FFFFFF"
-  lut-tdp-yellow: "#FFD63C"
+  lut-tdp: "#FF4B3A"
   membrane-blue: "#5F78C0"
   dapi-blue: "#5A78EB"
   green-ink: "#1F8A4C"
@@ -221,7 +221,7 @@ The palette is warm neutrals with one restrained accent. All the saturated hues 
 Each of these means the same thing in the viewer, the transcript map, the plot, the probe strip, the chips and the exported PNGs.
 - **smFISH Green** (`lut-green`) and **smFISH Magenta** (`lut-magenta`): the viewer LUTs for probe channels 1 and 2, blended additively.
 - **Merge White** (`lut-merge`): a molecule carrying both regions. White is reserved for this, so no other channel may default to white or grey.
-- **TDP-43 Yellow** (`lut-tdp-yellow`): the default TDP-43 IF LUT, dimmed to 40% while any smFISH channel is on (`--tdp-with-fish: .4`) so it doesn't add up to a false white. The default is still provisional until the pilot.
+- **TDP-43 Red-orange** (`lut-tdp`): the default TDP-43 IF LUT, dimmed to 40% while any smFISH channel is on (`--tdp-with-fish: .4`) so it doesn't add up to a false white.
 - **Membrane Blue** (`membrane-blue`) and **DAPI Blue** (`dapi-blue`): the labelled neuron and its nuclei. Membrane Blue is also the colour of the neurons in the story artwork, the only saturated colour in the drawn world, so blue always means "the labelled neuron".
 - **Green Ink** and **Magenta Ink** (`green-ink`, `magenta-ink`; dark-theme variants `-dark`): the same two hues, darkened for the page (map probe bands, plot points, chip dots) so they reach ≥3:1 on ivory.
 
@@ -233,7 +233,7 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 
 **The Clay Never Speaks Rule.** Clay fills; it never carries text. Text on clay is `on-clay`, and accent text is `clay-ink`.
 
-**The Clay Is Not a LUT Rule.** No LUT option, now or later, may look like clay. That is why TDP-43 is yellow and not amber or orange.
+**The Clay Is Not a LUT Rule.** No LUT option, now or later, may look like clay. The TDP-43 default is a saturated red-orange (`#FF4B3A`), redder and stronger than the muted clay, so the two stay distinguishable.
 
 ## Typography
 
@@ -373,7 +373,7 @@ Monochrome until probes are chosen: CDS in `ink-grey`, UTR in `stone`, introns a
 ### Don't:
 - **Don't** use `box-shadow`, glassmorphism, gradients on chrome, or purple/blue gradients anywhere.
 - **Don't** use white text on clay, or clay as text.
-- **Don't** use a data-channel hue (green, magenta, yellow, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.
+- **Don't** use a data-channel hue (green, magenta, red-orange, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.
 - **Don't** apply grain, washes or the ink-boil filter to the map, plot, notebook or viewer.
 - **Don't** use emoji, stock icon sets, mascots, or flies with faces or expressions.
 - **Don't** centre the hero, use Inter, or repeat the same fade-up stagger across sections.

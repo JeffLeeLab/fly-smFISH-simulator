@@ -420,20 +420,20 @@
           "#EEEEEE"
         ]
       },
-      "lut-tdp-yellow": {
+      "lut-tdp": {
         "role": "data",
-        "displayName": "TDP-43 Yellow",
-        "canonical": "#FFD63C",
-        "oklch": "oklch(88.7% 0.165 93.1)",
+        "displayName": "TDP-43 Red-orange",
+        "canonical": "#FF4B3A",
+        "oklch": "oklch(66.9% 0.219 29.5)",
         "tonalRamp": [
-          "#140900",
-          "#362100",
-          "#5D3C00",
-          "#815B00",
-          "#A47D00",
-          "#C9A000",
-          "#E8C74F",
-          "#FFEEA3"
+          "#220000",
+          "#500000",
+          "#8A0502",
+          "#C40E06",
+          "#ED3829",
+          "#FD6755",
+          "#FEA293",
+          "#FFD2CA"
         ]
       },
       "membrane-blue": {
@@ -778,7 +778,7 @@
       "kind": "chip",
       "refersTo": "chip-channel",
       "description": "Identifies a channel and its probe; the dot is the LUT colour.",
-      "html": "<span class=\"ds-chip\"><i style=\"background:#46E66E\"></i>smFISH 1 · S7</span> <span class=\"ds-chip\"><i style=\"background:#EB46E1\"></i>smFISH 2 · S8</span> <span class=\"ds-chip\"><i style=\"background:#FFD63C\"></i>TDP-43</span> <span class=\"ds-chip\"><i style=\"background:#5F78C0\"></i>Membrane + DAPI</span>",
+      "html": "<span class=\"ds-chip\"><i style=\"background:#46E66E\"></i>smFISH 1 · S7</span> <span class=\"ds-chip\"><i style=\"background:#EB46E1\"></i>smFISH 2 · S8</span> <span class=\"ds-chip\"><i style=\"background:#FF4B3A\"></i>TDP-43</span> <span class=\"ds-chip\"><i style=\"background:#5F78C0\"></i>Membrane + DAPI</span>",
       "css": ".ds-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border:1px solid var(--border, #C9C6BC);border-radius:var(--r-chip, 2px);font:400 13px/1.4 var(--font-sans, \"Instrument Sans\", system-ui, sans-serif);color:var(--text, #141413)} .ds-chip i{width:8px;height:8px;border-radius:50%;display:block}"
     },
     {
@@ -853,7 +853,7 @@
       },
       {
         "name": "The Clay Is Not a LUT Rule",
-        "body": "No LUT option, now or later, may look like clay. That is why TDP-43 is yellow and not amber or orange.",
+        "body": "No LUT option, now or later, may look like clay. The TDP-43 default is a saturated red-orange (#FF4B3A), redder and stronger than the muted clay, so the two stay distinguishable.",
         "section": "colors"
       },
       {
@@ -903,7 +903,7 @@
     "donts": [
       "**Don't** use `box-shadow`, glassmorphism, gradients on chrome, or purple/blue gradients anywhere.",
       "**Don't** use white text on clay, or clay as text.",
-      "**Don't** use a data-channel hue (green, magenta, yellow, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.",
+      "**Don't** use a data-channel hue (green, magenta, red-orange, blue) for decoration, status, links or emphasis, and don't make any LUT option look like clay.",
       "**Don't** apply grain, washes or the ink-boil filter to the map, plot, notebook or viewer.",
       "**Don't** use emoji, stock icon sets, mascots, or flies with faces or expressions.",
       "**Don't** centre the hero, use Inter, or repeat the same fade-up stagger across sections.",
