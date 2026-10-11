@@ -20,6 +20,8 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      CASES: "pdf"   # signed-off cases: truth tables regenerated and gated below (add "mb" here)
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -30,10 +32,11 @@ jobs:
       - name: Public data matches the sources
         run: |
           uv run python -m generator.public_models
-          uv run python -m generator.truth_table pdf
+          for case in $CASES; do uv run python -m generator.truth_table "$case"; done
           git diff --exit-code -- site/data data
       - name: Validation gate (fails unless the truth table is signed off)
-        run: uv run python -m generator.validate pdf --signed
+        run: |
+          for case in $CASES; do uv run python -m generator.validate "$case" --signed; done
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

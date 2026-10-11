@@ -4,17 +4,33 @@
 # marked as seen. Animated steps are frozen at their end frames (?t=). Writes one PNG per state
 # and one sheet per step (light | dark, small | large).
 #
-#   tools/review-shots.sh <out-dir> [case]
+#   tools/review-shots.sh <out-dir> [case]     case: pdf (default) or mb
 #
 # Needs the site served (uv run python tools/serve.py) and playwright-cli on PATH.
 set -euo pipefail
-mkdir -p "$1"
-out="$(cd "$1" && pwd)"; case="${2:-pdf}"
+out_arg="$1"; case="${2:-pdf}"
+# Per-case notebook state and step routes (the step-2 retimes are the animation end frames).
+case "$case" in
+  pdf)
+    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["splicing","transport"],"because":{},"pair":{"ch1":"F6","ch2":"F5"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"splicing":"ruled-out","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
+            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+    ;;
+  mb)
+    # Neutral review state: both hypotheses unresolved, so no verdict is given away.
+    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["isoform","transport"],"because":{},"pair":{"ch1":"U2","ch2":"U4"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"isoform":"unresolved","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
+            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+    ;;
+  *)
+    echo "review-shots: unknown case '$case' (expected pdf or mb)" >&2
+    exit 1
+    ;;
+esac
+mkdir -p "$out_arg"
+out="$(cd "$out_arg" && pwd)"
 base="${REVIEW_URL:-http://localhost:8765/}"
-state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["splicing","transport"],"because":{},"pair":{"ch1":"F6","ch2":"F5"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"splicing":"ruled-out","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
 names=(hero step1 step2-brain step2-labels step2-end step3 step4 step5 step6 step7)
-routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
-        "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
 repo="$(pwd)"
 cd "$out"   # playwright-cli writes screenshots relative to where the session was opened
 for theme in light dark; do
