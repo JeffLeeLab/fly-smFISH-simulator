@@ -13,11 +13,13 @@ gate is an independent check.
 
 import itertools
 import json
+import math
 import sys
 import tomllib
 
 from .cases import LAYOUTS
 from .paths import CASE_GENES, DATA, TRANSCRIPT_MODELS
+from .validate import LEVELS, level_of  # the gate's bands: the look of a site is read from nascent molecules per nucleus
 
 COMPARTMENTS = ("nucleus", "cellbody", "axon", "terminals")
 PER_CELL = {"nucleus", "cellbody"}  # per cell; axon and terminals are per animal (shared by the cells)
@@ -165,6 +167,64 @@ def nascent_change(nascent, rules):
     return num / den
 
 
+def site_fraction(lam, nascent):
+    """Chance that an active site holds at least ts_detect_min nascent molecules, Poisson(lam)."""
+    p = 0.0
+    term = math.exp(-lam)
+    for n in range(nascent["ts_detect_min"]):
+        p += term
+        term *= lam / (n + 1)
+    return 1 - p
+
+
+def site_mean(lam, nascent):
+    """Mean nascent molecules per counted site: E[n | n >= ts_detect_min] for Poisson(lam)."""
+    num = lam
+    den = 1.0
+    term = math.exp(-lam)
+    for n in range(nascent["ts_detect_min"]):
+        den -= term
+        num -= n * term
+        term *= lam / (n + 1)
+    return num / den
+
+
+def channel_lambda(ids, rules):
+    """Designed nascent molecules per active site, [control, mutant], of the lowest region in ids."""
+    return [min(rules["ts"][i][gt] for i in ids) for gt in (0, 1)]
+
+
+def borderline(lam, nascent, margin=0.15):
+    """The band edge that lam x ts_active lies within `margin` (relative) of, if any."""
+    x = lam * nascent["ts_active"]
+    return next((lo for _, lo in LEVELS if lo > 0 and abs(x - lo) <= margin * lo), None)
+
+
+def nascent_expectations(ids, rules, nascent, single):
+    """ts_number, ts_intensity (and ts_level for a single probe) from the designed molecules per site."""
+    nas = rules["nascent"]
+    out = []
+    lam = channel_lambda(ids, rules)
+    if not single:
+        # white spots come only from the isoforms carrying every region: the lower control level,
+        # moved in the mutant by those isoforms' production change
+        lam = [lam[0], lam[0] * nascent_change(nascent, rules)]
+    if single:
+        for gt, name in zip(lam, ("control", "mutant")):
+            edge = borderline(gt, nas)
+            if edge:
+                print(f"warning: {ids[0]} {name}: {gt} x {nas['ts_active']} = {gt * nas['ts_active']:.2f} nascent molecules per nucleus "
+                      f"lies within 15% of the band edge {edge:g}", file=sys.stderr)
+        out.append({"measure": "ts_level", "rule": "level",
+                    "level": {gt: level_of(x * nas["ts_active"]) for gt, x in zip(("control", "mutant"), lam)}})
+    if min(lam) < nas["measurable"]:
+        return out
+    n_c, n_m = (site_fraction(x, nas) * nas["ts_active"] for x in lam)
+    out.append({"measure": "ts_number", **change_rule(n_c, n_m, rules)})
+    out.append({"measure": "ts_intensity", **change_rule(site_mean(lam[0], nas), site_mean(lam[1], nas), rules)})
+    return out
+
+
 def group_channel_expectations(name, ids, regions, rules, single, layout):
     mature, nascent, other = channel_sets(ids, regions)
     f = group_fractions(mature, rules)
@@ -195,10 +255,8 @@ def group_channel_expectations(name, ids, regions, rules, single, layout):
     if other:
         add(measure="other_gene", rule="present", genes=sorted(other))
     if nascent:
-        add(measure="ts_number", rule=rules["nascent"]["ts_number"])
-        add(measure="ts_intensity", **change_rule(1, nascent_change(nascent, rules), rules))
-        if single:
-            add(measure="ts_level", rule="level", level=dict(rules["ts"][ids[0]]))
+        for e in nascent_expectations(ids, rules, nascent, single):
+            add(**e)
     else:
         add(measure="ts_level", rule="level", level={"control": "none", "mutant": "none"})
     return out, {"regions": list(ids), "mature": sorted(mature), "nascent": sorted(nascent),
@@ -240,6 +298,7 @@ def expand_groups(case, rules, regions):
         "source": f"data/{case}/truth-table.toml",
         "verdicts": rules["verdicts"],
         "rules": rules["rules"],
+        "nascent": rules["nascent"],
         "selections": selections,
     }
 
@@ -296,6 +355,7 @@ def render_md_groups(t: dict, regions: dict) -> str:
 
         lv = by.get(("ts_level", None), {}).get("level")
         look = f"{lv['control']} → {lv['mutant']}" if lv else "–"
+        ts_int = cell("ts_intensity") if ("ts_intensity", None) in by or not info["nascent"] else "too few nascent molecules to measure"
         groups = {}
         for e in s["expect"]:
             if e["measure"] == "overlap":
@@ -304,7 +364,7 @@ def render_md_groups(t: dict, regions: dict) -> str:
         mat = ", ".join("R" + m for m in info["mature"]) or "–"
         nas = ", ".join("R" + m for m in info["nascent"]) or "–"
         lines.append(f"| {rid} | {regions[rid]['label']} | {mat} | {nas} | {' | '.join(cell('count', c.id) for c in comps)} | "
-                     f"{cell('nc_ratio')} | {cell('share_distal')} | {overlap} | {cell('ts_intensity')} | {look} |")
+                     f"{cell('nc_ratio')} | {cell('share_distal')} | {overlap} | {ts_int} | {look} |")
     lines += [
         "",
         "Lobe counts per lobe system are checked for each of "
@@ -336,7 +396,7 @@ def render_md_groups(t: dict, regions: dict) -> str:
         f"- *↓×r / ↑×r*: the mutant / control ratio is within ±{r['ratio']:.0%} of the nominal ratio (widened by 2 standard errors for small counts). Ratios follow from the group weights, each group's production change and each compartment's group-1 share (see the `.toml`).",
         f"- Control means within ±{r['nominal']:.0%} of the nominal numbers (in brackets above).",
         f"- TDP-43 overlap: *chance* is within {r['chance']:.0%} (absolute) of the randomised-position control, in both genotypes.",
-        f"- Transcription sites: number within {r['ts_number']} nuclei of control; intensity within ±{r['ts_intensity']:.0%}; look (bright, present, dim, none) from the nascent copies per site.",
+        f"- Transcription sites: number and intensity (mean nascent molecules per counted site) follow a Poisson model of the designed molecules per active site (`[ts]`, with `ts_active` and `ts_detect_min` in `[nascent]`), within the ratio rules above. They are checked only for probes with at least {t['nascent']['measurable']:g} molecules per active site in both genotypes; otherwise the table says \"too few nascent molecules to measure\". Look (bright, present, dim, none) is read from the nascent molecules per nucleus (molecules per site x {t['nascent']['ts_active']:g}).",
         "",
     ]
     return "\n".join(lines)

@@ -174,7 +174,7 @@ MB = {
         "mutant": {"nucleus": 0.28, "cellbody": 0.24, "calyx": 0.24, "peduncle": 0.40, "lobes": 0.60},
     },
     "ts_active": 0.90,
-    "ts_reference": ("U6", 9),   # U6 sites hold about 9 nascent transcripts (control production)
+    "ts_reference": ("U6", 10),  # U6 sites hold about 10 nascent transcripts (control production)
     "ts_spread_um": 0.12,
     "ts_detect_min": 2,
     "ts_inset_um": 1.2,          # transcription sites sit this far inside the nucleus edge

@@ -21,14 +21,14 @@ Counts: per Kenyon cell for the nucleus and cell body; per animal for the pedunc
 
 | Region | Type | Mature in | Nascent in | nucleus | cell body | calyx (instructor only) | peduncle | lobes | N:C | Distal share | TDP-43 overlap | TS intensity | TS look |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| U1 | first exon (far-upstream TSS) | RG | RG | ↓×0.40 (0.15) | ↓×0.41 (0.929) | ↓×0.41 (4.179) | ↓×0.40 (5.143) | ↓×0.40 (3.857) | same | same | cell body, calyx, peduncle, lobes: chance | ↓×0.40 | dim → none |
+| U1 | first exon (far-upstream TSS) | RG | RG | ↓×0.40 (0.15) | ↓×0.41 (0.929) | ↓×0.41 (4.179) | ↓×0.40 (5.143) | ↓×0.40 (3.857) | same | same | cell body, calyx, peduncle, lobes: chance | too few nascent molecules to measure | dim → none |
 | U2 | N-terminal exon (group 1) | RA, RC, RD, RF, RG | RA, RC, RD, RF, RG | ↓×0.40 (2.1) | ↓×0.41 (13) | ↓×0.41 (58.5) | ↓×0.40 (72) | ↓×0.40 (54) | same | same | cell body, calyx, peduncle, lobes: chance | ↓×0.40 | bright → present |
 | U3 | intron upstream of group-2 TSS | – | RA, RC, RD, RF, RG | none | none | none | none | none | – | – | – | ↓×0.40 | bright → present |
 | U4 | N-terminal exon (group 2) | RB, RE | RA, RB, RC, RD, RE, RF, RG | ↑×2.40 (0.9) | ↑×2.39 (7) | ↑×2.39 (31.5) | ↑×2.40 (18) | ↑×2.40 (6) | same | same | cell body, calyx, peduncle, lobes: chance | same | bright → bright |
 | U5 | alternative exon | RA, RD | RA, RB, RC, RD, RE, RF, RG | ↓×0.40 (1.2) | ↓×0.41 (7.429) | ↓×0.41 (33.429) | ↓×0.40 (41.143) | ↓×0.40 (30.857) | same | same | cell body, calyx, peduncle, lobes: chance | same | present → present |
 | U6 | intron | – | RA, RB, RC, RD, RE, RF, RG | none | none | none | none | none | – | – | – | same | present → present |
-| U7 | last exon | RA, RB, RC, RD, RE, RF, RG | RA, RB, RC, RD, RE, RF, RG | same (3) | ↑×1.10 (20) | ↑×1.10 (90) | ↓×0.80 (90) | ↓×0.60 (60) | ↓×0.91 | ↓×0.69 | cell body, calyx, peduncle, lobes: chance | same | none → none |
-| U8 | long 3'UTR | RD | RD | ↓×0.40 (0.3) | ↓×0.41 (1.857) | ↓×0.41 (8.357) | ↓×0.40 (10.286) | ↓×0.40 (7.714) | same | same | cell body, calyx, peduncle, lobes: chance | ↓×0.40 | none → none |
+| U7 | last exon | RA, RB, RC, RD, RE, RF, RG | RA, RB, RC, RD, RE, RF, RG | same (3) | ↑×1.10 (20) | ↑×1.10 (90) | ↓×0.80 (90) | ↓×0.60 (60) | ↓×0.91 | ↓×0.69 | cell body, calyx, peduncle, lobes: chance | too few nascent molecules to measure | none → none |
+| U8 | long 3'UTR | RD | RD | ↓×0.40 (0.3) | ↓×0.41 (1.857) | ↓×0.41 (8.357) | ↓×0.40 (10.286) | ↓×0.40 (7.714) | same | same | cell body, calyx, peduncle, lobes: chance | too few nascent molecules to measure | none → none |
 
 Lobe counts per lobe system are checked for each of `ab`, `apbp`, `g` (`unit_count`, answer key only) with the same rule and control mean as the lobes above.
 
@@ -73,4 +73,4 @@ Channel 1 and channel 2 behave as the single probes above; the 56 ordered pairs 
 - *↓×r / ↑×r*: the mutant / control ratio is within ±10% of the nominal ratio (widened by 2 standard errors for small counts). Ratios follow from the group weights, each group's production change and each compartment's group-1 share (see the `.toml`).
 - Control means within ±20% of the nominal numbers (in brackets above).
 - TDP-43 overlap: *chance* is within 4% (absolute) of the randomised-position control, in both genotypes.
-- Transcription sites: number within 8 nuclei of control; intensity within ±15%; look (bright, present, dim, none) from the nascent copies per site.
+- Transcription sites: number and intensity (mean nascent molecules per counted site) follow a Poisson model of the designed molecules per active site (`[ts]`, with `ts_active` and `ts_detect_min` in `[nascent]`), within the ratio rules above. They are checked only for probes with at least 4 molecules per active site in both genotypes; otherwise the table says "too few nascent molecules to measure". Look (bright, present, dim, none) is read from the nascent molecules per nucleus (molecules per site x 0.9).

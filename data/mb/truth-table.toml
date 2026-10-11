@@ -77,7 +77,7 @@ ts_number = 8                # transcription-site number: within 8 nuclei of con
 ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% for dim sites)
 
 # The readouts the case's conclusions rest on, held to the tight tolerance with no allowance for
-# counting noise. Transcription sites are calibrated so U6 carries about 9 nascent copies per site
+# counting noise. Transcription sites are calibrated so U6 carries about 10 nascent copies per site
 # in both genotypes, so the U6 intensity is flat while the group-1 intron (U3) falls.
 [key]
 single = ["U6:ts_intensity", "U7:count:nucleus"]
@@ -89,21 +89,31 @@ region_ratio_whole_cell = ["U2+U4"]
 # genotypes (no granule incorporation). The calyx is not offered to students, but is checked.
 tdp43_overlap = { cellbody = "chance", calyx = "chance", peduncle = "chance", lobes = "chance" }
 
-# Nascent RNA: transcription-site number unchanged (nuclei still transcribe); the intensity
-# follows the production change of the isoforms the probe carries (computed from [groups]).
+# Nascent RNA: the designed number of nascent molecules per ACTIVE transcription site, per region,
+# [control, mutant] (the [ts] table below), and the two design statements the gate's expectations
+# are computed from. A site is counted when at least `ts_detect_min` nascent molecules carry the
+# probe, and a nucleus has a site with probability `ts_active`. The site-number and intensity
+# checks need enough molecules per site to follow the production change, so they apply only to
+# channels with at least `measurable` molecules per active site in both genotypes (otherwise the
+# truth table says "too few nascent molecules to measure").
 [nascent]
-ts_number = "same"
+ts_active = 0.9
+ts_detect_min = 2
+measurable = 4.0
 
-# Designed look of each region's transcription sites, from the polymerase model's nascent
-# copies per site, control -> mutant: U1 1.6 -> 0.6, U2 19 -> 7.7, U3 16.4 -> 6.6, U4 17.7 both,
-# U5 10.4 both, U6 9 both, U7 0.6 both, U8 0.1 both. Bands: bright >= 14, present >= 3,
-# dim >= 0.8, none below.
+# Mean nascent molecules per active site, [control, mutant], from the generator's polymerase model
+# with U6 calibrated to 10 molecules per site (control): lambda = sum over isoforms of
+# k x production x (isoform length - distance from the TSS to the region midpoint), for the
+# isoforms that reach the region. Computed once with generator.model (nascent_scale, production,
+# distance) and checked against simulated draws; rounded to 2 decimals. The look of a site
+# (bright >= 14, present >= 3, dim >= 0.8, none below) is the band of lambda x ts_active, the mean
+# nascent molecules per nucleus; the expander derives it.
 [ts]
-U1 = { control = "dim", mutant = "none" }          # far-upstream start (RG only): 1.6 -> 0.6
-U2 = { control = "bright", mutant = "present" }    # group-1 N-terminal exon: 19 -> 7.7
-U3 = { control = "bright", mutant = "present" }    # group-1-only intron: 16.4 -> 6.6
-U4 = { control = "bright", mutant = "bright" }     # group-2 exon, on all nascent RNA: 17.7 both
-U5 = { control = "present", mutant = "present" }   # alternative exon, all nascent: 10.4 both
-U6 = { control = "present", mutant = "present" }   # intron: about 9 per site by calibration
-U7 = { control = "none", mutant = "none" }         # last exon: almost no nascent RNA reaches it (0.6)
-U8 = { control = "none", mutant = "none" }         # long 3'UTR, RD only: 0.1
+U1 = [1.76, 0.70]     # far-upstream start (RG only)
+U2 = [21.31, 8.52]    # group-1 N-terminal exon
+U3 = [18.21, 7.29]    # group-1-only intron
+U4 = [19.68, 19.49]   # group-2 exon, on all nascent RNA
+U5 = [11.51, 11.32]   # alternative exon, all nascent
+U6 = [10.00, 9.81]    # intron: 10 per site by calibration, flat
+U7 = [0.69, 0.50]     # last exon: almost no nascent RNA reaches it
+U8 = [0.16, 0.06]     # long 3'UTR, RD only
