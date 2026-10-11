@@ -1,0 +1,109 @@
+# Mushroom body – unc-13: "the wrong isoform".
+# The instructor answer key in machine-readable form (docs/spec.md, *Case truth tables*).
+# This file states what must be true of the simulated results; the generator implements the
+# biology separately, and the validation gate checks one against the other.
+#
+# `uv run python -m generator.truth_table mb` expands these rules, with the probe menu in
+# docs/transcript_models_R6.json, into data/mb/truth-table.json (every single probe and all
+# 56 ordered pairs) and data/mb/truth-table.md (the readable version to sign off).
+#
+# DRAFT: a first pass written from the prose truth table, the coverage row and the simulation
+# parameters in the spec. Nothing here has been signed off; the science owner revises it.
+#
+# Unlike the Pdf case, the mutant does not scale every isoform alike. The isoforms fall into two
+# groups with their own production change and their own localisation, so every expectation is
+# derived per group: a probe's expected count in a compartment is the control mean times the
+# share of that compartment's RNA that belongs to the groups the probe carries, in each genotype.
+
+case = "mb"
+gene = "unc-13"
+status = "draft"
+signed_off_by = ""
+signed_off_on = ""
+
+# The coverage row for this case (spec, *Coverage*).
+[verdicts]
+transport = "ruled-out"     # the group-1 share reaching the lobes is unchanged
+granule = "ruled-out"       # overlap with TDP-43 puncta matches randomised positions
+isoform = "supported"       # first-exon switch: group 1 down, group 2 up
+splicing = "unresolved"     # spec: "~ (first exon)": a first-exon change sits on the boundary between splicing and transcription
+export = "ruled-out"        # no nuclear retention: nuclear counts follow production
+stability = "unresolved"    # group 2 could be more production or more stability (spec: "? (group 2)")
+translation = "not-tested"
+celltype = "not-tested"
+
+# Isoform groups. Weights are the isoforms' shares of control production (spec, *Simulation
+# parameters*); group 1 = unc-13-RA, RC, RD, RF, RG; group 2 = unc-13-RB, RE.
+[groups]
+g1 = { RA = 30, RC = 15, RD = 10, RF = 10, RG = 5 }
+g2 = { RB = 20, RE = 10 }
+
+# Mutant production relative to control, per group. Decay is equal in both genotypes and each
+# group has a fixed localisation, so in every compartment group-1 counts scale by the first
+# number and group-2 counts by the second.
+[group_change]
+g1 = 0.4
+g2 = 2.4
+
+# Mean mature molecules per Kenyon cell, [control, mutant], all isoforms together. Peduncle and
+# lobes are shared by the 30 cells; the calyx is shared too, and instructor only (never offered
+# to students, but simulated and checked). The lobes are counted per lobe system (10 cells each).
+[mature_per_cell]
+nucleus = [3, 3]
+cellbody = [20, 22]
+calyx = [3, 3.3]
+peduncle = [3, 2.4]
+lobes = [6, 3.6]
+
+# Group 1's share of the mature molecules in each compartment, [control, mutant]. With the group
+# changes above these follow from the counts, e.g. cell body: 20 x 0.65 x 0.4 = 5.2 and
+# 20 x 0.35 x 2.4 = 16.8, a total of 22 and a group-1 share of 0.24.
+[group1_share]
+nucleus = [0.70, 0.28]
+cellbody = [0.65, 0.24]
+calyx = [0.65, 0.24]
+peduncle = [0.80, 0.40]
+lobes = [0.90, 0.60]
+
+# How the mutant compares with control. A count or ratio that moves is expected to follow the
+# mutant / control ratio the model gives (nominal_ratio in the json), within `ratio`.
+[rules]
+same = 0.05                  # "unchanged": within ±5%
+ratio = 0.10                 # a moving count or ratio: within ±10% of the nominal mutant / control ratio
+nominal = 0.20               # control means within ±20% of the numbers above
+chance = 0.04                # TDP-43 overlap within 4 percentage points of the randomised-position control (or 2 SE, whichever is larger)
+above = 0.10                 # "above chance": at least 10 percentage points over the randomised-position level (less 2 SE)
+ts_number = 8                # transcription-site number: within 8 nuclei of control (30 nuclei per genotype)
+ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% for dim sites)
+
+# The readouts the case's conclusions rest on, held to the tight tolerance with no allowance for
+# counting noise. Transcription sites are calibrated so U6 carries about 9 nascent copies per site
+# in both genotypes, so the U6 intensity is flat while the group-1 intron (U3) falls.
+[key]
+single = ["U6:ts_intensity", "U7:count:nucleus"]
+region_ratio_whole_cell = ["U2+U4"]
+
+# Mature RNA: what each group's share and change imply (see [groups] to [group1_share]).
+[mature]
+# Share of spots on TDP-43 puncta, per compartment: at chance in every compartment and both
+# genotypes (no granule incorporation). The calyx is not offered to students, but is checked.
+tdp43_overlap = { cellbody = "chance", calyx = "chance", peduncle = "chance", lobes = "chance" }
+
+# Nascent RNA: transcription-site number unchanged (nuclei still transcribe); the intensity
+# follows the production change of the isoforms the probe carries (computed from [groups]).
+[nascent]
+ts_number = "same"
+
+# Designed look of each region's transcription sites, from the polymerase model's nascent
+# copies per site, control -> mutant: U1 1.6 -> 0.6, U2 19 -> 7.7, U3 16.4 -> 6.6, U4 17.7 both,
+# U5 10.4 both, U6 9 both, U7 0.6 both, U8 0.1 both. Bands: bright >= 14, present >= 3,
+# dim >= 0.8, none below.
+[ts]
+U1 = { control = "dim", mutant = "none" }          # far-upstream start (RG only): 1.6 -> 0.6
+U2 = { control = "bright", mutant = "present" }    # group-1 N-terminal exon: 19 -> 7.7
+U3 = { control = "bright", mutant = "present" }    # group-1-only intron: 16.4 -> 6.6
+U4 = { control = "bright", mutant = "bright" }     # group-2 exon, on all nascent RNA: 17.7 both
+U5 = { control = "present", mutant = "present" }   # alternative exon, all nascent: 10.4 both
+U6 = { control = "present", mutant = "present" }   # intron: about 9 per site by calibration
+U7 = { control = "none", mutant = "none" }         # last exon: almost no nascent RNA reaches it (0.6)
+U8 = { control = "none", mutant = "none" }         # long 3'UTR, RD only: 0.1
