@@ -46,11 +46,24 @@ export function slideFly(markup) {
 
 const ringsD = mp => mp.coordinates.map(poly => poly.map(r => "M" + r.map(p => `${p[0]},${p[1]}`).join("L") + "Z").join("")).join("");
 
+// Per case: where one side's neurons sit in the brain frame, how they are drawn (`neurons(geo, sw)`,
+// `sw` converting px to brain units) and the points the label line aims at. A case without an entry
+// gets the fly and brain only.
+export const CASE_LOCATOR = {
+  pdf: {
+    at: NEURON_AT,
+    neurons: (geo, sw) => `
+    <path fill-rule="evenodd" d="${ringsD(geo.terminals.shape)}${ringsD(geo.axon.shape)}${geo.cells.map(c => ringsD(c.cytoplasm)).join("")}" fill="${LIGHT.mem}" fill-opacity=".42" stroke="${LIGHT.mem}" stroke-width="${sw(1.2)}"/>
+    ${geo.cells.map(c => `<path d="${ringsD(c.nucleus)}" fill="${LIGHT.dapi}" fill-opacity=".55"/>`).join("")}`,
+    bodies: geo => geo.cells.map(c => c.nucleus_centre),
+  },
+};
+
 // The locator, the step 2 descent in one picture: the fly from the front with its head ringed,
 // and the brain enlarged beside it, the neurons on both sides in the anatomy blue. The brain's
 // frame has the head's centre at 0,0, at 10 µm per fly-sprite unit (step 2). Right-aligned at
 // `right`; returns markup.
-function locator({ fly, geo, cells, right, top }) {
+function locator({ fly, geo, cells, right, top, loc }) {
   const P = LIGHT;
   const iw = 260, ih = 124;                                // the brain inset
   const ix = right - iw, iy = top;
@@ -72,16 +85,18 @@ function locator({ fly, geo, cells, right, top }) {
   const brain = BRAIN.map(([d, kind]) => kind === "line"
     ? `<path d="${d}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.6)}" stroke-linecap="round"/>`
     : `<path d="${d}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.1)}" stroke-dasharray="${sw(3)} ${sw(3)}" stroke-opacity=".7"/>`).join("");
-  const nrn = `
-    <path fill-rule="evenodd" d="${ringsD(geo.terminals.shape)}${ringsD(geo.axon.shape)}${geo.cells.map(c => ringsD(c.cytoplasm)).join("")}" fill="${P.mem}" fill-opacity=".42" stroke="${P.mem}" stroke-width="${sw(1.2)}"/>
-    ${geo.cells.map(c => `<path d="${ringsD(c.nucleus)}" fill="${P.dapi}" fill-opacity=".55"/>`).join("")}`;
+  if (!loc) {   // a case without a locator entry: the fly and the empty brain
+    out.push(`<g transform="translate(${bx} ${by}) scale(${kb})">${brain}</g>`);
+    return out.join("");
+  }
+  const nrn = loc.neurons(geo, sw);
   out.push(`<g transform="translate(${bx} ${by}) scale(${kb})">${brain}
-    <g transform="translate(${NEURON_AT.x} ${NEURON_AT.y})">${nrn}</g>
-    <g transform="scale(-1 1) translate(${NEURON_AT.x} ${NEURON_AT.y})">${nrn}</g></g>`);
+    <g transform="translate(${loc.at.x} ${loc.at.y})">${nrn}</g>
+    <g transform="scale(-1 1) translate(${loc.at.x} ${loc.at.y})">${nrn}</g></g>`);
   // the label, under the inset, points at the left side's cell bodies
-  const cc = geo.cells.map(c => c.nucleus_centre);
-  const nx = bx + (NEURON_AT.x + cc.reduce((s, p) => s + p[0], 0) / cc.length) * kb;
-  const ny = by + (NEURON_AT.y + cc.reduce((s, p) => s + p[1], 0) / cc.length) * kb;
+  const cc = loc.bodies(geo);
+  const nx = bx + (loc.at.x + cc.reduce((s, p) => s + p[0], 0) / cc.length) * kb;
+  const ny = by + (loc.at.y + cc.reduce((s, p) => s + p[1], 0) / cc.length) * kb;
   out.push(`<line x1="${nx}" y1="${ny + 7}" x2="${nx}" y2="${iy + ih + 14}" stroke="${P.text2}" stroke-width="1.5"/>`);
   out.push(`<text x="${nx}" y="${iy + ih + 40}" text-anchor="middle" font-family="${P.sans}" font-size="22" fill="${P.text2}">${esc(cells)}</text>`);
   return out.join("");
@@ -98,7 +113,7 @@ export function summarySVG({ c, s, date, g, art }) {
   out.push(`<text x="80" y="104" font-family="${P.sans}" font-size="24" font-weight="600" letter-spacing="2.5" fill="${P.text2}">PART 1 SUMMARY</text>`);
   out.push(`<text x="80" y="170" font-family="${P.serif}" font-size="60" font-weight="500" fill="${P.text}">${esc(c.system)} · <tspan font-style="italic">${esc(c.target.gene)}</tspan></text>`);
   out.push(`<text x="80" y="218" font-family="${P.sans}" font-size="28" fill="${P.text2}">hTDP-43 WT vs hTDP-43 mutant</text>`);
-  if (art) out.push(locator({ ...art, cells: c.cells, right: W - 80, top: 56 }));
+  if (art) out.push(locator({ ...art, loc: CASE_LOCATOR[c.id], cells: c.cells, right: W - 80, top: 56 }));
   out.push(`<line x1="80" x2="${W - 80}" y1="256" y2="256" stroke="${P.grid}" stroke-width="2"/>`);
 
   // the probe pair on the transcript map

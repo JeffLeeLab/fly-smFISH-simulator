@@ -22,6 +22,12 @@ const VIEWS = {
   7: () => import("./steps/step7.js"),
 };
 
+// A case can replace a step's view; the rest are shared.
+const CASE_VIEWS = {
+  mb: { 1: () => import("./steps/mb-step1.js"), 2: () => import("./steps/mb-step2.js") },
+};
+const viewOf = (caseId, key) => (CASE_VIEWS[caseId]?.[key] ?? VIEWS[key]);
+
 const app = document.getElementById("app");
 const rail = document.getElementById("rail");
 const view = document.getElementById("view");
@@ -86,7 +92,7 @@ async function show(r) {
 
   let mod;
   try {
-    mod = await VIEWS[choice.key]();
+    mod = await viewOf(r.caseId, choice.key)();
   } catch (err) {
     if (my === token) failed(err);
     return;

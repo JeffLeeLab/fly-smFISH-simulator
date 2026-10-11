@@ -103,3 +103,7 @@ function mazeArt() {
 }
 
 export const stationArt = { pdf: monitorArt, nmj: vialArt, mb: mazeArt };
+
+// Stations that run live on the landing: `start(svg, sprites)` returns draw(t); `handOff` names
+// the hand-off to the case's step 1. A case without an entry keeps its still art.
+export const stationLive = { pdf: { start: (svg, sprites) => startMiniMonitor(svg, sprites), handOff: "monitor" } };

@@ -9,7 +9,7 @@ import { href } from "../router.js";
 import { loadJSON, transcripts } from "../data.js";
 import { createMap } from "../map.js";
 import { loadFlySprite } from "../fly.js";
-import { summarySVG, slideFly, SLIDE } from "../summary.js";
+import { summarySVG, slideFly, SLIDE, CASE_LOCATOR } from "../summary.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -17,7 +17,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 export async function mount(root, ctx) {
   const id = ctx.caseId;
   const c = ctx.case;
-  const [g, flyMeta, geo] = await Promise.all([transcripts(id), loadFlySprite("frontal"), loadJSON(`data/${id}/geometry-control-1.json`)]);
+  const [g, flyMeta, geo] = await Promise.all([transcripts(id), loadFlySprite("frontal"), CASE_LOCATOR[id] ? loadJSON(`data/${id}/geometry-control-1.json`) : null]);   // the locator's neurons need geometry
   const art = {
     fly: { viewBox: flyMeta.viewBox.split(" ").map(Number), markup: slideFly(document.getElementById("fly-frontal-stand-0").innerHTML) },
     geo,

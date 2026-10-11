@@ -12,7 +12,7 @@ import { term } from "../glossary.js";
 import { loadGsap, reducedMotion } from "../gsap.js";
 import { loadFlySprite, flyNode, groomFrame, startBoil, stopBoil, ensureBoilFilter } from "../fly.js";
 import { mulberry32 } from "../prng.js";
-import { stationArt, startMiniMonitor } from "../stations.js";
+import { stationArt, stationLive } from "../stations.js";
 import { handOff } from "../handoff.js";
 
 // Schematic exon blocks within a 180-unit gene: [start, end, kind]; kind sets the block height
@@ -180,8 +180,13 @@ export async function mount(root) {
   const svg = root.querySelector(".hero__scene");
   ensureBoilFilter();   // drawn with the ink texture even when frozen or with reduced motion (not animated)
   const [meta, lateral] = await Promise.all([loadFlySprite("dorsal"), loadFlySprite("lateral")]);
-  const drawMonitor = startMiniMonitor(root.querySelector(".station[data-case=pdf] svg"), lateral);
-  root.querySelector(".station[data-case=pdf]").addEventListener("click", e => handOff("monitor", e.currentTarget.querySelector(".station__art")));
+  const liveDraws = [];
+  for (const [id, live] of Object.entries(stationLive)) {
+    const station = root.querySelector(`.station[data-case=${id}]`);
+    if (!station) continue;
+    liveDraws.push(live.start(station.querySelector("svg"), lateral));
+    station.addEventListener("click", e => handOff(live.handOff, e.currentTarget.querySelector(".station__art")));
+  }
   const legendFlies = [...root.querySelectorAll(".legend__fly")];
   legendFlies.forEach(el => el.setAttribute("viewBox", meta.viewBox));
   const flies = FLIES.map(f => {
@@ -297,7 +302,7 @@ export async function mount(root) {
       if (g) fly.show(...groomFrame(fly.meta.frames, g[0], g[1], t));
       else fly.show("stand", 0);
     });
-    drawMonitor(still ? 0 : t);
+    for (const draw of liveDraws) draw(still ? 0 : t);
     drawWings?.(t);
   };
   gsap.ticker.add(drawFlies);
