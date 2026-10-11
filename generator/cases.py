@@ -1,9 +1,109 @@
-"""Simulation parameters per case (docs/spec.md, *Simulation parameters (draft)*).
+"""Simulation parameters and compartment layouts per case (docs/spec.md, *Simulation parameters
+(draft)*).
 
-These are the generator's own statement of the biology. The truth table (data/<case>/
-truth-table.toml) states the expected results separately; the validation gate checks that
-the two agree.
+The parameters (PDF, MB) are the generator's own statement of the biology. The truth table
+(data/<case>/truth-table.toml) states the expected results separately; the validation gate
+checks that the two agree.
+
+The layouts (PDF_LAYOUT, MB_LAYOUT) are structure only: which compartments a case has, how
+they are counted and pooled, and where their shapes are in the geometry file. They carry no
+numbers, so truth_table.py and validate.py may import them and still check the generator
+independently.
+
+Contracts every module keeps (Phase 2):
+- Compartment order in a layout is the RNG draw order in simulate.draw, the key order in
+  tables.json and the plot order. PDF_LAYOUT reproduces Phase 1 exactly; the Pdf build must
+  stay byte-identical (tools/pdf-identical.sh).
+- Every cell draws its molecules for every compartment, shared ones included (a shared
+  compartment's molecules each came from one cell). A shared compartment split into units
+  (MB lobes: one per lobe system) places each cell's molecules in that cell's unit.
+- Counts (tables `m.count`): count_unit "cell" = mean over the cells; "animal" = the raw
+  total, kept an int (never divided by 1); "unit" = total / number of units, with the
+  per-unit totals in `raw.units[<compartment>]` (the plot's per-unit dots).
+- `student=False` compartments are simulated, drawn, written to tables (`raw`) and checked by
+  the gate, but no student-facing measure, plot or fly-to uses them (MB calyx).
+- Pools: whole_cell (region ratios across the cell), distal (numerator of share_distal) and
+  cytoplasm (its denominator). Student-facing pools never include a student=False
+  compartment.
+- Geometry paths: "cells[].nucleus", "cells[].cytoplasm" (per cell); "axon.shape",
+  "terminals.shape", "regions.calyx.shape", "regions.peduncle.shape" (shared, one unit);
+  "regions.lobes.{unit}.shape" (shared, one shape per unit id). A per-cell unit is read from
+  "cells[].lobe_system".
+
+MB geometry file (site/data/mb/geometry-<genotype>-<animal>.json, written by geometry_mb):
+  case, genotype, animal, units "µm", note, bounds, frame
+  cells[30]: {id, lobe_system ("ab" | "apbp" | "g"), nucleus, nucleus_centre, cytoplasm}
+  regions: {calyx: {shape, area_um2}, peduncle: {shape, area_um2},
+            lobes: {ab | apbp | g: {shape, area_um2, parts: {name: shape}}}}
+  views: {nucleus, cellbody, calyx, peduncle, lobes, lobes_ab, lobes_apbp, lobes_g}  [x0, y0, x1, y1]
+Shapes are GeoJSON-style MultiPolygons in µm, as in the Pdf files. geometry_mb.build(g, a)
+returns (public, skeleton) like geometry_pdf.build; the skeleton drives render.py.
 """
+
+from dataclasses import dataclass, field
+
+
+@dataclass(frozen=True)
+class Comp:
+    id: str                   # key in raw / m.count / records
+    kind: str                 # "per_cell" | "shared"
+    geometry: str             # path in the geometry file (see the module docstring)
+    count_unit: str           # "cell" | "animal" | "unit"
+    units: str | None = None  # unit set (Layout.unit_sets) for a shared compartment split by cell
+    student: bool = True      # False: simulated and gated, never plotted or offered to students
+    granules: str | None = None  # TDP-43 granules: "per_cell" (per cell body) | "density" (per µm²) | None
+    aggregates: bool = False  # TDP-43 aggregates sit here (mutant), and mRNA stays out of them
+    overlap: bool = True      # spots here are scored for overlap with TDP-43 granules
+    area: bool = False        # record the shape's area (µm²) in tables.json
+
+
+@dataclass(frozen=True)
+class Layout:
+    case: str
+    gene: str
+    geometry_module: str      # generator.<module>.build(genotype, animal) -> (public, skeleton)
+    cells: int
+    compartments: tuple       # of Comp, in draw / key / plot order
+    unit_sets: dict = field(default_factory=dict)  # name -> {"ids": (...), "of_cell": geometry path}
+    pools: dict = field(default_factory=dict)      # whole_cell, distal, cytoplasm -> compartment ids
+    measures: tuple = ()      # keys of tables `m`, in order
+    per_area: dict | None = None  # {"compartment": id, "per_um2": 100} for the per_area measure
+    area_header: tuple = ()   # (tables.json header key, source) for compartment areas
+
+
+PDF_LAYOUT = Layout(
+    case="pdf", gene="futsch", geometry_module="geometry_pdf", cells=4,
+    compartments=(
+        Comp("nucleus", "per_cell", "cells[].nucleus", "cell", overlap=False),
+        Comp("cellbody", "per_cell", "cells[].cytoplasm", "cell", granules="per_cell", aggregates=True),
+        Comp("axon", "shared", "axon.shape", "animal", granules="density"),
+        Comp("terminals", "shared", "terminals.shape", "animal", granules="density", area=True),
+    ),
+    pools={"whole_cell": ("nucleus", "cellbody"), "distal": ("axon", "terminals"),
+           "cytoplasm": ("cellbody", "axon", "terminals")},
+    measures=("count", "per_area", "nc_ratio", "share_distal", "ts_number", "ts_intensity", "ts_level", "overlap"),
+    per_area={"compartment": "terminals", "per_um2": 100},
+    area_header=("terminal_area_um2", "terminals"),
+)
+
+MB_LAYOUT = Layout(
+    case="mb", gene="unc-13", geometry_module="geometry_mb", cells=30,
+    compartments=(
+        Comp("nucleus", "per_cell", "cells[].nucleus", "cell", overlap=False),
+        Comp("cellbody", "per_cell", "cells[].cytoplasm", "cell", granules="per_cell", aggregates=True),
+        Comp("calyx", "shared", "regions.calyx.shape", "animal", student=False, granules="density", area=True),
+        Comp("peduncle", "shared", "regions.peduncle.shape", "animal", granules="density", area=True),
+        Comp("lobes", "shared", "regions.lobes.{unit}.shape", "unit", units="lobe_system", granules="density", area=True),
+    ),
+    unit_sets={"lobe_system": {"ids": ("ab", "apbp", "g"), "of_cell": "cells[].lobe_system"}},
+    # the calyx is drawn but never counted by students, so it stays out of every student-facing pool
+    pools={"whole_cell": ("nucleus", "cellbody", "peduncle", "lobes"), "distal": ("peduncle", "lobes"),
+           "cytoplasm": ("cellbody", "peduncle", "lobes")},
+    measures=("count", "nc_ratio", "share_distal", "ts_number", "ts_intensity", "ts_level", "overlap"),
+    area_header=("region_area_um2", None),
+)
+
+LAYOUTS = {"pdf": PDF_LAYOUT, "mb": MB_LAYOUT}
 
 PDF = {
     "seed": 202609280,           # base seed for the candidate animals
@@ -49,4 +149,56 @@ PDF = {
     "search": {"candidates": 120},  # candidate animals per slot; the build picks 3 per genotype
 }
 
-CASES = {"pdf": PDF}
+# Mushroom body, unc-13 ("the wrong isoform"). Two isoform groups with separate start sites; in
+# the mutant, group-1 production falls ×0.4 and group-2 production rises ×2.4 (total production
+# unchanged), with equal decay. Each group has its own fixed localisation, so every
+# compartment's group-1 count falls ×0.4 and its group-2 count rises ×2.4; the group-1 shares
+# below follow from that. Starting values for TDP-43; the look is tuned in Phase 2, wave 2.
+MB = {
+    "seed": 202610110,
+    "animals": 3,
+    "cells": 30,                 # Kenyon cells per animal, 10 per lobe system, all behaving alike
+    "animal_sd": 0.10,
+    "spot_intensity_sd": 0.10,
+    # within-group weights (the RA–RG mix of each group); the groups' shares are set below
+    "isoform_groups": {"g1": {"RA": 30, "RC": 15, "RD": 10, "RF": 10, "RG": 5}, "g2": {"RB": 20, "RE": 10}},
+    # relative production per group (nascent transcripts); control 70 : 30
+    "production": {"control": {"g1": 0.70, "g2": 0.30}, "mutant": {"g1": 0.28, "g2": 0.72}},
+    "mature_per_cell": {
+        "control": {"nucleus": 3, "cellbody": 20, "calyx": 3, "peduncle": 3, "lobes": 6},
+        "mutant": {"nucleus": 3, "cellbody": 22, "calyx": 3.3, "peduncle": 2.4, "lobes": 3.6},
+    },
+    # group-1 share of the mature molecules in each compartment (the rest are group 2)
+    "group_share": {
+        "control": {"nucleus": 0.70, "cellbody": 0.65, "calyx": 0.65, "peduncle": 0.80, "lobes": 0.90},
+        "mutant": {"nucleus": 0.28, "cellbody": 0.24, "calyx": 0.24, "peduncle": 0.40, "lobes": 0.60},
+    },
+    "ts_active": 0.90,
+    "ts_reference": ("U6", 9),   # U6 sites hold about 9 nascent transcripts (control production)
+    "ts_spread_um": 0.12,
+    "ts_detect_min": 2,
+    "ts_inset_um": 1.2,          # transcription sites sit this far inside the nucleus edge
+    "granule_inset_um": 0.4,     # cell-body granules sit this far inside the cytoplasm edge
+    # TDP-43 IF: nuclear loss in the mutant; TDP-43 gathers into many small puncta across the
+    # neuropil. unc-13 mRNA does not ride on them (no cargo), so overlap stays at chance: the
+    # dense puncta only make spots *seem* to overlap.
+    "tdp43": {
+        "control": {"nuclear": 1.0, "cytoplasmic": 0.16, "aggregates": (0, 0),
+                    "granule_density_um2": {"calyx": 0.05, "peduncle": 0.05, "lobes": 0.05}},
+        "mutant": {"nuclear": 0.6, "cytoplasmic": 0.14, "aggregates": (0, 1),
+                   "granule_density_um2": {"calyx": 0.20, "peduncle": 0.20, "lobes": 0.20}},
+        "neurite_level": 0.75,
+        "granules_per_cell_body": 0.3,
+        "granule_radius_um": (0.22, 0.30),  # small puncta
+        "granule_peak": 0.45,
+        "aggregate_shell_um": 1.5,
+        "aggregate_area_um2": (0.8, 1.6),
+        "aggregate_grey": 1.0,
+    },
+    "granule_cargo": {"calyx": 0.0, "peduncle": 0.0, "lobes": 0.0},
+    "cargo_spread_um": 0.15,
+    "overlap_um": 0.3,
+    "search": {"candidates": 120},
+}
+
+CASES = {"pdf": PDF, "mb": MB}
