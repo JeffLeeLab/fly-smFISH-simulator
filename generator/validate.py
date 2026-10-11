@@ -14,6 +14,7 @@ import json
 import math
 import sys
 
+from .cases import LAYOUTS
 from .paths import DATA, SITE_DATA
 
 LEVELS = (("bright", 14.0), ("present", 3.0), ("dim", 0.8), ("none", -1.0))
@@ -26,6 +27,8 @@ def level_of(x):
 class Gate:
     def __init__(self, truth, positions_optional=False):
         self.rules = truth["rules"]
+        self.layout = LAYOUTS[truth["case"]]
+        self._totals = {}
         self.positions_optional = positions_optional  # the seed search screens counts before placing molecules
         self.failures = []
         self.checked = 0
@@ -38,19 +41,26 @@ class Gate:
             self.failures.append(f"{where}: {msg}")
 
     # ---------- helpers over the tables ----------
-    @staticmethod
-    def totals(entry, gt, ch):
+    def totals(self, key, entry, gt, ch):
+        """Totals over the animals of one selection, genotype and channel (cached: pure)."""
+        if (key, gt, ch) in self._totals:
+            return self._totals[(key, gt, ch)]
+        layout = self.layout
         raws = [a[ch]["raw"] for a in entry[gt]["animals"]]
-        t = {
-            "nucleus": sum(c["nucleus"] for r in raws for c in r["cells"]),
-            "cellbody": sum(c["cellbody"] for r in raws for c in r["cells"]),
-            "axon": sum(r["axon"] for r in raws),
-            "terminals": sum(r["terminals"] for r in raws),
-            "ts_all": sum(c["ts"] for r in raws for c in r["cells"]),
-            "nuclei": sum(len(r["cells"]) for r in raws),
-        }
+        t = {}
+        for comp in layout.compartments:
+            if comp.kind == "per_cell":
+                t[comp.id] = sum(c[comp.id] for r in raws for c in r["cells"])
+            else:
+                t[comp.id] = sum(r[comp.id] for r in raws)
+            if comp.units:
+                for i, unit in enumerate(layout.unit_sets[comp.units]["ids"]):
+                    t[f"{comp.id}:{unit}"] = sum(r["units"][comp.id][i] for r in raws)
+        t["ts_all"] = sum(c["ts"] for r in raws for c in r["cells"])
+        t["nuclei"] = sum(len(r["cells"]) for r in raws)
         if "overlap" in raws[0]:
             t["ov"] = {name: [sum(r["overlap"][name][i] for r in raws) for i in range(3)] for name in raws[0]["overlap"]}
+        self._totals[(key, gt, ch)] = t
         return t
 
     @staticmethod
@@ -63,8 +73,12 @@ class Gate:
         return self.rules[name]
 
     # ---------- checks ----------
-    def ratio_rule(self, where, rule, r, se_r, key=False):
-        if rule == "same":
+    def ratio_rule(self, where, rule, r, se_r, key=False, nominal=None):
+        if rule == "ratio":
+            # an exact expected mutant/control ratio, with the counting noise as a floor on the band
+            tol = self.rules["ratio"] if key else max(self.rules["ratio"], 2 * se_r / r)
+            self._ok(abs(r / nominal - 1) <= tol, where, f"mutant/control = {r:.3f}, expected {nominal:g} ± {tol:.0%}", (r / nominal - 1) / tol)
+        elif rule == "same":
             tol = self.rules["same"] if key else max(self.rules["same"], 2 * se_r)
             self._ok(abs(r - 1) <= tol, where, f"mutant/control = {r:.3f}, expected 1 ± {tol:.3f}", (r - 1) / tol)
         elif rule in ("fall", "fall_per_area"):
@@ -86,11 +100,11 @@ class Gate:
         meas = e["measure"]
 
         if meas == "region_ratio":
-            pools = {"whole_cell": ("nucleus", "cellbody"), "distal": ("axon", "terminals")}[e["pool"]]
+            pools = self.layout.pools[e["pool"]]
             v = {}
             for gt in ("control", "mutant"):
-                A = sum(self.totals(entry, gt, "ch1")[p] for p in pools)
-                B = sum(self.totals(entry, gt, "ch2")[p] for p in pools)
+                A = sum(self.totals(key, entry, gt, "ch1")[p] for p in pools)
+                B = sum(self.totals(key, entry, gt, "ch2")[p] for p in pools)
                 v[gt] = (A, B)
             (Ac, Bc), (Am, Bm) = v["control"], v["mutant"]
             if min(Ac, Bc, Am, Bm) == 0:
@@ -98,27 +112,35 @@ class Gate:
                 return
             rc, rm = Bc / Ac, Bm / Am
             se = math.sqrt(1 / Bc + 1 / Ac + 1 / Bm + 1 / Am)
-            self.ratio_rule(where, e["rule"], rm / rc, (rm / rc) * se, e.get("key", False))
+            self.ratio_rule(where, e["rule"], rm / rc, (rm / rc) * se, e.get("key", False), e.get("nominal_ratio"))
             tol = max(self.rules["nominal"], 2 * math.sqrt(1 / Bc + 1 / Ac))
             nom = e["nominal_control"]
             self._ok(abs(rc / nom - 1) <= tol, where + " (control)", f"ratio {rc:.3f}, expected {nom:.3f} ± {tol:.0%}", (rc / nom - 1) / tol)
             return
 
-        tc, tm = self.totals(entry, "control", ch), self.totals(entry, "mutant", ch)
+        tc, tm = self.totals(key, entry, "control", ch), self.totals(key, entry, "mutant", ch)
 
-        if meas == "count":
+        if meas in ("count", "unit_count"):
             comp = e["compartment"]
+            if meas == "unit_count":
+                # one unit's total (MB lobes: ab, apbp or g); its per-animal value is the raw unit total
+                unit = e["unit"]
+                comp = f"{comp}:{unit}"
             nc, nm = tc[comp], tm[comp]
             if e["rule"] == "none":
                 self._ok(nc == 0 and nm == 0, where, f"expected no spots, found control {nc}, mutant {nm}")
                 return
-            c = self.mean(entry, "control", ch, lambda m: m["count"][comp])
-            mu = self.mean(entry, "mutant", ch, lambda m: m["count"][comp])
+            if meas == "unit_count":
+                c = tc[comp] / len(entry["control"]["animals"])
+                mu = tm[comp] / len(entry["mutant"]["animals"])
+            else:
+                c = self.mean(entry, "control", ch, lambda m: m["count"][comp])
+                mu = self.mean(entry, "mutant", ch, lambda m: m["count"][comp])
             if not nc or not nm:
                 self._ok(False, where, f"no spots (control {nc}, mutant {nm})")
                 return
             r = mu / c
-            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm), e.get("key", False))
+            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm), e.get("key", False), e.get("nominal_ratio"))
             if "nominal_control" in e:
                 nom = e["nominal_control"]
                 tol = max(self.rules["nominal"], 2 / math.sqrt(nc))
@@ -126,21 +148,24 @@ class Gate:
         elif meas == "per_area":
             c = self.mean(entry, "control", ch, lambda m: m["per_area"])
             mu = self.mean(entry, "mutant", ch, lambda m: m["per_area"])
-            nc, nm = tc["terminals"], tm["terminals"]
+            nc, nm = tc[self.layout.per_area["compartment"]], tm[self.layout.per_area["compartment"]]
             r = mu / c
-            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm))
+            self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm), nominal=e.get("nominal_ratio"))
         elif meas == "nc_ratio":
             r = (tm["nucleus"] / tm["cellbody"]) / (tc["nucleus"] / tc["cellbody"])
             se = math.sqrt(sum(1 / x for x in (tm["nucleus"], tm["cellbody"], tc["nucleus"], tc["cellbody"])))
-            self.ratio_rule(where, e["rule"], r, r * se)
+            self.ratio_rule(where, e["rule"], r, r * se, nominal=e.get("nominal_ratio"))
         elif meas == "share_distal":
+            pools = self.layout.pools
+
             def p(t):
-                d = t["axon"] + t["terminals"]
-                return d / (t["cellbody"] + d), t["cellbody"] + d
+                d = sum(t[x] for x in pools["distal"])
+                den = sum(t[x] for x in pools["cytoplasm"])
+                return d / den, den
             (pc, nc), (pm, nm) = p(tc), p(tm)
             r = pm / pc
             se = math.sqrt((1 - pm) / (pm * nm) + (1 - pc) / (pc * nc))
-            self.ratio_rule(where, e["rule"], r, r * se, e.get("key", False))
+            self.ratio_rule(where, e["rule"], r, r * se, e.get("key", False), e.get("nominal_ratio"))
         elif meas == "overlap":
             if "ov" not in tc:
                 if not self.positions_optional:
@@ -173,6 +198,13 @@ class Gate:
         elif meas == "ts_number":
             a = sum(x[ch]["m"]["ts_number"] for x in entry["control"]["animals"])
             b = sum(x[ch]["m"]["ts_number"] for x in entry["mutant"]["animals"])
+            if e.get("rule") == "ratio":
+                if not a or not b:
+                    self._ok(False, where, f"no transcription sites (control {a}, mutant {b})")
+                    return
+                r = b / a
+                self.ratio_rule(where, "ratio", r, r * math.sqrt(1 / a + 1 / b), e.get("key", False), e["nominal_ratio"])
+                return
             tol = 0 if e.get("key") else self.rules["ts_number"]
             self._ok(abs(a - b) <= tol, where, f"control {a}, mutant {b} sites (± {tol})", (a - b) / max(tol, 1))
         elif meas == "ts_intensity":
@@ -185,14 +217,19 @@ class Gate:
             if sc < 3 or sm < 3:
                 return  # too few sites to compare brightness (dim or absent by design)
             r = (mm / sm) / (mc / sc)
-            dim = ts_levels.get(ch) in ("dim", "none") or mc / sc < 5
+            lv = ts_levels.get(ch)
+            dim = (any(x in ("dim", "none") for x in lv.values()) if isinstance(lv, dict) else lv in ("dim", "none")) or mc / sc < 5
+            if e.get("rule") == "ratio":
+                self.ratio_rule(where, "ratio", r, r * math.sqrt(1 / mm + 1 / mc), e.get("key", False), e["nominal_ratio"])
+                return
             tol = self.rules["same"] if e.get("key") else max(self.rules["ts_intensity"] * (2 if dim else 1), 2 * math.sqrt(1 / mm + 1 / mc))
             self._ok(abs(r - 1) <= tol, where, f"mutant/control = {r:.3f}, expected 1 ± {tol:.3f}", (r - 1) / tol)
         elif meas == "ts_level":
             for gt, t in (("control", tc), ("mutant", tm)):
                 x = t["ts_all"] / t["nuclei"]
                 got = level_of(x)
-                self._ok(got == e["level"], f"{where} {gt}", f"{x:.2f} nascent molecules per nucleus reads as '{got}', expected '{e['level']}'")
+                want = e["level"][gt] if isinstance(e["level"], dict) else e["level"]
+                self._ok(got == want, f"{where} {gt}", f"{x:.2f} nascent molecules per nucleus reads as '{got}', expected '{want}'")
         elif meas == "other_gene":
             self._ok(False, where, "other-gene molecules are not modelled for this case yet")
         else:
