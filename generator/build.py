@@ -17,15 +17,16 @@ Writes:
     uv run python -m generator.build pdf
 """
 
+import importlib
 import json
 import sys
 import time
 
 import numpy as np
 
-from . import geometry_pdf, render
+from . import render
 from .cases import CASES
-from .model import COMPARTMENTS, load_case
+from .model import geometry_areas, load_case
 from .paths import DATA, SITE_DATA
 from .simulate import draw, place
 from .tables import animal_entry, assemble
@@ -125,7 +126,7 @@ def private_records(case, m):
         "ts_active": m.ts_active.tolist(),
         "molecules": [
             {
-                "compartment": COMPARTMENTS[c], "cell": int(cl) + 1, "isoform": case.isoforms[i].name,
+                "compartment": case.layout.compartments[c].id, "cell": int(cl) + 1, "isoform": case.isoforms[i].name,
                 "nascent": bool(n), "regions": [r.id for b, r in enumerate(case.regions) if mk >> b & 1],
                 "x": round(float(x), 3), "y": round(float(y), 3), "on_granule": bool(gr), "overlaps_granule": bool(o),
             }
@@ -138,6 +139,21 @@ def write(path, obj, compact=True):
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(obj, ensure_ascii=False, separators=(",", ":")) if compact else json.dumps(obj, ensure_ascii=False, indent=1)
     path.write_text(text + "\n", encoding="utf-8")
+
+
+def area_header(case):
+    """The tables.json header entry for a compartment's area (Pdf: terminal_area_um2). A case whose
+    header is not one compartment's area (area source None) leaves it to tables.py."""
+    key, source = case.layout.area_header
+    if source is None:
+        return {}
+    return {key: {g: [case.geometry[(g, a)]["areas"][source] for a in range(1, case.params["animals"] + 1)] for g in GENOTYPES}}
+
+
+def same_areas(a, b):
+    """Two {compartment: area | {unit: area}} dicts agree to 0.05 µm²."""
+    return a.keys() == b.keys() and all(
+        all(abs(a[k][u] - b[k][u]) < 0.05 for u in a[k]) if isinstance(a[k], dict) else abs(a[k] - b[k]) < 0.05 for k in a)
 
 
 def main(argv) -> int:
@@ -157,19 +173,20 @@ def main(argv) -> int:
             "animals": case.params["animals"],
             "cells": case.params["cells"],
             "regions": [r.id for r in case.regions],
-            "compartments": list(COMPARTMENTS),
+            "compartments": [c.id for c in case.layout.compartments],
             "units": {"count": "nucleus and cell body per cell; axon and terminals per animal", "per_area": "spots per 100 µm²"},
-            "terminal_area_um2": {g: [case.geometry[(g, a)]["terminal_area"] for a in range(1, case.params["animals"] + 1)] for g in GENOTYPES},
+            **area_header(case),
             "simulated": True,
             **tables,
         })
+        geometry = importlib.import_module(f"generator.{case.layout.geometry_module}")
         frame = case.geometry[("control", 1)]["raw"]["frame"]
         for (g, a), m in datasets.items():
             write(out / "molecules" / f"{g}-{a}.json", public_molecules(case, m))
             write(DATA / case_id / "generated" / f"records-{g}-{a}.json", private_records(case, m), compact=False)
-            public, skel = geometry_pdf.build(g, a)
-            assert abs(public["terminals"]["area_um2"] - case.geometry[(g, a)]["terminal_area"]) < 0.05, \
-                f"geometry-{g}-{a}.json is out of date: run generator.geometry_pdf"
+            public, skel = geometry.build(g, a)
+            assert same_areas(geometry_areas(case.layout, public), case.geometry[(g, a)]["areas"]), \
+                f"geometry-{g}-{a}.json is out of date: run generator.{case.layout.geometry_module}"
             render.render_animal(out, frame, skel, g, a, m.tdp43, case.params["tdp43"]["neurite_level"], case.params["seed"])
         n = sum(int((m.mask > 0).sum()) for m in datasets.values())
         print(f"{case_id}: animals {dict((f'{g}-{a}', k) for (g, a), k in choice.items())}, {gate.checked} checks passed, "

@@ -13,7 +13,7 @@ import shapely
 from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
 
-from .model import COMP, Case, nascent_scale
+from .model import Case, nascent_scale
 
 
 @dataclass
@@ -21,8 +21,8 @@ class Molecules:
     genotype: str
     animal: int
     factor: float
-    comp: np.ndarray       # compartment code (model.COMPARTMENTS)
-    cell: np.ndarray       # source cell 0..n-1 (axon and terminals are shared, but each molecule came from one cell)
+    comp: np.ndarray       # compartment code (Case.comp_index)
+    cell: np.ndarray       # source cell 0..n-1 (shared compartments too: each molecule came from one cell)
     iso: np.ndarray        # isoform index
     nascent: np.ndarray    # bool: part of a transcription site
     mask: np.ndarray       # uint8: bit i set if the molecule carries region i
@@ -42,7 +42,9 @@ def draw(case: Case, genotype: str, animal: int, rng: np.random.Generator) -> Mo
     p = case.params
     f = max(0.6, rng.normal(1.0, p["animal_sd"]))
     per = p["mature_per_cell"][genotype]
-    shares = np.array([i.share for i in case.isoforms])
+    layout, ci = case.layout, case.comp_index
+    mix = {c.id: case.mature_mix(genotype, c.id) for c in layout.compartments}
+    prod = case.production(genotype)
     k = nascent_scale(case)
     nbits = len(case.regions)
     bits = 1 << np.arange(nbits)
@@ -51,10 +53,10 @@ def draw(case: Case, genotype: str, animal: int, rng: np.random.Generator) -> Mo
     comp, cell, iso, nas, mask = [], [], [], [], []
     ts_active = np.zeros(p["cells"], dtype=bool)
     for c in range(p["cells"]):
-        for name in ("nucleus", "cellbody", "axon", "terminals"):
-            n = rng.poisson(per[name] * f)
-            ii = rng.choice(len(shares), size=n, p=shares)
-            comp.append(np.full(n, COMP[name]))
+        for cp in layout.compartments:
+            n = rng.poisson(per[cp.id] * f)
+            ii = rng.choice(len(case.isoforms), size=n, p=mix[cp.id])
+            comp.append(np.full(n, ci[cp.id]))
             cell.append(np.full(n, c))
             iso.append(ii)
             nas.append(np.zeros(n, dtype=bool))
@@ -62,12 +64,12 @@ def draw(case: Case, genotype: str, animal: int, rng: np.random.Generator) -> Mo
         ts_active[c] = rng.random() < p["ts_active"]
         if ts_active[c]:
             for ii, isoform in enumerate(case.isoforms):
-                n = rng.poisson(k * isoform.share * isoform.length * f)
+                n = rng.poisson(k * prod[ii] * isoform.length * f)
                 pol = rng.uniform(0, isoform.length, n)
                 d = np.array([isoform.distance(r.mid) for r in case.regions])
                 valid = (d >= 0) & (d <= isoform.length)
                 carried = (pol[:, None] >= d[None, :]) & valid[None, :]
-                comp.append(np.full(n, COMP["nucleus"]))
+                comp.append(np.full(n, ci["nucleus"]))
                 cell.append(np.full(n, c))
                 iso.append(np.full(n, ii))
                 nas.append(np.ones(n, dtype=bool))
@@ -81,6 +83,13 @@ def draw(case: Case, genotype: str, animal: int, rng: np.random.Generator) -> Mo
     )
     m.intensity = np.clip(rng.normal(1.0, p["spot_intensity_sd"], m.comp.size), 0.7, 1.3)
     return m
+
+
+def _checked(case, geom, n, comp_id, where):
+    """geom, unless molecules are to go into an empty shape (a geometry fault, not a draw)."""
+    if n > 0 and (geom.is_empty or geom.area <= 0):
+        raise ValueError(f"{case.id}: {n} molecules to place in an empty {comp_id} shape ({where})")
+    return geom
 
 
 def _uniform_in(geom, n, rng, prepared=True):
@@ -131,10 +140,11 @@ def _tdp43(case: Case, m: Molecules, g: dict, rng: np.random.Generator) -> dict:
     nuclear = [round(float(gt["nuclear"] * rng.normal(1, 0.05)), 3) for _ in range(cells)]
     cytoplasmic = [round(float(gt["cytoplasmic"] * rng.normal(1, 0.05)), 3) for _ in range(cells)]
 
+    layout = case.layout
     aggregates, footprints = [], []
     for c, (nuc, cyto) in enumerate(zip(g["nuclei"], g["cytoplasm"])):
         lo, hi = gt["aggregates"]
-        k = int(rng.integers(lo, hi + 1))
+        k = int(rng.integers(lo, hi + 1)) if any(cp.aggregates for cp in layout.compartments) else 0
         if k == 0:
             footprints.append(None)
             continue
@@ -155,16 +165,22 @@ def _tdp43(case: Case, m: Molecules, g: dict, rng: np.random.Generator) -> dict:
         footprints.append(unary_union([a["shape"] for a in mine]) if mine else None)
 
     granules = []  # (x, y, radius, peak brightness, compartment)
-    for c, cyto in enumerate(g["cytoplasm"]):
-        free = cyto.buffer(-0.4)
-        if footprints[c] is not None:
-            free = free.difference(footprints[c].buffer(0.5))
-        for (px, py) in _uniform_in(free, rng.poisson(t["granules_per_cell_body"]), rng):
-            granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), "cellbody"))
-    for name in ("axon", "terminals"):
-        inner = g[name].buffer(-0.15)
-        for (px, py) in _uniform_in(inner, rng.poisson(t["granule_density_um2"][name] * g[name].area), rng):
-            granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), name))
+    inset = case.params.get("granule_inset_um", 0.4)
+    for cp in layout.compartments:
+        if cp.granules == "per_cell":
+            for c, shp in enumerate(g["per_cell"][cp.id]):
+                free = shp.buffer(-inset)
+                if cp.aggregates and footprints[c] is not None:
+                    free = free.difference(footprints[c].buffer(0.5))
+                for (px, py) in _uniform_in(free, rng.poisson(t["granules_per_cell_body"]), rng):
+                    granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id))
+    density = gt.get("granule_density_um2", t.get("granule_density_um2"))
+    for cp in layout.compartments:
+        if cp.granules == "density":
+            for unit, shp in g["shared"][cp.id]:
+                inner = shp.buffer(-0.15)
+                for (px, py) in _uniform_in(inner, rng.poisson(density[cp.id] * shp.area), rng):
+                    granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id))
     return {"nuclear": nuclear, "cytoplasmic": cytoplasmic, "granules": granules, "aggregates": aggregates, "footprints": footprints}
 
 
@@ -177,34 +193,47 @@ def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
     m.on_granule = np.zeros(n, dtype=bool)
 
     # transcription-site centres: well inside each nucleus
-    m.ts_xy = np.array([_uniform_in(nuc.buffer(-1.2), 1, rng)[0] for nuc in g["nuclei"]])
+    ts_inset = p.get("ts_inset_um", 1.2)
+    m.ts_xy = np.array([_uniform_in(nuc.buffer(-ts_inset), 1, rng)[0] for nuc in g["nuclei"]])
 
+    layout, ci = case.layout, case.comp_index
+    per_cell = [cp for cp in layout.compartments if cp.kind == "per_cell"]
+    cell_unit = {name: np.array(u) for name, u in g["units"].items()}
     for c in range(p["cells"]):
-        sel = (m.cell == c) & (m.comp == COMP["nucleus"]) & ~m.nascent
-        xy[sel] = _uniform_in(g["nuclei"][c], sel.sum(), rng)
-        sel = (m.cell == c) & m.nascent
-        xy[sel] = m.ts_xy[c] + rng.normal(0, p["ts_spread_um"], (sel.sum(), 2))
-        sel = (m.cell == c) & (m.comp == COMP["cellbody"])
-        fp = m.tdp43["footprints"][c]
-        xy[sel] = _uniform_in(g["cytoplasm"][c] if fp is None else g["cytoplasm"][c].difference(fp), sel.sum(), rng)  # none in aggregates
-    for name in ("axon", "terminals"):
-        sel = np.flatnonzero(m.comp == COMP[name])
-        xy[sel] = _uniform_in(g[name], sel.size, rng)
-        # granule cargo: the same share in both genotypes, each molecule on one granule of the compartment
-        G = np.array([gr[:2] for gr in m.tdp43["granules"] if gr[4] == name])
-        if len(G) and sel.size:
-            cargo = sel[rng.random(sel.size) < p["granule_cargo"][name]]
-            shapely.prepare(g[name])
-            for i in cargo:
-                cx, cy = G[rng.integers(len(G))]
-                for _ in range(20):
-                    px, py = rng.normal((cx, cy), p["cargo_spread_um"])
-                    if shapely.contains_xy(g[name], px, py):
-                        break
-                else:
-                    px, py = cx, cy
-                xy[i] = (px, py)
-            m.on_granule[cargo] = True
+        for cp in per_cell:
+            sel = (m.cell == c) & (m.comp == ci[cp.id]) & ~m.nascent
+            shp = g["per_cell"][cp.id][c]
+            fp = m.tdp43["footprints"][c] if cp.aggregates else None
+            if fp is not None:
+                shp = shp.difference(fp)  # none in aggregates
+            xy[sel] = _uniform_in(_checked(case, shp, sel.sum(), cp.id, f"cell {c}"), sel.sum(), rng)
+            if cp.id == "nucleus":  # nascent transcripts cluster at the transcription site
+                sel = (m.cell == c) & m.nascent
+                xy[sel] = m.ts_xy[c] + rng.normal(0, p["ts_spread_um"], (sel.sum(), 2))
+    for cp in layout.compartments:
+        if cp.kind != "shared":
+            continue
+        for unit, shp in g["shared"][cp.id]:
+            here = m.comp == ci[cp.id]
+            if unit is not None:  # each cell's molecules go to the unit that cell feeds
+                here = here & (cell_unit[cp.units][m.cell] == unit)
+            sel = np.flatnonzero(here)
+            xy[sel] = _uniform_in(_checked(case, shp, sel.size, cp.id, unit), sel.size, rng)
+            # granule cargo: the same share in both genotypes, each molecule on one granule of the compartment
+            G = np.array([gr[:2] for gr in m.tdp43["granules"] if gr[4] == cp.id and (unit is None or shp.contains(Point(gr[0], gr[1])))])
+            if len(G) and sel.size:
+                cargo = sel[rng.random(sel.size) < p["granule_cargo"].get(cp.id, 0.0)]
+                shapely.prepare(shp)
+                for i in cargo:
+                    cx, cy = G[rng.integers(len(G))]
+                    for _ in range(20):
+                        px, py = rng.normal((cx, cy), p["cargo_spread_um"])
+                        if shapely.contains_xy(shp, px, py):
+                            break
+                    else:
+                        px, py = cx, cy
+                    xy[i] = (px, py)
+                m.on_granule[cargo] = True
     m.x, m.y = xy[:, 0], xy[:, 1]
 
     # overlap with granules (aggregates aren't counted), and the chance level for a random
@@ -218,11 +247,23 @@ def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
         m.overlap = (dist <= reach).any(axis=1)
     zones = unary_union([Point(px, py).buffer(r + reach, quad_segs=16) for px, py, r, _, _ in granules]) if granules else None
     chance_by = {}
-    for c in range(p["cells"]):
-        for name, geom in (("nucleus", g["nuclei"][c]), ("cellbody", g["cytoplasm"][c])):
-            chance_by[(COMP[name], c)] = zones.intersection(geom).area / geom.area if zones is not None else 0.0
-    for name in ("axon", "terminals"):
-        chance_by[(COMP[name], -1)] = zones.intersection(g[name]).area / g[name].area if zones is not None else 0.0
-    shared = np.isin(m.comp, [COMP["axon"], COMP["terminals"]])
-    m.chance = np.array([chance_by[(int(cp), -1 if sh else int(cl))] for cp, cl, sh in zip(m.comp, m.cell, shared)])
+
+    def chance_in(geom):
+        return zones.intersection(geom).area / geom.area if zones is not None and geom.area > 0 else 0.0
+
+    for cp in layout.compartments:
+        if cp.kind == "per_cell":
+            for c, geom in enumerate(g["per_cell"][cp.id]):
+                chance_by[(ci[cp.id], c)] = chance_in(geom)
+        else:
+            for unit, geom in g["shared"][cp.id]:
+                chance_by[(ci[cp.id], unit)] = chance_in(geom)
+    shared_unit = {ci[cp.id]: cp.units for cp in layout.compartments if cp.kind == "shared"}
+
+    def key(cp, cl):
+        if cp not in shared_unit:
+            return (cp, cl)
+        return (cp, cell_unit[shared_unit[cp]][cl] if shared_unit[cp] else None)
+
+    m.chance = np.array([chance_by[key(int(cp), int(cl))] for cp, cl in zip(m.comp, m.cell)])
     return m

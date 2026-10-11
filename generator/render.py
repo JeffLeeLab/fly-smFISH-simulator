@@ -30,6 +30,16 @@ PSF_SIGMA_UM = 0.2          # lateral PSF (a little soft, as in the reference im
 HAZE_SIGMA_UM = 1.3          # out-of-focus light gathered by the projection
 LAYERS = ("membrane", "dapi", "tdp43")
 
+# per fibre kind: the radius at which stamp() gives full brightness, and the membrane layer's gain
+FIBRE_CORE = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}
+FIBRE_GAIN = {"axon": 0.9, "neurite": 0.85, "terminal": 1.0, "fine": 1.0}
+# PLACEHOLDER levels for skel["regions"] (filled neuropil shapes: a flat fill, no texture yet),
+# as fractions of a full-brightness fibre in the membrane layer and of the neurite level in TDP-43
+REGION_MEMBRANE = 0.45
+REGION_TDP43 = 1.0
+BIG_CASE_CELLS = 8           # beyond this many cells, per-cell textures are made in a window
+WINDOW_UM = 3.0              # margin around a cell in its window
+
 
 class Canvas:
     def __init__(self, frame, res=RES):
@@ -43,6 +53,24 @@ class Canvas:
 
     def zeros(self):
         return np.zeros((self.h, self.w), np.float32)
+
+    def window(self, bounds, margin_um):
+        """A smaller canvas on the same pixel grid around bounds, and the slice of this canvas it covers."""
+        x0, y0, x1, y1 = bounds
+        i0, j0 = self.px(x0 - margin_um, y0 - margin_um)
+        i1, j1 = self.px(x1 + margin_um, y1 + margin_um)
+        c0, c1 = max(0, int(i0)), min(self.w, int(math.ceil(i1)))
+        r0, r1 = max(0, int(j0)), min(self.h, int(math.ceil(j1)))
+        sub = Canvas((self.x0 + c0 / self.res, self.y0 + r0 / self.res, self.x0 + c1 / self.res, self.y0 + r1 / self.res), self.res)
+        return sub, (slice(r0, r1), slice(c0, c1))
+
+
+def cell_window(cv, cells, c):
+    """Where to make one cell's textures: the whole canvas, or (many cells, a large frame) a
+    window round the cell, so each cell does not cost full-canvas blurs."""
+    if len(cells) <= BIG_CASE_CELLS:
+        return cv, (slice(None), slice(None))
+    return cv.window(c["soma"].bounds, WINDOW_UM)
 
 
 def blur(img, sigma_px):
@@ -128,19 +156,22 @@ def optics(img, rng, photons, haze):
     return blur(counts / photons, 0.6)  # a touch of detector smoothing
 
 
-def membrane(cv, skel, rng):
+def membrane(whole, skel, rng):
+    cv = whole
     # A maximum-intensity projection: where structures overlap, the brightest wins (each fibre
     # lies at its own depth), so fibres and cells are max-composited, not summed.
     out = cv.zeros()
     layer = cv.zeros()
     for f in skel["fibres"]:
         layer[:] = 0
-        core = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}[f["kind"]]
-        stamp(layer, cv, f, core)
-        np.maximum(out, layer * {"axon": 0.9, "neurite": 0.85, "terminal": 1.0, "fine": 1.0}[f["kind"]], out=out)
+        stamp(layer, cv, f, FIBRE_CORE[f["kind"]])
+        np.maximum(out, layer * FIBRE_GAIN[f["kind"]], out=out)
+    for r in skel.get("regions", []):  # placeholder neuropil fill (see REGION_MEMBRANE)
+        np.maximum(out, mask(cv, r["shape"]) * REGION_MEMBRANE, out=out)
     # membrane label is cloudy, not even: mottle the processes at fine and medium scales
     out *= uneven(cv, rng, 0.42, 1.1, scale_um=0.3) * uneven(cv, rng, 0.6, 1.06, scale_um=1.2)
     for c in skel["cells"]:
+        cv, sl = cell_window(whole, skel["cells"], c)
         soma = mask(cv, c["soma"])
         nuc = mask(cv, c["nucleus"], 0.15)
         # plasma membrane: brightest at the rim, unevenly so around the cell
@@ -155,7 +186,8 @@ def membrane(cv, skel, rng):
         gran /= np.percentile(gran[soma > 0], 95) + 1e-9
         envelope = np.clip(nuc * (1 - blur(nuc, 0.35 * RES)) * 2, 0, 1)
         body = (0.12 + 0.55 * np.clip(gran, 0, 1.8) + 0.62 * rim) * soma * (1 - 0.88 * nuc) + 0.08 * envelope
-        np.maximum(out, body * c["brightness"] * 1.45, out=out)
+        np.maximum(out[sl], body * c["brightness"] * 1.45, out=out[sl])
+    cv = whole
     out *= uneven(cv, rng, 0.62, 1.08)
     return optics(out, rng, photons=30, haze=0.32) / 1.25
 
@@ -186,7 +218,8 @@ def nucleus_texture(cv, c, rng, kind):
 def dapi(cv, skel, rng):
     out = cv.zeros()
     for c in skel["cells"]:
-        out += nucleus_texture(cv, c, rng, "dapi") * c["brightness"]
+        win, sl = cell_window(cv, skel["cells"], c)
+        out[sl] += nucleus_texture(win, c, rng, "dapi") * c["brightness"]
     return optics(out, rng, photons=55, haze=0.12) / 0.95
 
 
@@ -203,13 +236,16 @@ def cytoplasm_texture(cv, c, rng):
 def tdp43(cv, skel, levels, neurite_level, rng):
     out = cv.zeros()
     for c, v, cy in zip(skel["cells"], levels["nuclear"], levels["cytoplasmic"]):
-        out += nucleus_texture(cv, c, rng, "tdp") * v + cytoplasm_texture(cv, c, rng) * cy
+        win, sl = cell_window(cv, skel["cells"], c)
+        out[sl] += nucleus_texture(win, c, rng, "tdp") * v + cytoplasm_texture(win, c, rng) * cy
     # neurites: a filled tube per fibre (max-composited, like the membrane), dimmer than the cell body
     layer, fill = cv.zeros(), cv.zeros()
     for f in skel["fibres"]:
         layer[:] = 0
-        stamp(layer, cv, {**f, "b": 1.0, "v": np.ones_like(f["v"])}, {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}[f["kind"]])
+        stamp(layer, cv, {**f, "b": 1.0, "v": np.ones_like(f["v"])}, FIBRE_CORE[f["kind"]])
         np.maximum(fill, layer, out=fill)
+    for r in skel.get("regions", []):  # placeholder neuropil fill (see REGION_TDP43)
+        np.maximum(fill, mask(cv, r["shape"]) * REGION_TDP43, out=fill)
     level = neurite_level * float(np.mean(levels["cytoplasmic"]))
     fill *= level * 0.8 * uneven(cv, rng, 0.7, 1.1, scale_um=0.4)
     somata = sum(mask(cv, c["soma"]) for c in skel["cells"])

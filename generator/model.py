@@ -11,8 +11,11 @@ from dataclasses import dataclass, field
 import numpy as np
 from shapely.geometry import shape
 
+from .cases import LAYOUTS, Layout
 from .paths import CASE_GENES, SITE_DATA, TRANSCRIPT_MODELS
 
+# Pdf's compartments, kept for modules that still assume them; the codes in a Case are
+# Case.comp_index (for Pdf, these same numbers)
 COMPARTMENTS = ("nucleus", "cellbody", "axon", "terminals")
 COMP = {c: i for i, c in enumerate(COMPARTMENTS)}
 
@@ -22,7 +25,9 @@ class Isoform:
     name: str          # e.g. "RC"
     exons: list        # [[lo, hi], ...] genomic, 1-based inclusive
     strand: str
-    share: float       # fraction of mature molecules (equal decay, so also of production)
+    share: float       # fraction of mature molecules (equal decay, so also of production); control production
+    group: str | None = None  # isoform group ("g1" | "g2"), for cases whose groups change production
+    weight: float = 1.0       # within-group weight
 
     @property
     def tss(self):
@@ -61,7 +66,26 @@ class Case:
     regions: list
     geometry: dict          # (genotype, animal) -> parsed geometry (shapely shapes + raw json)
     params: dict
+    layout: Layout = None
     mature_masks: dict = field(default_factory=dict)  # isoform name -> 8-bit mask
+    comp_index: dict = field(default_factory=dict)    # compartment id -> molecule comp code
+
+    def _group_total(self, group: str) -> float:
+        return sum(i.weight for i in self.isoforms if i.group == group)
+
+    def production(self, genotype: str) -> list:
+        """Relative production of each isoform (same order as isoforms)."""
+        if "isoform_groups" not in self.params:
+            return [i.share for i in self.isoforms]
+        prod = self.params["production"][genotype]
+        return [prod[i.group] * i.weight / self._group_total(i.group) for i in self.isoforms]
+
+    def mature_mix(self, genotype: str, comp_id: str) -> np.ndarray:
+        """Isoform probabilities of the mature molecules in one compartment."""
+        if "isoform_groups" not in self.params:
+            return np.array([i.share for i in self.isoforms])
+        g1 = self.params["group_share"][genotype][comp_id]
+        return np.array([(g1 if i.group == "g1" else 1 - g1) * i.weight / self._group_total(i.group) for i in self.isoforms])
 
     def nascent_mask(self, iso: Isoform, pol_dist: float) -> int:
         """Regions carried by an unspliced pre-mRNA running from the TSS to pol_dist.
@@ -85,31 +109,75 @@ def _mature_mask(iso: Isoform, regions) -> int:
     return m
 
 
-def _geometry(case_id: str, genotype: str, animal: int) -> dict:
+def _resolve(raw: dict, path: str, units: tuple = ()) -> list:
+    """Shapes (or numbers) at a layout geometry path, as [(unit id or None, value)]. A "{unit}"
+    path gives one per unit id, in order. Per-cell paths ("cells[].x") are read separately."""
+    def walk(p):
+        node = raw
+        for key in p.split("."):
+            node = node[key]
+        return node
+    if "{unit}" in path:
+        return [(u, walk(path.replace("{unit}", u))) for u in units]
+    return [(None, walk(path))]
+
+
+def geometry_areas(layout: Layout, raw: dict) -> dict:
+    """Area (µm²) of every compartment that records one: a number, or {unit: number} when split."""
+    out = {}
+    for comp in layout.compartments:
+        if not comp.area:
+            continue
+        unit_ids = layout.unit_sets[comp.units]["ids"] if comp.units else ()
+        found = _resolve(raw, comp.geometry.rsplit(".", 1)[0] + ".area_um2", unit_ids)
+        out[comp.id] = dict(found) if comp.units else found[0][1]
+    return out
+
+
+def _geometry(case_id: str, genotype: str, animal: int, layout: Layout) -> dict:
     raw = json.loads((SITE_DATA / case_id / f"geometry-{genotype}-{animal}.json").read_text(encoding="utf-8"))
-    return {
+    out = {
         "raw": raw,
         "nuclei": [shape(c["nucleus"]) for c in raw["cells"]],
         "cytoplasm": [shape(c["cytoplasm"]) for c in raw["cells"]],
-        "axon": shape(raw["axon"]["shape"]),
-        "terminals": shape(raw["terminals"]["shape"]),
-        "terminal_area": raw["terminals"]["area_um2"],
     }
+    per_cell = {"cells[].nucleus": out["nuclei"], "cells[].cytoplasm": out["cytoplasm"]}
+    shared = {}
+    for comp in layout.compartments:
+        if comp.kind == "shared":
+            unit_ids = layout.unit_sets[comp.units]["ids"] if comp.units else ()
+            shared[comp.id] = [(u, shape(sh)) for u, sh in _resolve(raw, comp.geometry, unit_ids)]
+    out["per_cell"] = {c.id: per_cell[c.geometry] for c in layout.compartments if c.kind == "per_cell"}
+    out["shared"] = shared
+    # the unit (e.g. lobe system) each cell feeds
+    out["units"] = {name: [c[spec["of_cell"].split(".")[-1]] for c in raw["cells"]] for name, spec in layout.unit_sets.items()}
+    out["areas"] = geometry_areas(layout, raw)
+    if case_id == "pdf":  # Phase 1 keys
+        out["axon"], out["terminals"] = shared["axon"][0][1], shared["terminals"][0][1]
+        out["terminal_area"] = out["areas"]["terminals"]
+    return out
 
 
 def load_case(case_id: str, params: dict) -> Case:
     models = json.loads(TRANSCRIPT_MODELS.read_text(encoding="utf-8"))
     g = models["genes"][CASE_GENES[case_id]]
     strand = g["strand"]
+    layout = LAYOUTS[case_id]
     isoforms = []
     for t in g["transcripts"]:
         name = t["name"].split("-")[-1]
-        if name in params["isoforms"]:
+        if "isoform_groups" in params:
+            for group, weights in params["isoform_groups"].items():
+                if name in weights:
+                    share = params["production"]["control"][group] * weights[name] / sum(weights.values())
+                    isoforms.append(Isoform(name, t["exons"], strand, share, group, weights[name]))
+        elif name in params["isoforms"]:
             isoforms.append(Isoform(name, t["exons"], strand, params["isoforms"][name]))
     assert abs(sum(i.share for i in isoforms) - 1) < 1e-9, "isoform shares must sum to 1"
     regions = [Region(r["id"], r["lo"], r["hi"]) for r in sorted(g["probe_regions"], key=lambda r: int(r["id"][1:]))]
     case = Case(case_id, CASE_GENES[case_id], strand, isoforms, regions,
-                {(gt, a): _geometry(case_id, gt, a) for gt in ("control", "mutant") for a in range(1, params["animals"] + 1)}, params)
+                {(gt, a): _geometry(case_id, gt, a, layout) for gt in ("control", "mutant") for a in range(1, params["animals"] + 1)}, params,
+                layout, comp_index={c.id: i for i, c in enumerate(layout.compartments)})
     case.mature_masks = {i.name: _mature_mask(i, regions) for i in isoforms}
     return case
 
