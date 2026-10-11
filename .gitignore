@@ -8,3 +8,7 @@ data/*/generated/
 data/flybody/
 .impeccable/questions/
 .impeccable/review/
+# MaleCNS Kenyon cell skeletons (downloaded by generator.connectome_mb; not committed)
+data/mb/connectome/
+# Office lock files
+~$*
