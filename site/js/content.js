@@ -19,6 +19,35 @@ export const CASES = {
       orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/4131",
     },
     compartments: ["Nucleus", "Cell body", "Axon", "Dorsal terminals"],
+    // What the viewer and the results plot read, so they hold no case-specific names.
+    anatomy: {
+      whole: "Whole neuron",
+      flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Dorsal terminals"]],
+      projection: "2D maximum-intensity projection (simulated)",
+    },
+    // Lateral PSF σ in µm (FWHM ≈ 0.28 µm); spots below minSigmaPx are drawn larger and dimmer (same total light).
+    display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95 },
+    // Count categories: `sub` says where the small points come from ("cells": one per cell;
+    // "lobes": one per lobe system, raw.units.lobes), `unit` names them in the hover text.
+    plot: {
+      labels: { nucleus: "Nucleus", cellbody: "Cell body", axon: "Axon", terminals: "Dorsal terminals" },
+      count: {
+        cats: [
+          { id: "nucleus", sub: "cells", unit: "cells" },
+          { id: "cellbody", sub: "cells", unit: "cells" },
+          { id: "axon" },
+          { id: "terminals" },
+        ],
+        note: "Nucleus and cell body: per cell. Axon and dorsal terminals: per animal (all four cells).",
+      },
+      distal: {
+        label: "Proportion in axon + terminals",
+        catLabel: "Axon + dorsal terminals",
+        note: "(Axon + dorsal terminals) / (cell body + axon + dorsal terminals).",
+        fly: "terminals",
+      },
+      overlap: ["cellbody", "axon", "terminals"],
+    },
   },
   nmj: {
     id: "nmj",
@@ -35,6 +64,40 @@ export const CASES = {
     phenotype: "Learning and memory",
     assay: "T-maze",
     available: false,
+    target: {
+      gene: "unc-13",
+      orthologue: "UNC13A",
+      function: "A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, calyx, peduncle and lobes.",
+      flybase: "https://flybase.org/reports/FBgn0025726",
+      orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/23025",
+    },
+    compartments: ["Nucleus", "Cell body", "Calyx", "Peduncle", "Lobes"],
+    // The calyx is simulated and drawn but never counted, plotted or offered as a fly-to.
+    anatomy: {
+      whole: "Whole mushroom body",
+      flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Peduncle"], ["lobes", "Lobes"]],
+      projection: "Oblique maximum-intensity projection (simulated)",
+    },
+    display: { spotSigmaUm: 0.16, minSigmaPx: 0.85, spotGain: 0.95 },
+    plot: {
+      labels: { nucleus: "Nucleus", cellbody: "Cell body", peduncle: "Peduncle", lobes: "Lobes" },
+      count: {
+        cats: [
+          { id: "nucleus", sub: "cells", unit: "cells" },
+          { id: "cellbody", sub: "cells", unit: "cells" },
+          { id: "peduncle" },
+          { id: "lobes", sub: "lobes", unit: "lobe systems" },
+        ],
+        note: "Nucleus and cell body: per cell. Peduncle: per animal (all thirty cells). Lobes: per lobe system (ten cells each).",
+      },
+      distal: {
+        label: "Proportion in peduncle + lobes",
+        catLabel: "Peduncle + lobes",
+        note: "(Peduncle + lobes) / (cell body + peduncle + lobes).",
+        fly: "lobes",
+      },
+      overlap: ["cellbody", "peduncle", "lobes"],
+    },
   },
 };
 

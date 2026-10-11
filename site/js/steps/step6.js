@@ -11,7 +11,8 @@ import { renderCompare } from "../notebook.js";
 import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
 import { loadJSON, transcripts } from "../data.js";
-import { MEASURES, fixedScales, plotSVG, plotTable, plotTitle } from "../results.js";
+import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle } from "../results.js";
+import { CASES } from "../content.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 import { createMap, drawStrip } from "../map.js";
 import { popCard } from "../popcard.js";
@@ -21,6 +22,8 @@ import { tourOnce, runTour, VIEWER_TOUR, LEGEND_POINTER } from "../tour.js";
 
 export async function mount(root, ctx) {
   const id = ctx.caseId;
+  const cs = CASES[id];
+  const measures = measuresFor(cs);
   const { pair } = caseState(id);
   const g = await transcripts(id);
 
@@ -57,7 +60,7 @@ export async function mount(root, ctx) {
             <button type="button" data-channel="ch1" aria-pressed="true"><span class="cdot cdot--ch1" aria-hidden="true"></span>smFISH 1 · ${pair.ch1}</button><button type="button" data-channel="ch2" aria-pressed="false"><span class="cdot cdot--ch2" aria-hidden="true"></span>smFISH 2 · ${pair.ch2}</button><button type="button" data-channel="both" aria-pressed="false"><span class="cdot cdot--both" aria-hidden="true"></span>Both</button>
           </div>
           <label class="results__measure"><span class="vh">Measure</span>
-            <select class="select" data-act="measure">${Object.entries(MEASURES).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>
+            <select class="select" data-act="measure">${Object.entries(measures).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>
           <button type="button" class="btn results__png" data-act="plot-png">Copy as PNG</button>
         </div>
         <div class="results__plot" id="results-plot" hidden>
@@ -126,7 +129,7 @@ export async function mount(root, ctx) {
   // ---------- the plot drawer ----------
   const tables = await loadJSON(`data/${id}/tables.json`);
   const entry = tables.selections[`${pair.ch1}+${pair.ch2}`];
-  const yMax = fixedScales(tables);
+  const yMax = fixedScales(tables, cs);
   const plot = { channel: "ch1", measure: "count" };
   const foot = root.querySelector(".results");
   const bar = foot.querySelector(".results__bar");
@@ -146,11 +149,11 @@ export async function mount(root, ctx) {
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);
     svg.setAttribute("width", w);
     svg.setAttribute("height", h);
-    svg.innerHTML = plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: w, height: h, pal: screenPal() });
-    svg.setAttribute("aria-label", plotTitle(pair, plot.channel, plot.measure));
-    root.querySelector(".results__title").textContent = plotTitle(pair, plot.channel, plot.measure);
-    root.querySelector(".results__note").textContent = MEASURES[plot.measure].note;
-    root.querySelector(".results__sr").innerHTML = plotTable(entry, pair, plot.channel, plot.measure);
+    svg.innerHTML = plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: w, height: h, pal: screenPal(), cs });
+    svg.setAttribute("aria-label", plotTitle(pair, plot.channel, plot.measure, cs));
+    root.querySelector(".results__title").textContent = plotTitle(pair, plot.channel, plot.measure, cs);
+    root.querySelector(".results__note").textContent = measures[plot.measure].note;
+    root.querySelector(".results__sr").innerHTML = plotTable(entry, pair, plot.channel, plot.measure, cs);
   }
 
   // the drawer slides between the toolbar's height and its open height; the plot is hidden
@@ -178,9 +181,9 @@ export async function mount(root, ctx) {
     else if (b.dataset.act === "plot-png") {
       const W = 1920, H = 1080;
       const pal = { ...LIGHT, ink: LIGHT[plot.channel] };
-      const inner = `<text x="64" y="84" font-family="${LIGHT.sans}" font-size="34" font-weight="600" fill="${LIGHT.text}">${plotTitle(pair, plot.channel, plot.measure)}</text>
-        <g transform="translate(40,120)">${plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: W - 80, height: H - 220, pal, font: 2.2 })}</g>
-        <text x="64" y="${H - 40}" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${MEASURES[plot.measure].note} · Simulated teaching data</text>`;
+      const inner = `<text x="64" y="84" font-family="${LIGHT.sans}" font-size="34" font-weight="600" fill="${LIGHT.text}">${plotTitle(pair, plot.channel, plot.measure, cs)}</text>
+        <g transform="translate(40,120)">${plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: W - 80, height: H - 220, pal, font: 2.2, cs })}</g>
+        <text x="64" y="${H - 40}" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${measures[plot.measure].note} · Simulated teaching data</text>`;
       await copyCanvas(await svgToCanvas(inner, W, H, LIGHT.bg), `smFISH-${id}-plot-${plot.measure}.png`, b);
     } else if (b.classList.contains("splot__cat") && viewer) viewer.flyTo(b.dataset.fly);
     else if (b.classList.contains("splot__pt") && viewer) viewer.setAnimal(+b.dataset.animal);

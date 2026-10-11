@@ -7,56 +7,73 @@
 // No p-values or stars: students judge the effect size against the spread.
 
 import { mulberry32 } from "./prng.js";
+import { CASES } from "./content.js";
 
 const SHAPES = ["circle", "square", "triangle"];
 const GENO = [["control", "WT"], ["mutant", "Mutant"]];
-const COMP_LABEL = { nucleus: "Nucleus", cellbody: "Cell body", axon: "Axon", terminals: "Dorsal terminals" };
 
 const fmt = (v, d = 1) => (v == null ? "–" : Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(d));
 
 // Each measure: categories along the x-axis, and how to read animals and sub-units from the tables.
-export const MEASURES = {
-  count: {
-    label: "Spots in each compartment",
-    axis: "spots",
-    note: "Nucleus and cell body: per cell. Axon and dorsal terminals: per animal (all four cells).",
-    cats: ["nucleus", "cellbody", "axon", "terminals"].map(c => ({
-      id: c, label: COMP_LABEL[c], fly: c,
-      animal: a => a.m.count[c],
-      sub: c === "nucleus" || c === "cellbody" ? a => a.raw.cells.map(x => x[c]) : null,
-    })),
-  },
-  nc_ratio: {
-    label: "Nucleus vs cell body (N:C)",
-    axis: "ratio",
-    note: "Nuclear spots divided by cell-body spots. Small points: single cells.",
-    cats: [{
-      id: "nc", label: "Nucleus : cell body", fly: "cellbody", animal: a => a.m.nc_ratio,
-      sub: a => a.raw.cells.filter(x => x.cellbody > 0).map(x => x.nucleus / x.cellbody),
-    }],
-  },
-  share_distal: {
-    label: "Proportion in axon + terminals",
-    axis: "proportion",
-    note: "(Axon + dorsal terminals) / (cell body + axon + dorsal terminals).",
-    cats: [{ id: "distal", label: "Axon + dorsal terminals", fly: "terminals", animal: a => a.m.share_distal, sub: null }],
-  },
-  ts: {
-    label: "Transcription sites",
-    axis: "molecules",
-    note: "Nascent molecules at each nucleus’s transcription site (0 where there is none). Small points: single nuclei.",
-    cats: [{ id: "ts", label: "Transcription sites", fly: "nucleus", animal: a => a.m.ts_level, sub: a => a.raw.cells.map(x => x.ts) }],
-  },
-  overlap: {
-    label: "Spots in TDP-43 granules",
-    axis: "share",
-    note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
-    cats: ["cellbody", "axon", "terminals"].map(c => ({
-      id: `overlap-${c}`, label: COMP_LABEL[c], fly: c, sub: null,
-      animal: a => a.m.overlap?.[c]?.observed ?? null,
-      chance: a => a.m.overlap?.[c]?.chance ?? null,
-    })),
-  },
+// The compartments, notes and small-point sources come from the case's `plot` config (content.js).
+const SUBS = {
+  cells: c => a => a.raw.cells.map(x => x[c]),
+  lobes: () => a => a.raw.units.lobes,
+};
+
+export function measuresFor(cs) {
+  const P = cs.plot;
+  return {
+    count: {
+      label: "Spots in each compartment",
+      axis: "spots",
+      note: P.count.note,
+      cats: P.count.cats.map(({ id: c, sub, unit }) => ({
+        id: c, label: P.labels[c], fly: c, unit,
+        animal: a => a.m.count[c],
+        sub: sub ? SUBS[sub](c) : null,
+      })),
+    },
+    nc_ratio: {
+      label: "Nucleus vs cell body (N:C)",
+      axis: "ratio",
+      note: "Nuclear spots divided by cell-body spots. Small points: single cells.",
+      cats: [{
+        id: "nc", label: "Nucleus : cell body", fly: "cellbody", unit: "cells", animal: a => a.m.nc_ratio,
+        sub: a => a.raw.cells.filter(x => x.cellbody > 0).map(x => x.nucleus / x.cellbody),
+      }],
+    },
+    share_distal: {
+      label: P.distal.label,
+      axis: "proportion",
+      note: P.distal.note,
+      cats: [{ id: "distal", label: P.distal.catLabel, fly: P.distal.fly, animal: a => a.m.share_distal, sub: null }],
+    },
+    ts: {
+      label: "Transcription sites",
+      axis: "molecules",
+      note: "Nascent molecules at each nucleus’s transcription site (0 where there is none). Small points: single nuclei.",
+      cats: [{ id: "ts", label: "Transcription sites", fly: "nucleus", unit: "cells", animal: a => a.m.ts_level, sub: a => a.raw.cells.map(x => x.ts) }],
+    },
+    overlap: {
+      label: "Spots in TDP-43 granules",
+      axis: "share",
+      note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
+      cats: P.overlap.map(c => ({
+        id: `overlap-${c}`, label: P.labels[c], fly: c, sub: null,
+        animal: a => a.m.overlap?.[c]?.observed ?? null,
+        chance: a => a.m.overlap?.[c]?.chance ?? null,
+      })),
+    },
+  };
+}
+
+// Built once per case; the plot functions take the case (object or id) and look it up here.
+const MEMO = new Map();
+export const measuresOf = cs => {
+  const c = typeof cs === "string" ? CASES[cs] : cs;
+  if (!MEMO.has(c.id)) MEMO.set(c.id, measuresFor(c));
+  return MEMO.get(c.id);
 };
 
 function niceCeil(x) {
@@ -66,9 +83,9 @@ function niceCeil(x) {
 }
 
 // Fixed y-scale per measure for the whole case, so switching channel or pair never rescales.
-export function fixedScales(tables) {
+export function fixedScales(tables, cs) {
   const max = {};
-  for (const [mid, m] of Object.entries(MEASURES)) {
+  for (const [mid, m] of Object.entries(measuresOf(cs))) {
     let hi = 0;
     for (const entry of Object.values(tables.selections)) {
       for (const ch of entry.channels) {
@@ -119,8 +136,8 @@ function summary(entry, channel, c, g) {
 // Returns SVG markup. `pal` holds colours (CSS variables on screen, resolved values for export).
 // Each compartment sits in its own band (every other one tinted), named at the top; WT | Mutant
 // along the foot of the band.
-export function plotSVG({ entry, channel, measure, yMax, width, height, pal, seed = 1, font = 1 }) {
-  const m = MEASURES[measure];
+export function plotSVG({ entry, channel, measure, yMax, width, height, pal, seed = 1, font = 1, cs }) {
+  const m = measuresOf(cs)[measure];
   const L = 52 * font, R = 10, T = 4, HEAD = 26 * font, B = 24 * font;
   const pw = width - L - R, top = T + HEAD, ph = height - top - B;
   const y = v => top + ph - (Math.min(v, yMax) / yMax) * ph;
@@ -186,7 +203,7 @@ export function plotSVG({ entry, channel, measure, yMax, width, height, pal, see
         if (v == null) return;
         const ax = gx + (ai - 1) * 10 * font;
         const cells = c.sub ? c.sub(a).length : null;
-        const extra = measure === "ts" ? ` · sites in ${a.m.ts_number} of ${cells} nuclei` : cells != null ? ` · ${cells} cells` : "";
+        const extra = measure === "ts" ? ` · sites in ${a.m.ts_number} of ${cells} nuclei` : cells != null ? ` · ${cells} ${c.unit}` : "";
         parts.push(`<path class="splot__pt" data-animal="${ai + 1}" data-tip="${short} · animal ${ai + 1} · ${fmt(v, d)}${UNIT[measure] || ""}${extra}" tabindex="-1"
           d="${shapePath(SHAPES[ai], ax, y(v), 5.2 * font)}" fill="${pal.ink}" stroke="${pal.bg}" stroke-width="${1.5 * font}"/>`);
       });
@@ -196,10 +213,10 @@ export function plotSVG({ entry, channel, measure, yMax, width, height, pal, see
 }
 
 // The same numbers as a table for screen readers (the plot's text alternative).
-export function plotTable(entry, pair, channel, measure) {
-  const m = MEASURES[measure], d = digits(measure);
+export function plotTable(entry, pair, channel, measure, cs) {
+  const m = measuresOf(cs)[measure], d = digits(measure);
   const chance = m.cats.some(c => c.chance);
-  return `<table class="vh"><caption>${plotTitle(pair, channel, measure)}</caption>
+  return `<table class="vh"><caption>${plotTitle(pair, channel, measure, cs)}</caption>
     <thead><tr><th scope="col">Compartment</th><th scope="col">Genotype</th><th scope="col">Mean ± SD${UNIT[measure] ? ` (${UNIT[measure].trim()})` : ""}</th>${chance ? `<th scope="col">Expected by chance</th>` : ""}</tr></thead>
     <tbody>${m.cats.flatMap(c => GENO.map(([g, short]) => {
       const sm = summary(entry, channel, c, g);
@@ -207,7 +224,7 @@ export function plotTable(entry, pair, channel, measure) {
     })).join("")}</tbody></table>`;
 }
 
-export function plotTitle(pair, channel, measure) {
+export function plotTitle(pair, channel, measure, cs) {
   const who = channel === "ch1" ? `${pair.ch1} (smFISH 1)` : channel === "ch2" ? `${pair.ch2} (smFISH 2)` : `${pair.ch1} + ${pair.ch2} (white, both regions)`;
-  return `${who} · ${MEASURES[measure].label} · mean ± SD, n = 3 animals · simulated data`;
+  return `${who} · ${measuresOf(cs)[measure].label} · mean ± SD, n = 3 animals · simulated data`;
 }

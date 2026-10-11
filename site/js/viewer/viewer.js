@@ -18,12 +18,10 @@ import { Application, CanvasSource, Container, Filter, GlProgram, ImageSource, R
 import { Viewport } from "pixi-viewport";
 import { loadJSON } from "../data.js";
 import { copyCanvas } from "../export.js";
+import { CASES } from "../content.js";
 import { term } from "../glossary.js";
 import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 
-const SIGMA_UM = 0.12;         // lateral PSF σ (FWHM ≈ 0.28 µm)
-const MIN_SIGMA_PX = 0.85;     // below this the spot is drawn larger and dimmer (same total light)
-const SPOT_GAIN = 0.95;
 const TDP_DIM = 0.4;           // TDP-43 while an smFISH channel is on, so a spot on it doesn't sum to a false white
 const GRANULE_DIM = 0.55;      // granules are faint already: dimmed less, so a spot inside one still shows (no whiter than over a nucleus)
 const MAX_SCALE = 60;          // px per µm
@@ -119,6 +117,8 @@ function setImage(sprite, img, frame) {
 
 export async function createViewer(root, opts) {
   const { caseId, mode, pair = null, regionIds = [] } = opts;
+  const { anatomy, display } = CASES[caseId];
+  const { spotSigmaUm: SIGMA_UM, minSigmaPx: MIN_SIGMA_PX, spotGain: SPOT_GAIN } = display;
   const firstAnimal = opts.animal || 1;
   const geometryOf = n => Promise.all(GENOTYPES.map(g => loadJSON(`data/${caseId}/geometry-${g}-${n}.json`)));
   const firstGeoms = await geometryOf(firstAnimal);
@@ -155,7 +155,7 @@ export async function createViewer(root, opts) {
   root.innerHTML = `
     <div class="viewer__tools" role="toolbar" aria-label="Viewer">
       <span class="viewer__group" role="group" aria-label="Fly to">
-        ${[["whole", "Whole neuron"], ["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Dorsal terminals"]]
+        ${[["whole", anatomy.whole], ...anatomy.flyTo]
           .map(([k, l]) => `<button type="button" class="vbtn" data-fly="${k}">${l}</button>`).join("")}
       </span>
       <span class="viewer__sep" aria-hidden="true"></span>
@@ -175,7 +175,7 @@ export async function createViewer(root, opts) {
         </div>`).join("")}
     </div>
     ${mode === "results" && pair ? `<p class="viewer__legend"></p>` : ""}
-    <div class="viewer__bar"><span class="viewer__hint"><button type="button" class="viewer__tour" data-act="tour">Viewer tour</button> · Drag to pan · scroll or pinch to zoom</span><span class="proj">2D ${term("mip", "maximum-intensity projection")} (simulated)</span></div>`;
+    <div class="viewer__bar"><span class="viewer__hint"><button type="button" class="viewer__tour" data-act="tour">Viewer tour</button> · Drag to pan · scroll or pinch to zoom</span><span class="proj">${anatomy.projection.replace("maximum-intensity projection", term("mip", "maximum-intensity projection"))}</span></div>`;
 
   const fieldEls = [...root.querySelectorAll(".viewer__field")];
   const fieldsBox = root.querySelector(".viewer__fields");
