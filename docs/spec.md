@@ -96,8 +96,8 @@
 
 Shared across cases:
 - **One probe** (constitutive reference S7, F6 or U7): fewer mutant target spots at synapses. Other single probes differ by design (e.g. S1 bouton counts are unchanged; U4 lobe counts rise; intron probes show no synaptic spots).
-- **TDP-43 IF clue:** nuclear depletion *and* cytoplasmic puncta (granules, aggregates or both) in every case, so LOF and GOF both stay open.
-- **Three stories:** RNA redistributed (NMJ), lost (Pdf), or the wrong isoform (mushroom body).
+- **TDP-43 IF clue:** nuclear depletion *and* cytoplasmic puncta (granules, aggregates or both) in every case, so LOF and GOF both stay open. In the mushroom body the puncta are the same in both genotypes, so the clue is the nuclear loss, with rare aggregates in mutant cell bodies.
+- **Three stories:** RNA redistributed (NMJ), lost (Pdf), or mis-spliced (mushroom body).
 - **Numbers:** see *Simulation parameters*.
 
 *NMJ – stai: RNA stuck on the way*
@@ -122,13 +122,16 @@ Shared across cases:
 - **Sampling time:** ZT2, when s-LNv dorsal terminals are most branched (they remodel daily; Fernández et al. 2008).
 - **Confound (instructor only; outside the students' scope):** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising. The site does not plot per-area counts; the truth table still checks the fall per area.
 
-*Mushroom body – unc-13: the wrong isoform* (truth table signed off by the instructor on 2026-10-12, `data/mb/truth-table.toml`)
-- **TDP-43 clue:** nuclear loss in Kenyon cells; many small puncta across the dense neuropil.
-- **One probe:** fewer spots in the lobes; whole-cell count unchanged; spots seem to overlap TDP-43 puncta. The constitutive probe U7 is not flat by compartment (cell body × 1.10, peduncle × 0.80, lobes × 0.60) while its whole-cell sum, nucleus plus cell body plus peduncle plus lobes per cell, is unchanged (32 → 31 per cell, −3%).
-- **Informative pair:** U2 + U4 (group 1: unc-13-RA/RC/RD/RF/RG; group 2: unc-13-RB/RE). Across the cell the group-1:group-2 ratio shifts towards group 2; lobe spots are group 1 in both genotypes, and the share of group 1 reaching the lobes is unchanged.
-- **Supported:** isoform-specific regulation (first-exon switch).
-- **Ruled out:** transport; granule incorporation (overlap matches randomised positions); nuclear export.
-- **Unresolved → Part 2:** with U2 + U4 alone, a start-site switch (production) or faster decay of group 1 (stability). U3 (group-1-only nascent RNA) shows that group-1 production falls, but the group-2 rise could be more production or more stability, because group 2 has no intron of its own. A first-exon change also sits on the boundary between splicing and transcription, while the human UNC13A prior says "splicing".
+*Mushroom body – unc-13: a poison exon* (draft, awaiting sign-off by the instructor; `data/mb/truth-table.toml`)
+- **TDP-43 clue:** nuclear loss in Kenyon cells (1.0 → 0.6). The puncta across the dense neuropil are the same in both genotypes; there are rare aggregates in mutant cell bodies.
+- **One probe:** with an exon probe such as U2 or U7, fewer spots in the cell body and neurites, the nucleus unchanged, and transcription sites flat. Spots seem to overlap TDP-43 puncta, but only at chance.
+- **Informative pair:** U2 + U4. White spots (both probes) appear in mutant nuclei and cell bodies and are almost absent in WT. No annotated isoform carries U2 and U4 together, so they mark a junction that is not on the map.
+- **Supported:** splicing (an exon included where it is normally kept out).
+- **Ruled out:** transport (the share reaching the axon bundle and lobes is unchanged); granule incorporation (chance overlap); nuclear export (nuclear counts don't rise; the N:C ratio rises only because the cytoplasm loses molecules).
+- **Ambiguous:** isoform-specific regulation. Only group 1 is hit, because only its pre-mRNA holds the exon in an intron, but the cause is the splicing choice.
+- **Unresolved → Part 2:** is the fall all NMD of the new isoform? Block NMD in Kenyon cells (Upf1 RNAi): the white spots should rise and reach the cytoplasm, and group-1 totals recover. A snapshot can't exclude an added change in stability.
+- **Instructor key (never stated to students):** *Invented for this case*: nuclear TDP-43 binds UG repeats next to the exon's acceptor in group-1 pre-mRNA and keeps it out, as it keeps cryptic exons out of human UNC13A and STMN2 (Ma et al. 2022; Brown et al. 2022, *Nature*). Mutant nuclear TDP-43 falls to 0.6, so 40% of group-1 transcripts include the exon (control 2%). The 5,876-nt exon shifts the reading frame, so they go to NMD, and less UNC-13 reaches the synapses (less priming of vesicles, weaker short-term memory).
+- **Caveat worth raising:** students who search "UNC13A TDP-43" will find the cryptic-exon papers; the gene card gives no hint.
 
 **Coverage** (✓ supported, ✗ ruled out, ? unresolved, ~ ambiguous)
 
@@ -136,10 +139,10 @@ Shared across cases:
 | --- | --- | --- | --- |
 | Transport / localisation | ✓ | ✗ | ✗ |
 | Granule incorporation | ✓ | ✗ (same share on granules) | ✗ (chance overlap) |
-| Isoform-specific | ✓ | ✗ | ✓ |
-| Splicing / intron retention | ✗ | ✗ | ~ (first exon) |
+| Isoform-specific | ✓ | ✗ | ~ (only group 1 is hit) |
+| Splicing / intron retention | ✗ | ✗ | ✓ (exon inclusion) |
 | Nuclear export / retention | ✗ | ? (failed export + nuclear decay) | ✗ |
-| Stability | ✗ | ✓ | ? (group 2) |
+| Stability | ✗ | ✓ | ? (NMD of the new isoform) |
 | Translation | not tested | not tested | not tested |
 
 ---
@@ -209,7 +212,7 @@ Build one case completely before the others, so every shared part (data pipeline
 - Findings are written back into this spec before Phase 2 starts.
 
 **Phase 2 – The rest.** The NMJ (*stai*) and mushroom body (*unc-13*) cases, reusing everything from Phase 1.
-- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table signed off 2026-10-12, gate in the Pages workflow); the NMJ is still to do.
+- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table draft, awaiting sign-off, gate in the Pages workflow); the NMJ is still to do.
 - **Shared:** the NMJ and mushroom body cases reuse the same four-class TDP-43 layer (diffuse nuclear, diffuse cytoplasmic, transport granules, aggregates). The NMJ's extra mutant puncta along the axon and in boutons are stalled transport granules carrying cargo, not aggregates, which keeps the cases' stories distinct.
 - **Shared:** all three landing stations live; cross-case check that the student-facing template is identical and the *Coverage* table holds across the three cases.
 - **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
@@ -361,19 +364,32 @@ Starting values for the generator; tune after the pilot. Counts are mean mature 
 	- Futsch overlap with granules: cell body at chance; axon and terminals above chance and the same share in both genotypes. Built F6 values (means of the 3 animals): cell body 0.008 (WT) / 0.004 (mutant) vs chance 0.009 / 0.006; axon 0.30 / 0.32 vs chance ≈ 0.07; dorsal terminals 0.19 / 0.19 vs chance 0.03 / 0.05. Chance is higher than it was because the granules are larger.
 	- Transcription sites are unchanged between genotypes.
 
-**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Mutant: group-1 production × 0.4, group-2 production × 2.4, same decay rates. Built values are in `data/mb/truth-table.toml`.
+**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system; draft, awaiting sign-off). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Production is 70 : 30 (group 1 : group 2) in both genotypes, and every decay rate is the same. Built values are in `data/mb/truth-table.toml`.
 
-| Compartment (per Kenyon cell) | Control (group 1 %) | Mutant (group 1 %) |
+Mature molecules per Kenyon cell before the exon choice [group 1, group 2], the same in both genotypes:
+
+| Compartment | Group 1 | Group 2 |
 | --- | --- | --- |
-| Nucleus | 3 (70%) | 3 (28%) |
-| Cell body cytoplasm | 20 (65%) | 22 (24%) |
-| Calyx (instructor only) | 3 (65%) | 3.3 (24%) |
-| Peduncle (axon bundle) | 3 (80%) | 2.4 (40%) |
-| Lobes | 6 (90%) | 3.6 (60%) |
+| Nucleus | 2.1 | 0.9 |
+| Cell body cytoplasm | 13 | 7 |
+| Calyx (instructor only) | 1.95 | 1.05 |
+| Peduncle (axon bundle) | 2.4 | 0.6 |
+| Lobes | 5.4 | 0.6 |
 
-- Counted compartments: nucleus, cell body, peduncle (axon bundle) and lobes. Nucleus and cell body are counted per cell, the peduncle per animal (all 30 cells), the lobes per lobe system (10 cells each). The calyx is simulated and checked but excluded from every student pool. Whole cell = nucleus + cell body + peduncle + lobes, so the constitutive U7 goes 32 → 31 per cell (−3%, "unchanged"), although its compartments move (cell body × 1.10, peduncle × 0.80, lobes × 0.60). Share in axon bundle + lobes (the plot's measure; Pdf's "Proportion in axon + terminals") = (peduncle + lobes) / (cell body + peduncle + lobes).
-- Transcription sites: the same nascent model as the Pdf case, calibrated on U6 = 10 nascent transcripts per active site in both genotypes. Built values (control → mutant, per active site): U3 18.2 → 7.3 (still × 0.4), U6 10.0 / 9.8 (flat), U2 21.3 → 8.5, U4 19.7 / 19.5. Active in 90% of nuclei; a site is counted at 2 or more nascent molecules.
-- TDP-43: nuclear signal 1.0 → 0.6; neuropil puncta density (calyx, peduncle, lobes) 0.05 → 0.20 per µm²; mutant aggregates 0–1 per cell body. The puncta carry no unc-13 mRNA (granule cargo 0), so unc-13 overlap sits at the randomised level in both genotypes; the dense puncta only make spots seem to overlap.
+- The exon (the span of U4, 886,965–892,840): the share of group-1 transcripts that include it (psi) is 0.02 in control and 0.40 in the mutant. Survival of those transcripts after NMD: nucleus 1, cell body 0.1, neurites 0. The rest of group 1 skips the exon, as annotated. *Simplified*: the premature stop is not sequence-checked, and NMD is drawn as a steady state.
+
+| Compartment (per Kenyon cell) | Control total (white U2+U4) | Mutant total (white U2+U4) |
+| --- | --- | --- |
+| Nucleus | 3.0 (0.04) | 3.0 (0.84) |
+| Cell body cytoplasm | 19.8 (0.03) | 15.3 (0.52) |
+| Calyx (instructor only) | 3.0 (0) | 2.2 (0) |
+| Peduncle (axon bundle) | 2.95 (0) | 2.04 (0) |
+| Lobes | 5.9 (0) | 3.8 (0) |
+
+- Counted compartments: nucleus, cell body, peduncle (axon bundle) and lobes. Nucleus and cell body are counted per cell, the peduncle per animal (all 30 cells), the lobes per lobe system (10 cells each). The calyx is simulated and checked but excluded from every student pool. Whole cell = nucleus + cell body + peduncle + lobes. Share in axon bundle + lobes (the plot's measure; Pdf's "Proportion in axon + terminals") = (peduncle + lobes) / (cell body + peduncle + lobes).
+- What the probes show, control → mutant: U2 nucleus unchanged, cell body × 0.65, axon bundle and lobes × 0.61, N:C × 1.53, share in axon bundle + lobes unchanged (× 0.96). U4 nucleus × 1.85, cell body × 1.07, neurites unchanged. The constitutive U7 falls from 31.6 to 24.2 per cell (−23%) over the whole cell.
+- Transcription sites: the same nascent model as the Pdf case, calibrated on U6 = 10 nascent transcripts per active site, and flat for every probe (production is the same; the exon choice is made after these molecules). Values per active site, in both genotypes: U2 21.3, U3 18.2, U4 19.7, U6 10.0. Active in 90% of nuclei; a site is counted at 2 or more nascent molecules.
+- TDP-43: nuclear signal 1.0 → 0.6; puncta 0.12 per µm² in the calyx, peduncle and lobes in both genotypes; mutant aggregates 0–1 per cell body. No unc-13 mRNA sits on the puncta (granule cargo 0), so overlap is at the randomised level in both genotypes; the dense puncta only make spots seem to overlap.
 
 #### Rendering stack
 
@@ -541,7 +557,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 	- *T-maze* (mushroom body case) → performance index. Live front-on mini T-maze at the station (`stationLive.mb`).
 - Hover brings a station forward; click expands it into the chosen case (shared-element transition), where the group does one real action (tap the vial down; start the light–dark days; run odour + shock training) and watches the readout build.
 - Students may draw on these readouts in Part 2.
-- **T-maze (step 1, signed off 2026-10-12; storyboard in [storyboards/mb-openings.md](storyboards/mb-openings.md)):** drawn front-on, as on the bench, with two lanes (hTDP-43 WT left, mutant right). OCT (3-octanol) is paired with three shock pulses and MCH (4-methylcyclohexanol) with none; the short-term memory test follows minutes later. Ten drawn flies per lane stand in for about 100, and the reciprocal experiment (MCH shocked) is not shown (*Simplified*). WT: 8 of 10 flies in the MCH arm (PI 0.6); mutant: 6 of 10 (PI 0.2) (invented for this case). PI = (MCH − OCT) / all flies. Odours and shocks are ink textures, not colours, because colour belongs to the data.
+- **T-maze (step 1, signed off 2026-10-12 and amended the same day; storyboard in [storyboards/mb-openings.md](storyboards/mb-openings.md)):** drawn front-on, as on the bench, with two lanes (hTDP-43 WT left, mutant right). OCT (3-octanol) is paired with three shock pulses and MCH (4-methylcyclohexanol) with none; the short-term memory test follows minutes later. Ten drawn flies per lane stand in for about 100, and the reciprocal experiment (MCH shocked) is not shown (*Simplified*). WT: 8 of 10 flies in the MCH arm (PI 0.6); mutant: 5 of 10, at chance (PI 0.0) (invented for this case; the instructor's choice of 2026-10-12, so the drop reads at a glance). PI = (MCH − OCT) / all flies. Odours and shocks are ink textures, not colours, because colour belongs to the data.
 
 **Descent into anatomy (step 2)**
 - The camera pushes in on one fly from the chosen assay; its body turns semi-transparent and the neurons appear in membrane blue, the only saturated colour on screen. Blue means "the labelled neuron" from here to the viewer.
@@ -573,7 +589,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 
 **Hypotheses (step 4)**
 - **Mode cards:** the same set, in the same order, for every case, each with one plain-language definition. Translation and cell-type-specific regulation are included even though the pilot cannot test them; students can discover that through the "can't test it" box in step 5.
-- **Grouped by where TDP-43 acts** (established biology from the lecture, not a hint; every case's clue shows nuclear loss and cytoplasmic puncta, so both groups stay open):
+- **Grouped by where TDP-43 acts** (established biology from the lecture, not a hint; every case's clue shows nuclear loss and cytoplasmic puncta or aggregates, so both groups stay open):
 	- *Nucleus:* splicing / alternative exon / intron retention; nuclear export / retention.
 	- *Cytoplasm:* RNA stability; localisation / transport; translation; granule incorporation.
 	- *Both:* isoform-specific regulation; cell-type-specific regulation.
@@ -764,7 +780,7 @@ Worked example: having seen that RNA stability may be affected in the mutant, a 
 Per-case example directions:
 - **NMJ – stai:** live imaging of an MS2-tagged long-3'UTR reporter in leg axons shows the stall but not its cause. Separating an RNA-specific stall from general transport failure needs an unrelated axonal cargo as a comparison, or removal of the TDP-43-binding (UG-rich) sites from the long 3'UTR.
 - **Pdf – futsch:** where and how fast the RNA is lost: transcription shut-off in explanted brains followed by an smFISH time course of nuclear and cytoplasmic counts, or cell-type-specific metabolic labelling (TU-tagging). As an intervention, knocking down nuclear (Rrp6, exosome) or cytoplasmic (Pacman/Xrn1) decay in Pdf neurons could tell the two routes apart.
-- **Mushroom body – unc-13:** production vs decay per isoform group. U3 transcription sites report group-1 production, and a pulse–chase with isoform-specific readout reports decay. Group 2 has no private intron, so only kinetics can separate its production from its stabilisation.
+- **Mushroom body – unc-13:** is the fall all NMD of the new isoform? Block NMD in Kenyon cells (Upf1 RNAi): the white spots should rise and reach the cytoplasm, and group-1 totals recover.
 
 ---
 

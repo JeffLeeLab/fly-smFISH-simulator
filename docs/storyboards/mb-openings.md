@@ -7,7 +7,7 @@ Signed off by the instructor on 2026-10-12: decisions 1–6 as proposed (spec, *
 1. **Assay view.** The T-maze is drawn front-on, as it stands on the bench: a vertical training tube above the choice point, and the T's two horizontal arms. The flies are then seen from the side, so the existing side-view walking drawings and the activity monitor's walk–pause model carry over, and no new fly drawings are needed. The landing station is redrawn to match (today's still shows the maze from above). *Alternative:* a top view, which needs new top-view walking drawings.
 2. **Training, compressed.** The real protocol is about 60 s of OCT with 12 shocks, 45 s of air, then 60 s of MCH. Proposal: one compressed cycle, OCT with three shock pulses, a breath of air, then MCH with none (*Simplified*). *Alternative:* the real 12 pulses as tick marks on a small timeline bar under the tube.
 3. **Odours and shocks without colour.** Colour belongs to the data, so the odours are ink textures: OCT a drifting stipple, MCH short wavy strokes. A shock is an ink zig-zag flashing along the grid, and the flies hop. Labels gloss the odours once: "OCT (3-octanol)", "MCH (4-methylcyclohexanol)".
-4. **The memory phenotype** (invented for this case; signed off as proposed). tested a few minutes after training, the hTDP-43 WT flies mostly avoid OCT (8 of 10 in the MCH arm, performance index 0.6); the mutants remember less (6 of 10, index 0.2). Ten drawn flies per lane stand in for about 100 (*Simplified*); the reciprocal experiment (MCH shocked) is not shown. *Alternative:* mutants at chance (5 of 10, index 0.0), a starker read.
+4. **The memory phenotype** (invented for this case; signed off as proposed). tested a few minutes after training, the hTDP-43 WT flies mostly avoid OCT (8 of 10 in the MCH arm, performance index 0.6); the mutants remember less (6 of 10, index 0.2). Ten drawn flies per lane stand in for about 100 (*Simplified*); the reciprocal experiment (MCH shocked) is not shown. *Alternative:* mutants at chance (5 of 10, index 0.0), a starker read. *Amended 2026-10-12 at the instructor's request: the alternative was taken, mutants at chance, 5 of 10, index 0.0, so the drop reads at a glance.*
 5. **Which fly we enter.** Proposal: one hTDP-43 WT fly from the MCH arm (a fly that remembered) lifts out of the maze, as the Pdf descent lifts the WT fly from its tube.
 6. **The turn into the oblique view.** The viewer shows the mushroom body in an oblique view (about 35° down from the front, turned about 30° to the side), so the cell bodies, axon bundle (peduncle) and lobes each have their own space. Proposal: the brain is drawn from the front as in the Pdf case; once it has faded, the mushroom body alone turns from the front view to the oblique view while the camera pushes in. The turn is a morph between projections of the same 3D outline (from the MaleCNS Kenyon cells), so it is true to the anatomy. *Alternative:* a cross-fade from the front view to the oblique view, with no turn.
 
@@ -22,7 +22,7 @@ Signed off by the instructor on 2026-10-12: decisions 1–6 as proposed (spec, *
 
 ```
 F  ambient   the T-maze station, live: a small front-on maze per lane after the test; the flies walk
-             and pause inside their arms (most WT flies in the MCH arm, the mutants spread across both);
+             and pause inside their arms (most WT flies in the MCH arm, the mutants split half and half; the station draws 3 and 3);
              the odour textures drift faintly; hover brings it forward as the other stations
    reads:  (self-paced) the mushroom body experiment: flies choosing between two arms
    [transition out, on click: the station expands into the stage (Flip); URL #/mb/step-1]
@@ -44,7 +44,11 @@ G 0.0–3.5    [transition in: the station expands (Flip), 0.8 s]  ten flies per
 H 0.0–4.2    (after the click) OCT flows down the tube (the stipple drifts in from the top); the grid
              flashes three times (0.5, 1.2, 1.9 s; an ink zig-zag along the hatch, 0.15 s each) and at
              each flash the flies hop and freeze for a beat (cause → effect); 2.2–2.6 air (the stipple
-             clears); 2.6–4.2 MCH flows (wavy strokes), no flashes, the flies walk calmly
+             clears); 2.6–4.2 MCH flows (wavy strokes), no flashes, the flies walk calmly.
+             An odour hose runs into the tube's inlet, its free end tagged with what flows (OCT, then
+             air, then MCH), and the odour's own texture (OCT dots, MCH dashes) runs along it into
+             the tube. An ink lightning bolt beside the shock grid pops at each pulse with a running
+             count (×1, ×2, ×3) and fades before MCH
    reads:  0.2–2.2  this odour comes with shocks
            2.6–4.2  this one doesn't
    caption: 0.0 "OCT comes with mild shocks. MCH comes with none."
@@ -53,12 +57,12 @@ I 4.2–8.4    the elevator slides the flies down to the choice point (0.8 s); b
              odour; the flies walk out and into the arms (walk–pause); each fly that crosses an arm's
              entrance line ticks that arm's counter up (the line thickens for a beat)
    reads:  4.4–7.0  each fly goes one way or the other
-           7.0–8.4  the WT flies mostly avoid OCT; the mutants less so
+           7.0–8.4  the WT flies mostly avoid OCT; the mutants split evenly
    caption: 4.2 "A few minutes later, each fly picks an arm."
 
 J 8.4–11.8   under each lane the performance index builds: "PI = (MCH − OCT) / all flies", then the
-             numbers, (8 − 2) / 10 = 0.6 for WT and (6 − 4) / 10 = 0.2 for the mutant, and a short ink
-             bar on a 0–1 scale; from 10.6 s the flies rest and groom; the "Next: look inside the brain"
+             numbers, (8 − 2) / 10 = 0.6 for WT and (5 − 5) / 10 = 0.0 for the mutant, and a short ink
+             bar on a 0–1 scale with a dot at each lane's value and "chance" under the 0; from 10.6 s the flies rest and groom; the "Next: look inside the brain"
              button
    reads:  8.7–10.6 one number for memory: higher means the flies remembered better
            10.8–11.8 where to go next (the hold continues, untimed, until the group moves on)
@@ -122,6 +126,8 @@ Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: the
 
 ## As built
 
+- H: the odour hose runs into the tube's inlet. A tag at its free end names what flows (OCT, then air, then MCH), and the odour's own texture (OCT dots, MCH dashes) runs along the hose into the tube. An ink lightning bolt beside the shock grid pops at each of the three pulses with a running count (×1, ×2, ×3), and fades before MCH.
+- J: on the performance-index scale a dot marks each lane's value, and "chance" sits under the 0. The mutant lane reads (5 − 5) / 10 = 0.0.
 - K: the fly that lifts out of the maze comes from the MCH arm, the arm the WT flies mostly chose.
 - M: the 30 simulated Kenyon cells (`site/data/mb/anatomy.json`) grow as 3D paths from their cell bodies, through the calyx and along the axon bundle into the lobes. There is no outline morph.
 - N: the left mushroom body turns in true 3D, tilt 0 → 35° and turn 0 → −30°. It is drawn 1.35× larger in the whole brain and eases to life size during the turn. Labels: "Cell bodies (with their nuclei)", "Axon bundle (peduncle)", "Lobes (synapses)".
