@@ -456,7 +456,6 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 @media (prefers-reduced-motion: reduce) { .results { transition: none; } }
 .results__bar { flex: none; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); }
 .results__bar .seg > button { min-height: 28px; padding: 4px 10px; }
-.results__bar .seg > button:disabled { opacity: .45; cursor: not-allowed; }   /* Both, for a white-spot share */
 .results__toggle { min-height: 30px; padding: 4px 12px 4px 9px; gap: 6px; font-weight: 600; }
 .results__toggle svg { flex: none; transition: transform .2s ease; }
 .results__toggle[aria-expanded="true"] svg { transform: rotate(180deg); }

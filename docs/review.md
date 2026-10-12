@@ -98,3 +98,15 @@ The case was redesigned as a splicing case (truth table redrafted, awaiting re-s
 | 6 | Pdf screens | Against the Wave 0 screenshot baseline, steps 3, 6 and 7 differ by a few pixels at the native controls (the LUT and measure drop-downs, the brightness slider). `main` and this branch render Pdf steps 3 and 6 identically in today's browser, so the browser's drawing of native controls changed, not the code. | OK; the baseline should be re-taken before the next Pdf comparison. |
 
 **Still to do:** the instructor's re-sign-off of `data/mb/truth-table.toml`, then `validate mb --signed`; the manual assessment; the browser matrix.
+
+## 2026-10-12: mushroom body science v2, revised at the instructor's request
+
+The white-spot share measure was removed (the per-cell counts stay). The TDP-43 puncta were cut to a fifth (0.024 per µm², both genotypes). The fall in U2 was made larger, most of it in the neurites: 70% of group-1 transcripts include the exon in the mutant, and those decay before they travel far (about a third left in the cell body, a few in the calyx and axon bundle, none in the lobes). Transport is now scored "~": U2's share reaching the axon bundle and lobes falls, but only because the new isoform decays before it gets there.
+
+**Checks.** `build mb`: 3790 checks, 0 failed (draft). `tools/pdf-identical.sh` passed. No served file names the invented isoforms. Step 3, step 6 (count, distal share; cell-body and lobes zooms) at 1280×720 light and 1920×1080 dark.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 6 plot | U2 per cell: cell body 12.8 → 7.1, axon bundle 2.4 → 0.8, lobes 5.3 → 1.6; share in axon bundle + lobes 0.37 → 0.26, with no overlap between the genotypes' animals. | OK. The neurite counts sit low on the per-cell axis (0–40), so the share plot shows the localisation change best. |
+| 2 | Step 6 viewer | Lobes zoom: far fewer green (U2-only) spots in the mutant. Cell-body zoom: many white spots in mutant nuclei and cell bodies, almost none in WT. | OK. |
+| 3 | Step 3 | Sparse puncta in both genotypes; the dimmer mutant nuclei carry the clue. | OK. |

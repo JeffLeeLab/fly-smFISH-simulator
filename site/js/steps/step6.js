@@ -11,7 +11,7 @@ import { renderCompare } from "../notebook.js";
 import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
 import { loadJSON, transcripts } from "../data.js";
-import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle, addWhiteShares } from "../results.js";
+import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle } from "../results.js";
 import { CASES } from "../content.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 import { createMap, drawStrip } from "../map.js";
@@ -127,7 +127,7 @@ export async function mount(root, ctx) {
   });
 
   // ---------- the plot drawer ----------
-  const tables = addWhiteShares(await loadJSON(`data/${id}/tables.json`), cs);
+  const tables = await loadJSON(`data/${id}/tables.json`);
   const entry = tables.selections[`${pair.ch1}+${pair.ch2}`];
   const yMax = fixedScales(tables, cs);
   const plot = { channel: "ch1", measure: "count" };
@@ -143,12 +143,7 @@ export async function mount(root, ctx) {
     sans: "var(--font-sans)", mono: "var(--font-mono)" });
 
   function drawPlot() {
-    const pairOnly = !!measures[plot.measure].pairOnly;   // a white-spot share: of smFISH 1's or 2's spots, not of Both
-    if (pairOnly && plot.channel === "both") plot.channel = "ch1";
-    root.querySelectorAll("[data-channel]").forEach(b => {
-      b.setAttribute("aria-pressed", String(b.dataset.channel === plot.channel));
-      if (b.dataset.channel === "both") b.disabled = pairOnly;
-    });
+    root.querySelectorAll("[data-channel]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.channel === plot.channel)));
     if (panel.hidden) return;
     const w = Math.max(320, box.clientWidth), h = Math.max(120, box.clientHeight);
     svg.setAttribute("viewBox", `0 0 ${w} ${h}`);

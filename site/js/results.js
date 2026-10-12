@@ -36,17 +36,6 @@ export function measuresFor(cs) {
         sub: sub ? (per === 1 ? SUBS[sub](c) : a => SUBS[sub](c)(a).map(v => v / per)) : null,
       })),
     },
-    // white spots (MB): of one channel's spots, the share that also carry the other probe; a pair
-    // readout, so the plot's Both channel is off for it (addWhiteShares derives the values)
-    ...(P.white && {
-      white: {
-        label: "Share of spots that are white",
-        axis: "share",
-        note: P.white.note,
-        pairOnly: true,
-        cats: P.count.cats.map(({ id: c }) => ({ id: `white-${c}`, label: P.labels[c], fly: c, sub: null, animal: a => a.m.white?.[c] ?? null })),
-      },
-    }),
     nc_ratio: {
       label: "Nucleus vs cell body (N:C)",
       axis: "ratio",
@@ -79,25 +68,6 @@ export function measuresFor(cs) {
       })),
     },
   };
-}
-
-// The white-spot shares, derived in place from the counts the gate checked: for each pair and
-// animal, of each channel's spots in a compartment, the share that the Both channel also counts.
-export function addWhiteShares(tables, cs) {
-  const c = typeof cs === "string" ? CASES[cs] : cs;
-  if (!c.plot.white) return tables;
-  const comps = c.plot.count.cats.map(x => x.id);
-  for (const entry of Object.values(tables.selections)) {
-    if (!entry.channels.includes("both")) continue;
-    for (const [g] of GENO) {
-      for (const an of entry[g].animals) {
-        for (const ch of ["ch1", "ch2"]) {
-          an[ch].m.white = Object.fromEntries(comps.map(k => [k, an[ch].m.count[k] ? an.both.m.count[k] / an[ch].m.count[k] : null]));
-        }
-      }
-    }
-  }
-  return tables;
 }
 
 // Built once per case; the plot functions take the case (object or id) and look it up here.

@@ -93,9 +93,6 @@ export const CASES = {
         ],
         note: "Spots per Kenyon cell. The axon bundle and lobes are shared, so their spots are divided among the cells they come from: all thirty for the axon bundle, ten for each lobe system.",
       },
-      white: {
-        note: "Of this channel's spots in each compartment, the share that also carry the other probe (white spots). Transcription sites are not counted.",
-      },
       distal: {
         label: "Share in axon bundle + lobes",   // shorter than "Proportion in …", so the plot bar fits 1280 px
         catLabel: "Axon bundle + lobes",

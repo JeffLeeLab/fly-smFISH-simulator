@@ -155,10 +155,12 @@ PDF = {
 # exon that RB/RE use as their first coding exon (U4: exon 3 of RB/RE, with working splice sites).
 # Invented: nuclear TDP-43 keeps that exon out of group-1 transcripts; with the mutant's nuclear
 # loss a share psi of them include it. The 5,876-nt exon shifts the reading frame, so those
-# transcripts meet a premature stop and nonsense-mediated decay soon after export: all of them in
-# the nucleus, a tenth in the cell body, none in the neurites (Simplified: a steady state, no
-# kinetics). Production and every decay rate are the same in both genotypes. TDP-43 puncta are the
-# same in both genotypes (instructor, 2026-10-12).
+# transcripts meet a premature stop and nonsense-mediated decay soon after export, and decay before
+# they travel far: all of them in the nucleus, about a third in the cell body, a few in the calyx
+# and the proximal axon bundle, none in the lobes (Simplified: a steady state, no kinetics). So
+# group-1 RNA falls most in the neurites, and the share of U2 RNA reaching them falls. Production
+# and every decay rate are the same in both genotypes. TDP-43 puncta are the same in both
+# genotypes, and sparse (instructor, 2026-10-12).
 MB = {
     "seed": 202610110,
     "animals": 3,
@@ -175,22 +177,23 @@ MB = {
     # the included exon: its genomic span (all of U4), the group whose pre-mRNA holds it in an
     # intron, the share of that group's transcripts that include it per genotype, and the share of
     # those that survive NMD in each compartment. The rest of the group skips it, as annotated.
-    "exon": {"lo": 886965, "hi": 892840, "into": "g1", "psi": {"control": 0.02, "mutant": 0.40},
-             "survives": {"nucleus": 1.0, "cellbody": 0.10, "calyx": 0.0, "peduncle": 0.0, "lobes": 0.0}},
+    "exon": {"lo": 886965, "hi": 892840, "into": "g1", "psi": {"control": 0.02, "mutant": 0.70},
+             "survives": {"nucleus": 1.0, "cellbody": 0.35, "calyx": 0.10, "peduncle": 0.05, "lobes": 0.0}},
     "ts_active": 0.90,
     "ts_reference": ("U6", 10),  # U6 sites hold about 10 nascent transcripts (control production)
     "ts_spread_um": 0.12,
     "ts_detect_min": 2,
     "ts_inset_um": 1.2,          # transcription sites sit this far inside the nucleus edge
     "granule_inset_um": 0.4,     # cell-body granules sit this far inside the cytoplasm edge
-    # TDP-43 IF: nuclear loss in the mutant (the clue); small puncta across the neuropil, the same
-    # in both genotypes; 0-1 aggregates per mutant cell body. unc-13 mRNA does not ride on the
+    # TDP-43 IF: nuclear loss in the mutant (the clue); sparse small puncta across the neuropil, the
+    # same in both genotypes (a fifth of the first density, instructor 2026-10-12); 0-1 aggregates
+    # per mutant cell body. unc-13 mRNA does not ride on the
     # puncta (no cargo), so overlap stays at chance: they only make spots *seem* to overlap.
     "tdp43": {
         "control": {"nuclear": 1.0, "cytoplasmic": 0.16, "aggregates": (0, 0),
-                    "granule_density_um2": {"calyx": 0.12, "peduncle": 0.12, "lobes": 0.12}},
+                    "granule_density_um2": {"calyx": 0.024, "peduncle": 0.024, "lobes": 0.024}},
         "mutant": {"nuclear": 0.6, "cytoplasmic": 0.14, "aggregates": (0, 1),
-                   "granule_density_um2": {"calyx": 0.12, "peduncle": 0.12, "lobes": 0.12}},
+                   "granule_density_um2": {"calyx": 0.024, "peduncle": 0.024, "lobes": 0.024}},
         "neurite_level": 0.75,
         "granules_per_cell_body": 0.3,
         "granule_radius_um": (0.22, 0.30),  # small puncta

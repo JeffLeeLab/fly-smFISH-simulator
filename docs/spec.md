@@ -123,21 +123,21 @@ Shared across cases:
 - **Confound (instructor only; outside the students' scope):** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising. The site does not plot per-area counts; the truth table still checks the fall per area.
 
 *Mushroom body – unc-13: a poison exon* (draft, awaiting sign-off by the instructor; `data/mb/truth-table.toml`)
-- **TDP-43 clue:** nuclear loss in Kenyon cells (1.0 → 0.6). The puncta across the dense neuropil are the same in both genotypes; there are rare aggregates in mutant cell bodies.
-- **One probe:** with an exon probe such as U2 or U7, fewer spots in the cell body and neurites, the nucleus unchanged, and transcription sites flat. Spots seem to overlap TDP-43 puncta, but only at chance.
-- **Informative pair:** U2 + U4. White spots (both probes) appear in mutant nuclei and cell bodies and are almost absent in WT. No annotated isoform carries U2 and U4 together, so they mark a junction that is not on the map.
+- **TDP-43 clue:** nuclear loss in Kenyon cells (1.0 → 0.6). The sparse puncta across the neuropil are the same in both genotypes; there are rare aggregates in mutant cell bodies.
+- **One probe:** with a group-1 exon probe such as U2, about half the spots over the whole cell and a third in the axon bundle and lobes, so a smaller share reaches them; the nucleus unchanged, and transcription sites flat. A few spots sit on TDP-43 puncta, at chance.
+- **Informative pair:** U2 + U4. White spots (both probes) appear in mutant nuclei and cell bodies (about 1.5 and 3 per cell) and are almost absent in WT. No annotated isoform carries U2 and U4 together, so they mark a junction that is not on the map.
 - **Supported:** splicing (an exon included where it is normally kept out).
-- **Ruled out:** transport (the share reaching the axon bundle and lobes is unchanged); granule incorporation (chance overlap); nuclear export (nuclear counts don't rise; the N:C ratio rises only because the cytoplasm loses molecules).
-- **Ambiguous:** isoform-specific regulation. Only group 1 is hit, because only its pre-mRNA holds the exon in an intron, but the cause is the splicing choice.
+- **Ruled out:** granule incorporation (chance overlap); nuclear export (nuclear counts don't rise; the N:C ratio rises only because the cytoplasm loses molecules).
+- **Ambiguous:** isoform-specific regulation (only group 1 is hit, because only its pre-mRNA holds the exon in an intron, but the cause is the splicing choice); transport (U2's share reaching the axon bundle and lobes falls, but only because the new isoform decays before it gets there: the white spots stop at the cell body, while the annotated isoforms travel as before).
 - **Unresolved → Part 2:** is the fall all NMD of the new isoform? Block NMD in Kenyon cells (Upf1 RNAi): the white spots should rise and reach the cytoplasm, and group-1 totals recover. A snapshot can't exclude an added change in stability.
-- **Instructor key (never stated to students):** *Invented for this case*: nuclear TDP-43 binds UG repeats next to the exon's acceptor in group-1 pre-mRNA and keeps it out, as it keeps cryptic exons out of human UNC13A and STMN2 (Ma et al. 2022; Brown et al. 2022, *Nature*). Mutant nuclear TDP-43 falls to 0.6, so 40% of group-1 transcripts include the exon (control 2%). The 5,876-nt exon shifts the reading frame, so they go to NMD, and less UNC-13 reaches the synapses (less priming of vesicles, weaker short-term memory).
+- **Instructor key (never stated to students):** *Invented for this case*: nuclear TDP-43 binds UG repeats next to the exon's acceptor in group-1 pre-mRNA and keeps it out, as it keeps cryptic exons out of human UNC13A and STMN2 (Ma et al. 2022; Brown et al. 2022, *Nature*). Mutant nuclear TDP-43 falls to 0.6, so 70% of group-1 transcripts include the exon (control 2%). The 5,876-nt exon shifts the reading frame, so they go to NMD and decay before they travel far; group-1 unc-13 mRNA in the lobes falls to a third, and less UNC-13 reaches the synapses (less priming of vesicles, the mutants at chance in the T-maze).
 - **Caveat worth raising:** students who search "UNC13A TDP-43" will find the cryptic-exon papers; the gene card gives no hint.
 
 **Coverage** (✓ supported, ✗ ruled out, ? unresolved, ~ ambiguous)
 
 | Mode | NMJ – stai | Pdf – futsch | Mushroom body – unc-13 |
 | --- | --- | --- | --- |
-| Transport / localisation | ✓ | ✗ | ✗ |
+| Transport / localisation | ✓ | ✗ | ~ (the new isoform decays before it travels) |
 | Granule incorporation | ✓ | ✗ (same share on granules) | ✗ (chance overlap) |
 | Isoform-specific | ✓ | ✗ | ~ (only group 1 is hit) |
 | Splicing / intron retention | ✗ | ✗ | ✓ (exon inclusion) |
@@ -376,20 +376,20 @@ Mature molecules per Kenyon cell before the exon choice [group 1, group 2], the 
 | Peduncle (axon bundle) | 2.4 | 0.6 |
 | Lobes | 5.4 | 0.6 |
 
-- The exon (the span of U4, 886,965–892,840): the share of group-1 transcripts that include it (psi) is 0.02 in control and 0.40 in the mutant. Survival of those transcripts after NMD: nucleus 1, cell body 0.1, neurites 0. The rest of group 1 skips the exon, as annotated. *Simplified*: the premature stop is not sequence-checked, and NMD is drawn as a steady state.
+- The exon (the span of U4, 886,965–892,840): the share of group-1 transcripts that include it (psi) is 0.02 in control and 0.70 in the mutant. Survival of those transcripts after NMD, as they decay before they travel far: nucleus 1, cell body 0.35, calyx 0.1, axon bundle 0.05, lobes 0. The rest of group 1 skips the exon, as annotated. *Simplified*: the premature stop is not sequence-checked, and NMD is drawn as a steady state.
 
 | Compartment (per Kenyon cell) | Control total (white U2+U4) | Mutant total (white U2+U4) |
 | --- | --- | --- |
-| Nucleus | 3.0 (0.04) | 3.0 (0.84) |
-| Cell body cytoplasm | 19.8 (0.03) | 15.3 (0.52) |
-| Calyx (instructor only) | 3.0 (0) | 2.2 (0) |
-| Peduncle (axon bundle) | 2.95 (0) | 2.04 (0) |
-| Lobes | 5.9 (0) | 3.8 (0) |
+| Nucleus | 3.0 (0.04) | 3.0 (1.47) |
+| Cell body cytoplasm | 19.8 (0.09) | 14.1 (3.19) |
+| Calyx (instructor only) | 3.0 (0) | 1.8 (0.14) |
+| Peduncle (axon bundle) | 2.95 (0) | 1.40 (0.08) |
+| Lobes | 5.9 (0) | 2.2 (0) |
 
 - Counted compartments: nucleus, cell body, peduncle (axon bundle) and lobes. Nucleus and cell body are counted per cell, the peduncle per animal (all 30 cells), the lobes per lobe system (10 cells each). The calyx is simulated and checked but excluded from every student pool. Whole cell = nucleus + cell body + peduncle + lobes. Share in axon bundle + lobes (the plot's measure; Pdf's "Proportion in axon + terminals") = (peduncle + lobes) / (cell body + peduncle + lobes).
-- What the probes show, control → mutant: U2 nucleus unchanged, cell body × 0.65, axon bundle and lobes × 0.61, N:C × 1.53, share in axon bundle + lobes unchanged (× 0.96). U4 nucleus × 1.85, cell body × 1.07, neurites unchanged. The constitutive U7 falls from 31.6 to 24.2 per cell (−23%) over the whole cell.
+- What the probes show, control → mutant: U2 nucleus unchanged, cell body × 0.55, axon bundle × 0.34, lobes × 0.31, whole cell × 0.51, N:C × 1.81, share in axon bundle + lobes 0.37 → 0.26 (× 0.68). U4 nucleus × 2.5, cell body × 1.44, lobes unchanged. The constitutive U7 falls from 31.7 to 20.7 per cell (× 0.65) over the whole cell.
 - Transcription sites: the same nascent model as the Pdf case, calibrated on U6 = 10 nascent transcripts per active site, and flat for every probe (production is the same; the exon choice is made after these molecules). Values per active site, in both genotypes: U2 21.3, U3 18.2, U4 19.7, U6 10.0. Active in 90% of nuclei; a site is counted at 2 or more nascent molecules.
-- TDP-43: nuclear signal 1.0 → 0.6; puncta 0.12 per µm² in the calyx, peduncle and lobes in both genotypes; mutant aggregates 0–1 per cell body. No unc-13 mRNA sits on the puncta (granule cargo 0), so overlap is at the randomised level in both genotypes; the dense puncta only make spots seem to overlap.
+- TDP-43: nuclear signal 1.0 → 0.6; puncta 0.024 per µm² in the calyx, peduncle and lobes in both genotypes (a fifth of the first density, instructor 2026-10-12); mutant aggregates 0–1 per cell body. No unc-13 mRNA sits on the puncta (granule cargo 0), so overlap is at the randomised level in both genotypes.
 
 #### Rendering stack
 
@@ -500,7 +500,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **x-axis:** compartments in anatomical order (nucleus → cell body → axon → terminals), control and mutant side by side within each, so the cross-compartment pattern is visible in one plot. Genotype labels read "WT" | "Mutant" (see *Spatial convention* in *Openings*).
 - **Drawer:** the plot sits in a drawer under the viewer, closed by default on first visit; open or closed is remembered per browser. Its toolbar row is always visible: a "Show plot" / "Hide plot" toggle (chevron icon) at the left, the channel and measure toggles, and "Copy as PNG" at the right. Opening slides the drawer up (0.26 s; no animation under reduced motion) to `clamp(230px, 34vh, 360px)`. The viewer shrinks to make room and refits what was in view, never cropping. Choosing a channel or measure while the drawer is closed opens it. There is still no page scroll at 1280×720.
 - **Demarcation:** each compartment sits in its own band, and every other band is tinted (`ivory-panel` on screen, #F1EFE8 in the light PNG export). The compartment name is at the top of its band (12 px sans 600; still a button that flies the viewer there), and "WT" | "Mutant" runs along the foot of the band (11 px mono).
-- **Toggles** in the drawer's toolbar row: channel (smFISH 1 · ID / smFISH 2 · ID / Both, segmented) and measure ("Spots in each compartment", "Nucleus vs cell body (N:C)", "Proportion in axon + terminals", "Transcription sites", "Spots in TDP-43 granules"; a drop-down, so the row fits 1280 px). The Spots in TDP-43 granules measure has three x-axis categories (cell body, axon, dorsal terminals), each with its own dashed chance band. Its note reads: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment." Only one plot is shown at a time. *Transcription sites* (nascent molecules per nucleus, nuclei as sub-units) was added in the Phase 1 build: without it, an intron probe such as F5 has nothing to plot. Mushroom body (2026-10-12): counts are spots per Kenyon cell, the shared axon bundle and lobes divided among the cells they come from (30; 10 per lobe system), so the per-cell and shared compartments share one readable axis; and an extra measure, "Share of spots that are white", gives the share of the chosen channel's spots that also carry the other probe (transcription sites not counted; the Both channel is off for it). For U2 + U4 in the nucleus it reads the exon's inclusion share. It is derived in the browser from the gated counts, so the tables are unchanged. The measure label is "Share in axon bundle + lobes" for the distal measure there.
+- **Toggles** in the drawer's toolbar row: channel (smFISH 1 · ID / smFISH 2 · ID / Both, segmented) and measure ("Spots in each compartment", "Nucleus vs cell body (N:C)", "Proportion in axon + terminals", "Transcription sites", "Spots in TDP-43 granules"; a drop-down, so the row fits 1280 px). The Spots in TDP-43 granules measure has three x-axis categories (cell body, axon, dorsal terminals), each with its own dashed chance band. Its note reads: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment." Only one plot is shown at a time. *Transcription sites* (nascent molecules per nucleus, nuclei as sub-units) was added in the Phase 1 build: without it, an intron probe such as F5 has nothing to plot. Mushroom body (2026-10-12): counts are spots per Kenyon cell, the shared axon bundle and lobes divided among the cells they come from (30; 10 per lobe system), so the per-cell and shared compartments share one readable axis. The distal measure there is "Share in axon bundle + lobes".
 - **Fixed y-scale per measure**, so switching channel never rescales silently. The Spots in TDP-43 granules measure shows the randomised-position control as a dashed reference band.
 - **Colour:** points take the channel's LUT colour (darker in light mode); genotype is shown by position and label, not colour.
 - **No p-values or asterisks:** students judge effect size against spread, and a star would act as a hint.

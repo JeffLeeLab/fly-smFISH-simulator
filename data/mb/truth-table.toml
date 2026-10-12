@@ -9,7 +9,9 @@
 #
 # DRAFT, 2026-10-12. Redesigned at the instructor's request as a splicing case; it replaces the
 # start-site switch signed off earlier the same day (choosing a start site is transcriptional,
-# not a typical RNA-binding-protein job). Not yet signed off.
+# not a typical RNA-binding-protein job). Revised the same day at the instructor's request: a
+# larger fall in U2, most of it in the axon bundle and lobes, with less U2 RNA reaching them; the
+# TDP-43 puncta cut to a fifth. Not yet signed off.
 #
 # The biology. Two isoform groups with separate start sites (group 1 = RA, RC, RD, RF, RG; group 2
 # = RB, RE) are made at the same rates in both genotypes, so transcription sites are flat. The
@@ -18,8 +20,11 @@
 # out of group-1 transcripts; the mutant's nuclear loss (1.0 -> 0.6) lets a share psi include it.
 # Joined after the U2 exon, the 5,876-nt exon shifts the reading frame (not a multiple of 3), so
 # these transcripts meet a premature stop and nonsense-mediated decay (NMD) soon after export
-# (Simplified: the stop is not sequence-checked; NMD is drawn as a steady state). No annotated
-# isoform has U2 and U4 together, so a white U2+U4 spot marks the new junction.
+# (Simplified: the stop is not sequence-checked; NMD is drawn as a steady state). They decay
+# before they travel far, so they are found in the nucleus and cell body, barely in the calyx and
+# proximal axon bundle, and never in the lobes: group-1 RNA falls most in the neurites, and the
+# share of U2 RNA that reaches them falls. No annotated isoform has U2 and U4 together, so a white
+# U2+U4 spot marks the new junction.
 #
 # A probe's expected count in a compartment is the sum, over the three kinds of molecule (group 2;
 # group 1 that skips the exon; group 1 that includes it), of that kind's count times the share of
@@ -38,7 +43,7 @@ splicing = "supported"      # white U2+U4 spots, a junction no annotated isoform
 isoform = "ambiguous"       # only group 1 is hit (its pre-mRNA holds the exon in an intron), but the cause is the splicing choice
 stability = "unresolved"    # cytoplasmic counts fall with production unchanged: decay, by NMD of the new isoform; a snapshot can't exclude a stability change too (Part 2: block NMD)
 export = "ruled-out"        # nuclear counts don't rise; N:C rises only because the cytoplasm loses molecules
-transport = "ruled-out"     # U2's share in axon bundle + lobes is unchanged
+transport = "ambiguous"     # U2's share in axon bundle + lobes falls, but only because the new isoform decays before it gets there; the annotated isoforms travel as before
 granule = "ruled-out"       # overlap with TDP-43 puncta at chance in both genotypes
 translation = "not-tested"
 celltype = "not-tested"
@@ -63,23 +68,24 @@ lobes = [5.4, 0.6]
 
 # The included exon. `psi`: the share of group-1 transcripts that include it, [control, mutant].
 # `survives`: the share of those left after NMD in each compartment (all in the nucleus, before
-# export; a tenth in the cell body; none in the neurites). The rest of group 1 skips it.
+# export; about a third in the cell body; a tenth in the calyx; a few in the axon bundle; none in
+# the lobes). The rest of group 1 skips it.
 #
 # What this gives, per Kenyon cell, control -> mutant:
 #   compartment   group 2   group 1 skips   group 1 includes (white U2+U4)   total
-#   nucleus       0.90      2.06 -> 1.26    0.04 -> 0.84                     3.00 -> 3.00
-#   cell body     7.00     12.74 -> 7.80    0.03 -> 0.52                    19.77 -> 15.32
-#   calyx         1.05      1.91 -> 1.17    0                                2.96 -> 2.22
-#   peduncle      0.60      2.35 -> 1.44    0                                2.95 -> 2.04
-#   lobes         0.60      5.29 -> 3.24    0                                5.89 -> 3.84
-# U2: nucleus unchanged, cell body x0.65, peduncle and lobes x0.61, N:C x1.53, share in peduncle +
-# lobes x0.96 (unchanged). U4: nucleus x1.85, cell body x1.07, neurites unchanged. U7: whole cell
-# 31.6 -> 24.2 (-23%).
+#   nucleus       0.90      2.06 -> 0.63    0.04 -> 1.47                     3.00 -> 3.00
+#   cell body     7.00     12.74 -> 3.90    0.09 -> 3.19                    19.83 -> 14.09
+#   calyx         1.05      1.91 -> 0.59    0.00 -> 0.14                     2.96 -> 1.77
+#   peduncle      0.60      2.35 -> 0.72    0.00 -> 0.08                     2.95 -> 1.40
+#   lobes         0.60      5.29 -> 1.62    0                                5.89 -> 2.22
+# U2: nucleus unchanged, cell body x0.55, peduncle x0.34, lobes x0.31, whole cell x0.51; N:C x1.81;
+# share in peduncle + lobes 0.37 -> 0.26 (x0.68). U4: nucleus x2.5, cell body x1.44, lobes
+# unchanged. U7: whole cell 31.7 -> 20.7 (x0.65).
 [exon]
 region = "U4"
 carried_by = "g1"
-psi = [0.02, 0.40]
-survives = { nucleus = 1.0, cellbody = 0.10, calyx = 0.0, peduncle = 0.0, lobes = 0.0 }
+psi = [0.02, 0.70]
+survives = { nucleus = 1.0, cellbody = 0.35, calyx = 0.10, peduncle = 0.05, lobes = 0.0 }
 
 # How the mutant compares with control. A count or ratio that moves is expected to follow the
 # mutant / control ratio the model gives (nominal_ratio in the json), within `ratio`. A count that
@@ -98,15 +104,15 @@ ts_intensity = 0.15          # transcription-site intensity within ±15% (±30% 
 
 # The readouts the case's conclusions rest on, held to the tight tolerance with no allowance for
 # counting noise: flat transcription sites (production unchanged), unchanged U2 in the nucleus (no
-# retention) and in its share reaching the neurites (no transport change), and the white U2+U4
-# spots that appear in mutant nuclei and cell bodies (the new junction).
+# retention), the fall of U2 in the lobes, and the white U2+U4 spots that appear in mutant nuclei and
+# cell bodies (the new junction).
 [key]
-single = ["U6:ts_intensity", "U2:count:nucleus", "U2:share_distal"]
+single = ["U6:ts_intensity", "U2:count:nucleus", "U2:count:lobes"]
 pair = ["U2+U4:both:count:nucleus", "U2+U4:both:count:cellbody"]
 
 [mature]
 # Share of spots on TDP-43 puncta, per compartment: at chance in every compartment and both
-# genotypes (no granule incorporation; the puncta are equally dense in both). The calyx is not
+# genotypes (no granule incorporation; the puncta are equally dense, and sparse, in both). The calyx is not
 # offered to students, but is checked.
 tdp43_overlap = { cellbody = "chance", calyx = "chance", peduncle = "chance", lobes = "chance" }
 
