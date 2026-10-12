@@ -11,10 +11,11 @@ import { href } from "../router.js";
 import { loadGsap, reducedMotion } from "../gsap.js";
 import { loadFlySprite, flyNode, startBoil, stopBoil, ensureBoilFilter } from "../fly.js";
 import { tubeFly } from "../monitor.js";
-import { VB, LANES, H, FLY_H, DROP, TUBE_SPAN, odourDefs, driftOdours, mazeMarkup, piMarkup, laneFlies, flyPose, poseTransform, armCounts, odourAt, shockAt } from "../tmaze.js";
+import { VB, LANES, H, FLY_H, DROP, TUBE_SPAN, odourDefs, driftOdours, mazeMarkup, piMarkup, laneFlies, flyPose, poseTransform, armCounts, odourAt, shockAt, boltAt, feedAt } from "../tmaze.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
 
 const G_END = 3.5;
+const FEED_TAG = { oct: "OCT", air: "air", mch: "MCH" };
 const ID = "step";
 
 const CAPTIONS = {
@@ -31,7 +32,7 @@ export async function mount(root, ctx) {
       <p class="t-label story__eyebrow">Introduction · Step 1</p>
       <h1 class="t-h1">T-maze</h1>
       <div class="stage stage--assay">
-        <svg class="assay tmaze" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="T-maze, seen from the front. Two mazes, hTDP-43 WT on the left and the ALS mutant on the right, each with ten flies. The flies are trained in a tube lined with a shock grid: the odour OCT comes with mild shocks, the odour MCH with none. Minutes later they are moved to the choice point between an OCT arm and an MCH arm. Eight of ten WT flies avoid OCT, a performance index of 0.6; six of ten mutant flies do, a performance index of 0.2.">
+        <svg class="assay tmaze" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="T-maze, seen from the front. Two mazes, hTDP-43 WT on the left and the ALS mutant on the right, each with ten flies. The flies are trained in a tube lined with a shock grid: the odour OCT comes with mild shocks, the odour MCH with none. Minutes later they are moved to the choice point between an OCT arm and an MCH arm. Eight of ten WT flies avoid OCT, a performance index of 0.6; the mutant flies split five and five, a performance index of 0, as if they chose at random.">
           <defs>${odourDefs(ID)}</defs>
           ${LANES.map(l => mazeMarkup(l, { id: ID, labels: l.id === "wt" }) + piMarkup(l, counts(l))).join("")}
         </svg>
@@ -73,6 +74,8 @@ export async function mount(root, ctx) {
       ...l, el, flies, stride: probe.stride, frames: probe.frames, ground: probe.groundOffset,
       elevator: el.querySelector(".elevator"),
       shock: el.querySelector(".shock"),
+      feed: { tag: el.querySelector(".feed-tag"), flow: el.querySelector(".feed-flow"), shown: "" },
+      bolt: { g: el.querySelector(".bolt-g"), n: el.querySelector(".bolt-n"), at: el.querySelector(".bolt-g").getAttribute("transform"), shown: -1 },
       tube: { oct: el.querySelector(".odour--tube[data-odour=oct]"), mch: el.querySelector(".odour--tube[data-odour=mch]") },
       arms: [...el.querySelectorAll(".odour--arm")],
       entry: { oct: el.querySelector(".entry[data-arm=oct]"), mch: el.querySelector(".entry[data-arm=mch]") },
@@ -84,7 +87,7 @@ export async function mount(root, ctx) {
   // ---------- G: the stage arrives and the parts are named (3.5 s) ----------
   const q = s => svg.querySelectorAll(s);
   gsap.set(q(".maze-labels text, .odour-labels text"), { autoAlpha: 0 });
-  gsap.set(q(".counter, .pi-formula, .pi-sum, .pi-track, .pi-tick, .pi .scene-tick, .pi-bar"), { autoAlpha: 0 });
+  gsap.set(q(".counter, .pi-formula, .pi-sum, .pi-track, .pi-tick, .pi .scene-tick, .pi-bar, .pi-dot"), { autoAlpha: 0 });
   gsap.set(ends, { autoAlpha: 0 });
   const tlG = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
   if (!handRect) tlG.fromTo(stage, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.8, ease: "power2.inOut" }, 0);
@@ -99,6 +102,7 @@ export async function mount(root, ctx) {
     .fromTo(q(".pi-track, .pi-tick, .pi .scene-tick"), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3 }, H.pi + 0.5)
     .fromTo(q(".pi-sum"), { autoAlpha: 0, y: 4 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.12 }, H.pi + 0.5)
     .fromTo(q(".pi-bar"), { autoAlpha: 1, attr: { width: 0 } }, { attr: { width: (i, el) => el.dataset.w }, duration: 0.7, ease: "power2.inOut", stagger: 0.12 }, H.pi + 0.8)
+    .fromTo(q(".pi-dot"), { autoAlpha: 1, attr: { cx: (i, el) => el.dataset.x0 } }, { attr: { cx: (i, el) => el.dataset.x }, duration: 0.7, ease: "power2.inOut", stagger: 0.12, immediateRender: false }, H.pi + 0.8)
     .fromTo(ends, { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, stagger: 0.15 }, H.rest)
     .to({}, { duration: 0.01 }, H.end - 0.01);
 
@@ -169,6 +173,7 @@ export async function mount(root, ctx) {
     }
     const od = odourAt(tH, phase);
     const shock = tH == null ? 0 : shockAt(tH);
+    const bolt = boltAt(tH), feed = feedAt(tH);
     for (const l of lanes) {
       for (const f of l.flies) {
         const p = flyPose(f, l, tWall, tH, l.stride, l.frames, l.ground);
@@ -179,6 +184,16 @@ export async function mount(root, ctx) {
       setOdour(l.tube.mch, od.tube.mch);
       l.arms.forEach(a => { a.style.opacity = (0.55 * od.arms).toFixed(3); });
       l.shock.style.opacity = shock.toFixed(3);
+      // the hose names what flows and its texture runs into the tube; the bolt pops at each pulse
+      if (feed !== l.feed.shown) {
+        l.feed.tag.textContent = feed ? FEED_TAG[feed] : "";
+        l.feed.flow.dataset.odour = feed || "";
+        l.feed.shown = feed;
+      }
+      l.feed.flow.style.strokeDashoffset = (-14 * tDrift).toFixed(2);
+      l.bolt.g.style.opacity = bolt.alpha.toFixed(3);
+      l.bolt.g.setAttribute("transform", `${l.bolt.at} scale(${(1 + 0.45 * bolt.pop).toFixed(3)})`);
+      if (bolt.n !== l.bolt.shown) { l.bolt.n.textContent = bolt.n ? `×${bolt.n}` : ""; l.bolt.shown = bolt.n; }
       const lift = tH == null || tH < H.slide[0] ? 0 : (H.slide[1] <= tH ? 1 : gsap.parseEase("power2.inOut")((tH - H.slide[0]) / (H.slide[1] - H.slide[0])));
       l.elevator.setAttribute("transform", lift ? `translate(0 ${(lift * DROP).toFixed(2)})` : "");
       const { n, last } = armCounts(l.flies, tH);

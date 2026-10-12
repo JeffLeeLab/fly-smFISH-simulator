@@ -31,11 +31,14 @@ export const H = {
   tap: [4.2, 4.5], slide: [4.5, 5.3], armsFill: [4.6, 5.4], out: 5.4, pi: 8.4, rest: 10.6, end: 11.8,
 };
 
-// Decision 4 (invented for this case): ten drawn flies per lane stand in for about a hundred.
+// Decision 4 (invented for this case; the mutant at chance, instructor 2026-10-12): ten drawn
+// flies per lane stand in for about a hundred.
 export const LANES = [
-  { id: "wt", x: 40, label: "hTDP-43 WT", seed: 311, oct: [3, 8] },              // 8 MCH, 2 OCT: PI 0.6
-  { id: "mut", x: 520, label: "hTDP-43 ALS mutant", seed: 422, oct: [1, 4, 6, 9] }, // 6 MCH, 4 OCT: PI 0.2
+  { id: "wt", x: 40, label: "hTDP-43 WT", seed: 311, oct: [3, 8] },                 // 8 MCH, 2 OCT: PI 0.6
+  { id: "mut", x: 520, label: "hTDP-43 ALS mutant", seed: 422, oct: [1, 3, 4, 6, 9] }, // 5 MCH, 5 OCT: PI 0
 ];
+const FEED_Y = 8;                              // the odour hose runs into the inlet at this height
+const BOLT_Y = 136;                            // the shock symbol, beside the grid
 export const N_FLIES = 10;
 
 const smooth = u => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
@@ -98,7 +101,11 @@ export function mazeMarkup(l, { id, labels = false, small = false }) {
       <line class="entry" data-arm="mch" x1="${cx + ENTRY}" y1="${ARM.y - 3}" x2="${cx + ENTRY}" y2="${ARM.y + ARM.h + 3}"/>
       <!-- the choice point: where the elevator docks between the arms -->
       <rect class="maze-dock" x="${cx - TW / 2 - 3}" y="${ARM.y - 5}" width="${TW + 6}" height="${ARM.h + 10}" rx="3"/>
-      <!-- the training tube with its grid, and the odour inlet at the top -->
+      <!-- the training tube with its grid, and the odour inlet at the top, fed by a hose whose end
+           names what flows: dots of OCT or dashes of MCH run along it into the tube -->
+      ${small ? "" : `
+      <path class="feed" d="${feedD(cx)}"/><path class="feed-core" d="${feedD(cx)}"/><path class="feed-flow" d="${feedD(cx)}"/>
+      <text class="feed-tag" x="${cx + 52}" y="${FEED_Y + 4.5}"></text>`}
       <rect class="maze-port" x="${cx - 7}" y="${TOP - 12}" width="14" height="14" rx="2"/>
       <rect class="tube-glass" x="${tx}" y="${TOP}" width="${TW}" height="${JOINT - TOP}" rx="${TW / 2}"/>
       <g clip-path="url(#tube-${id}-${l.id})">
@@ -108,6 +115,12 @@ export function mazeMarkup(l, { id, labels = false, small = false }) {
         <path class="shock" d="${zigzag(tx + 3, TOP + 10, JOINT - 6)} ${zigzag(tx + TW - 3, TOP + 10, JOINT - 6)}"/>
       </g>
       <path class="tube-outline" d="M${tx},${JOINT} V${TOP + TW / 2} a${TW / 2},${TW / 2} 0 0 1 ${TW},0 V${JOINT}"/>
+      ${small ? "" : `
+      <!-- the shock symbol: pops at each pulse, with the pulses counted -->
+      <g class="bolt-g" transform="translate(${tx + TW + 17} ${BOLT_Y})">
+        <path class="bolt" d="M3.5,-12 L-5,1.5 L0,1.5 L-3.5,12 L5.5,-2.5 L0.5,-2.5 L4.5,-12 Z"/>
+        <text class="bolt-n" x="10" y="4.5"></text>
+      </g>`}
       <!-- the elevator: the tube's lower segment, which carries the flies down to the choice point -->
       <g class="elevator">
         <rect class="tube-glass" x="${tx}" y="${JOINT}" width="${TW}" height="${EH}"/>
@@ -132,23 +145,30 @@ export function mazeMarkup(l, { id, labels = false, small = false }) {
     </g>`;
 }
 
+// The hose, drawn from its free end to the inlet, so the flow's dash offset runs into the tube.
+const feedD = cx => `M${cx + 46},${FEED_Y} H${cx + 6} Q${cx},${FEED_Y} ${cx},${FEED_Y + 6} V${TOP - 12}`;
+
 function zigzag(x, y0, y1) {
   const pts = [];
   for (let y = y0, k = 0; y <= y1; y += 6, k++) pts.push(`${(x + (k % 2 ? 2.5 : -2.5)).toFixed(1)},${y}`);
   return `M${pts.join(" L")}`;
 }
 
-// The performance index under a lane: the formula, the sum, and an ink bar on a 0–1 scale.
+// The performance index under a lane: the formula, the sum, and an ink bar on a 0–1 scale with a
+// dot at the value, so an index of 0 (chance, marked under the 0) still shows.
 export function piMarkup(l, n) {
   const cx = l.x + LW / 2, bx = cx - 100, y = 404;
   const pi = (n.mch - n.oct) / (n.mch + n.oct);
+  const at = (bx + pi * 200).toFixed(1);
   return `
     <g class="pi" data-lane="${l.id}">
       <text class="scene-small pi-formula" x="${cx}" y="${y - 22}" text-anchor="middle">PI = (MCH − OCT) / all flies</text>
       <text class="pi-sum" x="${cx}" y="${y - 3}" text-anchor="middle">(${n.mch} − ${n.oct}) / ${n.mch + n.oct} = <tspan class="pi-value">${pi.toFixed(1)}</tspan></text>
       <line class="pi-track" x1="${bx}" y1="${y + 14}" x2="${bx + 200}" y2="${y + 14}"/>
       ${[0, 0.5, 1].map(v => `<line class="pi-tick" x1="${bx + v * 200}" y1="${y + 10}" x2="${bx + v * 200}" y2="${y + 18}"/><text class="scene-tick" x="${bx + v * 200}" y="${y + 31}" text-anchor="middle">${v}</text>`).join("")}
+      <text class="scene-tick pi-chance" x="${bx}" y="${y + 44}" text-anchor="middle">chance</text>
       <rect class="pi-bar" x="${bx}" y="${y + 10}" width="${(pi * 200).toFixed(1)}" height="8" data-w="${(pi * 200).toFixed(1)}"/>
+      <circle class="pi-dot" cx="${at}" cy="${y + 14}" r="4.5" data-x0="${bx}" data-x="${at}"/>
     </g>`;
 }
 
@@ -203,6 +223,20 @@ export const shockAt = tH => {
   for (const p of H.pulses) if (tH >= p && tH < p + 0.15) f = Math.max(f, 1 - (tH - p) / 0.15);
   return f;
 };
+// The shock symbol: how many pulses so far (shown during OCT), its pop after each pulse, and its
+// opacity: faint between pulses while OCT flows, full at a pulse, gone once OCT is out.
+export const boltAt = tH => {
+  if (tH == null || tH < H.pulses[0]) return { n: 0, pop: 0, alpha: 0 };
+  const n = H.pulses.filter(p => tH >= p).length;
+  const since = tH - H.pulses[n - 1];
+  const pop = Math.max(0, 1 - since / 0.28);
+  const out = clamp01((tH - H.octOut) / 0.3);
+  return { n, pop, alpha: (0.4 + 0.6 * pop) * (1 - out) };
+};
+// What flows into the tube now (the hose's tag and its moving texture), or null.
+export const feedAt = tH =>
+  tH == null || tH >= H.mchOut ? null : tH < H.octOut ? "oct" : tH < H.mchIn ? "air" : "mch";
+
 const hopAt = (tH, k) => {
   for (const p of H.pulses) {
     const u = (tH - p - 0.02 * (k % 3)) / 0.32;

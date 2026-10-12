@@ -248,6 +248,18 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .pi-value { font-weight: 600; }
 .pi-track, .pi-tick { stroke: var(--ink); stroke-width: .9; opacity: .6; }
 .pi-bar { fill: var(--text-2); }
+.pi-dot { fill: var(--ink); }
+/* the odour hose into the training tube: what flows runs along it as the odour's own texture */
+.feed { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.feed-core { fill: none; stroke: var(--wash-c); stroke-width: 4.6; stroke-linecap: round; stroke-linejoin: round; }
+.feed-flow { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; opacity: 0; }
+.feed-flow[data-odour=oct] { opacity: .9; stroke-dasharray: .1 4.2; }
+.feed-flow[data-odour=mch] { opacity: .9; stroke-width: 1.1; stroke-dasharray: 2.4 3; }
+.feed-tag { font: 500 13px var(--font-mono); fill: var(--text); }
+/* the shock symbol, in ink like the grid's flash */
+.bolt-g { opacity: 0; }
+.bolt { fill: var(--ink); stroke: var(--ink); stroke-width: .8; stroke-linejoin: round; }
+.bolt-n { font: 500 12px var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
 .odour--station { opacity: .5; }
 .station-odour { font: 400 11.5px var(--font-mono); fill: var(--text-2); }   /* ≥11 px on screen at the station's size */
 

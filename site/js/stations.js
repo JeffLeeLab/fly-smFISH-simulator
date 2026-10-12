@@ -87,12 +87,12 @@ function vialArt() {
 // ---------- T-maze (live once its case is available; a still otherwise) ----------
 // Front-on, as in step 1, after the test: a short training tube, the elevator docked at the
 // choice point, and the two arms with their odours (ink textures). Most WT flies rest in the MCH
-// arm, away from the shocked odour; the mutants spread across both. They stand and groom.
+// arm, away from the shocked odour; the mutants split half and half. They stand and groom.
 const MAZE = { tubeY: 18, tubeH: 66, tubeW: 18, armY: 100, armH: 18, dock: 11 };
 const MAZE_FLY = { h: 13, vh: 197.8, ground: 118 };   // side-view sprite: frame height, thorax to feet
 const MAZE_LANES = [   // [dx from the lane centre, on the ceiling?] per arm
   { id: "wt", seed: 61, oct: [[-44, 0]], mch: [[24, 0], [33, 1], [46, 0], [56, 1]] },
-  { id: "mut", seed: 73, oct: [[-24, 1], [-46, 0]], mch: [[26, 0], [42, 1], [55, 0]] },
+  { id: "mut", seed: 73, oct: [[-24, 1], [-36, 0], [-52, 1]], mch: [[26, 0], [42, 1], [55, 0]] },   // half and half: chance
 ];
 
 function mazeFlies(l, cx) {
