@@ -81,3 +81,19 @@ After the instructor's sign-offs (truth table, storyboard, compartment sketch wi
 | 9 | Step 6 plots and zooms | All five measures read at both sizes; the zooms frame the bundle (fibres visible), the lobe junction and about a dozen cell bodies. | OK. |
 
 **Still to do:** the instructor's manual assessment of the mushroom body strand, and the browser matrix (Edge, Firefox, Safari).
+
+## 2026-10-12: mushroom body science v2 (poison exon, draft) and T-maze changes
+
+The case was redesigned as a splicing case (truth table redrafted, awaiting re-sign-off), the TDP-43 puncta were made equal in both genotypes, and the T-maze got an odour hose, a shock bolt and mutants at chance.
+
+**Checks.** `build mb` reproduced the agent's build (same animals; 3760 checks, 0 failed against the draft). `tools/pdf-identical.sh` passed. No served file names the invented isoforms (`grep "+x|g1x" site/data/mb` is empty; `transcripts.json` lists the 7 annotated isoforms; no `mature_in`, `nascent_in` or `also_detects`). `tools/review-shots.sh <out-dir> mb` (40 screenshots), a step 6 plot run for every measure and channel of U2 + U4, the cell-body and nucleus zooms, a T-maze contact sheet through training, and the station at 1920×1080.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 6 plot, Both channel | The case's key readout, the white U2+U4 spots (0.04 → 0.84 per nucleus), sat flat at zero: the count axis is fixed for the whole case, and the per-animal axon-bundle counts set it to 0–120. The nucleus and cell body were flattened the same way for every probe. | Fixed (mushroom body only; Pdf's plot unchanged): counts are spots per Kenyon cell, the shared axon bundle and lobes divided among the cells they come from (30; 10 per lobe system). A new measure, "Share of spots that are white", gives the share of a channel's spots that also carry the other probe: U2 in the nucleus reads about 0.02 in WT and 0.42 in the mutant, the exon's inclusion share. The Both channel is off for it. |
+| 2 | Step 6 viewer, cell-body zoom | The white mature spots are visible in mutant nuclei and cell bodies but modest beside the bright transcription sites, which are white in both genotypes (group-1 pre-mRNA carries U2 and U4). | By design; the legend names the transcription sites. Worth watching in the manual assessment. |
+| 3 | Step 3 | The puncta now look the same in both genotypes; the clue is the dimmer mutant nuclei. | OK. |
+| 4 | Step 5 | The gene card and map are unchanged and give nothing away; the new junction is on no drawn isoform. | OK. |
+| 5 | T-maze, step 1 | The PI dot showed from the start (a `fromTo` rendered its start state at once). | Fixed (`immediateRender: false`). The hose, its tag (OCT, air, MCH), the bolt with its count and the 5 : 5 mutant read in order; the station draws 3 : 3. |
+
+**Still to do:** the instructor's re-sign-off of `data/mb/truth-table.toml`, then `validate mb --signed`; the manual assessment; the browser matrix.
