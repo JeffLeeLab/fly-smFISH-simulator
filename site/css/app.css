@@ -232,6 +232,25 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .zt2-head { fill: var(--ink); }
 .zt2-line { stroke: var(--ink); stroke-width: 1.6; }
 
+/* ---------- the T-maze (mushroom body step 1 and its landing station) ---------- */
+/* ink only: the odours are textures and the shocks are ink flashes, since colour belongs to the data */
+.maze-grid { fill: none; stroke: var(--ink); stroke-width: .55; opacity: .28; }
+.maze-port { fill: var(--wash-c); stroke: var(--ink); stroke-width: 1; }
+.maze-dock { fill: none; stroke: var(--ink); stroke-width: .9; stroke-dasharray: 3 2.5; opacity: .5; }
+.maze-elevator { fill: none; stroke: var(--ink); stroke-width: 1.3; }
+.odour-pat circle { fill: var(--ink); }
+.odour-wave { fill: none; stroke: var(--ink); stroke-width: .8; stroke-linecap: round; }
+.odour { opacity: .55; }
+.odour--arm { opacity: .2; }
+.shock { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; opacity: 0; }
+.entry { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 4 3; opacity: .55; }
+.pi-sum { font: 500 15px var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
+.pi-value { font-weight: 600; }
+.pi-track, .pi-tick { stroke: var(--ink); stroke-width: .9; opacity: .6; }
+.pi-bar { fill: var(--text-2); }
+.odour--station { opacity: .5; }
+.station-odour { font: 400 11.5px var(--font-mono); fill: var(--text-2); }   /* ≥11 px on screen at the station's size */
+
 /* ---------- step 2: the descent (scroll-driven; the stage stays pinned for three screens) ---------- */
 .descent { position: relative; height: 400vh; }
 .descent.is-still { height: auto; }

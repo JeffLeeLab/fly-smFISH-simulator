@@ -1,10 +1,12 @@
 // The three-assay landing (storyboard shot F): one drawing per station, each split into a WT lane
 // (left) and a mutant lane (right). The activity monitor runs live (flies walking and pausing,
-// the beam, a tiny actogram in which the mutant's night bars stand out); the climbing vial and
-// the T-maze are stills in this build.
+// the beam, a tiny actogram in which the mutant's night bars stand out), as does the T-maze once
+// its case is available (flies resting and grooming in the arms); the climbing vial is a still.
 
 import { activity, walkPause, walkAt, lastCrossing, tube, tubeFly, actogramRows } from "./monitor.js";
-import { flyNode } from "./fly.js";
+import { flyNode, groomFrame } from "./fly.js";
+import { mulberry32 } from "./prng.js";
+import { odourDefs, driftOdours } from "./tmaze.js";
 
 const VB = "0 0 320 180";
 const LANE_X = [10, 170], LANE_W = 140;
@@ -82,28 +84,80 @@ function vialArt() {
     </svg>`;
 }
 
-// ---------- T-maze (still) ----------
-// After training, WT flies gather in the arm away from the punished odour; mutants split evenly.
-const MAZE = { wt: [-48, -40, -30, -21, -56, 40], mut: [-50, -38, -24, 26, 38, 52] };
+// ---------- T-maze (live once its case is available; a still otherwise) ----------
+// Front-on, as in step 1, after the test: a short training tube, the elevator docked at the
+// choice point, and the two arms with their odours (ink textures). Most WT flies rest in the MCH
+// arm, away from the shocked odour; the mutants spread across both. They stand and groom.
+const MAZE = { tubeY: 18, tubeH: 66, tubeW: 18, armY: 100, armH: 18, dock: 11 };
+const MAZE_FLY = { h: 13, vh: 197.8, ground: 118 };   // side-view sprite: frame height, thorax to feet
+const MAZE_LANES = [   // [dx from the lane centre, on the ceiling?] per arm
+  { id: "wt", seed: 61, oct: [[-44, 0]], mch: [[24, 0], [33, 1], [46, 0], [56, 1]] },
+  { id: "mut", seed: 73, oct: [[-24, 1], [-46, 0]], mch: [[26, 0], [42, 1], [55, 0]] },
+];
+
+function mazeFlies(l, cx) {
+  const k = MAZE_FLY.h / MAZE_FLY.vh, g = MAZE_FLY.ground * k;
+  const fly = ([dx, up], face) => {
+    const y = up ? MAZE.armY + 1 + g : MAZE.armY + MAZE.armH - 1 - g;
+    return `<g class="fly maze-fly" transform="translate(${cx + dx} ${y.toFixed(2)}) scale(${(face * k).toFixed(4)} ${(up ? -k : k).toFixed(4)})"><use href="#fly-lateral-stand-0"/></g>`;
+  };
+  return l.oct.map((f, i) => fly(f, i % 2 ? 1 : -1)).join("") + l.mch.map((f, i) => fly(f, i % 3 === 2 ? -1 : 1)).join("");
+}
 
 function mazeArt() {
   return `
-    <svg viewBox="${VB}" aria-hidden="true" class="station-svg">
-      ${["wt", "mut"].map((id, i) => {
-        const x = LANE_X[i], cx = x + LANE_W / 2;
-        const d = `M${x + 14},34 H${x + LANE_W - 14} A12,12 0 0 1 ${x + LANE_W - 14},58 H${cx + 11} V160 Q${cx + 11},168 ${cx + 3},168 H${cx - 3} Q${cx - 11},168 ${cx - 11},160 V58 H${x + 14} A12,12 0 0 1 ${x + 14},34 Z`;
+    <svg viewBox="${VB}" aria-hidden="true" class="station-svg station-svg--maze">
+      <defs>${odourDefs("mini")}</defs>
+      ${MAZE_LANES.map((l, i) => {
+        const x = LANE_X[i], cx = x + LANE_W / 2, tx = cx - MAZE.tubeW / 2, d = MAZE.dock;
+        const a0 = x + 4, a1 = x + LANE_W - 4, ay = MAZE.armY, ah = MAZE.armH;
+        const grid = Array.from({ length: 12 }, (_, j) => `M${tx},${MAZE.tubeY + j * 6} l${MAZE.tubeW},${MAZE.tubeW * 0.55} M${tx + MAZE.tubeW},${MAZE.tubeY + j * 6} l${-MAZE.tubeW},${MAZE.tubeW * 0.55}`).join(" ");
         return `
-        <g>
-          <path class="tube-glass" d="${d}"/>
-          <path class="tube-outline" d="${d}"/>
-          ${MAZE[id].map((dx, k) => `<g class="fly" transform="translate(${cx + dx} ${44 + (k % 2) * 5}) rotate(${dx < 0 ? -90 : 90}) scale(0.042)"><use href="#fly-dorsal-stand-0"/></g>`).join("")}
+        <g class="mini-maze" data-lane="${l.id}">
+          <clipPath id="mini-tube-${l.id}"><rect x="${tx}" y="${MAZE.tubeY}" width="${MAZE.tubeW}" height="${MAZE.tubeH}" rx="${MAZE.tubeW / 2}"/></clipPath>
+          <rect class="tube-glass" x="${tx}" y="${MAZE.tubeY}" width="${MAZE.tubeW}" height="${MAZE.tubeH}" rx="${MAZE.tubeW / 2}"/>
+          <path class="maze-grid" clip-path="url(#mini-tube-${l.id})" d="${grid}"/>
+          <rect class="tube-outline" x="${tx}" y="${MAZE.tubeY}" width="${MAZE.tubeW}" height="${MAZE.tubeH}" rx="${MAZE.tubeW / 2}"/>
+          <rect class="tube-glass" x="${a0}" y="${ay}" width="${a1 - a0}" height="${ah}"/>
+          <rect class="odour odour--station" x="${a0}" y="${ay}" width="${cx - d - a0}" height="${ah}" fill="url(#oct-left-mini)"/>
+          <rect class="odour odour--station" x="${cx + d}" y="${ay}" width="${a1 - cx - d}" height="${ah}" fill="url(#mch-right-mini)"/>
+          <path class="tube-outline" d="M${cx - d},${ay} H${a0} V${ay + ah} H${cx - d} M${cx + d},${ay} H${a1} V${ay + ah} H${cx + d}"/>
+          <rect class="maze-port" x="${a0 - 5}" y="${ay - 2}" width="5" height="${ah + 4}" rx="1"/>
+          <rect class="maze-port" x="${a1}" y="${ay - 2}" width="5" height="${ah + 4}" rx="1"/>
+          <rect class="maze-elevator" x="${cx - d}" y="${ay - 3}" width="${2 * d}" height="${ah + 6}" rx="1.5"/>
+          <text class="station-odour" x="${a0}" y="${ay + ah + 15}">OCT</text>
+          <text class="station-odour" x="${a1}" y="${ay + ah + 15}" text-anchor="end">MCH</text>
+          <g class="maze-flies">${mazeFlies(l, cx)}</g>
         </g>`;
       }).join("")}
     </svg>`;
+}
+
+// The station's flies stand and groom on seeded schedules, never in step; the odours drift.
+// Returns draw(t).
+export function startMiniMaze(svg, meta) {
+  const flies = [...svg.querySelectorAll(".maze-fly use")].map((use, i) => {
+    const r = mulberry32(97 + i * 13);
+    const bouts = [];
+    for (let t = r() * 4; t < 900;) { const b = 2.2 + r(); bouts.push([t, t + b]); t += b + 2.4 + r() * 3.6; }
+    return { use, bouts, shown: "" };
+  });
+  return t => {
+    for (const f of flies) {
+      const g = f.bouts.find(([a, b]) => t >= a && t < b);
+      const [seq, k] = g ? groomFrame(meta.frames, g[0], g[1], t) : ["stand", 0];
+      const id = `#fly-lateral-${seq}-${k}`;
+      if (id !== f.shown) { f.use.setAttribute("href", id); f.shown = id; }
+    }
+    driftOdours(svg, "mini", t);
+  };
 }
 
 export const stationArt = { pdf: monitorArt, nmj: vialArt, mb: mazeArt };
 
 // Stations that run live on the landing: `start(svg, sprites)` returns draw(t); `handOff` names
 // the hand-off to the case's step 1. A case without an entry keeps its still art.
-export const stationLive = { pdf: { start: (svg, sprites) => startMiniMonitor(svg, sprites), handOff: "monitor" } };
+export const stationLive = {
+  pdf: { start: (svg, sprites) => startMiniMonitor(svg, sprites), handOff: "monitor" },
+  mb: { start: (svg, sprites) => startMiniMaze(svg, sprites), handOff: "maze" },
+};
