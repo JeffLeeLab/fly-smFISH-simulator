@@ -58,7 +58,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 - `docs/spec.md`: the full pedagogy, case truth tables, simulation parameters and screen spec.
 - `docs/transcript_models_R6.json`: FlyBase R6 transcript models, CDS and probe menus.
-- `docs/references/`: the Pdf-neuron and mushroom body reference packs (the latter with the instructor's compartment sketch, `mb-compartment-sketch.png`), FlyBase gene-model images and the DAM activity-monitor schematic.
+- `docs/references/`: the Pdf-neuron and mushroom body reference packs (the latter with the compartment sketch the instructor annotated, `mb-compartment-sketch.png`), FlyBase gene-model images and the DAM activity-monitor schematic.
 - `docs/mockups/` and `docs/style-directions/`: design records only; they are not served.
 - Not yet available: student testimonials, pilot results and usage data. Don't invent outcomes or claims of effectiveness.
 

@@ -76,7 +76,7 @@ export const CASES = {
     // Students meet the peduncle as the axon bundle; "peduncle" is named once, in step 2 (instructor,
     // 2026-10-12). The ids stay anatomical.
     anatomy: {
-      whole: "Whole mushroom body",
+      whole: "Mushroom body",
       flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Axon bundle"], ["lobes", "Lobes"]],
       projection: "Oblique maximum-intensity projection (simulated)",
     },

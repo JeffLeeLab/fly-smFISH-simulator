@@ -156,7 +156,7 @@ def neuropil_segments(tilt, turn):
     for k, c in enumerate(cells):
         v, e = np.asarray(c["vertices"]), np.asarray(c["edges"])
         lab = label(v, c["class"])
-        keep = (lab[e[:, 0]] == lab[e[:, 1]]) & (lab[e[:, 0]] != "tract")
+        keep = (lab[e[:, 0]] != "tract") & (lab[e[:, 1]] != "tract")   # across region borders too, or the cuts show as lines
         segs.append(project(v, tilt, turn, centre)[e[keep]])
         owner.append(np.full(int(keep.sum()), k))
     return np.concatenate(segs).astype(np.float32), np.concatenate(owner)
