@@ -41,7 +41,7 @@ class Molecules:
 def draw(case: Case, genotype: str, animal: int, rng: np.random.Generator) -> Molecules:
     p = case.params
     f = max(0.6, rng.normal(1.0, p["animal_sd"]))
-    per = p["mature_per_cell"][genotype]
+    per = case.mature_per_cell(genotype)
     layout, ci = case.layout, case.comp_index
     mix = {c.id: case.mature_mix(genotype, c.id) for c in layout.compartments}
     prod = case.production(genotype)

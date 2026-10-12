@@ -91,7 +91,10 @@ def choose_animals(case, truth):
         if not gate.failures:
             return choice, datasets, gate
         # an overlap check failed: drop the worst-placed slot's animal and re-optimise that slot
-        bad = next(s for s in slots if any(s[0] in f for f in gate.failures))
+        # (the failing genotype's animals take turns: the check pools all of them)
+        geno = next(s[0] for s in slots if any(s[0] in f for f in gate.failures))
+        mine = [s for s in slots if s[0] == geno]
+        bad = mine[attempt % len(mine)]
         excluded[bad].add(choice[bad])
         options = [(evaluate({**choice, bad: k})[0], k) for k in range(K) if k not in excluded[bad]]
         choice[bad] = min(options)[1]

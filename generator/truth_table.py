@@ -78,11 +78,15 @@ def channel_expectations(name, ids, regions, rules, single):
 def mark_key(selections, key):
     """Flag the key readouts: held to the 'same' tolerance with no allowance for noise."""
     singles = {tuple(k.split(":")) for k in key.get("single", [])}
+    pairs = {(frozenset(k.split(":")[0].split("+")), *k.split(":")[1:]) for k in key.get("pair", [])}
     for sel_id, sel in selections.items():
         for e in sel["expect"]:
             regions = sel["channels"][e["channel"]]["regions"] if e["channel"] in sel["channels"] else []
-            sig = (regions[0], e["measure"], *([e["compartment"]] if "compartment" in e else [])) if len(regions) == 1 else None
-            if sig and sig in singles and e["rule"] in ("same", "ratio"):
+            tail = (e["measure"], *([e["compartment"]] if "compartment" in e else []))
+            sig = (regions[0], *tail) if len(regions) == 1 else None
+            if sig and sig in singles and e["rule"] in ("same", "ratio", "appears"):
+                e["key"] = True
+            if len(regions) == 2 and (frozenset(regions), e["channel"], *tail) in pairs and e["rule"] in ("same", "ratio", "appears"):
                 e["key"] = True
             if e["measure"] == "region_ratio" and e["pool"] == "whole_cell" and sel_id in key.get("region_ratio_whole_cell", []):
                 e["key"] = True
@@ -127,19 +131,30 @@ def expand(case: str) -> dict:
 # ---------- group model (cases whose isoforms fall into groups with their own production change) ----------
 
 
-def group_fractions(mature, rules):
-    """Fraction of each group's weight carried by the isoforms in `mature` (letters)."""
-    out = []
-    for g in ("g1", "g2"):
+def group_fractions(ids, regions, rules):
+    """Share of each kind's isoform weight that a channel (every region in ids) detects:
+    [group 1 skipping the exon, group 1 including it, group 2]. Taken from the hand-written mature_in
+    lists; an included-exon molecule of isoform P is detected by region R if P is in R's list or R is the exon."""
+    ex = rules["exon"]
+    sets = {i: set(regions[i]["mature_in"]) for i in ids}
+    def share(g, including):
         w = rules["groups"][g]
-        out.append(sum(v for k, v in w.items() if k[1:] in mature) / sum(w.values()))
-    return out
+        ok = lambda k: all(k[1:] in sets[i] or (including and i == ex["region"]) for i in ids)
+        return sum(v for k, v in w.items() if ok(k)) / sum(w.values())
+    return [share(ex["carried_by"], False), share(ex["carried_by"], True), share("g2" if ex["carried_by"] == "g1" else "g1", False)]
+
+
+def kind_counts(comp, gt, rules):
+    """Mature molecules per cell in a compartment before detection, [group 1 skipping, group 1 including, group 2]."""
+    g1, g2 = rules["group_per_cell"][comp]
+    ex = rules["exon"]
+    psi = ex["psi"][gt]
+    return [g1 * (1 - psi), g1 * psi * ex["survives"][comp], g2]
 
 
 def expected_mean(comp, gt, f, rules):
-    """Expected mature molecules per cell in a compartment: n x (s f1 + (1 - s) f2). gt 0 = control, 1 = mutant."""
-    s = rules["group1_share"][comp][gt]
-    return rules["mature_per_cell"][comp][gt] * (s * f[0] + (1 - s) * f[1])
+    """Expected mature molecules per cell in a compartment: sum over the three kinds of count x detected share. gt 0 = control, 1 = mutant."""
+    return sum(n * x for n, x in zip(kind_counts(comp, gt, rules), f))
 
 
 def change_rule(ctrl, mut, rules):
@@ -152,19 +167,24 @@ def change_rule(ctrl, mut, rules):
     return {"rule": "ratio", "nominal_ratio": round(r, 4)}
 
 
+def count_rule(ctrl, mut, scale, rules):
+    """change_rule for a count; 'appears' when the control is at most appears_cap per cell and the mutant more than 3x it."""
+    cap = rules["rules"]["appears_cap"]
+    if ctrl == 0 and mut == 0:
+        return {"rule": "none", "note": "no molecules of this channel reach here"}
+    if ctrl <= cap and mut > 3 * ctrl:
+        return {"rule": "appears", "nominal_mutant": round(mut * scale, 4), "cap": round(cap * scale, 4)}
+    return change_rule(ctrl, mut, rules)
+
+
 def pool_sum(comps, gt, f, rules):
     return sum(expected_mean(c, gt, f, rules) for c in comps)
 
 
-def nascent_change(nascent, rules):
-    """Mutant / control intensity of the nascent isoforms a probe carries, weighted by control production."""
-    num = den = 0.0
-    for g, change in (("g1", rules["group_change"]["g1"]), ("g2", rules["group_change"]["g2"])):
-        for k, v in rules["groups"][g].items():
-            if k[1:] in nascent:
-                num += v * change
-                den += v
-    return num / den
+def nascent_change(ids, rules):
+    """Mutant / control nascent level of a probe pair's shared isoforms, from the [ts] columns (the lower region of the pair)."""
+    lam = channel_lambda(ids, rules)
+    return lam[1] / lam[0]
 
 
 def site_fraction(lam, nascent):
@@ -207,8 +227,8 @@ def nascent_expectations(ids, rules, nascent, single):
     lam = channel_lambda(ids, rules)
     if not single:
         # white spots come only from the isoforms carrying every region: the lower control level,
-        # moved in the mutant by those isoforms' production change
-        lam = [lam[0], lam[0] * nascent_change(nascent, rules)]
+        # moved in the mutant by the [ts] columns' change
+        lam = [lam[0], lam[0] * nascent_change(ids, rules)]
     if single:
         for gt, name in zip(lam, ("control", "mutant")):
             edge = borderline(gt, nas)
@@ -227,21 +247,22 @@ def nascent_expectations(ids, rules, nascent, single):
 
 def group_channel_expectations(name, ids, regions, rules, single, layout):
     mature, nascent, other = channel_sets(ids, regions)
-    f = group_fractions(mature, rules)
+    f = group_fractions(ids, regions, rules)
     total = sum(sum(w.values()) for w in (rules["groups"]["g1"], rules["groups"]["g2"]))
     carried = sum(v for g in ("g1", "g2") for k, v in rules["groups"][g].items() if k[1:] in mature)
     out = []
     add = lambda **e: out.append({"channel": name, **e})
-    if mature:
+    if any(f):
         scale = {"cell": 1, "animal": layout.cells, "unit": layout.cells // len(layout.unit_sets["lobe_system"]["ids"])}
         E = {c.id: (expected_mean(c.id, 0, f, rules), expected_mean(c.id, 1, f, rules)) for c in layout.compartments}
         for c in layout.compartments:
             ec, em = E[c.id]
-            add(measure="count", compartment=c.id, nominal_control=round(ec * scale[c.count_unit], 3), **change_rule(ec, em, rules))
+            add(measure="count", compartment=c.id, nominal_control=round(ec * scale[c.count_unit], 3),
+                **count_rule(ec, em, scale[c.count_unit], rules))
             if c.units:
                 for u in layout.unit_sets[c.units]["ids"]:
                     add(measure="unit_count", compartment=c.id, unit=u, nominal_control=round(ec * scale["unit"], 3),
-                        **change_rule(ec, em, rules))
+                        **count_rule(ec, em, scale["unit"], rules))
         if E["cellbody"][0] > 0:
             add(measure="nc_ratio", **change_rule(E["nucleus"][0] / E["cellbody"][0], E["nucleus"][1] / E["cellbody"][1], rules))
         dc, cc = (pool_sum(layout.pools[p], 0, f, rules) for p in ("distal", "cytoplasm"))
@@ -260,7 +281,9 @@ def group_channel_expectations(name, ids, regions, rules, single, layout):
     else:
         add(measure="ts_level", rule="level", level={"control": "none", "mutant": "none"})
     return out, {"regions": list(ids), "mature": sorted(mature), "nascent": sorted(nascent),
-                 "mature_fraction": round(carried / total, 6), "group_fractions": [round(x, 6) for x in f]}
+                 "mature_fraction": round(carried / total, 6), "group_fractions": [round(x, 6) for x in f],
+                 "included": sorted(k[1:] for k, _ in rules["groups"][rules["exon"]["carried_by"]].items()
+                                    if all(k[1:] in set(regions[i]["mature_in"]) or i == rules["exon"]["region"] for i in ids))}
 
 
 def expand_groups(case, rules, regions):
@@ -278,7 +301,7 @@ def expand_groups(case, rules, regions):
         e2, i2 = ch("ch2", (b,), True)
         eb, ib = ch("both", (a, b), False)
         exp = e1 + e2 + eb
-        if i1["mature_fraction"] > 0 and i2["mature_fraction"] > 0:
+        if any(i1["group_fractions"]) and any(i2["group_fractions"]):
             f1, f2 = i1["group_fractions"], i2["group_fractions"]
             for pool in ("whole_cell", "distal"):
                 comps = layout.pools[pool]
@@ -299,6 +322,7 @@ def expand_groups(case, rules, regions):
         "verdicts": rules["verdicts"],
         "rules": rules["rules"],
         "nascent": rules["nascent"],
+        "exon": rules["exon"],
         "selections": selections,
     }
 
@@ -308,11 +332,38 @@ def fmt_rule(e):
     if e["rule"] == "ratio":
         r = e["nominal_ratio"]
         return f"{'↓' if r < 1 else '↑'}×{r:.2f}"
+    if e["rule"] == "appears":
+        return f"appears (→ {e['nominal_mutant']:g})"
     return WORD.get(e["rule"], e["rule"])
+
+
+def kinds_table(rules: dict, layout) -> list:
+    """The per-cell counts of the three kinds of molecule, control -> mutant, for the .md."""
+    ex = rules["exon"]
+    rows = ["| Compartment | Group 2 | Group 1, skips the exon | Group 1, includes the exon (white U2+U4) | Total |", "| --- | --- | --- | --- | --- |"]
+    for c in layout.compartments:
+        k = [kind_counts(c.id, gt, rules) for gt in (0, 1)]
+        pair = lambda i: f"{k[0][i]:.2f} → {k[1][i]:.2f}" if abs(k[0][i] - k[1][i]) > 5e-3 else f"{k[0][i]:.2f}"
+        tot = f"{sum(k[0]):.2f} → {sum(k[1]):.2f}" if abs(sum(k[0]) - sum(k[1])) > 5e-3 else f"{sum(k[0]):.2f}"
+        rows.append(f"| {SHORT_MB.get(c.id, c.id)} | {pair(2)} | {pair(0)} | {pair(1)} | {tot} |")
+    return [
+        "## Three kinds of molecule",
+        "",
+        f"Group 1 and group 2 are made at the same rates in both genotypes. The exon covered by {ex['region']} is group 2's first coding exon, "
+        f"and lies in an intron of group-1 pre-mRNA. In control {ex['psi'][0]:.0%} of group-1 transcripts include it; in the mutant "
+        f"{ex['psi'][1]:.0%} do. Those transcripts are broken down soon after export (nonsense-mediated decay), so the share that survives falls with distance from the nucleus: "
+        + ", ".join(f"{SHORT_MB.get(c, c)} {v:.0%}" for c, v in ex["survives"].items())
+        + ". A probe counts a molecule only if it carries its region: group-1 molecules that include the exon carry "
+        f"{ex['region']} as well as their usual regions. Mean molecules per Kenyon cell, control → mutant:",
+        "",
+        *rows,
+        "",
+    ]
 
 
 def render_md_groups(t: dict, regions: dict) -> str:
     layout = LAYOUTS[t["case"]]
+    rules, _ = load(t["case"])
     sel = t["selections"]
     comps = layout.compartments
     title = {"mb": "Mushroom body"}.get(t["case"], t["case"].upper())
@@ -328,11 +379,12 @@ def render_md_groups(t: dict, regions: dict) -> str:
         "| Mode | Verdict |", "| --- | --- |",
         *[f"| {m} | {v} |" for m, v in t["verdicts"].items()],
         "",
+        *kinds_table(rules, layout),
         "## Single probes",
         "",
         f"Counts: per Kenyon cell for the nucleus and cell body; per animal for the peduncle and calyx ({layout.cells} cells' worth); "
         f"per lobe system for the lobes ({layout.cells // len(layout.unit_sets['lobe_system']['ids'])} cells' worth). Brackets give the control mean. ↓×r and ↑×r give the "
-        "nominal mutant / control ratio. N:C = nucleus / cell body. Distal share = (peduncle + lobes) / all cytoplasmic RNA "
+        "nominal mutant / control ratio; \"appears\" marks a count that is near zero in control and clear in the mutant. N:C = nucleus / cell body. Distal share = (peduncle + lobes) / all cytoplasmic RNA "
         "(cell body, peduncle, lobes). TDP-43 overlap = share of spots on TDP-43 puncta, against the randomised-position level. "
         "TS = transcription sites, control → mutant.",
         "",
@@ -375,8 +427,8 @@ def render_md_groups(t: dict, regions: dict) -> str:
         "",
         f"Channel 1 and channel 2 behave as the single probes above; the 56 ordered pairs differ in which isoforms carry *both* regions (white spots) and in the channel-2 : channel-1 ratio over the whole cell (nucleus, cell body, peduncle, lobes) and over the distal compartments (peduncle, lobes). The ratio is given as the control value and its change in the mutant. One row per unordered pair; swapping channels inverts the ratio:",
         "",
-        "| Pair | Both regions in (mature) | Both regions in (nascent) | Whole-cell ratio | Distal ratio |",
-        "| --- | --- | --- | --- | --- |",
+        "| Pair | Both regions in (annotated, mature) | Both regions in (group 1 with the exon) | Both regions in (nascent) | Whole-cell ratio | Distal ratio |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     ids = sorted(regions, key=lambda r: int(r[1:]))
     for a, b in itertools.combinations(ids, 2):
@@ -384,16 +436,17 @@ def render_md_groups(t: dict, regions: dict) -> str:
         ib = s["channels"]["both"]
         rr = {e["pool"]: e for e in s["expect"] if e["measure"] == "region_ratio"}
         txt = lambda p: f"{rr[p]['nominal_control']:g}, {fmt_rule(rr[p])}" if p in rr else "–"
-        lines.append(f"| {a} + {b} | {', '.join('R' + m for m in ib['mature']) or '–'} | {', '.join('R' + m for m in ib['nascent']) or '–'} | "
-                     f"{txt('whole_cell')} | {txt('distal')} |")
+        lines.append(f"| {a} + {b} | {', '.join('R' + m for m in ib['mature']) or '–'} | {', '.join('R' + m for m in ib['included']) or '–'} | "
+                     f"{', '.join('R' + m for m in ib['nascent']) or '–'} | {txt('whole_cell')} | {txt('distal')} |")
     r = t["rules"]
     n_key = sum(1 for s in sel.values() for e in s["expect"] if e.get("key"))
     lines += [
         "",
         "## Tolerances",
         "",
-        f"- *same*: within ±{r['same']:.0%}. Key readouts ({n_key} checks: U6 transcription-site intensity, U7 nuclear count, whole-cell U2 : U4 ratios) are held to their rule with no allowance for counting noise; other checks may also differ by 2 standard errors of counting noise where counts are small.",
-        f"- *↓×r / ↑×r*: the mutant / control ratio is within ±{r['ratio']:.0%} of the nominal ratio (widened by 2 standard errors for small counts). Ratios follow from the group weights, each group's production change and each compartment's group-1 share (see the `.toml`).",
+        f"- *same*: within ±{r['same']:.0%}. Key readouts ({n_key} checks: U6 transcription-site intensity, nuclear and neurite-share U2, the white U2+U4 counts in the nucleus and cell body) are held to their rule with no allowance for counting noise; other checks may also differ by 2 standard errors of counting noise where counts are small.",
+        f"- *↓×r / ↑×r*: the mutant / control ratio is within ±{r['ratio']:.0%} of the nominal ratio (widened by 2 standard errors for small counts). Ratios follow from the group weights, the exon's inclusion share and its survival in each compartment (see the `.toml`).",
+        f"- *appears*: the control mean is at most {r['appears_cap']:g} per cell (scaled for shared compartments) and the mutant mean is within ±{r['nominal']:.0%} of the expected value (widened by 2 standard errors for small counts).",
         f"- Control means within ±{r['nominal']:.0%} of the nominal numbers (in brackets above).",
         f"- TDP-43 overlap: *chance* is within {r['chance']:.0%} (absolute) of the randomised-position control, in both genotypes.",
         f"- Transcription sites: number and intensity (mean nascent molecules per counted site) follow a Poisson model of the designed molecules per active site (`[ts]`, with `ts_active` and `ts_detect_min` in `[nascent]`), within the ratio rules above. They are checked only for probes with at least {t['nascent']['measurable']:g} molecules per active site in both genotypes; otherwise the table says \"too few nascent molecules to measure\". Look (bright, present, dim, none) is read from the nascent molecules per nucleus (molecules per site x {t['nascent']['ts_active']:g}).",
@@ -494,7 +547,7 @@ def main(argv) -> int:
         t = expand(case)
         _, regions = load(case)
         (DATA / case / "truth-table.json").write_text(json.dumps(t, indent=1, ensure_ascii=False) + "\n", encoding="utf-8")
-        md = render_md_groups(t, regions) if "group_change" in load(case)[0] else render_md(t, regions)
+        md = render_md_groups(t, regions) if "groups" in load(case)[0] else render_md(t, regions)
         (DATA / case / "truth-table.md").write_text(md, encoding="utf-8")
         n_single = sum(1 for k in t["selections"] if "+" not in k)
         n_pairs = len(t["selections"]) - n_single

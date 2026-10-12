@@ -71,21 +71,40 @@ class Case:
     comp_index: dict = field(default_factory=dict)    # compartment id -> molecule comp code
 
     def _group_total(self, group: str) -> float:
-        return sum(i.weight for i in self.isoforms if i.group == group)
+        return sum(i.weight for i in self.isoforms if i.group == group.rstrip("x"))
 
     def production(self, genotype: str) -> list:
         """Relative production of each isoform (same order as isoforms)."""
         if "isoform_groups" not in self.params:
             return [i.share for i in self.isoforms]
         prod = self.params["production"][genotype]
-        return [prod[i.group] * i.weight / self._group_total(i.group) for i in self.isoforms]
+        return [prod.get(i.group, 0.0) * i.weight / self._group_total(i.group) for i in self.isoforms]  # invented isoforms: 0
 
     def mature_mix(self, genotype: str, comp_id: str) -> np.ndarray:
         """Isoform probabilities of the mature molecules in one compartment."""
         if "isoform_groups" not in self.params:
             return np.array([i.share for i in self.isoforms])
+        if "exon" in self.params:
+            n = self.group_counts(genotype, comp_id)
+            kinds = {"g1": n[0], self.params["exon"]["into"] + "x": n[1], "g2": n[2]}
+            tot = sum(kinds.values())
+            return np.array([kinds[i.group] / tot * i.weight / self._group_total(i.group) for i in self.isoforms])
         g1 = self.params["group_share"][genotype][comp_id]
         return np.array([(g1 if i.group == "g1" else 1 - g1) * i.weight / self._group_total(i.group) for i in self.isoforms])
+
+    def group_counts(self, genotype: str, comp_id: str) -> tuple:
+        """Mature molecules per cell in a compartment, by kind: (group 1 skipping the exon,
+        group 1 including it after NMD, group 2)."""
+        g1, g2 = self.params["group_per_cell"][comp_id]
+        ex = self.params["exon"]
+        psi = ex["psi"][genotype]
+        return g1 * (1 - psi), g1 * psi * ex["survives"][comp_id], g2
+
+    def mature_per_cell(self, genotype: str) -> dict:
+        """Mean mature molecules per cell, by compartment."""
+        if "exon" in self.params:
+            return {c.id: sum(self.group_counts(genotype, c.id)) for c in self.layout.compartments}
+        return self.params["mature_per_cell"][genotype]
 
     def nascent_mask(self, iso: Isoform, pol_dist: float) -> int:
         """Regions carried by an unspliced pre-mRNA running from the TSS to pol_dist.
@@ -174,6 +193,12 @@ def load_case(case_id: str, params: dict) -> Case:
         elif name in params["isoforms"]:
             isoforms.append(Isoform(name, t["exons"], strand, params["isoforms"][name]))
     assert abs(sum(i.share for i in isoforms) - 1) < 1e-9, "isoform shares must sum to 1"
+    if "exon" in params:
+        # invented, private isoforms: each of the exon's host group with the exon spliced in; no production
+        ex = params["exon"]
+        for iso in [i for i in isoforms if i.group == ex["into"]]:
+            exons = sorted(iso.exons + [[ex["lo"], ex["hi"]]], reverse=strand == "-")
+            isoforms.append(Isoform(iso.name + "+x", exons, strand, 0.0, ex["into"] + "x", iso.weight))
     regions = [Region(r["id"], r["lo"], r["hi"]) for r in sorted(g["probe_regions"], key=lambda r: int(r["id"][1:]))]
     case = Case(case_id, CASE_GENES[case_id], strand, isoforms, regions,
                 {(gt, a): _geometry(case_id, gt, a, layout) for gt in ("control", "mutant") for a in range(1, params["animals"] + 1)}, params,

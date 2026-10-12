@@ -127,6 +127,18 @@ class Gate:
                 unit = e["unit"]
                 comp = f"{comp}:{unit}"
             nc, nm = tc[comp], tm[comp]
+            if e["rule"] == "appears":
+                # near zero in control (at most `cap`), the expected mean in the mutant
+                if meas == "unit_count":
+                    c, mu = nc / len(entry["control"]["animals"]), nm / len(entry["mutant"]["animals"])
+                else:
+                    c = self.mean(entry, "control", ch, lambda m: m["count"][comp])
+                    mu = self.mean(entry, "mutant", ch, lambda m: m["count"][comp])
+                self._ok(c <= e["cap"], where + " (control)", f"mean {c:.3f}, expected at most {e['cap']:g}", max(0.0, c / e["cap"] - 1))
+                nom = e["nominal_mutant"]
+                tol = self.rules["nominal"] if e.get("key") else max(self.rules["nominal"], 2 / math.sqrt(max(nm, 1)))
+                self._ok(abs(mu / nom - 1) <= tol, where, f"mutant mean {mu:.3f}, expected {nom:g} ± {tol:.0%}", (mu / nom - 1) / tol)
+                return
             if e["rule"] == "none":
                 self._ok(nc == 0 and nm == 0, where, f"expected no spots, found control {nc}, mutant {nm}")
                 return
@@ -152,6 +164,8 @@ class Gate:
             r = mu / c
             self.ratio_rule(where, e["rule"], r, r * math.sqrt(1 / nc + 1 / nm), nominal=e.get("nominal_ratio"))
         elif meas == "nc_ratio":
+            if not all(x for x in (tm["nucleus"], tm["cellbody"], tc["nucleus"], tc["cellbody"])):
+                return  # a ratio of nothing: a channel whose spots appear (white spots), checked by their counts
             r = (tm["nucleus"] / tm["cellbody"]) / (tc["nucleus"] / tc["cellbody"])
             se = math.sqrt(sum(1 / x for x in (tm["nucleus"], tm["cellbody"], tc["nucleus"], tc["cellbody"])))
             self.ratio_rule(where, e["rule"], r, r * se, nominal=e.get("nominal_ratio"))
@@ -161,8 +175,10 @@ class Gate:
             def p(t):
                 d = sum(t[x] for x in pools["distal"])
                 den = sum(t[x] for x in pools["cytoplasm"])
-                return d / den, den
+                return (d / den if den else 0), den
             (pc, nc), (pm, nm) = p(tc), p(tm)
+            if not pc or not pm:
+                return
             r = pm / pc
             se = math.sqrt((1 - pm) / (pm * nm) + (1 - pc) / (pc * nc))
             self.ratio_rule(where, e["rule"], r, r * se, e.get("key", False), e.get("nominal_ratio"))
