@@ -78,7 +78,8 @@ export const CASES = {
       flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Peduncle"], ["lobes", "Lobes"]],
       projection: "Oblique maximum-intensity projection (simulated)",
     },
-    display: { spotSigmaUm: 0.16, minSigmaPx: 0.85, spotGain: 0.95 },
+    // larger and brighter than true size, so spots read like the Pdf case's in a structure three times its size
+    display: { spotSigmaUm: 0.2, minSigmaPx: 1.0, spotGain: 1.1 },
     plot: {
       labels: { nucleus: "Nucleus", cellbody: "Cell body", peduncle: "Peduncle", lobes: "Lobes" },
       count: {

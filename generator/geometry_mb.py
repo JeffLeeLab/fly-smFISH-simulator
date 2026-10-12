@@ -259,6 +259,13 @@ def build(genotype: str, animal: int):
         x0, y0, x1, y1 = geom.bounds
         return [round(x0 - margin, 2), round(y0 - margin, 2), round(x1 + margin, 2), round(y1 + margin, 2)]
 
+    def box(at, w, h):   # a reading zoom: about a dozen cell bodies, or the heel where the lobes meet
+        x, y = at
+        return [round(x - w / 2, 2), round(y - h / 2, 2), round(x + w / 2, 2), round(y + h / 2, 2)]
+
+    lobes_all = unary_union(list(lobe_union.values()))
+    heel = lobes_all.intersection(peduncle.buffer(30)).centroid
+
     everything = unary_union([somata, calyx, peduncle, *lobe_union.values()])
     public = {
         "case": "mb",
@@ -285,10 +292,10 @@ def build(genotype: str, animal: int):
         },
         "views": {
             "nucleus": view(cells[0]["soma"], 2.0),
-            "cellbody": view(somata, 3.0),
+            "cellbody": box(somata.centroid.coords[0], 64, 48),
             "calyx": view(calyx, 3.0),
             "peduncle": view(peduncle, 3.0),
-            "lobes": view(unary_union(list(lobe_union.values())), 3.0),
+            "lobes": box((heel.x + 18, heel.y - 8), 96, 72),
             **{f"lobes_{k}": view(u, 3.0) for k, u in lobe_union.items()},
         },
     }
