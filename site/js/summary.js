@@ -7,6 +7,7 @@ import { MODES } from "./content.js";
 import { LIGHT } from "./export.js";
 import { slideMap } from "./map.js";
 import { BRAIN, BRAIN_BOX, NEURON_AT } from "./brain.js";
+import { MB_AT, MB_BIG, projector } from "./mbanatomy.js";
 
 const W = 1920, H = 1080;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -57,6 +58,21 @@ export const CASE_LOCATOR = {
     ${geo.cells.map(c => `<path d="${ringsD(c.nucleus)}" fill="${LIGHT.dapi}" fill-opacity=".55"/>`).join("")}`,
     bodies: geo => geo.cells.map(c => c.nucleus_centre),
   },
+  // the mushroom bodies from the front: the 30 simulated Kenyon cells (anatomy.json), drawn larger
+  // as in the descent; the schematic's calyx dashes give way to the real calyces
+  mb: {
+    at: MB_AT,
+    file: "anatomy.json",
+    brain: BRAIN.slice(0, 6),
+    neurons: (A, sw) => {
+      const p = projector(A)(0), k = MB_BIG;
+      const xy = q => p(q).map(v => (v * k).toFixed(2)).join(",");
+      return `<g fill="none" stroke="${LIGHT.mem}" stroke-width="${sw(1.1)}" stroke-opacity=".8" stroke-linecap="round" stroke-linejoin="round">
+        ${A.cells.flatMap(c => c.paths).map(path => `<path d="M${path.filter((_, i) => i % 2 === 0 || i === path.length - 1).map(xy).join("L")}"/>`).join("")}</g>
+        ${A.cells.map(c => { const [x, y] = p(c.soma); return `<circle cx="${(x * k).toFixed(2)}" cy="${(y * k).toFixed(2)}" r="${(4.4 * k).toFixed(2)}" fill="${LIGHT.mem}" fill-opacity=".55"/>`; }).join("")}`;
+    },
+    bodies: A => { const p = projector(A)(0); return A.cells.map(c => p(c.soma).map(v => v * MB_BIG)); },
+  },
 };
 
 // The locator, the step 2 descent in one picture: the fly from the front with its head ringed,
@@ -82,10 +98,10 @@ function locator({ fly, geo, cells, right, top, loc }) {
   }
   out.push(`<rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" fill="${P.bg}" stroke="${P.border}" stroke-width="2"/>`);
   const sw = w => w / kb;
-  const brain = BRAIN.map(([d, kind]) => kind === "line"
+  const brain = (loc?.brain || BRAIN).map(([d, kind]) => kind === "line"
     ? `<path d="${d}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.6)}" stroke-linecap="round"/>`
     : `<path d="${d}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.1)}" stroke-dasharray="${sw(3)} ${sw(3)}" stroke-opacity=".7"/>`).join("");
-  if (!loc) {   // a case without a locator entry: the fly and the empty brain
+  if (!loc || !geo) {   // a case without a locator entry (or its data): the fly and the empty brain
     out.push(`<g transform="translate(${bx} ${by}) scale(${kb})">${brain}</g>`);
     return out.join("");
   }

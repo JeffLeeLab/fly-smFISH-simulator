@@ -23,6 +23,7 @@ import { loadFlySprite } from "../fly.js";
 import { BRAIN } from "../brain.js";
 import { handOff, takeHandOff } from "../handoff.js";
 import { odourDefs } from "../tmaze.js";
+import { MB_AT, MB_BIG, projector } from "../mbanatomy.js";
 
 const DUR = 14;
 const FLY_K = 10;                              // µm per fly-sprite unit (life size)
@@ -33,8 +34,6 @@ const FLY_END = { x: 0, y: -FRONT_HEAD_Y * FLY_K };
 const STILL_T = 10.2;
 const HEAD_PARTS = new Set(["head", "eye"]);
 const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
-const MB_AT = { x: -100, y: -34 };             // the left mushroom body's own µm + this = brain µm
-const MB_BIG = 1.35;                           // drawn larger in the whole brain (about 40% of its width), true size once it turns
 const BRAIN_NO_CALYX = BRAIN.slice(0, 6);      // the schematic's calyx dashes give way to the real ones
 const REGIONS = [
   ["Central brain", [0, 70], [0, 196], "below"],
@@ -95,26 +94,6 @@ function paintField(canvas, imgs, frame, view, s) {
     ctx.drawImage(t, frame[0], frame[1], frame[2] - frame[0], frame[3] - frame[1]);
   }
   ctx.setTransform(1, 0, 0, 1, 0, 0);
-}
-
-// ---------- the 3D Kenyon cells: projection as in generator/connectome_mb.project ----------
-function projector(A) {
-  const [c0, c1, c2] = A.centre;
-  const { turn: mt, scale: ms, origin: [ox, oy] } = A.move;
-  // u: 0 (front view) → 1 (the viewer's oblique view); the animal's small turn and scale come in with it
-  return u => {
-    const a = (A.view.tilt * u) * Math.PI / 180, b = (A.view.turn * u) * Math.PI / 180;
-    const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
-    const th = (mt * u) * Math.PI / 180, ct = Math.cos(th), st = Math.sin(th), k = 1 + (ms - 1) * u;
-    return ([x, y, z]) => {
-      x -= c0; y -= c1; z -= c2;
-      // Ry(turn) then Rx(tilt): R = Rx @ Ry
-      const x1 = cb * x + sb * z, z1 = -sb * x + cb * z;
-      const y2 = ca * y - sa * z1;
-      const dx = x1 - ox, dy = y2 - oy;
-      return [ox + (ct * dx - st * dy) * k, oy + (st * dx + ct * dy) * k];
-    };
-  };
 }
 
 export async function mount(root, ctx) {
