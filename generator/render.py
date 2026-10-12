@@ -33,10 +33,11 @@ LAYERS = ("membrane", "dapi", "tdp43")
 # per fibre kind: the radius at which stamp() gives full brightness, and the membrane layer's gain
 FIBRE_CORE = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}
 FIBRE_GAIN = {"axon": 0.9, "neurite": 0.85, "terminal": 1.0, "fine": 1.0}
-# PLACEHOLDER levels for skel["regions"] (filled neuropil shapes: a flat fill, no texture yet),
-# as fractions of a full-brightness fibre in the membrane layer and of the neurite level in TDP-43
-REGION_MEMBRANE = 0.45
-REGION_TDP43 = 1.0
+# neuropil (mushroom body): a dim fill under the Kenyon cells' own processes, which run as fine
+# bright streaks along the bundles (reference pack, p. 11); as fractions of a full-brightness fibre
+NEUROPIL_FILL = 0.2
+NEUROPIL_STREAKS = 0.85
+NEUROPIL_TDP43 = 1.0         # diffuse TDP-43 in the neuropil, as a fraction of the neurite level
 BIG_CASE_CELLS = 8           # beyond this many cells, per-cell textures are made in a window
 WINDOW_UM = 3.0              # margin around a cell in its window
 
@@ -142,6 +143,29 @@ def stamp(layer, cv, f, core_r):
         np.maximum(layer[r0:r1, c0:c1], disc, out=layer[r0:r1, c0:c1])
 
 
+def neuropil(cv, n):
+    """A neuropil's mask (one shape, so its regions show no seams) and its streaks: the Kenyon
+    cells' processes summed into the image (sampled every 0.08 µm, each cell at its own
+    brightness), so where more of them run together the bundle is brighter, then blurred to
+    membrane width and scaled so the dense bundles reach about 1."""
+    base = mask(cv, n["shape"], 0.3)
+    seg, shine = n["segments"], n["shine"]
+    d = seg[:, 1] - seg[:, 0]
+    k = np.ceil(np.hypot(d[:, 0], d[:, 1]) / 0.08).astype(int) + 1
+    idx = np.repeat(np.arange(len(seg)), k)
+    t = (np.arange(k.sum()) - np.repeat(np.cumsum(k) - k, k)) / np.repeat(k, k)
+    pts = seg[idx, 0] + d[idx] * t[:, None]
+    I, J = cv.px(pts[:, 0], pts[:, 1])
+    I, J = I.astype(int), J.astype(int)
+    ok = (I >= 0) & (I < cv.w) & (J >= 0) & (J < cv.h)
+    acc = cv.zeros()
+    np.add.at(acc, (J[ok], I[ok]), shine[idx][ok] / k[idx][ok] * np.hypot(d[idx, 0], d[idx, 1])[ok])
+    streaks = blur(acc, 0.1 * RES)
+    inside = streaks[base > 0.5]
+    streaks /= (np.percentile(inside, 98) if inside.size else 1.0) + 1e-9
+    return base, np.clip(streaks, 0, 1.2) * base
+
+
 def uneven(cv, rng, lo, hi, scale_um=5.0):
     """Smooth multiplicative field: uneven labelling across the tissue."""
     f = blur(rng.standard_normal((cv.h, cv.w)).astype(np.float32), scale_um * cv.res)
@@ -166,8 +190,9 @@ def membrane(whole, skel, rng):
         layer[:] = 0
         stamp(layer, cv, f, FIBRE_CORE[f["kind"]])
         np.maximum(out, layer * FIBRE_GAIN[f["kind"]], out=out)
-    for r in skel.get("regions", []):  # placeholder neuropil fill (see REGION_MEMBRANE)
-        np.maximum(out, mask(cv, r["shape"]) * REGION_MEMBRANE, out=out)
+    if "neuropil" in skel:
+        base, streaks = neuropil(cv, skel["neuropil"])
+        np.maximum(out, base * (NEUROPIL_FILL + NEUROPIL_STREAKS * streaks), out=out)
     # membrane label is cloudy, not even: mottle the processes at fine and medium scales
     out *= uneven(cv, rng, 0.42, 1.1, scale_um=0.3) * uneven(cv, rng, 0.6, 1.06, scale_um=1.2)
     for c in skel["cells"]:
@@ -244,8 +269,9 @@ def tdp43(cv, skel, levels, neurite_level, rng):
         layer[:] = 0
         stamp(layer, cv, {**f, "b": 1.0, "v": np.ones_like(f["v"])}, FIBRE_CORE[f["kind"]])
         np.maximum(fill, layer, out=fill)
-    for r in skel.get("regions", []):  # placeholder neuropil fill (see REGION_TDP43)
-        np.maximum(fill, mask(cv, r["shape"]) * REGION_TDP43, out=fill)
+    if "neuropil" in skel:
+        base, streaks = neuropil(cv, skel["neuropil"])
+        np.maximum(fill, base * NEUROPIL_TDP43 * (0.75 + 0.35 * streaks), out=fill)
     level = neurite_level * float(np.mean(levels["cytoplasmic"]))
     fill *= level * 0.8 * uneven(cv, rng, 0.7, 1.1, scale_um=0.4)
     somata = sum(mask(cv, c["soma"]) for c in skel["cells"])

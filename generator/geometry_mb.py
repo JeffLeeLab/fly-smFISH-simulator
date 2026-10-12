@@ -1,5 +1,6 @@
 """Mushroom body geometry (Kenyon cells), one per genotype and animal, in µm:
-site/data/mb/geometry-<genotype>-<animal>.json.
+site/data/mb/geometry-<genotype>-<animal>.json, and site/data/mb/anatomy.json (the simulated
+Kenyon cells in 3D, for the descent's turn into this view).
 
 Connectome-assisted (spec, *Geometry references*). The MaleCNS v0.9 Kenyon cells fetched by
 generator.connectome_mb (one hemisphere, 150 per lobe system, 10 of them the simulated cells)
@@ -139,6 +140,21 @@ def outlines(tilt, turn):
     return shapes, [(c["class"], tuple(s)) for c, s in zip(sim, somata)]
 
 
+@lru_cache(maxsize=None)
+def neuropil_segments(tilt, turn):
+    """Every Kenyon cell's processes in the neuropil (calyx, peduncle, lobes; not the soma
+    tracts), projected: segments (n, 2, 2) in µm and the index of the cell each belongs to."""
+    cells, centre = connectome()
+    segs, owner = [], []
+    for k, c in enumerate(cells):
+        v, e = np.asarray(c["vertices"]), np.asarray(c["edges"])
+        lab = label(v, c["class"])
+        keep = (lab[e[:, 0]] == lab[e[:, 1]]) & (lab[e[:, 0]] != "tract")
+        segs.append(project(v, tilt, turn, centre)[e[keep]])
+        owner.append(np.full(int(keep.sum()), k))
+    return np.concatenate(segs).astype(np.float32), np.concatenate(owner)
+
+
 def regions_at(tilt, turn):
     """The compartments at one view: lobes per lobe system (with their parts), the peduncle
     clear of the lobes, the calyx clear of the peduncle."""
@@ -229,6 +245,14 @@ def build(genotype: str, animal: int):
     somata = unary_union([c["soma"] for c in cells])
     calyx = calyx.difference(somata.buffer(0.4))
     fibres = [tract(c, calyx, rng) for c in cells]
+    # the neuropil's texture: every Kenyon cell's processes, moved with the animal, each cell at
+    # its own brightness (the label is uneven from cell to cell)
+    segs, owner = neuropil_segments(*VIEW)
+    th = math.radians(turn)
+    o = np.array(origin, np.float32)
+    rot = np.array([[math.cos(th), -math.sin(th)], [math.sin(th), math.cos(th)]], np.float32)
+    segs = o + ((segs - o) @ rot.T) * scale
+    shine = rng.uniform(0.45, 1.0, owner.max() + 1)[owner].astype(np.float32)
     cyto = [c["soma"].difference(c["nucleus"]) for c in cells]
 
     def view(geom, margin):
@@ -268,11 +292,69 @@ def build(genotype: str, animal: int):
             **{f"lobes_{k}": view(u, 3.0) for k, u in lobe_union.items()},
         },
     }
-    skeleton = {"cells": cells, "fibres": fibres,
+    skeleton = {"cells": cells, "fibres": fibres, "move": {"turn": turn, "scale": scale, "origin": origin},
+                "neuropil": {"shape": unary_union([calyx, peduncle, *lobe_union.values()]).buffer(0.35), "segments": segs, "shine": shine},
                 "regions": [{"name": "calyx", "shape": calyx, "kind": "neuropil"},
                             {"name": "peduncle", "shape": peduncle, "kind": "neuropil"},
                             *[{"name": p, "shape": s, "kind": "neuropil"} for parts in lobes.values() for p, s in parts.items()]]}
     return public, skeleton
+
+
+# ---------- the descent's 3D Kenyon cells (site/data/mb/anatomy.json) ----------
+
+def paths_of(c):
+    """A Kenyon cell's paths from its soma to its lobe tips: the farthest vertical-lobe tip and
+    the farthest horizontal-lobe tip (γ cells have only the horizontal one), resampled every 2 µm."""
+    v, e = np.asarray(c["vertices"]), np.asarray(c["edges"])
+    lab = label(v, c["class"])
+    nbr = [[] for _ in v]
+    for i, j in e:
+        nbr[i].append(j)
+        nbr[j].append(i)
+    root = int(np.argmin(np.linalg.norm(v - np.asarray(c["soma"]), axis=1)))
+    dist, parent, queue = {root: 0.0}, {root: -1}, [root]
+    for i in queue:   # breadth-first; the skeleton is a tree, so this is the geodesic tree
+        for j in nbr[i]:
+            if j not in dist:
+                dist[j] = dist[i] + float(np.linalg.norm(v[j] - v[i]))
+                parent[j] = i
+                queue.append(j)
+    parts = LOBE_PARTS[c["class"]]
+    out = []
+    for part in parts:
+        ends = [i for i in dist if lab[i] == part]
+        if not ends:
+            continue
+        tip = max(ends, key=lambda i: dist[i])
+        chain = [tip]
+        while parent[chain[-1]] != -1:
+            chain.append(parent[chain[-1]])
+        pts = np.vstack([np.asarray(c["soma"]), v[chain[::-1]]])
+        seg = np.r_[0, np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))]
+        at = np.arange(0, seg[-1], 2.0)
+        out.append(np.c_[[np.interp(at, seg, pts[:, k]) for k in range(3)]].T)
+    return out
+
+
+def anatomy(view_skeleton):
+    """The simulated cells in 3D (µm, about the connectome's centre) with their final places in
+    the viewer's opening geometry (control, animal 1), so the descent can turn them from the
+    front view into exactly the frame the viewer opens on."""
+    cells, centre = connectome()
+    sim = [c for c in cells if c["simulated"]]
+    mv = view_skeleton["move"]
+    return {
+        "note": "MaleCNS v0.9 Kenyon cells (the 30 simulated), for the descent: project with Rx(tilt) @ Ry(turn) about `centre`, then rotate by move.turn degrees and scale by move.scale about move.origin to land on geometry-control-1.json at the view.",
+        "view": {"tilt": VIEW[0], "turn": VIEW[1]},
+        "centre": np.round(centre, 3).tolist(),
+        "move": {"turn": round(mv["turn"], 4), "scale": round(mv["scale"], 5), "origin": [round(x, 3) for x in mv["origin"]]},
+        "cells": [{
+            "class": c["class"],
+            "soma": np.round(np.asarray(c["soma"]), 2).tolist(),
+            "at": [round(float(x), 3) for x in vc["centre"]],
+            "paths": [np.round(p, 2).tolist() for p in paths_of(c)],
+        } for c, vc in zip(sim, view_skeleton["cells"])],
+    }
 
 
 # ---------- the compartment sketch (for the instructor's annotation) ----------
@@ -336,6 +418,9 @@ def main(argv) -> int:
         print(f"wrote {path.name}: {len(public['cells'])} cells, calyx {r['calyx']['area_um2']} µm², "
               f"peduncle {r['peduncle']['area_um2']} µm², lobes {[l['area_um2'] for l in r['lobes'].values()]}")
     print(f"frame {frame} ({frame[2] - frame[0]} × {frame[3] - frame[1]} µm)")
+    a = anatomy(built[("control", 1)][1])
+    (SITE_DATA / "mb" / "anatomy.json").write_text(json.dumps(a, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(f"wrote anatomy.json: {len(a['cells'])} cells, {sum(len(c['paths']) for c in a['cells'])} paths")
     return 0
 
 
