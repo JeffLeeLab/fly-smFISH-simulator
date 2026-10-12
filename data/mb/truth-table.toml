@@ -7,8 +7,10 @@
 # docs/transcript_models_R6.json, into data/mb/truth-table.json (every single probe and all
 # 56 ordered pairs) and data/mb/truth-table.md (the readable version to sign off).
 #
-# DRAFT: a first pass written from the prose truth table, the coverage row and the simulation
-# parameters in the spec. Nothing here has been signed off; the science owner revises it.
+# Written from the prose truth table, the coverage row and the simulation parameters in the
+# spec; signed off by the instructor after reading truth-table.md on 2026-10-12. The same day the
+# instructor moved the heel (the horizontal lobes' stretch next to the peduncle) from the lobes to
+# the peduncle, which students call the axon bundle; the per-cell counts below are unchanged.
 #
 # Unlike the Pdf case, the mutant does not scale every isoform alike. The isoforms fall into two
 # groups with their own production change and their own localisation, so every expectation is
@@ -17,9 +19,9 @@
 
 case = "mb"
 gene = "unc-13"
-status = "draft"
-signed_off_by = ""
-signed_off_on = ""
+status = "signed-off"
+signed_off_by = "Jeff Lee (instructor)"
+signed_off_on = "2026-10-12"
 
 # The coverage row for this case (spec, *Coverage*).
 [verdicts]

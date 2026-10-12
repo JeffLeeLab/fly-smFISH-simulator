@@ -4,10 +4,10 @@
 //   K 0–2      a WT fly leaves the MCH arm of the T-maze and turns to face us (side → front view)
 //   L 2–4.5    the camera pushes into its head, which turns see-through; the paper greys
 //   M 4.5–7.5  the brain draws on (front view); the mushroom bodies grow in membrane blue on both
-//              sides, from the cell bodies through the calyx and down the peduncle into the lobes
+//              sides, from the cell bodies through the calyx and along the axon bundle into the lobes
 //   N 7.5–10.5 the right one goes; the left one turns from the front view into the viewer's oblique
 //              view (a true 3D rotation of the 30 simulated Kenyon cells, anatomy.json) while the
-//              camera closes in; cell bodies, peduncle and lobes are named; paper → charcoal
+//              camera closes in; cell bodies, axon bundle and lobes are named; paper → charcoal
 //   O 10.5–14  the outline settles where the viewer will open; black; the mutant's slides in on the
 //              right and the microscope images come up under the outlines (matched swap)
 //
@@ -47,7 +47,7 @@ const CAPTIONS = [
   [2.3, "Into its head."],
   [4.8, "Inside the head: the brain."],
   [6.2, "In blue, the mushroom bodies, a centre for learning and memory, on both sides of the brain."],
-  [7.8, "About 2,000 Kenyon cells on each side; we follow 30. Their axons run down the peduncle into the lobes."],
+  [7.8, "About 2,000 Kenyon cells on each side; we follow 30. Their axons run in one bundle to the lobes."],
   [10.8, "This is what you will look at under the microscope."],
   [12.4, "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)."],
 ];
@@ -107,7 +107,7 @@ export async function mount(root, ctx) {
   const kc = A.cells.map(c => ({ ...c, len: c.paths.map(p => p.reduce((s, q, i) => s + (i ? Math.hypot(q[0] - p[i - 1][0], q[1] - p[i - 1][1], q[2] - p[i - 1][2]) : 0), 0)) }));
   const longest = Math.max(...kc.flatMap(c => c.len));
   const lead = [0, 1, 2].map(() => ({ k: 0 })), rlead = REGIONS.map(() => ({ k: 0 }));
-  const PARTS = ["Cell bodies (with their nuclei)", "Peduncle (axon bundle)", "Lobes (synapses)"];
+  const PARTS = ["Cell bodies (with their nuclei)", "Axon bundle (peduncle)", "Lobes (synapses)"];
 
   root.innerHTML = `
     <div class="descent-page">
@@ -122,7 +122,7 @@ export async function mount(root, ctx) {
                 <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
               <p class="descent__vbar">${ctx.case.anatomy?.projection || "Oblique maximum-intensity projection (simulated)"}</p>
             </div>
-            <svg class="descent__svg" role="img" aria-label="An hTDP-43 WT fly from the T-maze turns to face us; we push into its head, where the brain appears with the mushroom bodies in blue on both sides, growing from their cell bodies down the peduncle into the lobes. The left one turns to an oblique view while we close in on it: cell bodies, peduncle and lobes. It ends as two microscope fields: WT left, mutant right.">
+            <svg class="descent__svg" role="img" aria-label="An hTDP-43 WT fly from the T-maze turns to face us; we push into its head, where the brain appears with the mushroom bodies in blue on both sides, growing from their cell bodies along an axon bundle into the lobes. The left one turns to an oblique view while we close in on it: cell bodies, axon bundle and lobes. It ends as two microscope fields: WT left, mutant right.">
               <defs>
                 ${odourDefs("descent")}
                 <filter id="descent-boil" x="-5%" y="-5%" width="110%" height="110%">
@@ -161,8 +161,8 @@ export async function mount(root, ctx) {
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">Each mushroom body holds about 2,000 Kenyon cells. Their cell bodies sit in a cap at the back of the brain. Each cell sends a neurite into the calyx, where it receives input, and an axon down the peduncle into the lobes, where its synapses are. The lobes come in three systems (α/β, α′/β′ and γ), each made by its own Kenyon cells. This simulation follows 30 of them, 10 in each system, seen from an oblique angle so every part has its own space.</p>
-        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made in all Kenyon cells) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, peduncle and lobes. The calyx is drawn but not counted.</p>
+        <p class="t-story">Each mushroom body holds about 2,000 Kenyon cells. Their cell bodies sit in a cap at the back of the brain. Each cell sends out one neurite: it first branches into dendrites, where the cell receives its input, then runs on as an axon, bundled with all the others, to the lobes, where its synapses are. The lobes come in three systems (α/β, α′/β′ and γ), each made by its own Kenyon cells. This simulation follows 30 of them, 10 in each system, seen from an oblique angle so every part has its own space.</p>
+        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made in all Kenyon cells) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, axon bundle and lobes. The dendrites are drawn but not counted.</p>
         <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: the first clue</a></p>
       </div>
     </div>`;

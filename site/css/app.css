@@ -305,7 +305,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .nrn-fill { fill: var(--mem); fill-opacity: .42; stroke: var(--mem); stroke-width: calc(var(--px) * 1.2); }
 .nrn-nuc { fill: var(--dapi); fill-opacity: .55; }
 /* the mushroom body descent: the 30 Kenyon cells as live 3D paths, then the viewer's outline */
-.nrn-neuropil { fill: var(--mem); opacity: .3; }   /* one flat layer: overlapping lobe systems don't stack */
+.nrn-neuropil { fill: var(--mem); stroke: var(--mem); stroke-width: .8; opacity: .3; }   /* one flat layer: overlapping lobe systems don't stack; the stroke closes the 0.3 µm cuts between regions */
 .kc-path { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 1.1); stroke-opacity: .75; stroke-linecap: round; stroke-linejoin: round; }
 .kc-soma { fill: var(--mem); fill-opacity: .55; stroke: var(--mem); stroke-width: calc(var(--px) * 1); }
 .descent__svg .odour--descent { opacity: .35; }

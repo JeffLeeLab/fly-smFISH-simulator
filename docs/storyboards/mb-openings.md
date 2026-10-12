@@ -1,15 +1,15 @@
 # Storyboard: openings, mushroom body case (steps 1–2)
 
-Draft for the instructor's review, before any animation code (spec, *Openings* and *Motion principles*). Same format as the [Pdf storyboard](pdf-openings.md): each shot lists what is seen, its event and the camera, then its **reads**, the things the viewer must understand, in order, each with a start and end time. One read at a time; a shot is as long as its reads need. The hero (segment 1) is shared by all cases and is not repeated here.
+Signed off by the instructor on 2026-10-12: decisions 1–6 as proposed (spec, *Openings* and *Motion principles*). The same day the instructor named the peduncle the "axon bundle" for students: "Axon bundle (peduncle)" in the descent, "Axon bundle" everywhere after; the calyx is described as the dendrites and not labelled. Same format as the [Pdf storyboard](pdf-openings.md): each shot lists what is seen, its event and the camera, then its **reads**, the things the viewer must understand, in order, each with a start and end time. One read at a time; a shot is as long as its reads need. The hero (segment 1) is shared by all cases and is not repeated here.
 
-## Decisions (for sign-off)
+## Decisions (signed off 2026-10-12)
 
 1. **Assay view.** The T-maze is drawn front-on, as it stands on the bench: a vertical training tube above the choice point, and the T's two horizontal arms. The flies are then seen from the side, so the existing side-view walking drawings and the activity monitor's walk–pause model carry over, and no new fly drawings are needed. The landing station is redrawn to match (today's still shows the maze from above). *Alternative:* a top view, which needs new top-view walking drawings.
 2. **Training, compressed.** The real protocol is about 60 s of OCT with 12 shocks, 45 s of air, then 60 s of MCH. Proposal: one compressed cycle, OCT with three shock pulses, a breath of air, then MCH with none (*Simplified*). *Alternative:* the real 12 pulses as tick marks on a small timeline bar under the tube.
 3. **Odours and shocks without colour.** Colour belongs to the data, so the odours are ink textures: OCT a drifting stipple, MCH short wavy strokes. A shock is an ink zig-zag flashing along the grid, and the flies hop. Labels gloss the odours once: "OCT (3-octanol)", "MCH (4-methylcyclohexanol)".
-4. **The memory phenotype** (invented for this case; needs your sign-off). Proposal: tested a few minutes after training, the hTDP-43 WT flies mostly avoid OCT (8 of 10 in the MCH arm, performance index 0.6); the mutants remember less (6 of 10, index 0.2). Ten drawn flies per lane stand in for about 100 (*Simplified*); the reciprocal experiment (MCH shocked) is not shown. *Alternative:* mutants at chance (5 of 10, index 0.0), a starker read.
+4. **The memory phenotype** (invented for this case; signed off as proposed). tested a few minutes after training, the hTDP-43 WT flies mostly avoid OCT (8 of 10 in the MCH arm, performance index 0.6); the mutants remember less (6 of 10, index 0.2). Ten drawn flies per lane stand in for about 100 (*Simplified*); the reciprocal experiment (MCH shocked) is not shown. *Alternative:* mutants at chance (5 of 10, index 0.0), a starker read.
 5. **Which fly we enter.** Proposal: one hTDP-43 WT fly from the MCH arm (a fly that remembered) lifts out of the maze, as the Pdf descent lifts the WT fly from its tube.
-6. **The turn into the oblique view.** The viewer shows the mushroom body in an oblique view (about 35° down from the front, turned about 30° to the side), so the cell bodies, peduncle and lobes each have their own space. Proposal: the brain is drawn from the front as in the Pdf case; once it has faded, the mushroom body alone turns from the front view to the oblique view while the camera pushes in. The turn is a morph between projections of the same 3D outline (from the MaleCNS Kenyon cells), so it is true to the anatomy. *Alternative:* a cross-fade from the front view to the oblique view, with no turn.
+6. **The turn into the oblique view.** The viewer shows the mushroom body in an oblique view (about 35° down from the front, turned about 30° to the side), so the cell bodies, axon bundle (peduncle) and lobes each have their own space. Proposal: the brain is drawn from the front as in the Pdf case; once it has faded, the mushroom body alone turns from the front view to the oblique view while the camera pushes in. The turn is a morph between projections of the same 3D outline (from the MaleCNS Kenyon cells), so it is true to the anatomy. *Alternative:* a cross-fade from the front view to the oblique view, with no turn.
 
 ## Whole piece
 
@@ -69,7 +69,7 @@ Reduced motion: the finished counts and both performance indices, with the Next 
 
 ## 4 · Descent (`#/mb/step-2`), scroll-driven, 14 s at a steady scroll
 
-Scrubbing always gives the same frame. Compartment labels use the viewer's names and order (Nucleus, Cell body, Peduncle, Lobes), with glosses here only.
+Scrubbing always gives the same frame. Compartment labels use the viewer's names and order (Nucleus, Cell body, Axon bundle, Lobes), with glosses here only.
 
 ```
 K  0.0–2.0   [transition in: shared element, a WT fly from the MCH arm]  the maze wipes away
@@ -81,20 +81,20 @@ L  2.0–4.5   push-in on the head; the body turns semi-transparent; paper ivory
    reads:  2.3–4.3  we are going inside its head
 
 M  4.5–7.5   the brain outline draws on (front view, as in the Pdf case) with its region labels; then
-             both mushroom bodies grow in membrane blue, from the cell bodies down the peduncle into
-             the lobes; the right one and the brain's labels fade as the camera starts to push in
+             both mushroom bodies grow in membrane blue, from the cell bodies along the axon bundle
+             into the lobes; the right one and the brain's labels fade as the camera starts to push in
    reads:  4.8–6.2  the brain, inside the head
            6.2–7.5  these blue structures are the mushroom bodies
    caption: 6.2 "In blue, the mushroom bodies, a centre for learning and memory, on both sides of the brain."
 
 N  7.5–10.5  the brain outline fades; the left mushroom body turns from the front view to the oblique
              view while the camera closes in (decision 6); labels one at a time: "Cell bodies (with
-             their nuclei)", "Peduncle (axon bundle)", "Lobes (synapses)"; paper → charcoal; grain,
+             their nuclei)", "Axon bundle (peduncle)", "Lobes (synapses)"; paper → charcoal; grain,
              washes and boil fade out
    reads:  7.8–8.6  the cell bodies, where the nuclei are
-           8.6–9.4  the peduncle, the bundle of their axons
+           8.6–9.4  the axon bundle
            9.4–10.5 the lobes, where their synapses are
-   caption: 7.8 "About 2,000 Kenyon cells on each side; we follow 30. Their axons run down the peduncle into the lobes."
+   caption: 7.8 "About 2,000 Kenyon cells on each side; we follow 30. Their axons run in one bundle to the lobes."
 
 O  10.5–14.0 matched swap: the outline settles at the viewer's opening position and scale; paper →
              black; it moves to the left half and the mutant's mushroom body slides in on the right;

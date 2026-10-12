@@ -9,8 +9,10 @@ into outlines:
 - lobes: in front of the heel (z < 178 µm). Vertical lobes (α, α′) above y = 132 µm, horizontal
   lobes (β, β′) below; γ cells have only a horizontal lobe. Each lobe system's lobes come from its
   own cells, so the three systems overlap where they lie behind one another (a projection).
-- peduncle: a cylinder round its axis, from the heel to the calyx; calyx: an ellipsoid behind it;
-  everything else behind the lobes is soma tracts.
+- peduncle (the students' "axon bundle"): a cylinder round its axis, from the heel to the calyx,
+  plus the heel itself, the horizontal lobes' stretch left of the vertical lobes' base in this
+  view (instructor, 2026-10-12); calyx: an ellipsoid behind it; everything else behind the lobes
+  is soma tracts.
 - The view: tilt 35° (looking down from the front) and turn −30° (towards the side), so the cell
   bodies with the calyx, the peduncle, the vertical lobes and the horizontal lobes each have
   their own space (instructor, 2026-10-11). The lobes reach towards the midline on the right.
@@ -55,6 +57,10 @@ Z_LOBE = 178.0
 Y_VERTICAL = 132.0
 PEDUNCLE = (np.array([292.0, 152.0, 178.0]), np.array([298.0, 140.0, 248.0]), 14.0)   # axis from the heel to the calyx, radius
 CALYX = (np.array([300.0, 122.0, 266.0]), np.array([30.0, 30.0, 26.0]))  # ellipsoid centre, radii
+# the heel: the horizontal lobes' stretch left of the vertical lobes' base in this view is axon
+# bundle, not lobes (instructor, 2026-10-12): below a plane facing the view's x-axis, n·v < cut
+HEEL_N = np.array([math.cos(math.radians(VIEW[1])), 0.0, math.sin(math.radians(VIEW[1]))])
+HEEL_CUT = 183.9
 LOBE_PARTS = {"ab": ("alpha", "beta"), "apbp": ("alpha_prime", "beta_prime"), "g": ("gamma",)}
 
 RES = 2.0                         # px per µm for tracing outlines
@@ -84,6 +90,7 @@ def label(v, cls):
     near = np.linalg.norm(v - (a + u[:, None] * (b - a)), axis=1) <= rad
     lab[~lobe] = "tract"
     lab[~lobe & near & (z <= b[2])] = "peduncle"
+    lab[(lab == parts[-1]) & (v @ HEEL_N < HEEL_CUT)] = "peduncle"
     c, r = CALYX
     cal = ~lobe & ((((v - c) / r) ** 2).sum(axis=1) <= 1)
     lab[cal] = "calyx"
@@ -391,7 +398,7 @@ def sketch(path):
     for c in skel["cells"]:
         poly(c["soma"], ink[c["lobe_system"]] + (40,), (0, 0, 0, 200))
         poly(c["nucleus"], (255, 255, 255, 160), (0, 0, 0, 120))
-    labels = [("calyx", "Calyx (drawn, not counted)"), ("peduncle", "Peduncle")]
+    labels = [("calyx", "Calyx: dendrites (drawn, not counted)"), ("peduncle", "Axon bundle (peduncle)")]
     for name, text in labels:
         g = next(r["shape"] for r in skel["regions"] if r["name"] == name)
         c = g.representative_point()

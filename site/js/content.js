@@ -63,25 +63,27 @@ export const CASES = {
     cells: "Kenyon cells",
     phenotype: "Learning and memory",
     assay: "T-maze",
-    available: false,
+    available: true,
     target: {
       gene: "unc-13",
       orthologue: "UNC13A",
-      function: "A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, calyx, peduncle and lobes.",
+      function: "A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, dendrites, axons and the synapses in the lobes.",
       flybase: "https://flybase.org/reports/FBgn0025726",
       orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/23025",
     },
-    compartments: ["Nucleus", "Cell body", "Calyx", "Peduncle", "Lobes"],
-    // The calyx is simulated and drawn but never counted, plotted or offered as a fly-to.
+    compartments: ["Nucleus", "Cell body", "Dendrites", "Axon bundle", "Lobes"],
+    // The calyx (dendrites) is simulated and drawn but never counted, plotted or offered as a fly-to.
+    // Students meet the peduncle as the axon bundle; "peduncle" is named once, in step 2 (instructor,
+    // 2026-10-12). The ids stay anatomical.
     anatomy: {
       whole: "Whole mushroom body",
-      flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Peduncle"], ["lobes", "Lobes"]],
+      flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Axon bundle"], ["lobes", "Lobes"]],
       projection: "Oblique maximum-intensity projection (simulated)",
     },
     // larger and brighter than true size, so spots read like the Pdf case's in a structure three times its size
     display: { spotSigmaUm: 0.2, minSigmaPx: 1.0, spotGain: 1.1 },
     plot: {
-      labels: { nucleus: "Nucleus", cellbody: "Cell body", peduncle: "Peduncle", lobes: "Lobes" },
+      labels: { nucleus: "Nucleus", cellbody: "Cell body", peduncle: "Axon bundle", lobes: "Lobes" },
       count: {
         cats: [
           { id: "nucleus", sub: "cells", unit: "cells" },
@@ -89,12 +91,12 @@ export const CASES = {
           { id: "peduncle" },
           { id: "lobes", sub: "lobes", unit: "lobe systems" },
         ],
-        note: "Nucleus and cell body: per cell. Peduncle: per animal (all thirty cells). Lobes: per lobe system (ten cells each).",
+        note: "Nucleus and cell body: per cell. Axon bundle: per animal (all thirty cells). Lobes: per lobe system (ten cells each).",
       },
       distal: {
-        label: "Proportion in peduncle + lobes",
-        catLabel: "Peduncle + lobes",
-        note: "(Peduncle + lobes) / (cell body + peduncle + lobes).",
+        label: "Proportion in axon bundle + lobes",
+        catLabel: "Axon bundle + lobes",
+        note: "(Axon bundle + lobes) / (cell body + axon bundle + lobes).",
         fly: "lobes",
       },
       overlap: ["cellbody", "peduncle", "lobes"],
