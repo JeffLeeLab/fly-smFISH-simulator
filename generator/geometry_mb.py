@@ -1,249 +1,343 @@
-"""PLACEHOLDER mushroom body geometry, one per genotype and animal, in µm:
+"""Mushroom body geometry (Kenyon cells), one per genotype and animal, in µm:
 site/data/mb/geometry-<genotype>-<animal>.json.
 
-This is a crude stand-in with simple shapes, written so the pipeline (build, validate, render,
-viewer) can be tested before the real anatomy is drawn. It is not the real anatomy.
-- 30 Kenyon cell bodies: circles of radius 5 µm with concentric nuclei of radius 3 µm, packed in
-  a 6 × 5 hexagonal-ish grid (centre spacing 10.5 µm) above the calyx, with a small seeded
-  jitter (±0.3 µm) per animal. Ten cells per lobe system (ab, apbp, g), in id order.
-- A calyx (ellipse about 40 × 25 µm) just below the cell cluster.
-- A peduncle (10 µm band) running about 80 µm diagonally down-right from the calyx.
-- Lobes: vertical α (ab) and α′ (apbp) bands going up from the peduncle's end, and horizontal
-  β (ab), β′ (apbp) and γ (g) bands going right; each 10 µm wide.
+Connectome-assisted (spec, *Geometry references*). The MaleCNS v0.9 Kenyon cells fetched by
+generator.connectome_mb (one hemisphere, 150 per lobe system, 10 of them the simulated cells)
+are split into regions by their position, projected at the viewer's oblique angle and merged
+into outlines:
+- lobes: in front of the heel (z < 178 µm). Vertical lobes (α, α′) above y = 132 µm, horizontal
+  lobes (β, β′) below; γ cells have only a horizontal lobe. Each lobe system's lobes come from its
+  own cells, so the three systems overlap where they lie behind one another (a projection).
+- peduncle: a cylinder round its axis, from the heel to the calyx; calyx: an ellipsoid behind it;
+  everything else behind the lobes is soma tracts.
+- The view: tilt 35° (looking down from the front) and turn −30° (towards the side), so the cell
+  bodies with the calyx, the peduncle, the vertical lobes and the horizontal lobes each have
+  their own space (instructor, 2026-10-11). The lobes reach towards the midline on the right.
 
-Control and mutant share the same shapes; only the per-animal jitter differs between animals.
-Regions are carved so that they overlap neither each other nor any soma.
+Representative, not exact anatomy (simplification): 30 cell bodies (10 per lobe system) are drawn
+about 10 µm across (real Kenyon cell bodies are about 5 µm) and packed as a cap over the calyx,
+starting from their own projected positions; each sends a soma tract into the calyx. The calyx is
+drawn and simulated but never counted (instructor-only). Animals differ by a small rotation and
+scale and by their packing; the mutant's anatomy is the control's (no remodelling).
 
-x runs lateral → medial, y dorsal (top) → ventral (bottom), as on screen.
+The skeleton returned by build() drives the image renderer (generator/render.py): cells as in
+geometry_pdf, the soma tracts as fibres, and the neuropil regions.
 
-The skeleton (cell dicts and neuropil regions) is returned by build() for the image renderer
-(generator/render.py), with the same keys as geometry_pdf's skeleton where render.py reads them.
-
-    uv run python -m generator.geometry_mb
+    uv run python -m generator.geometry_mb            # the six geometry files
+    uv run python -m generator.geometry_mb --sketch docs/references/mb-compartment-sketch.png
 """
 
 import json
 import math
 import sys
+from functools import lru_cache
 
 import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+from scipy import ndimage as ndi
 from shapely import affinity
-from shapely.geometry import LineString, Point
+from shapely.geometry import MultiPolygon, Point, Polygon
 from shapely.ops import unary_union
+from skimage import measure
 
-from .geometry_pdf import as_multi, rounded
+from .connectome_mb import load, project
+from .geometry_pdf import as_multi, catmull, fibre, irregular, rounded, wobbly
 from .paths import SITE_DATA
 
-SEED = 20261012
+SEED = 20261013
 GENOTYPES = ("control", "mutant")
 ANIMALS = (1, 2, 3)
+VIEW = (35.0, -30.0)              # tilt, turn (degrees)
 
-SOMA_R = 5.0
-NUC_R = 3.0
-SPACING = 10.5                  # centre spacing of the cell grid, µm
-ROW_SPACING = SPACING * math.sqrt(3) / 2   # hexagonal rows
-JITTER = 0.3                    # per-axis jitter, µm
-MIN_CENTRE_DISTANCE = 10.0      # somata must not overlap after jitter
-BAND = 10.0                     # width of the peduncle and lobe bands, µm
+# region rules, in the connectome's µm (z runs front → back, y top → bottom, x lateral → medial)
+Z_LOBE = 178.0
+Y_VERTICAL = 132.0
+PEDUNCLE = (np.array([292.0, 152.0, 178.0]), np.array([298.0, 140.0, 248.0]), 14.0)   # axis from the heel to the calyx, radius
+CALYX = (np.array([300.0, 122.0, 266.0]), np.array([30.0, 30.0, 26.0]))  # ellipsoid centre, radii
+LOBE_PARTS = {"ab": ("alpha", "beta"), "apbp": ("alpha_prime", "beta_prime"), "g": ("gamma",)}
 
-CALYX_CENTRE = (0.0, 37.7)
-CALYX_SEMI = (20.0, 12.5)       # about 40 × 25 µm
-PEDUNCLE_LENGTH = 80.0          # along the 45° diagonal, down-right
-LOBE_LENGTH = 60.0              # vertical lobes: alpha, alpha_prime
-LOBE_RUN = 50.0                 # horizontal lobes: beta, beta_prime, gamma
-
-LOBE_SYSTEMS = ("ab", "apbp", "g")
-CELLS_PER_SYSTEM = 10
+RES = 2.0                         # px per µm for tracing outlines
+SOMA_R = 5.0                      # cell body radius (≈2× real)
+NUC_R = (2.7, 3.1)
+GAP = 0.7                         # between packed cell bodies
+TRACT_R = 0.38                    # soma tract radius
+WOBBLE = (2.0, 0.03)              # per animal: rotation (±°) and scale (±)
 
 
-# ---------- helpers ----------
-
-def ellipse(cx, cy, rx, ry):
-    return affinity.translate(affinity.scale(Point(0, 0).buffer(1.0, quad_segs=32), rx, ry), cx, cy)
+def rng_for(genotype, animal, stream):
+    return np.random.default_rng([SEED, GENOTYPES.index(genotype), animal, stream])
 
 
-def band(points, width=BAND):
-    """A straight band of the given width along a polyline, with flat ends."""
-    return LineString(points).buffer(width / 2, cap_style="flat", quad_segs=8)
+# ---------- the connectome: regions and outlines ----------
+
+def label(v, cls):
+    x, y, z = v[:, 0], v[:, 1], v[:, 2]
+    lab = np.full(len(v), "", dtype=object)
+    lobe = z < Z_LOBE
+    parts = LOBE_PARTS[cls]
+    lab[lobe] = parts[-1]
+    if len(parts) == 2:
+        lab[lobe & (y < Y_VERTICAL)] = parts[0]
+    a, b, rad = PEDUNCLE
+    u = np.clip((v - a) @ (b - a) / ((b - a) @ (b - a)), 0, 1)
+    near = np.linalg.norm(v - (a + u[:, None] * (b - a)), axis=1) <= rad
+    lab[~lobe] = "tract"
+    lab[~lobe & near & (z <= b[2])] = "peduncle"
+    c, r = CALYX
+    cal = ~lobe & ((((v - c) / r) ** 2).sum(axis=1) <= 1)
+    lab[cal] = "calyx"
+    return lab
 
 
-def view(geom, margin):
-    x0, y0, x1, y1 = geom.bounds
-    return [round(x0 - margin, 2), round(y0 - margin, 2), round(x1 + margin, 2), round(y1 + margin, 2)]
+@lru_cache(maxsize=None)
+def connectome():
+    cells = load()["cells"]
+    allv = np.vstack([np.asarray(c["vertices"]) for c in cells])
+    return cells, allv.mean(axis=0)
 
 
-def cell_centres(rng):
-    """30 centres in a 6 × 5 hexagonal-ish grid, row 0 dorsal; rows alternate a 5.25 µm offset.
-    The jitter is redrawn until no two somata touch (seeded, so the same every run)."""
-    base = []
-    for r in range(5):
-        shift = -SPACING / 4 if r % 2 == 0 else SPACING / 4
-        for c in range(6):
-            base.append(((c - 2.5) * SPACING + shift, (r - 2) * ROW_SPACING))
-    base = np.array(base)
-    for _ in range(1000):
-        pts = base + rng.uniform(-JITTER, JITTER, base.shape)
-        d = np.hypot(*(pts[:, None, :] - pts[None, :, :]).transpose(2, 0, 1))
-        np.fill_diagonal(d, np.inf)
-        if d.min() >= MIN_CENTRE_DISTANCE:
-            return [tuple(p) for p in pts]
-    raise AssertionError("could not jitter the cell grid without touching somata")
+def _trace(mask):
+    """A region's outline from its raster: close the gaps between fibres, drop strays, fill,
+    smooth, then trace the edge (µm, in the raster's frame)."""
+    disk = lambda r: (lambda yy, xx: xx * xx + yy * yy <= r * r)(*np.mgrid[-r:r + 1, -r:r + 1])
+    m = ndi.binary_closing(mask, disk(6))
+    m = ndi.binary_opening(m, disk(4))
+    m = ndi.binary_fill_holes(m)
+    lab, n = ndi.label(m)
+    if n > 1:
+        sizes = ndi.sum(m, lab, range(1, n + 1))
+        m = np.isin(lab, [i + 1 for i, s in enumerate(sizes) if s > 0.15 * sizes.max()])
+    m = ndi.gaussian_filter(m.astype(float), 1.5) > 0.5
+    polys = [Polygon(np.c_[cc[:, 1], cc[:, 0]] - 1) for cc in measure.find_contours(np.pad(m, 1).astype(float), 0.5)]
+    return unary_union([p.buffer(0) for p in polys if len(p.exterior.coords) > 8 and p.area > 16])
 
 
-# ---------- parts ----------
+@lru_cache(maxsize=None)
+def outlines(tilt, turn):
+    """Every region's outline (shapely, µm, centred on the mushroom body) at one view, and the
+    simulated cells' projected soma positions with their lobe systems."""
+    cells, centre = connectome()
+    proj = [project(np.asarray(c["vertices"]), tilt, turn, centre) for c in cells]
+    lo = np.min([p.min(axis=0) for p in proj], axis=0) - 12
+    hi = np.max([p.max(axis=0) for p in proj], axis=0) + 12
+    W, H = (np.ceil((hi - lo) * RES)).astype(int)
+    canvases = {}
+    for c, p in zip(cells, proj):
+        lab = label(np.asarray(c["vertices"]), c["class"])
+        q = (p - lo) * RES
+        for i, j in c["edges"]:
+            if lab[i] != lab[j] or lab[i] == "tract":
+                continue
+            img = canvases.setdefault(lab[i], Image.new("L", (int(W), int(H)), 0))
+            ImageDraw.Draw(img).line([tuple(q[i]), tuple(q[j])], fill=255, width=3)
+    shapes = {}
+    for name, img in canvases.items():
+        g = _trace(np.asarray(img) > 0)
+        shapes[name] = affinity.affine_transform(g, [1 / RES, 0, 0, 1 / RES, lo[0], lo[1]]).simplify(0.25)
+    sim = [c for c in cells if c["simulated"]]
+    somata = project(np.array([c["soma"] for c in sim]), tilt, turn, centre)
+    return shapes, [(c["class"], tuple(s)) for c, s in zip(sim, somata)]
 
-def build_cells(rng):
-    centres = cell_centres(rng)
+
+def regions_at(tilt, turn):
+    """The compartments at one view: lobes per lobe system (with their parts), the peduncle
+    clear of the lobes, the calyx clear of the peduncle."""
+    shapes, somata = outlines(tilt, turn)
+    lobes = {sys_: {p: shapes[p] for p in parts} for sys_, parts in LOBE_PARTS.items()}
+    all_lobes = unary_union([s for parts in lobes.values() for s in parts.values()])
+    peduncle = shapes["peduncle"].difference(all_lobes.buffer(0.3))
+    calyx = shapes["calyx"].difference(peduncle.buffer(0.3))
+    return {"calyx": calyx, "peduncle": peduncle, "lobes": lobes}, somata
+
+
+# ---------- cell bodies ----------
+
+def pack(seeds, avoid, calyx, rng, iters=400):
+    """Cell bodies as a cap over the calyx: start from the cells' own projected positions (plus
+    a little jitter), then push apart until none overlap, none sit on the peduncle or lobes, and
+    each overlaps the calyx by at most a sliver."""
+    c0 = np.array(calyx.centroid.coords[0])
+    P = c0 + (np.array(seeds, float) - c0) * 0.7 + rng.normal(0, 0.8, (len(seeds), 2))   # a compact cap
+    D = 2 * SOMA_R + GAP
+    for _ in range(iters):
+        moved = 0.0
+        d = P[:, None, :] - P[None, :, :]
+        dist = np.hypot(d[..., 0], d[..., 1]) + np.eye(len(P)) * 1e9
+        push = np.clip(D - dist, 0, None)[..., None] * d / dist[..., None] * 0.5
+        P += push.sum(axis=1)
+        moved += np.abs(push).sum()
+        for i, p in enumerate(P):
+            pt = Point(*p)
+            for geom, keep in ((calyx, SOMA_R * 0.75), (avoid, SOMA_R + GAP)):
+                inside = geom.buffer(keep - SOMA_R).contains(pt) if geom is calyx else geom.distance(pt) < keep
+                if inside:
+                    away = p - (c0 if geom is calyx else np.array(geom.centroid.coords[0]))
+                    P[i] += away / (np.hypot(*away) + 1e-9) * 0.6
+                    moved += 0.6
+        if moved < 1e-3:
+            break
+    return P
+
+
+def make_cells(centres, systems, calyx, rng):
     cells = []
-    for i, (cx, cy) in enumerate(centres):
-        soma = Point(cx, cy).buffer(SOMA_R, quad_segs=32)
-        nucleus = Point(cx, cy).buffer(NUC_R, quad_segs=32)
-        system = LOBE_SYSTEMS[i // CELLS_PER_SYSTEM]
-        cells.append({"id": i + 1, "lobe_system": system, "soma": soma, "nucleus": nucleus,
-                      "centre": (cx, cy), "R": SOMA_R,
-                      # nucleolus and chromocentres sit at the centre, as render.py expects
-                      "nucleolus": ((cx, cy), 0.8),
-                      "chromocentres": [((cx + 1.0, cy - 0.5), 0.4), ((cx - 0.9, cy + 0.9), 0.4)],
-                      "brightness": float(rng.uniform(0.9, 1.1))})
+    c0 = np.array(calyx.centroid.coords[0])
+    for i, (c, sys_) in enumerate(zip(centres, systems)):
+        soma = wobbly(c[0], c[1], SOMA_R * rng.uniform(0.94, 1.04), rng, amps=(0.06, 0.04, 0.03, 0.02))
+        rn = rng.uniform(*NUC_R)
+        toward = (c0 - c) / (np.hypot(*(c0 - c)) + 1e-9)
+        nc = c - toward * rng.uniform(0.2, 0.6) + rng.normal(0, 0.25, 2)
+        nuc = affinity.rotate(affinity.scale(wobbly(nc[0], nc[1], rn, rng, amps=(0.03, 0.02, 0.01)), rng.uniform(1.0, 1.08), rng.uniform(0.92, 1.0)),
+                              rng.uniform(0, 180), origin=(nc[0], nc[1]))
+        nuc = nuc.intersection(soma.buffer(-0.9))
+        cells.append({"id": i + 1, "lobe_system": sys_, "soma": soma, "nucleus": nuc, "centre": c, "R": SOMA_R,
+                      "exit": toward,
+                      "nucleolus": (nc + rng.uniform(-0.6, 0.6, 2), rng.uniform(0.55, 0.8)),
+                      "chromocentres": [(nc + rng.uniform(-1.2, 1.2, 2), rng.uniform(0.3, 0.42)) for _ in range(rng.integers(1, 3))],
+                      "brightness": float(rng.uniform(0.82, 1.12))})
     return cells
 
 
-def build_regions():
-    """Calyx, peduncle and lobe parts, before carving against each other and the somata."""
-    calyx = ellipse(*CALYX_CENTRE, *CALYX_SEMI)
-    end = (CALYX_CENTRE[0] + PEDUNCLE_LENGTH / math.sqrt(2), CALYX_CENTRE[1] + PEDUNCLE_LENGTH / math.sqrt(2))
-    peduncle = band([CALYX_CENTRE, end])
-    ex, ey = end
-    # α and β meet at an L; α′ and β′ meet at a second L to the right of α; γ runs right beneath
-    # the junction. The lobe bands are carved against the peduncle and calyx below.
-    alpha = band([(ex - 10, 127.0), (ex - 10, ey - LOBE_LENGTH)])
-    beta = band([(ex - 10, 127.0), (ex - 10 + LOBE_RUN, 127.0)])
-    alpha_p = band([(ex + 10, 112.0), (ex + 10, ey - LOBE_LENGTH)])
-    beta_p = band([(ex + 10, 112.0), (ex + 10 + LOBE_RUN, 112.0)])
-    gamma = band([(ex + 17.5, ey), (ex + 17.5 + LOBE_RUN, ey)])
-    parts = {"alpha": alpha, "beta": beta, "alpha_prime": alpha_p, "beta_prime": beta_p, "gamma": gamma}
-    return calyx, peduncle, parts
+def tract(cell, calyx, rng):
+    """A soma tract: from the cell body into the calyx, bending a little on the way."""
+    a = np.array(cell["centre"]) + cell["exit"] * SOMA_R * 0.9
+    target = np.array(calyx.centroid.coords[0])
+    d = target - a
+    L = np.hypot(*d)
+    end = a + d / L * min(L, Point(*a).distance(calyx) + rng.uniform(3, 7))
+    mid = (a + end) / 2 + np.array([-d[1], d[0]]) / L * rng.uniform(-2.5, 2.5)
+    xy = catmull(np.array([a, mid, end]), max(20, int(5 * L)))   # about 0.1 µm apart, as the renderer stamps
+    s = np.r_[0, np.cumsum(np.hypot(*np.diff(xy, axis=0).T))]
+    return fibre(xy, s, irregular(s, rng, TRACT_R, var=0.25, swell=(0.1, 0.3), r_min=0.2), float(rng.uniform(0.75, 1.0)), "fine")
 
 
-GAP = 0.05                      # µm kept between neighbouring regions, so rounding in the JSON cannot overlap them
-
-
-def carve(raw, taken):
-    shape = raw
-    for t in taken:
-        shape = shape.difference(t.buffer(GAP))
-    return as_multi(shape)
-
-
-# ---------- assembly ----------
+# ---------- one animal ----------
 
 def build(genotype: str, animal: int):
-    """(public, skeleton) for one genotype and animal. The genotype only names the file: the
-    shapes are shared, and the jitter is seeded by the animal."""
-    assert genotype in GENOTYPES and animal in ANIMALS
-    rng = np.random.default_rng([SEED, animal])
-    cells = build_cells(rng)
+    rng = rng_for(genotype, animal, 0)
+    (regions, seeds) = regions_at(*VIEW)
+    every = unary_union([regions["calyx"], regions["peduncle"], *[s for p in regions["lobes"].values() for s in p.values()]])
+    origin = tuple(every.centroid.coords[0])
+    turn, scale = rng.uniform(-WOBBLE[0], WOBBLE[0]), 1 + rng.uniform(-WOBBLE[1], WOBBLE[1])
+    move = lambda g: affinity.scale(affinity.rotate(g, turn, origin=origin), scale, scale, origin=origin)
+    calyx, peduncle = move(regions["calyx"]), move(regions["peduncle"])
+    lobes = {k: {p: move(s) for p, s in parts.items()} for k, parts in regions["lobes"].items()}
+    lobe_union = {k: unary_union(list(parts.values())) for k, parts in lobes.items()}
+    pts = np.array([np.array(move(Point(*xy)).coords[0]) for _, xy in seeds])
+    centres = pack(pts, unary_union([peduncle, *lobe_union.values()]), calyx, rng)
+    cells = make_cells(centres, [k for k, _ in seeds], calyx, rng)
     somata = unary_union([c["soma"] for c in cells])
+    calyx = calyx.difference(somata.buffer(0.4))
+    fibres = [tract(c, calyx, rng) for c in cells]
+    cyto = [c["soma"].difference(c["nucleus"]) for c in cells]
 
-    calyx_raw, peduncle_raw, parts_raw = build_regions()
-    calyx = carve(calyx_raw, [somata])
-    peduncle = carve(peduncle_raw, [somata, calyx])
-    taken = [somata, calyx, peduncle]
-    parts = {}
-    for name, raw in parts_raw.items():
-        parts[name] = carve(raw, taken)
-        taken.append(parts[name])
-    for name, shape in parts.items():
-        assert not shape.is_empty, f"lobe part {name} is empty"
-    lobes = {
-        "ab": {"parts": {"alpha": parts["alpha"], "beta": parts["beta"]}},
-        "apbp": {"parts": {"alpha_prime": parts["alpha_prime"], "beta_prime": parts["beta_prime"]}},
-        "g": {"parts": {"gamma": parts["gamma"]}},
-    }
-    for sysname, lobe in lobes.items():
-        lobe["shape"] = unary_union(list(lobe["parts"].values())).buffer(0)
+    def view(geom, margin):
+        x0, y0, x1, y1 = geom.bounds
+        return [round(x0 - margin, 2), round(y0 - margin, 2), round(x1 + margin, 2), round(y1 + margin, 2)]
 
-    # no overlaps between regions, or between regions and somata
-    named = [("calyx", calyx), ("peduncle", peduncle)] + [(f"part {k}", v) for k, v in parts.items()]
-    named += [(f"soma {c['id']}", c["soma"]) for c in cells]
-    for i, (na, a) in enumerate(named):
-        for nb, b in named[i + 1:]:
-            if na.startswith("soma") and nb.startswith("soma"):
-                continue
-            assert a.intersection(b).area < 1e-4, f"{na} overlaps {nb}"
-
-    everything = unary_union([somata, calyx, peduncle] + [v for v in parts.values()])
-    lobes_all = unary_union(list(parts.values()))
-    margin = 3.0
-
+    everything = unary_union([somata, calyx, peduncle, *lobe_union.values()])
     public = {
         "case": "mb",
         "genotype": genotype,
         "animal": animal,
         "units": "µm",
-        "note": "Placeholder mushroom body geometry for pipeline tests; not the real anatomy.",
+        "note": "Representative mushroom body geometry from MaleCNS Kenyon cells, oblique view: cell bodies enlarged; the calyx is drawn but not counted. Shared by the generator and the viewer.",
         "bounds": view(everything, 4.0),
-        "frame": None,  # set by main(), one frame for all six files
         "cells": [
             {
                 "id": c["id"],
                 "lobe_system": c["lobe_system"],
                 "nucleus": rounded(c["nucleus"]),
-                "nucleus_centre": [round(c["centre"][0], 3), round(c["centre"][1], 3)],
-                "cytoplasm": rounded(c["soma"].difference(c["nucleus"])),
+                "nucleus_centre": [round(c["nucleus"].centroid.x, 3), round(c["nucleus"].centroid.y, 3)],
+                "cytoplasm": rounded(cyto[i]),
             }
-            for c in cells
+            for i, c in enumerate(cells)
         ],
         "regions": {
             "calyx": {"shape": rounded(calyx), "area_um2": round(calyx.area, 2)},
             "peduncle": {"shape": rounded(peduncle), "area_um2": round(peduncle.area, 2)},
-            "lobes": {
-                name: {
-                    "shape": rounded(lobe["shape"]),
-                    "area_um2": round(lobe["shape"].area, 2),
-                    "parts": {p: rounded(s) for p, s in lobe["parts"].items()},
-                }
-                for name, lobe in lobes.items()
-            },
+            "lobes": {k: {"shape": rounded(lobe_union[k]), "area_um2": round(lobe_union[k].area, 2),
+                          "parts": {p: rounded(s) for p, s in parts.items()}} for k, parts in lobes.items()},
         },
         "views": {
             "nucleus": view(cells[0]["soma"], 2.0),
-            "cellbody": view(somata, margin),
-            "calyx": view(calyx, margin),
-            "peduncle": view(peduncle, margin),
-            "lobes": view(lobes_all, margin),
-            "lobes_ab": view(lobes["ab"]["shape"], margin),
-            "lobes_apbp": view(lobes["apbp"]["shape"], margin),
-            "lobes_g": view(lobes["g"]["shape"], margin),
+            "cellbody": view(somata, 3.0),
+            "calyx": view(calyx, 3.0),
+            "peduncle": view(peduncle, 3.0),
+            "lobes": view(unary_union(list(lobe_union.values())), 3.0),
+            **{f"lobes_{k}": view(u, 3.0) for k, u in lobe_union.items()},
         },
     }
-
-    # skeleton for render.py: cells keep the keys it reads; neuropil regions are plain shapes
-    skeleton_regions = [{"name": "calyx", "shape": calyx, "kind": "neuropil"},
-                        {"name": "peduncle", "shape": peduncle, "kind": "neuropil"}]
-    skeleton_regions += [{"name": k, "shape": v, "kind": "neuropil"} for k, v in parts.items()]
-    skeleton = {"cells": cells, "fibres": [], "regions": skeleton_regions}
+    skeleton = {"cells": cells, "fibres": fibres,
+                "regions": [{"name": "calyx", "shape": calyx, "kind": "neuropil"},
+                            {"name": "peduncle", "shape": peduncle, "kind": "neuropil"},
+                            *[{"name": p, "shape": s, "kind": "neuropil"} for parts in lobes.values() for p, s in parts.items()]]}
     return public, skeleton
 
 
-def main() -> int:
+# ---------- the compartment sketch (for the instructor's annotation) ----------
+
+def sketch(path):
+    public, skel = build("control", 1)
+    ink = {"ab": (46, 110, 200), "apbp": (225, 128, 30), "g": (46, 150, 80)}
+    x0, y0, x1, y1 = public["bounds"]
+    K = 4.0
+    im = Image.new("RGB", (int((x1 - x0) * K) + 40, int((y1 - y0) * K) + 80), "white")
+    dr = ImageDraw.Draw(im, "RGBA")
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Supplemental/Arial.ttf", 15)   # has Greek
+    except OSError:
+        font = ImageFont.load_default()
+    _text = dr.text
+    dr.text = lambda xy, t, **k: _text(xy, t, font=font, **k)
+    P = lambda xy: [((x - x0) * K + 20, (y - y0) * K + 20) for x, y in xy]
+    poly = lambda g, fill, line: [dr.polygon(P(p.exterior.coords), fill=fill, outline=line) for p in as_multi(g).geoms]
+    poly(skel["regions"][0]["shape"], (170, 170, 170, 90), (90, 90, 90, 255))
+    poly(skel["regions"][1]["shape"], (120, 120, 170, 90), (60, 60, 120, 255))
+    for k, lobe in public["regions"]["lobes"].items():
+        for p in lobe["parts"]:
+            poly(next(r["shape"] for r in skel["regions"] if r["name"] == p), ink[k] + (60,), ink[k] + (255,))
+    for f in skel["fibres"]:
+        dr.line(P(f["xy"]), fill=(0, 0, 0, 120), width=1)
+    for c in skel["cells"]:
+        poly(c["soma"], ink[c["lobe_system"]] + (40,), (0, 0, 0, 200))
+        poly(c["nucleus"], (255, 255, 255, 160), (0, 0, 0, 120))
+    labels = [("calyx", "Calyx (drawn, not counted)"), ("peduncle", "Peduncle")]
+    for name, text in labels:
+        g = next(r["shape"] for r in skel["regions"] if r["name"] == name)
+        c = g.representative_point()
+        dr.text(P([(c.x, c.y)])[0], text, fill="black")
+    for k, lobe in public["regions"]["lobes"].items():
+        for p in lobe["parts"]:
+            g = next(r["shape"] for r in skel["regions"] if r["name"] == p)
+            c = g.representative_point()
+            dr.text(P([(c.x, c.y)])[0], p.replace("_prime", "′").replace("alpha", "α").replace("beta", "β").replace("gamma", "γ"), fill="black")
+    cb = unary_union([c["soma"] for c in skel["cells"]]).bounds
+    dr.text(P([(cb[0], cb[1] - 6)])[0], "Cell bodies (30 drawn, 10 per lobe system)", fill="black")
+    dr.line([(20, im.height - 30), (20 + 20 * K, im.height - 30)], fill="black", width=2)
+    dr.text((30 + 20 * K, im.height - 36), f"20 µm · oblique view, tilt {VIEW[0]:g}°, turn {VIEW[1]:g}° · MaleCNS v0.9 Kenyon cells (450)", fill="black")
+    im.save(path)
+    print(f"wrote {path} ({im.size[0]}×{im.size[1]})")
+
+
+def main(argv) -> int:
+    if argv[:1] == ["--sketch"]:
+        sketch(argv[1])
+        return 0
     built = {(g, a): build(g, a) for g in GENOTYPES for a in ANIMALS}
-    # one frame for every image of the case, so all animals share a coordinate frame
     xs = [v[0]["bounds"] for v in built.values()]
     frame = [math.floor(min(b[0] for b in xs)) - 4, math.floor(min(b[1] for b in xs)) - 4,
              math.ceil(max(b[2] for b in xs)) + 4, math.ceil(max(b[3] for b in xs)) + 4]
-    out_dir = SITE_DATA / "mb"
-    out_dir.mkdir(parents=True, exist_ok=True)
     for (g, a), (public, _) in built.items():
         public["frame"] = frame
-        path = out_dir / f"geometry-{g}-{a}.json"
+        path = SITE_DATA / "mb" / f"geometry-{g}-{a}.json"
         path.write_text(json.dumps(public, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
-        areas = {k: v["area_um2"] for k, v in public["regions"]["lobes"].items()}
-        print(f"wrote {path.name}: {len(public['cells'])} cells, calyx {public['regions']['calyx']['area_um2']} µm², "
-              f"peduncle {public['regions']['peduncle']['area_um2']} µm², lobes {areas}")
-    print(f"frame {frame}")
+        r = public["regions"]
+        print(f"wrote {path.name}: {len(public['cells'])} cells, calyx {r['calyx']['area_um2']} µm², "
+              f"peduncle {r['peduncle']['area_um2']} µm², lobes {[l['area_um2'] for l in r['lobes'].values()]}")
+    print(f"frame {frame} ({frame[2] - frame[0]} × {frame[3] - frame[1]} µm)")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
