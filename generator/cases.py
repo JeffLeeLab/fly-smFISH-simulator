@@ -149,11 +149,16 @@ PDF = {
     "search": {"candidates": 120},  # candidate animals per slot; the build picks 3 per genotype
 }
 
-# Mushroom body, unc-13 ("the wrong isoform"). Two isoform groups with separate start sites; in
-# the mutant, group-1 production falls ×0.4 and group-2 production rises ×2.4 (total production
-# unchanged), with equal decay. Each group has its own fixed localisation, so every
-# compartment's group-1 count falls ×0.4 and its group-2 count rises ×2.4; the group-1 shares
-# below follow from that. Starting values for TDP-43; the look is tuned in Phase 2, wave 2.
+# Mushroom body, unc-13 ("a poison exon"). Two isoform groups with separate start sites, made at
+# the same rates in both genotypes (control 70 : 30), each with its own fixed localisation (group 1
+# reaches the lobes more). Group-1 pre-mRNA holds, in the intron after its N-terminal exon (U2), the
+# exon that RB/RE use as their first coding exon (U4: exon 3 of RB/RE, with working splice sites).
+# Invented: nuclear TDP-43 keeps that exon out of group-1 transcripts; with the mutant's nuclear
+# loss a share psi of them include it. The 5,876-nt exon shifts the reading frame, so those
+# transcripts meet a premature stop and nonsense-mediated decay soon after export: all of them in
+# the nucleus, a tenth in the cell body, none in the neurites (Simplified: a steady state, no
+# kinetics). Production and every decay rate are the same in both genotypes. TDP-43 puncta are the
+# same in both genotypes (instructor, 2026-10-12).
 MB = {
     "seed": 202610110,
     "animals": 3,
@@ -162,31 +167,30 @@ MB = {
     "spot_intensity_sd": 0.10,
     # within-group weights (the RA–RG mix of each group); the groups' shares are set below
     "isoform_groups": {"g1": {"RA": 30, "RC": 15, "RD": 10, "RF": 10, "RG": 5}, "g2": {"RB": 20, "RE": 10}},
-    # relative production per group (nascent transcripts); control 70 : 30
-    "production": {"control": {"g1": 0.70, "g2": 0.30}, "mutant": {"g1": 0.28, "g2": 0.72}},
-    "mature_per_cell": {
-        "control": {"nucleus": 3, "cellbody": 20, "calyx": 3, "peduncle": 3, "lobes": 6},
-        "mutant": {"nucleus": 3, "cellbody": 22, "calyx": 3.3, "peduncle": 2.4, "lobes": 3.6},
-    },
-    # group-1 share of the mature molecules in each compartment (the rest are group 2)
-    "group_share": {
-        "control": {"nucleus": 0.70, "cellbody": 0.65, "calyx": 0.65, "peduncle": 0.80, "lobes": 0.90},
-        "mutant": {"nucleus": 0.28, "cellbody": 0.24, "calyx": 0.24, "peduncle": 0.40, "lobes": 0.60},
-    },
+    # relative production per group (nascent transcripts): 70 : 30 in both genotypes
+    "production": {"control": {"g1": 0.70, "g2": 0.30}, "mutant": {"g1": 0.70, "g2": 0.30}},
+    # mature molecules per Kenyon cell before the exon choice, (group 1, group 2) per compartment
+    "group_per_cell": {"nucleus": (2.1, 0.9), "cellbody": (13.0, 7.0), "calyx": (1.95, 1.05),
+                       "peduncle": (2.4, 0.6), "lobes": (5.4, 0.6)},
+    # the included exon: its genomic span (all of U4), the group whose pre-mRNA holds it in an
+    # intron, the share of that group's transcripts that include it per genotype, and the share of
+    # those that survive NMD in each compartment. The rest of the group skips it, as annotated.
+    "exon": {"lo": 886965, "hi": 892840, "into": "g1", "psi": {"control": 0.02, "mutant": 0.40},
+             "survives": {"nucleus": 1.0, "cellbody": 0.10, "calyx": 0.0, "peduncle": 0.0, "lobes": 0.0}},
     "ts_active": 0.90,
     "ts_reference": ("U6", 10),  # U6 sites hold about 10 nascent transcripts (control production)
     "ts_spread_um": 0.12,
     "ts_detect_min": 2,
     "ts_inset_um": 1.2,          # transcription sites sit this far inside the nucleus edge
     "granule_inset_um": 0.4,     # cell-body granules sit this far inside the cytoplasm edge
-    # TDP-43 IF: nuclear loss in the mutant; TDP-43 gathers into many small puncta across the
-    # neuropil. unc-13 mRNA does not ride on them (no cargo), so overlap stays at chance: the
-    # dense puncta only make spots *seem* to overlap.
+    # TDP-43 IF: nuclear loss in the mutant (the clue); small puncta across the neuropil, the same
+    # in both genotypes; 0-1 aggregates per mutant cell body. unc-13 mRNA does not ride on the
+    # puncta (no cargo), so overlap stays at chance: they only make spots *seem* to overlap.
     "tdp43": {
         "control": {"nuclear": 1.0, "cytoplasmic": 0.16, "aggregates": (0, 0),
-                    "granule_density_um2": {"calyx": 0.05, "peduncle": 0.05, "lobes": 0.05}},
+                    "granule_density_um2": {"calyx": 0.12, "peduncle": 0.12, "lobes": 0.12}},
         "mutant": {"nuclear": 0.6, "cytoplasmic": 0.14, "aggregates": (0, 1),
-                   "granule_density_um2": {"calyx": 0.20, "peduncle": 0.20, "lobes": 0.20}},
+                   "granule_density_um2": {"calyx": 0.12, "peduncle": 0.12, "lobes": 0.12}},
         "neurite_level": 0.75,
         "granules_per_cell_body": 0.3,
         "granule_radius_um": (0.22, 0.30),  # small puncta
