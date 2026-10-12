@@ -95,5 +95,6 @@ The case was redesigned as a splicing case (truth table redrafted, awaiting re-s
 | 3 | Step 3 | The puncta now look the same in both genotypes; the clue is the dimmer mutant nuclei. | OK. |
 | 4 | Step 5 | The gene card and map are unchanged and give nothing away; the new junction is on no drawn isoform. | OK. |
 | 5 | T-maze, step 1 | The PI dot showed from the start (a `fromTo` rendered its start state at once). | Fixed (`immediateRender: false`). The hose, its tag (OCT, air, MCH), the bolt with its count and the 5 : 5 mutant read in order; the station draws 3 : 3. |
+| 6 | Pdf screens | Against the Wave 0 screenshot baseline, steps 3, 6 and 7 differ by a few pixels at the native controls (the LUT and measure drop-downs, the brightness slider). `main` and this branch render Pdf steps 3 and 6 identically in today's browser, so the browser's drawing of native controls changed, not the code. | OK; the baseline should be re-taken before the next Pdf comparison. |
 
 **Still to do:** the instructor's re-sign-off of `data/mb/truth-table.toml`, then `validate mb --signed`; the manual assessment; the browser matrix.
