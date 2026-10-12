@@ -59,3 +59,25 @@ The full `tools/review-shots.sh` run is still to do with the next round.
 | 1 | Viewer, step 6 | The red-orange granules stay distinct from the green and magenta spots. Transcription sites still read white. | OK. |
 | 2 | Viewer, steps 3 and 6 | Nuclei read violet (red-orange plus DAPI blue; pink-violet in step 3, where TDP-43 is undimmed). | OK. Worth watching in the manual assessment whether magenta-only spots inside nuclei lose contrast. |
 | 3 | Controls | The red-orange TDP-43 dot sits beside the clay checkbox and slider. It is redder and more saturated, so distinguishable, but close. | OK. Worth watching in the manual assessment. |
+
+## 2026-10-12: mushroom body case (Phase 2), first full run
+
+After the instructor's sign-offs (truth table, storyboard, compartment sketch with the heel moved into the axon bundle) and the switch-on.
+
+**Screenshots.** `tools/review-shots.sh <out-dir> mb`: 10 states at 1280×720 and 1920×1080, light and dark (40 screenshots, 10 sheets), run twice (before and after the fixes below). A targeted step 6 run: every plot measure and the Axon bundle, Lobes and Cell body zooms, at 1280×720 light and 1920×1080 dark. Pdf: `tools/pdf-identical.sh` passed (2712 checks, 0 failed).
+
+**Animation.** Contact sheets of the T-maze (12 frames, `?t=0.8` to `15.3`) and the descent (14 frames, `?t=0.6` to `14`). Reduced motion (emulated) on the landing, step 1 and step 2.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Images (membrane, TDP-43), whole mushroom body | A thin dark line across the axon bundle where it meets the lobes. The neuropil texture left out every skeleton segment that crosses a region border, and the new heel cut, a flat plane, lined those gaps up. | Fixed: the texture keeps every neuropil segment. `build mb` re-run: same animals, 3702 checks, 0 failed. |
+| 2 | Descent, filled outline (shots N–O) | A hairline seam at the same border: the regions are cut 0.3 µm apart. | Fixed: the flat fill layer has a stroke in its own colour. |
+| 3 | Viewer toolbar, steps 3 and 6 at 1280×720 | With "Axon bundle" in place of "Peduncle", "Copy as PNG" wrapped onto a second row and the images lost about 35 px of height. | Fixed: the whole-view button reads "Mushroom body" (was "Whole mushroom body"). |
+| 4 | Plot bar, step 6 at 1280×720 | The measure menu was 3 px too wide with "Proportion in axon bundle + lobes", so "Copy as PNG" wrapped. | Fixed: "Share in axon bundle + lobes". |
+| 5 | Plot, Spots in TDP-43 granules | The case-wide y-axis ran to 1.2: the sparsest probe (U8) reaches a share of 1 (one spot, on a punctum). | Fixed: share and proportion axes stop at 1. Pdf is unchanged (its shares stay below 0.5). |
+| 6 | Step 1, reduced motion | The T-maze waits for "Train the flies" and then shows the counts and indices at once, as the Pdf assay does; the storyboard said the end frame shows straight away. | Storyboard corrected; no code change. |
+| 7 | T-maze and descent | The contact sheets read in storyboard order: training, elevator, choice, counts, indices; fly, head, brain, growth, turn, labels, matched swap. | OK. |
+| 8 | Offline | 83 resources across steps 1–7, all from the local server. No console errors or warnings. | OK. |
+| 9 | Step 6 plots and zooms | All five measures read at both sizes; the zooms frame the bundle (fibres visible), the lobe junction and about a dozen cell bodies. | OK. |
+
+**Still to do:** the instructor's manual assessment of the mushroom body strand, and the browser matrix (Edge, Firefox, Safari).

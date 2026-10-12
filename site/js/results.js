@@ -99,7 +99,8 @@ export function fixedScales(tables, cs) {
         }
       }
     }
-    max[mid] = niceCeil(hi * 1.04);
+    // a share can't pass 1 (a sparse probe can reach it: one spot, on a granule)
+    max[mid] = m.axis === "share" || m.axis === "proportion" ? Math.min(1, niceCeil(hi * 1.04)) : niceCeil(hi * 1.04);
   }
   return max;
 }

@@ -65,7 +65,7 @@ J 8.4–11.8   under each lane the performance index builds: "PI = (MCH − OCT)
    caption: 8.4 "Performance index: 1 if every fly avoided the shocked odour, 0 if they chose at random."
 ```
 
-Reduced motion: the finished counts and both performance indices, with the Next button. Skip jumps to the end of G or of H–J; Replay restarts the training.
+Reduced motion: the end frame of G; on "Train the flies", the finished counts and both performance indices, with the Next button (as in the Pdf case). Skip jumps to the end of G or of H–J; Replay restarts the training.
 
 ## 4 · Descent (`#/mb/step-2`), scroll-driven, 14 s at a steady scroll
 

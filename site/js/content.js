@@ -94,7 +94,7 @@ export const CASES = {
         note: "Nucleus and cell body: per cell. Axon bundle: per animal (all thirty cells). Lobes: per lobe system (ten cells each).",
       },
       distal: {
-        label: "Proportion in axon bundle + lobes",
+        label: "Share in axon bundle + lobes",   // shorter than "Proportion in …", so the plot bar fits 1280 px
         catLabel: "Axon bundle + lobes",
         note: "(Axon bundle + lobes) / (cell body + axon bundle + lobes).",
         fly: "lobes",
