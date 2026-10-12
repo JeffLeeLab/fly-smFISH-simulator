@@ -186,14 +186,14 @@ MB = {
     "ts_inset_um": 1.2,          # transcription sites sit this far inside the nucleus edge
     "granule_inset_um": 0.4,     # cell-body granules sit this far inside the cytoplasm edge
     # TDP-43 IF: nuclear loss in the mutant (the clue); sparse small puncta across the neuropil, the
-    # same in both genotypes (a fifth of the first density, instructor 2026-10-12); 0-1 aggregates
-    # per mutant cell body. unc-13 mRNA does not ride on the
+    # same in both genotypes (0.0072 per µm², 6% of the first density; instructor, 2026-10-12);
+    # 0-1 aggregates per mutant cell body. unc-13 mRNA does not ride on the
     # puncta (no cargo), so overlap stays at chance: they only make spots *seem* to overlap.
     "tdp43": {
         "control": {"nuclear": 1.0, "cytoplasmic": 0.16, "aggregates": (0, 0),
-                    "granule_density_um2": {"calyx": 0.024, "peduncle": 0.024, "lobes": 0.024}},
+                    "granule_density_um2": {"calyx": 0.0072, "peduncle": 0.0072, "lobes": 0.0072}},
         "mutant": {"nuclear": 0.6, "cytoplasmic": 0.14, "aggregates": (0, 1),
-                   "granule_density_um2": {"calyx": 0.024, "peduncle": 0.024, "lobes": 0.024}},
+                   "granule_density_um2": {"calyx": 0.0072, "peduncle": 0.0072, "lobes": 0.0072}},
         "neurite_level": 0.75,
         "granules_per_cell_body": 0.3,
         "granule_radius_um": (0.22, 0.30),  # small puncta

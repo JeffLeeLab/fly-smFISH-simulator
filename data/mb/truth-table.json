@@ -1,9 +1,9 @@
 {
  "case": "mb",
  "gene": "unc-13",
- "status": "draft",
- "signed_off_by": "",
- "signed_off_on": "",
+ "status": "signed-off",
+ "signed_off_by": "Jeff Lee (instructor)",
+ "signed_off_on": "2026-10-12",
  "source": "data/mb/truth-table.toml",
  "verdicts": {
   "splicing": "supported",

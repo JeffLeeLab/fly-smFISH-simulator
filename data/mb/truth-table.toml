@@ -7,11 +7,12 @@
 # docs/transcript_models_R6.json, into data/mb/truth-table.json (every single probe and all
 # 56 ordered pairs) and data/mb/truth-table.md (the readable version to sign off).
 #
-# DRAFT, 2026-10-12. Redesigned at the instructor's request as a splicing case; it replaces the
+# Redesigned on 2026-10-12 at the instructor's request as a splicing case; it replaces the
 # start-site switch signed off earlier the same day (choosing a start site is transcriptional,
 # not a typical RNA-binding-protein job). Revised the same day at the instructor's request: a
 # larger fall in U2, most of it in the axon bundle and lobes, with less U2 RNA reaching them; the
-# TDP-43 puncta cut to a fifth. Not yet signed off.
+# TDP-43 puncta made sparse (0.0072 per µm², in cases.py). Signed off by the instructor on
+# 2026-10-12.
 #
 # The biology. Two isoform groups with separate start sites (group 1 = RA, RC, RD, RF, RG; group 2
 # = RB, RE) are made at the same rates in both genotypes, so transcription sites are flat. The
@@ -33,9 +34,9 @@
 
 case = "mb"
 gene = "unc-13"
-status = "draft"
-signed_off_by = ""
-signed_off_on = ""
+status = "signed-off"
+signed_off_by = "Jeff Lee (instructor)"
+signed_off_on = "2026-10-12"
 
 # The coverage row for this case (spec, *Coverage*).
 [verdicts]

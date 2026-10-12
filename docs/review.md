@@ -110,3 +110,7 @@ The white-spot share measure was removed (the per-cell counts stay). The TDP-43 
 | 1 | Step 6 plot | U2 per cell: cell body 12.8 → 7.1, axon bundle 2.4 → 0.8, lobes 5.3 → 1.6; share in axon bundle + lobes 0.37 → 0.26, with no overlap between the genotypes' animals. | OK. The neurite counts sit low on the per-cell axis (0–40), so the share plot shows the localisation change best. |
 | 2 | Step 6 viewer | Lobes zoom: far fewer green (U2-only) spots in the mutant. Cell-body zoom: many white spots in mutant nuclei and cell bodies, almost none in WT. | OK. |
 | 3 | Step 3 | Sparse puncta in both genotypes; the dimmer mutant nuclei carry the clue. | OK. |
+
+## 2026-10-12: mushroom body signed off and merged
+
+At the instructor's request the TDP-43 puncta were cut again, to 0.0072 per µm² in both genotypes, and the truth table was signed off (status "signed-off", Jeff Lee, 2026-10-12). `build mb`: 3788 checks passed; `validate mb --signed` and `validate pdf --signed`: 0 failed; `tools/pdf-identical.sh` passed; the Pages workflow's data check regenerates nothing new; no served file names the invented isoforms. Step 3's lobes zoom shows a scattering of faint puncta, alike in both genotypes. `phase2-mb` was merged into `main` (fast-forward).

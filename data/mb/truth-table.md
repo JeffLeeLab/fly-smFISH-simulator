@@ -1,4 +1,4 @@
-# Truth table: Mushroom body – *unc-13* (draft)
+# Truth table: Mushroom body – *unc-13* (signed-off)
 
 Generated from `data/mb/truth-table.toml` and the probe menu by `uv run python -m generator.truth_table mb`. Every entry compares the hTDP-43 mutant with hTDP-43 WT (control). Sign off by editing the `.toml`, not this file.
 

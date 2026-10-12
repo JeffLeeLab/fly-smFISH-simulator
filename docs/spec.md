@@ -122,7 +122,7 @@ Shared across cases:
 - **Sampling time:** ZT2, when s-LNv dorsal terminals are most branched (they remodel daily; Fernández et al. 2008).
 - **Confound (instructor only; outside the students' scope):** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising. The site does not plot per-area counts; the truth table still checks the fall per area.
 
-*Mushroom body – unc-13: a poison exon* (draft, awaiting sign-off by the instructor; `data/mb/truth-table.toml`)
+*Mushroom body – unc-13: a poison exon* (truth table signed off by the instructor on 2026-10-12, `data/mb/truth-table.toml`)
 - **TDP-43 clue:** nuclear loss in Kenyon cells (1.0 → 0.6). The sparse puncta across the neuropil are the same in both genotypes; there are rare aggregates in mutant cell bodies.
 - **One probe:** with a group-1 exon probe such as U2, about half the spots over the whole cell and a third in the axon bundle and lobes, so a smaller share reaches them; the nucleus unchanged, and transcription sites flat. A few spots sit on TDP-43 puncta, at chance.
 - **Informative pair:** U2 + U4. White spots (both probes) appear in mutant nuclei and cell bodies (about 1.5 and 3 per cell) and are almost absent in WT. No annotated isoform carries U2 and U4 together, so they mark a junction that is not on the map.
@@ -212,7 +212,7 @@ Build one case completely before the others, so every shared part (data pipeline
 - Findings are written back into this spec before Phase 2 starts.
 
 **Phase 2 – The rest.** The NMJ (*stai*) and mushroom body (*unc-13*) cases, reusing everything from Phase 1.
-- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table draft, awaiting sign-off, gate in the Pages workflow); the NMJ is still to do.
+- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table signed off 2026-10-12, gate in the Pages workflow); the NMJ is still to do.
 - **Shared:** the NMJ and mushroom body cases reuse the same four-class TDP-43 layer (diffuse nuclear, diffuse cytoplasmic, transport granules, aggregates). The NMJ's extra mutant puncta along the axon and in boutons are stalled transport granules carrying cargo, not aggregates, which keeps the cases' stories distinct.
 - **Shared:** all three landing stations live; cross-case check that the student-facing template is identical and the *Coverage* table holds across the three cases.
 - **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
@@ -364,7 +364,7 @@ Starting values for the generator; tune after the pilot. Counts are mean mature 
 	- Futsch overlap with granules: cell body at chance; axon and terminals above chance and the same share in both genotypes. Built F6 values (means of the 3 animals): cell body 0.008 (WT) / 0.004 (mutant) vs chance 0.009 / 0.006; axon 0.30 / 0.32 vs chance ≈ 0.07; dorsal terminals 0.19 / 0.19 vs chance 0.03 / 0.05. Chance is higher than it was because the granules are larger.
 	- Transcription sites are unchanged between genotypes.
 
-**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system; draft, awaiting sign-off). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Production is 70 : 30 (group 1 : group 2) in both genotypes, and every decay rate is the same. Built values are in `data/mb/truth-table.toml`.
+**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system; signed off 2026-10-12). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Production is 70 : 30 (group 1 : group 2) in both genotypes, and every decay rate is the same. Built values are in `data/mb/truth-table.toml`.
 
 Mature molecules per Kenyon cell before the exon choice [group 1, group 2], the same in both genotypes:
 
@@ -389,7 +389,7 @@ Mature molecules per Kenyon cell before the exon choice [group 1, group 2], the 
 - Counted compartments: nucleus, cell body, peduncle (axon bundle) and lobes. Nucleus and cell body are counted per cell, the peduncle per animal (all 30 cells), the lobes per lobe system (10 cells each). The calyx is simulated and checked but excluded from every student pool. Whole cell = nucleus + cell body + peduncle + lobes. Share in axon bundle + lobes (the plot's measure; Pdf's "Proportion in axon + terminals") = (peduncle + lobes) / (cell body + peduncle + lobes).
 - What the probes show, control → mutant: U2 nucleus unchanged, cell body × 0.55, axon bundle × 0.34, lobes × 0.31, whole cell × 0.51, N:C × 1.81, share in axon bundle + lobes 0.37 → 0.26 (× 0.68). U4 nucleus × 2.5, cell body × 1.44, lobes unchanged. The constitutive U7 falls from 31.7 to 20.7 per cell (× 0.65) over the whole cell.
 - Transcription sites: the same nascent model as the Pdf case, calibrated on U6 = 10 nascent transcripts per active site, and flat for every probe (production is the same; the exon choice is made after these molecules). Values per active site, in both genotypes: U2 21.3, U3 18.2, U4 19.7, U6 10.0. Active in 90% of nuclei; a site is counted at 2 or more nascent molecules.
-- TDP-43: nuclear signal 1.0 → 0.6; puncta 0.024 per µm² in the calyx, peduncle and lobes in both genotypes (a fifth of the first density, instructor 2026-10-12); mutant aggregates 0–1 per cell body. No unc-13 mRNA sits on the puncta (granule cargo 0), so overlap is at the randomised level in both genotypes.
+- TDP-43: nuclear signal 1.0 → 0.6; puncta 0.0072 per µm² in the calyx, peduncle and lobes in both genotypes (6% of the first density; instructor, 2026-10-12); mutant aggregates 0–1 per cell body. No unc-13 mRNA sits on the puncta (granule cargo 0), so overlap is at the randomised level in both genotypes.
 
 #### Rendering stack
 
