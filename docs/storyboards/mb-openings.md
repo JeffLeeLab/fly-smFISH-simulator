@@ -119,3 +119,10 @@ Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: the
 - Reuse from the activity monitor: `walkPause`, `walkAt`, `tube`, `tubeFly` (`site/js/monitor.js`); the clock and `?t=` frozen-time pattern (`site/js/steps/step1.js`); `prng.js`; `handoff.js`; the `#ink-boil` filter and side-view sprites (`site/js/fly.js`).
 - New: `site/js/tmaze.js` (the maze drawing, the seeded fly paths and choices, the odour textures as SVG patterns drifting with time, the shock flash) and `site/js/steps/mb-step1.js`. Each fly's arm is fixed by decision 4; its path and timing are seeded, so every frame is a function of time.
 - Descent: `site/js/steps/mb-step2.js`. The mushroom body outlines (front view for M and the locator, the turn frames for N, the oblique view for O) are written by `generator/geometry_mb.py` from the same 3D Kenyon cell data as the viewer's geometry, so the final frame matches the viewer.
+
+## As built
+
+- K: the fly that lifts out of the maze comes from the MCH arm, the arm the WT flies mostly chose.
+- M: the 30 simulated Kenyon cells (`site/data/mb/anatomy.json`) grow as 3D paths from their cell bodies, through the calyx and along the axon bundle into the lobes. There is no outline morph.
+- N: the left mushroom body turns in true 3D, tilt 0 → 35° and turn 0 → −30°. It is drawn 1.35× larger in the whole brain and eases to life size during the turn. Labels: "Cell bodies (with their nuclei)", "Axon bundle (peduncle)", "Lobes (synapses)".
+- The neuropil is drawn as one flat blue layer, so overlapping lobe systems don't stack.

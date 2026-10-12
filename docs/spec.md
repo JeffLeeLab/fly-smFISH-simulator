@@ -20,7 +20,7 @@
 	- Correct control is humanised WT, not a wild-type fly (a design point for students).
 	- Teaches why *Drosophila* is a powerful model for human disease: a human gene can replace its fly orthologue at the endogenous locus.
 	- Real basis: [Chang & Morton 2017, *PLoS One*](https://pubmed.ncbi.nlm.nih.gov/28686708/) (hTDP-43 WT, G294A, M337V knock-ins). Reported phenotype is mild (faster age-related climbing decline; no TDP-43 accumulation), so stronger TDP-43 pathology, sleep and memory phenotypes are invented case details.
-	- **Membrane label:** motor neuron, Pdf neuron or mushroom body membranes are labelled by a neuron-type-specific GAL4 driver driving UAS-mCD8::BFP.
+	- **Membrane label:** motor neuron, Pdf neuron or mushroom body membranes are labelled by a neuron-type-specific GAL4 driver driving UAS-mCD8::BFP (mushroom body: OK107-GAL4, which labels all three lobe systems).
 
 **ALS and the three Drosophila neuron systems**
 - ALS symptoms are not solely motor; students can look up the clinical symptoms in Part 2.
@@ -31,7 +31,8 @@
 - Each group works with one system only; cell-type comparisons are not part of the pilot (see *Future implementation ideas*).
 - **All adult.** The NMJ is in the adult leg (femur), with the motor neuron cell body in the VNC. Boutons are best studied at larval NMJs but also occur in the less-studied adult leg. The motor neuron is drawn shorter than it really is so the whole cell fits one view (both stated simplifications).
 - **Cells shown per animal:** 1 motor neuron; 4 s-LNvs; 30 Kenyon cells (10 per lobe system), all behaving alike.
-	- The mushroom body is drawn as one Kenyon cell-body cluster plus shared calyx, peduncle and lobe regions (γ, α′/β′, α/β), not as individual cells, following the compartment-based smFISH analysis of [de Queiroz et al. 2025, *Nat Commun*](https://pmc.ncbi.nlm.nih.gov/articles/PMC11910521/).
+	- The mushroom body is drawn as 30 Kenyon-cell bodies packed as a cap over the calyx, plus shared calyx, peduncle and lobe regions (γ, α′/β′, α/β). Counts are taken per compartment, following the compartment-based smFISH analysis of [de Queiroz et al. 2025, *Nat Commun*](https://pmc.ncbi.nlm.nih.gov/articles/PMC11910521/).
+	- **Students' names (instructor, 2026-10-12):** students meet the peduncle as the "axon bundle" (the descent labels it "Axon bundle (peduncle)"; every later screen says "Axon bundle"). The calyx is described to them as the dendrites ("The dendrites are drawn but not counted") and is never labelled, counted, plotted or offered as a fly-to. Data ids stay anatomical (`peduncle`, `calyx`); instructor material can say "peduncle (axon bundle)".
 	- Only labelled cells are shown (simplification).
 - **Representative, not exact anatomy** (simplification): cell bodies and axons are drawn enlarged so RNA molecules and TDP-43 granules are easy to see (see *Geometry references*).
 
@@ -121,9 +122,9 @@ Shared across cases:
 - **Sampling time:** ZT2, when s-LNv dorsal terminals are most branched (they remodel daily; Fernández et al. 2008).
 - **Confound (instructor only; outside the students' scope):** mutant terminals are slightly less branched, but spots per terminal area are still lower after normalising. The site does not plot per-area counts; the truth table still checks the fall per area.
 
-*Mushroom body – unc-13: the wrong isoform*
+*Mushroom body – unc-13: the wrong isoform* (truth table signed off by the instructor on 2026-10-12, `data/mb/truth-table.toml`)
 - **TDP-43 clue:** nuclear loss in Kenyon cells; many small puncta across the dense neuropil.
-- **One probe:** fewer spots in the lobes; whole-cell count unchanged; spots seem to overlap TDP-43 puncta.
+- **One probe:** fewer spots in the lobes; whole-cell count unchanged; spots seem to overlap TDP-43 puncta. The constitutive probe U7 is not flat by compartment (cell body × 1.10, peduncle × 0.80, lobes × 0.60) while its whole-cell sum, nucleus plus cell body plus peduncle plus lobes per cell, is unchanged (32 → 31 per cell, −3%).
 - **Informative pair:** U2 + U4 (group 1: unc-13-RA/RC/RD/RF/RG; group 2: unc-13-RB/RE). Across the cell the group-1:group-2 ratio shifts towards group 2; lobe spots are group 1 in both genotypes, and the share of group 1 reaching the lobes is unchanged.
 - **Supported:** isoform-specific regulation (first-exon switch).
 - **Ruled out:** transport; granule incorporation (overlap matches randomised positions); nuclear export.
@@ -196,7 +197,7 @@ Build one case completely before the others, so every shared part (data pipeline
 	1. **Scaffold:** repository (the uv environment is already set up), `tokens.css`, self-hosted fonts and libraries, hash routes, progress rail, notebook shell, light/dark theme, GitHub Pages and offline test.
 	2. **Data:** Pdf geometry (control and mutant templates), the Pdf truth table as a machine-readable file (signed off by the instructor), generator, detection masks, pre-computed tables (incl. per-animal and per-unit values), public JSON stripping, and the validation gate against the Pdf truth table.
 	3. **Screens 3–7:** viewer (split view, flicker, fly-to, LUTs incl. TDP-43 dimming, overlay, PNG copy), TDP-43 dysfunction, hypotheses cards, gene card and map with probe track, microscopy reveal with plot, interpret & revise with summary PNG.
-	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders); the Pdf descent ending in the viewer.
+	4. **Openings:** hero and knock-in sequence; three-assay landing with the activity monitor live (climbing vial and T-maze shown as still placeholders in Phase 1; the T-maze went live, front-on, in Phase 2); the Pdf descent ending in the viewer.
 	5. **Review loop:** Playwright recordings, contact sheets and dead-stretch checks for the animations; screenshots of every step at 1280×720 and 1920×1080 in both themes (`tools/review-shots.sh`). Each run is recorded in [review.md](review.md).
 - *Exit: manual assessment* (instructor, ideally with one or two colleagues or students who haven't seen the spec):
 	- **Science:** the Pdf truth table is reproduced, e.g. F6 + F5 shows flat transcription sites and fewer cytoplasmic spots; each decoy gives its designed result; no step gives the answer away.
@@ -208,7 +209,7 @@ Build one case completely before the others, so every shared part (data pipeline
 - Findings are written back into this spec before Phase 2 starts.
 
 **Phase 2 – The rest.** The NMJ (*stai*) and mushroom body (*unc-13*) cases, reusing everything from Phase 1.
-- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path.
+- **Per case:** geometry (connectome-assisted: MANC for the motor neuron, FlyWire/MaleCNS for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table signed off 2026-10-12, gate in the Pages workflow); the NMJ is still to do.
 - **Shared:** the NMJ and mushroom body cases reuse the same four-class TDP-43 layer (diffuse nuclear, diffuse cytoplasmic, transport granules, aggregates). The NMJ's extra mutant puncta along the axon and in boutons are stalled transport granules carrying cargo, not aggregates, which keeps the cases' stories distinct.
 - **Shared:** all three landing stations live; cross-case check that the student-facing template is identical and the *Coverage* table holds across the three cases.
 - **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
@@ -220,7 +221,7 @@ Data generation is separate from display, so images and numbers always agree. A 
 0. **Case truth table** (see *Case truth tables*): per case, which PTR modes are active, plus the expected result for every single probe and every probe pair, decoys included. Active modes combine into one coherent molecule set. The generator implements it; instructors use it as the answer key.
 	- Stored per case in `data/<case>/`: `truth-table.toml` holds the rules (verdicts, isoform mix, counts per compartment, how each measure changes in the mutant, tolerances, the designed transcription-site look of each region); `generator.truth_table` expands it with the probe menu's `mature_in` / `nascent_in` into `truth-table.json`, covering every single probe and all 56 ordered pairs, and `truth-table.md` to read. It is drafted from the prose tables in *Case truth tables* and signed off by the instructor (in the `.toml`) before the validation gate relies on it. The Pdf table was amended on 2026-10-07 (TDP-43 layer and per-compartment overlap), and the instructor signed off the amended table on the same day.
 0.5. **Geometry** (built before the generator; see *Geometry references*): one file per case, genotype and animal, in µm, shared by generator and viewer, so it lives in `site/data/<case>/geometry-<genotype>-<animal>.json` (Pdf: written by `generator.geometry_pdf`). All animals of a case share one image frame.
-	- Closed, non-overlapping named shapes: nucleus, cell body cytoplasm, dendrites, axon (with centreline), each bouton or terminal. Mushroom body: one cell-body cluster (30 nuclei), calyx, peduncle and the three lobe systems as shared regions.
+	- Closed, non-overlapping named shapes: nucleus, cell body cytoplasm, dendrites, axon (with centreline), each bouton or terminal. Mushroom body: 30 cell bodies with their nuclei, the calyx (instructor only), the peduncle (axon bundle) and the three lobe systems as shared regions.
 	- Minimum neurite width 0.5 µm, so spots fit inside; axons wider (see *Geometry references*).
 	- Every animal has its own neurons: cell arrangement and sizes, axon path, weaving and branching vary from animal to animal, while the genotype difference stays systematic (NMJ: 20 vs 15 boutons, for the images only; Pdf: s-LNv dorsal terminals at ZT2, each mutant arbor about 20% shorter than the control mean).
 	- Key coordinates (nucleus centres and radii, terminal area and length) and fly-to views stored in the same file.
@@ -292,7 +293,7 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 | --- | --- | --- |
 | Connectome skeletons, projected to 2D (where available) | Proportion check | FlyWire or MaleCNS (Kenyon cell types γ, α′/β′, α/β); MANC (motor neuron cell body in the VNC). Not used for Pdf neurons: the connectome lacks the exact cells needed |
 | Reference images: schematics, EM renders, confocal max projections with scale bars | Shape to trace (Pdf neurons); appearance: membrane texture, varicosities, bouton size (~1–2 µm) | Open-access papers or Virtual Fly Brain; adult femur NMJ images; mushroom body regions as in de Queiroz et al. 2025; Pdf neurons: `references/reference-pdf-neurons.pdf` (see *Pdf neurons* below) |
-| Annotated compartment sketch over a reference image | Compartment boundaries and labels; simplifications (shortened motor neuron axon with break symbol); bouton numbers per genotype | Instructor. Pdf neurons: done (`references/reference-pdf-neurons.pdf`, p. 6). NMJ and mushroom body: to do before Phase 2 |
+| Annotated compartment sketch over a reference image | Compartment boundaries and labels; simplifications (shortened motor neuron axon with break symbol); bouton numbers per genotype | Instructor. Pdf neurons: done (`references/reference-pdf-neurons.pdf`, p. 6). Mushroom body: done (`references/reference-mb-neurons.pdf` and the compartment sketch `references/mb-compartment-sketch.png`, written by `generator.geometry_mb --sketch`). NMJ: to do before Phase 2 |
 
 **Pdf neurons (s-LNvs)**
 - **Reference pack:** `references/reference-pdf-neurons.pdf` (source: `.docx` alongside), annotated by the instructor:
@@ -317,13 +318,16 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 	- Draw them in the site's inks and washes from `tokens.css`, with the same boil filter as the other illustrations (see *Art direction*).
 	- The raw meshes (up to about 30 MB each) are downloaded by the script and not committed; only the SVG output is.
 - Case neurons in the whole-fly overview come from the same geometry files as the viewer.
-- Fix the projection per case before building: frontal suits s-LNvs and the mushroom body lobes but foreshortens the peduncle.
+- Fix the projection per case before building: frontal suits the s-LNvs. The mushroom body uses an oblique view (tilt 35° looking down from the front, turn −30° towards the side; Rx(tilt)·Ry(turn)), because a frontal view stacks the cell bodies, peduncle and lobes on top of one another; in this view each has its own space (instructor, 2026-10-11).
 
 #### Simulation parameters (draft)
 
 Starting values for the generator; tune after the pilot. Counts are mean mature molecules per cell (Poisson draws).
 
 - **Shared:** n = 3 animals per genotype, each with a multiplicative animal factor (SD 10%). Detection efficiency is 1.0 in the pilot (every molecule carrying a region is detected). Each spot's intensity varies by about ±10% (seeded), for realism. One transcription site per nucleus (paired homologues), active in 80–90% of nuclei; nascent transcripts per site follow production and gene length. Primary effects are 40–60%; "unchanged" means within ±5% (tightened from ±10% in the Phase 1 build at the instructor's request). The key readouts each case's conclusions rest on are held to ±5% with no allowance for counting noise (Pdf: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6); small decoy subsets may also differ by two standard errors of counting noise, which shows as spread in the plot. A spot overlaps TDP-43 if it lies within 0.3 µm of a transport granule's edge (aggregates are not counted); overlap is worked out per compartment, and the randomised control places the same number of spots uniformly in the same compartment.
+- **Mushroom body geometry (connectome-assisted):** `generator.connectome_mb` downloads 450 MaleCNS v0.9 Kenyon cells (150 per lobe system; 10 per system are the simulated cells) from the public bucket, with no token, into `data/mb/connectome/` (not committed). `generator.geometry_mb` splits them into regions by position and projects them at the oblique view above.
+	- *Region rules:* the lobes start at the heel. The heel itself, the horizontal lobes' stretch left of the vertical lobes' base in this view, belongs to the peduncle (axon bundle) (instructor, 2026-10-12). The peduncle is a cylinder round its axis from the heel to the calyx, plus the heel; the calyx is an ellipsoid behind it; everything else behind the lobes is soma tracts.
+	- *Simplified:* 30 cell bodies, drawn about 10 µm across (about twice real size) with nuclei about 6 µm, packed as a cap over the calyx. The mutant's anatomy is the control's; animals differ by ±2° rotation, ±3% scale and their packing.
 
 **NMJ – stai** (1 motor neuron; 20 boutons in control, 15 in mutant, for the images only). Long = RB : RD (60:40); short = RA : RC : RE (35:15:50).
 
@@ -357,18 +361,19 @@ Starting values for the generator; tune after the pilot. Counts are mean mature 
 	- Futsch overlap with granules: cell body at chance; axon and terminals above chance and the same share in both genotypes. Built F6 values (means of the 3 animals): cell body 0.008 (WT) / 0.004 (mutant) vs chance 0.009 / 0.006; axon 0.30 / 0.32 vs chance ≈ 0.07; dorsal terminals 0.19 / 0.19 vs chance 0.03 / 0.05. Chance is higher than it was because the granules are larger.
 	- Transcription sites are unchanged between genotypes.
 
-**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Mutant: group-1 production × 0.4, group-2 production × 2.4, same decay rates.
+**Mushroom body – unc-13** (30 Kenyon cells, 10 per lobe system). Group 1 = RA : RC : RD : RF : RG (30:15:10:10:5); group 2 = RB : RE (20:10). Mutant: group-1 production × 0.4, group-2 production × 2.4, same decay rates. Built values are in `data/mb/truth-table.toml`.
 
 | Compartment (per Kenyon cell) | Control (group 1 %) | Mutant (group 1 %) |
 | --- | --- | --- |
 | Nucleus | 3 (70%) | 3 (28%) |
 | Cell body cytoplasm | 20 (65%) | 22 (24%) |
-| Calyx | 3 (65%) | 3.3 (24%) |
-| Peduncle | 3 (80%) | 2.4 (40%) |
+| Calyx (instructor only) | 3 (65%) | 3.3 (24%) |
+| Peduncle (axon bundle) | 3 (80%) | 2.4 (40%) |
 | Lobes | 6 (90%) | 3.6 (60%) |
 
-- Transcription sites: U3 (group 1 only) about 6 → 2.4 nascent transcripts; U6 (both groups) about 9 in both genotypes.
-- TDP-43: nuclear signal 1.0 → 0.6; many small neuropil puncta in the mutant; unc-13 overlap at the randomised level in both genotypes.
+- Counted compartments: nucleus, cell body, peduncle (axon bundle) and lobes. Nucleus and cell body are counted per cell, the peduncle per animal (all 30 cells), the lobes per lobe system (10 cells each). The calyx is simulated and checked but excluded from every student pool. Whole cell = nucleus + cell body + peduncle + lobes, so the constitutive U7 goes 32 → 31 per cell (−3%, "unchanged"), although its compartments move (cell body × 1.10, peduncle × 0.80, lobes × 0.60). Proportion in axon bundle + lobes = (peduncle + lobes) / (cell body + peduncle + lobes).
+- Transcription sites: the same nascent model as the Pdf case, calibrated on U6 = 10 nascent transcripts per active site in both genotypes. Built values (control → mutant, per active site): U3 18.2 → 7.3 (still × 0.4), U6 10.0 / 9.8 (flat), U2 21.3 → 8.5, U4 19.7 / 19.5. Active in 90% of nuclei; a site is counted at 2 or more nascent molecules.
+- TDP-43: nuclear signal 1.0 → 0.6; neuropil puncta density (calyx, peduncle, lobes) 0.05 → 0.20 per µm²; mutant aggregates 0–1 per cell body. The puncta carry no unc-13 mRNA (granule cargo 0), so unc-13 overlap sits at the randomised level in both genotypes; the dense puncta only make spots seem to overlap.
 
 #### Rendering stack
 
@@ -475,7 +480,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - **Genotype comparison:** synced split view (control | mutant, linked pan and zoom) by default, plus a flicker key in the viewer toolbar to switch genotype in place.
 
 **Count plot**
-- **SuperPlot** ([Lord et al. 2020, *JCB*](https://doi.org/10.1083/jcb.202001064)): sub-units as faint small points where they exist (boutons at the NMJ; s-LNv nuclei and cell bodies; Kenyon cell nuclei and cell bodies; the three lobe systems), otherwise animal points only (e.g. the single motor neuron's cell body and axon; shared calyx and peduncle); the 3 animal means as large points, mean ± SD across animals. No box plots (3 points per box) and no bars. Teaching point: the animal, not the cell, is the unit of replication. Animals are told apart by marker shape (circle, square, triangle; sub-units share their animal's shape), never by colour, which belongs to the channel.
+- **SuperPlot** ([Lord et al. 2020, *JCB*](https://doi.org/10.1083/jcb.202001064)): sub-units as faint small points where they exist (boutons at the NMJ; s-LNv nuclei and cell bodies; Kenyon cell nuclei and cell bodies; the three lobe systems, 3 small points per animal), otherwise animal points only (e.g. the single motor neuron's cell body and axon; the mushroom body's axon bundle); the 3 animal means as large points, mean ± SD across animals. No box plots (3 points per box) and no bars. Teaching point: the animal, not the cell, is the unit of replication. Animals are told apart by marker shape (circle, square, triangle; sub-units share their animal's shape), never by colour, which belongs to the channel.
 - **x-axis:** compartments in anatomical order (nucleus → cell body → axon → terminals), control and mutant side by side within each, so the cross-compartment pattern is visible in one plot. Genotype labels read "WT" | "Mutant" (see *Spatial convention* in *Openings*).
 - **Drawer:** the plot sits in a drawer under the viewer, closed by default on first visit; open or closed is remembered per browser. Its toolbar row is always visible: a "Show plot" / "Hide plot" toggle (chevron icon) at the left, the channel and measure toggles, and "Copy as PNG" at the right. Opening slides the drawer up (0.26 s; no animation under reduced motion) to `clamp(230px, 34vh, 360px)`. The viewer shrinks to make room and refits what was in view, never cropping. Choosing a channel or measure while the drawer is closed opens it. There is still no page scroll at 1280×720.
 - **Demarcation:** each compartment sits in its own band, and every other band is tinted (`ivory-panel` on screen, #F1EFE8 in the light PNG export). The compartment name is at the top of its band (12 px sans 600; still a button that flies the viewer there), and "WT" | "Mutant" runs along the foot of the band (11 px mono).
@@ -533,13 +538,14 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 - Three assay stations, each with a WT lane (left) and mutant lane (right), running a calm ambient loop in which the behavioural difference is visible:
 	- *Climbing vial* (NMJ case) → climbing-index bar. Mutant flies also shake (a slight leg tremor) as part of the climbing animation; the hero flies stay identical and never shake.
 	- *Activity monitor* (Pdf case) → actogram, with ZT2 marked ("brains collected here"). A dashed "Simulated" pill at the bottom right of the stage marks the invented sleep phenotype. Content reference: `references/dam-motion/` (a 10-s GSAP schematic of the Drosophila Activity Monitor, with a deterministic `?render` mode and `render-dam-video.mjs` for WebM export). Use it for the mechanics (tubes, infrared beam, food and plug, beam-crossing counts) only: its colours and Helvetica don't follow `tokens.css`, and it loads GSAP from a CDN, which the site must not.
-	- *T-maze* (mushroom body case) → performance index.
+	- *T-maze* (mushroom body case) → performance index. Live front-on mini T-maze at the station (`stationLive.mb`).
 - Hover brings a station forward; click expands it into the chosen case (shared-element transition), where the group does one real action (tap the vial down; start the light–dark days; run odour + shock training) and watches the readout build.
 - Students may draw on these readouts in Part 2.
+- **T-maze (step 1, signed off 2026-10-12; storyboard in [storyboards/mb-openings.md](storyboards/mb-openings.md)):** drawn front-on, as on the bench, with two lanes (hTDP-43 WT left, mutant right). OCT (3-octanol) is paired with three shock pulses and MCH (4-methylcyclohexanol) with none; the short-term memory test follows minutes later. Ten drawn flies per lane stand in for about 100, and the reciprocal experiment (MCH shocked) is not shown (*Simplified*). WT: 8 of 10 flies in the MCH arm (PI 0.6); mutant: 6 of 10 (PI 0.2) (invented for this case). PI = (MCH − OCT) / all flies. Odours and shocks are ink textures, not colours, because colour belongs to the data.
 
 **Descent into anatomy (step 2)**
 - The camera pushes in on one fly from the chosen assay; its body turns semi-transparent and the neurons appear in membrane blue, the only saturated colour on screen. Blue means "the labelled neuron" from here to the viewer.
-- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; Pdf – head → brain → s-LNvs → dorsal terminals; mushroom body – head → cell-body cluster → calyx, peduncle and lobes.
+- Paths: NMJ – VNC cell body, then the axon draws out (DrawSVG) to the femur boutons; Pdf – head → brain → s-LNvs → dorsal terminals; mushroom body – the WT fly from the MCH arm → head → brain from the front → both mushroom bodies grow from their cell bodies (the 30 simulated Kenyon cells as 3D paths) → the left one turns in true 3D into the viewer's oblique view, labelled "Cell bodies (with their nuclei)", "Axon bundle (peduncle)" and "Lobes (synapses)". The neuropil is filled as one flat layer, so overlapping lobe systems don't stack.
 - Pdf: once the brain has drawn on, its two main regions are named with ink labels and arrows ("Central brain" above the brain, "Optic lobe" below the optic lobe on the viewer's right, its arrow pointing into the lobe's outer part, clear of the neurons). The Pdf neurons then grow out in blue on both sides of the brain (the right side a mirror image of the left). The labels and the right side's neurons clear as the camera pushes in, so only the left group is zoomed into, labelled and carried into the viewer.
 - The descent ends in the viewer on the TDP-43 IF clue (step 3, TDP-43 dysfunction). The background deepens ivory → charcoal → black during the push-in, and the paper grain, washes and boiling ink fade out with it, so students move from the drawn story into the clean microscope (in both themes).
 - The SVG neuron outline at the end of the descent matches the PixiJS viewer's opening frame (same outline, position and scale), so the hand-over is a matched swap, not a cross-fade.
@@ -637,11 +643,11 @@ Adapted from [motion-video-kit](https://github.com/echris6/motion-video-kit) (MI
 
 #### Viewer features
 
-Students zoom through one continuous neuron, from the cell body to its synaptic terminals; only labelled cells are shown. Each case opens with the whole neuron in frame (for the mushroom body, the cell-body cluster, calyx, peduncle and three lobe systems). The motor neuron's axon is drawn fictitiously short so its VNC cell body and femur boutons fit one frame. Cell bodies and axons are enlarged in every case (see *Geometry references*), so the scale bar is true for spot and granule sizes, but the anatomy is only roughly to scale.
+Students zoom through one continuous neuron, from the cell body to its synaptic terminals; only labelled cells are shown. Each case opens with the whole neuron in frame (for the mushroom body, the 30 cell bodies, the dendrites, the axon bundle and the three lobe systems, in the oblique view). The motor neuron's axon is drawn fictitiously short so its VNC cell body and femur boutons fit one frame. Cell bodies and axons are enlarged in every case (see *Geometry references*), so the scale bar is true for spot and granule sizes, but the anatomy is only roughly to scale.
 
-- **Zoom and navigation**: `pixi-viewport` with zoom limits (minimum zoom fits the whole neuron) and buttons that fly to each case's compartments: nucleus, cell body, axon and terminals (NMJ: cell body in the VNC, boutons in the femur; Pdf: s-LNv dorsal terminals; mushroom body: calyx, peduncle and the three lobe systems).
+- **Zoom and navigation**: `pixi-viewport` with zoom limits (minimum zoom fits the whole neuron) and buttons that fly to each case's compartments: nucleus, cell body, axon and terminals (NMJ: cell body in the VNC, boutons in the femur; Pdf: s-LNv dorsal terminals; mushroom body: Nucleus, Cell body, Axon bundle and Lobes, with no calyx button).
 - **Semantic zoom**: membrane channel only when zoomed out; spots, nuclear envelope and granules appear as students zoom in. Built as conserved light: below about 0.85 px per PSF σ a spot is drawn larger and dimmer by the same area factor, so single spots fade out at the whole-neuron view while dense cell bodies and transcription sites still glow.
-- **Projection notice**: fixed label beside the viewport: "2D maximum-intensity projection (simulated)".
+- **Projection notice**: fixed label beside the viewport: "2D maximum-intensity projection (simulated)"; for the mushroom body, "Oblique maximum-intensity projection (simulated)". The mushroom body's spots are drawn larger and brighter than true size (σ 0.2 µm, minimum 1.0 px, gain 1.1, against the Pdf case's 0.12 µm, 0.85 px and 0.95), so they read like the Pdf case's in a structure about three times its size.
 - **Live scale bar**: fixed to the screen, outside the zoomable world. On every zoom event it picks a round length (0.5, 1, 2, 5, 10, 20 or 50 µm) that spans at least 80 screen pixels.
 - **Channel toggles**: smFISH 1, smFISH 2, TDP-43 IF and membrane (mCD8::BFP) + DAPI (fixed blue), the three LUT channels are each a layer, added to the image, so green plus magenta shows as white. Within one channel, light saturates at the LUT colour and never turns white, so two spots stacked on one granule look like one bright spot; only different channels mix. The blue channel and the autofluorescence are tinted and added as before. A toggle sets `visible` on the container.
 - **TDP-43 IF LUT**: default red-orange `#FF4B3A` (not white/grey, the smFISH merge colour; not the muted clay of the UI accent; not green/magenta or blue, the other channels), automatically dimmed to ~40% while any smFISH channel is on (the granules only to 55%, so a spot inside a granule still shows; at 55% a green spot on a granule is no whiter than a spot over a WT nucleus), so green or magenta over red-orange doesn't sum to a pale, near-white false merge. The note under the control reads "Dimmed while smFISH is on, to avoid a false white." Students can switch the LUT (red-orange, yellow, cyan), adjust its brightness and solo any channel. The brightness slider (a small sun icon, accessible name "TDP-43 brightness") sits on the "TDP-43 IF" channel row between the name and Solo; the LUT select is on the line below, and in step 6 the dimming note follows. The dimming and the brightness slider act before the layer clamps at full intensity, so a brightness above 1 (the slider goes to 1.6) works as a display gain, like setting the display range. Shown alone for the step-3 clue, then alongside smFISH.
@@ -683,7 +689,7 @@ British English; short sentences; no PTR-mode names in case text (mode names app
 | --- | --- | --- |
 | NMJ | *stai* (stathmin) ↔ STMN2 | Binds tubulin and regulates microtubules; needed for axonal transport and for the growth and stability of synaptic boutons. In this motor neuron: cell body, axon and boutons. |
 | Pdf | *futsch* ↔ MAP1B | A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these Pdf neurons: cell bodies, axons and dorsal terminals, which remodel every day. |
-| Mushroom body | *unc-13* ↔ UNC13A | A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, calyx, peduncle and lobes. |
+| Mushroom body | *unc-13* ↔ UNC13A | A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, dendrites, axons and the synapses in the lobes. |
 
 **Mode cards (step 4)** – one plain-language definition each, *Established* layer
 

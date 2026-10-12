@@ -38,7 +38,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 ## Capabilities and Constraints
 
-- Pilot scope covers three adult cases (NMJ – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 builds the Pdf/*futsch* case end to end before the other two.
+- Pilot scope covers three adult cases (NMJ – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 built the Pdf/*futsch* case end to end; Phase 2 has built the mushroom body, and the NMJ is still to come.
 - In scope: animated phenotype/assay openings; probe placement from a curated 8-region menu per gene; a zoomable split-view viewer with membrane + DAPI, two smFISH channels and TDP-43 IF; configurable LUTs; a SuperPlot; the notebook; PNG export.
 - Out of scope: real image data, probe thermodynamics, user accounts, server storage, follow-up experiments, target protein readout, cell-type comparisons and glia.
 - No lock on the student's path and no limit on attempts. Exploring is never penalised, groups can always go back, and locked steps say why they are locked.
@@ -58,7 +58,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 - `docs/spec.md`: the full pedagogy, case truth tables, simulation parameters and screen spec.
 - `docs/transcript_models_R6.json`: FlyBase R6 transcript models, CDS and probe menus.
-- `docs/references/`: the Pdf-neuron reference pack, FlyBase gene-model images and the DAM activity-monitor schematic.
+- `docs/references/`: the Pdf-neuron and mushroom body reference packs (the latter with the instructor's compartment sketch, `mb-compartment-sketch.png`), FlyBase gene-model images and the DAM activity-monitor schematic.
 - `docs/mockups/` and `docs/style-directions/`: design records only; they are not served.
 - Not yet available: student testimonials, pilot results and usage data. Don't invent outcomes or claims of effectiveness.
 
