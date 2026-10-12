@@ -541,7 +541,7 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .viewer__sep { width: 1px; height: 16px; background: #4A4945; margin: 0 4px; }
 .viewer__spacer { flex: 1; }
 .vbtn {
-  display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 2px 9px;
+  display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 2px 8px;
   font: 400 var(--fs-ui)/1.2 var(--font-sans); color: var(--viewer-text);
   background: transparent; border: var(--hairline) solid #4A4945; border-radius: var(--r-pane);
   transition: background-color .15s ease, border-color .15s ease;
@@ -731,3 +731,48 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .cdot--ch1 { --c: var(--ch1-ink); }
 .cdot--ch2 { --c: var(--ch2-ink); }
 .cdot--both { background: linear-gradient(90deg, var(--ch1-ink) 50%, var(--ch2-ink) 50%); }
+
+/* ---------- full screen (steps 3 and 6; viewer/fullview.js) ----------
+   The bench takes the whole screen on the dark tokens, whatever the theme: the viewer's toolbar,
+   fields and legend, its controls floating over the fields' top-right corner, and in step 6 the
+   plot drawer under it. No shadows: the panel is the viewer surround, a little translucent. */
+.vbtn--full { padding: 2px 6px; }
+.vbtn--full .i-shrink, .vbtn--full .vbtn__exit { display: none; }
+.vbtn--full svg { display: block; }
+.bench.is-full .vbtn--full { padding: 2px 9px 2px 7px; }
+.bench.is-full .vbtn--full .i-expand { display: none; }
+.bench.is-full .vbtn--full .i-shrink { display: block; }
+.bench.is-full .vbtn--full .vbtn__exit { display: inline-flex; align-items: center; gap: 6px; }
+.bench.is-full {
+  position: fixed; inset: 0; z-index: 45; height: auto;
+  grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "main" "foot"; gap: 0; padding: 0;
+  background: var(--viewer-frame); color: var(--text); color-scheme: dark;
+}
+body[data-notebook="drawer"] .bench.is-full { padding-right: 0; }
+.bench.is-full > .bench__head, .bench.is-full > .bench__side { display: none; }
+.bench.is-full .viewer { border-radius: 0; }
+.bench.is-full .bench__foot { margin: 0 var(--sp-2) var(--sp-2); }
+.bench.is-full .viewer__fields { position: relative; }
+html[data-full] .nb-tab, html[data-full] .notebook { display: none; }
+.fullview__panel {
+  position: absolute; top: 8px; right: 8px; z-index: 3; width: 272px; max-height: calc(100% - 16px);
+  display: flex; flex-direction: column;
+  background: color-mix(in srgb, var(--viewer-frame) 88%, transparent);
+  border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip);
+}
+.fullview__head {
+  flex: none; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3);
+  width: 100%; min-height: 32px; padding: 4px 10px 4px 12px; border: 0; background: none; cursor: pointer;
+  font: 600 var(--fs-ui)/1.2 var(--font-sans); color: var(--text);
+}
+.fullview__head:hover { background: color-mix(in srgb, var(--text) 6%, transparent); }
+.fullview__head svg { flex: none; transition: transform .2s ease; }
+.fullview__panel.is-collapsed { width: auto; }
+.fullview__panel.is-collapsed .fullview__head svg { transform: rotate(180deg); }
+.fullview__panel.is-collapsed .fullview__body { display: none; }
+.fullview__body {
+  min-height: 0; overflow-y: auto; scrollbar-width: thin;
+  padding: var(--sp-2) var(--sp-3) var(--sp-3); border-top: var(--hairline) solid var(--border);
+}
+@media (prefers-reduced-motion: reduce) { .fullview__head svg { transition: none; } }

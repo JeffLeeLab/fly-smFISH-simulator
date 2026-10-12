@@ -3,6 +3,7 @@
 // The head carries the pair as a small probe map; hovering or focusing it opens the labelled map.
 // The plot's exact values: hover a genotype's column, or Tab to a compartment's name.
 // The side pane switches between viewer controls and the notebook's Compare tab.
+// Full screen (viewer/fullview.js) takes the viewer, its controls and the plot drawer to the whole screen.
 
 import { caseState, onChange, read, write } from "../store.js";
 import { bind } from "../forms.js";
@@ -10,6 +11,7 @@ import { href } from "../router.js";
 import { renderCompare } from "../notebook.js";
 import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
+import { fullView } from "../viewer/fullview.js";
 import { loadJSON, transcripts } from "../data.js";
 import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle } from "../results.js";
 import { CASES } from "../content.js";
@@ -75,7 +77,7 @@ export async function mount(root, ctx) {
           <button type="button" role="tab" aria-selected="true" aria-controls="pane-viewer" id="tab-viewer">Viewer controls</button>
           <button type="button" role="tab" aria-selected="false" aria-controls="pane-compare" id="tab-compare">Compare</button>
         </div>
-        <div id="pane-viewer" role="tabpanel" aria-labelledby="tab-viewer"></div>
+        <div id="pane-viewer" role="tabpanel" aria-labelledby="tab-viewer"><div class="vctl-host"></div></div>
         <div id="pane-compare" role="tabpanel" aria-labelledby="tab-compare" class="compare" hidden>${renderCompare(id)}</div>
         <p class="next-row" id="to-revise"></p>
       </aside>
@@ -221,7 +223,7 @@ export async function mount(root, ctx) {
   plotRO.observe(box);
 
   const host = root.querySelector("#viewer");
-  let viewer = null, offControls = () => {};
+  let viewer = null, offControls = () => {}, offFull = () => {};
   if (!hasWebGL2()) {
     renderNoWebGL(host);
     // the plot and notebook still work: open the plot and the Compare tab
@@ -233,7 +235,9 @@ export async function mount(root, ctx) {
     const { createViewer } = await import("../viewer/viewer.js");
     const regionIds = g.probe_regions.map(r => r.id);
     viewer = await createViewer(host, { caseId: id, mode: "results", pair, regionIds, ...viewerPrefs() });
-    offControls = renderControls(root.querySelector("#pane-viewer"), viewer, { mode: "results", pair });
+    const controls = root.querySelector("#pane-viewer .vctl-host");
+    offControls = renderControls(controls, viewer, { mode: "results", pair });
+    offFull = fullView(root.querySelector(".bench"), { controls });
     host.addEventListener("viewer-tour", () => {
       root.querySelector("#tab-viewer").click();  // the tour points at the viewer controls
       runTour(VIEWER_TOUR, { key: "viewer" });
@@ -250,6 +254,7 @@ export async function mount(root, ctx) {
     plotRO.disconnect();
     offCard();
     cardMap?.destroy();
+    offFull();
     offControls();
     viewer?.destroy();
   };

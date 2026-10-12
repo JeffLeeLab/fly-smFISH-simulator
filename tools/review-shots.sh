@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Review screenshots (spec, Phase 1 review loop): every step of a case at 1280×720 and 1920×1080,
 # light and dark, with a filled-in notebook so the gated steps open and the first-run tours
-# marked as seen. Animated steps are frozen at their end frames (?t=). Writes one PNG per state
-# and one sheet per step (light | dark, small | large).
+# marked as seen. Animated steps are frozen at their end frames (?t=). Steps 3 and 6 are also
+# shot in full screen (step 6 with the plot open); a scripted click is not a user gesture, so
+# that is the page's own full view, without the browser's. Writes one PNG per state and one
+# sheet per state (light | dark, small | large).
 #
 #   tools/review-shots.sh <out-dir> [case]     case: pdf (default) or mb
 #
@@ -48,11 +50,20 @@ for theme in light dark; do
       sleep "${REVIEW_WAIT:-3}"
       playwright-cli screenshot --filename="${names[$i]}-$theme-$size.png" >/dev/null
     done
+    for st in 3 6; do
+      plot=""; [ "$st" = 6 ] && plot="document.querySelector('.results__toggle').click();"
+      playwright-cli goto about:blank >/dev/null
+      playwright-cli goto "$base#/$case/step-$st" >/dev/null
+      sleep "${REVIEW_WAIT:-3}"
+      playwright-cli eval "() => { document.querySelector('[data-act=full]').click(); $plot return 1; }" >/dev/null
+      sleep 1.5
+      playwright-cli screenshot --filename="step$st-full-$theme-$size.png" >/dev/null
+    done
   done
 done
 playwright-cli kill-all >/dev/null 2>&1 || true
 cd "$repo"
-uv run python - "$out" "${names[@]}" <<'PY'
+uv run python - "$out" "${names[@]}" step3-full step6-full <<'PY'
 import sys
 from pathlib import Path
 from PIL import Image, ImageDraw

@@ -98,6 +98,11 @@ export const VIEWER_TOUR = [
     title: "Compare genotypes",
     text: "Control is on the left and the mutant on the right, zoomed together. Flicker shows one field and swaps genotype in place: press F.",
   },
+  {
+    target: "[data-act=full]",
+    title: "Full screen",
+    text: "Give the images the whole screen, with the controls over their corner. Esc or the same button brings you back.",
+  },
 ];
 
 export const LEGEND_POINTER = [

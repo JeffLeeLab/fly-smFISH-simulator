@@ -60,7 +60,7 @@ export function measuresFor(cs) {
     overlap: {
       label: "Spots in TDP-43 granules",
       axis: "share",
-      note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
+      note: "Share of spots on TDP-43 granules (the faint, soft-edged puncta; the bright, irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
       cats: P.overlap.map(c => ({
         id: `overlap-${c}`, label: P.labels[c], fly: c, sub: null,
         animal: a => a.m.overlap?.[c]?.observed ?? null,

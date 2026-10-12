@@ -13,7 +13,7 @@ Realism comes from modelling the label and the optics, not from detail (docs/spe
   and the neurites (also lower in the mutant), on the same grey-per-level scale as the nucleus.
   The mutant's aggregates are drawn in too: irregular bodies with bright and dark patches, at the
   brightness the generator gave each, with a highlight roll-off so their texture survives.
-  The small, round transport granules are drawn live by the viewer from the data.
+  The transport granules are drawn live by the viewer from the data, as faint, soft bodies.
 - Optics: point-spread blur, an out-of-focus haze from the maximum-intensity projection, uneven
   labelling, and shot noise that scales with the signal (zero where there is no signal, so the
   image edges never show). Spots are drawn live by the viewer, so they stay sharp at any zoom.

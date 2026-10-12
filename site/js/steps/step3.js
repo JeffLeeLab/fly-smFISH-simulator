@@ -1,11 +1,13 @@
 // Step 3: the first clue. TDP-43 IF in control vs mutant, qualitative only: membrane + DAPI
 // and TDP-43 channels, no plot or table. Observation and interpretation in separate fields.
+// Full screen (viewer/fullview.js) takes the viewer and its controls to the whole screen.
 
 import { bind } from "../forms.js";
 import { href } from "../router.js";
 import { storageWarning } from "../notebook.js";
 import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
+import { fullView } from "../viewer/fullview.js";
 import { term } from "../glossary.js";
 import { tourOnce, runTour, VIEWER_TOUR } from "../tour.js";
 import { takeHandOff, growFrom } from "../handoff.js";
@@ -50,12 +52,14 @@ export async function mount(root, ctx) {
   const { createViewer } = await import("../viewer/viewer.js");
   const viewer = await createViewer(host, { caseId: ctx.caseId, mode: "clue", ...viewerPrefs() });
   const offControls = renderControls(root.querySelector("#controls"), viewer, { mode: "clue" });
+  const offFull = fullView(root.querySelector(".bench"), { controls: root.querySelector("#controls") });
   const replay = () => runTour(VIEWER_TOUR, { key: "viewer" });
   host.addEventListener("viewer-tour", replay);
   tourOnce("viewer", VIEWER_TOUR);  // the first time the viewer opens
 
   return () => {
     unbind();
+    offFull();
     offControls();
     viewer.destroy();
   };

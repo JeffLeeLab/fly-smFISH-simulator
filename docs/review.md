@@ -114,3 +114,28 @@ The white-spot share measure was removed (the per-cell counts stay). The TDP-43 
 ## 2026-10-12: mushroom body signed off and merged
 
 At the instructor's request the TDP-43 puncta were cut again, to 0.0072 per µm² in both genotypes, and the truth table was signed off (status "signed-off", Jeff Lee, 2026-10-12). `build mb`: 3788 checks passed; `validate mb --signed` and `validate pdf --signed`: 0 failed; `tools/pdf-identical.sh` passed; the Pages workflow's data check regenerates nothing new; no served file names the invented isoforms. Step 3's lobes zoom shows a scattering of faint puncta, alike in both genotypes. `phase2-mb` was merged into `main` (fast-forward).
+
+## 2026-10-12: TDP-43 granules redrawn; full screen for steps 3 and 6
+
+At the instructor's request: the transport granules are larger and dimmer, and a little irregular, so RNA visibly sits inside one and a granule is never read as a spot. Steps 3 and 6 also get a full-screen view for laptop screens. Both changes are in the browser only: no generated data changed (`tools/pdf-identical.sh` passed; `validate pdf --signed` 2712 and `validate mb --signed` 3788 checks, 0 failed).
+
+- **Granules.** Each is drawn out to the distance the overlap measure scores (radius + 0.3 µm), as a flat-topped body with a soft edge and a gently lumpy outline (12 seeded variants, turned per granule), at half its data peak. While smFISH is on, it is dimmed only to 90%.
+- **Full screen.** An expand icon at the right end of the viewer toolbar opens it. The bench goes dark in either theme. The viewer controls float over the fields' top-right corner and collapse to their header. In step 6 the plot drawer docks under the viewer. The same button (now "Exit full screen", with an Esc key cap), Esc, the browser's own exit and leaving the step all close it. The viewer tour gains a fourth stop.
+- **Review set.** `tools/review-shots.sh` now also shoots steps 3 and 6 in full screen, step 6 with the plot open.
+
+**Checks.**
+- Close-ups before and after, at 1280×720:
+  - Pdf axon and dorsal terminals (TDP-43 alone; F6 + F5);
+  - mushroom body lobes (TDP-43 alone; U2 + U4);
+  - Pdf cell bodies, set against the mutant aggregates.
+- Real browser full screen (playwright-cli click): entered; Esc left it and returned the controls to the side pane; a route change also left it.
+- The tour over the full view, with Esc closing the tour before the view.
+- Review sets for both cases, at both sizes and in both themes.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Granules, Pdf | About 1.2–1.4 µm across; the futsch cargo sits visibly inside a faint body. TDP-43 alone, the peak fell from about 159 to 108 (8-bit red). | OK. |
+| 2 | Granules, mushroom body | About 1.1 µm, more than twice this case's enlarged spots; no longer spot-like. Aggregates stay far brighter and lumpier. | OK. |
+| 3 | Viewer toolbar at 1280 | The new icon pushed Pdf step 3's Split row 2 px past the width. `.vbtn` side padding went from 9 to 8 px, and Split fits again. In Flicker the row still wraps to two lines, as it did before this change ("Switch genotype F"). | Fixed (Split); Flicker wrap left as it was. |
+| 4 | Full screen, step 6 | At 1280 with the plot open, the controls panel covers the mutant's dorsal terminals (Pdf) or the end of the vertical lobe (mushroom body) in the whole view. | Accepted: the panel collapses to its header, and the state is remembered. |
+| 5 | Full screen, themes | Identical in light and dark; tours and glossary tips still show over it. | OK. |
