@@ -26,9 +26,7 @@ export const CASES = {
       projection: "2D maximum-intensity projection (simulated)",
     },
     // Lateral PSF σ in µm (FWHM ≈ 0.28 µm); spots below minSigmaPx are drawn larger and dimmer (same total light).
-    // TDP-43 granules are drawn granuleGrowUm beyond their radius: the generator's overlap_um, so the
-    // drawn body is the zone in which a spot counts as on the granule.
-    display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95, granuleGrowUm: 0.3 },
+    display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95 },
     // Count categories: `sub` says where the small points come from ("cells": one per cell;
     // "lobes": one per lobe system, raw.units.lobes), `unit` names them in the hover text.
     plot: {
@@ -83,7 +81,7 @@ export const CASES = {
       projection: "Oblique maximum-intensity projection (simulated)",
     },
     // larger and brighter than true size, so spots read like the Pdf case's in a structure three times its size
-    display: { spotSigmaUm: 0.2, minSigmaPx: 1.0, spotGain: 1.1, granuleGrowUm: 0.3 },
+    display: { spotSigmaUm: 0.2, minSigmaPx: 1.0, spotGain: 1.1 },
     plot: {
       labels: { nucleus: "Nucleus", cellbody: "Cell body", peduncle: "Axon bundle", lobes: "Lobes" },
       count: {

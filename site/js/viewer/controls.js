@@ -1,6 +1,6 @@
 // Side-pane controls for the viewer: channel toggles with solo, the TDP-43 brightness (on its
-// row) and LUT (dimmed to 40%, its faint granules only to 90%, automatically while any smFISH
-// channel is on), and the animal. In full screen the same element floats over the fields (fullview.js).
+// row) and LUT (dimmed to 40%, its granules to 70%, automatically while any smFISH channel is on),
+// and the animal. In full screen the same element floats over the fields (fullview.js).
 // LUT and brightness choices are kept per browser.
 
 import { read, write } from "../store.js";

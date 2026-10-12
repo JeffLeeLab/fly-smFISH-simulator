@@ -12,10 +12,7 @@
 // Every animal has its own neurons: the membrane, DAPI and TDP-43 images (diffuse nuclear and
 // cytoplasmic signal, and the mutant's aggregates) are rendered by the generator
 // (generator/render.py) from that animal's geometry; spots and TDP-43 transport granules are
-// drawn live from the molecule data, so they stay sharp at any zoom. A granule is drawn as the
-// zone the overlap measure scores (its radius plus the overlap distance, as optics would blur
-// it): a faint, soft, slightly irregular body, so it never reads as one more spot, and a spot on
-// it sits visibly inside.
+// drawn live from the molecule data, so they stay sharp at any zoom.
 
 import { Application, CanvasSource, Container, Filter, GlProgram, ImageSource, Rectangle, Sprite, Texture, TilingSprite, UniformGroup, defaultFilterVert } from "pixi.js";
 import { Viewport } from "pixi-viewport";
@@ -24,13 +21,12 @@ import { copyCanvas } from "../export.js";
 import { CASES } from "../content.js";
 import { term } from "../glossary.js";
 import { EXPAND_ICON, SHRINK_ICON } from "../icons.js";
-import { autofluorescence, gaussianCanvas, granuleCanvases, grainCanvas, GRANULE_BODY } from "./textures.js";
-import { mulberry32 } from "../prng.js";
+import { autofluorescence, gaussianCanvas, grainCanvas } from "./textures.js";
 
 const TDP_DIM = 0.4;           // TDP-43 while an smFISH channel is on, so a spot on it doesn't sum to a false white
-const GRANULE_LEVEL = 0.5;     // a granule's display peak relative to its data peak: a large body, so dim
-const GRANULE_DIM = 0.9;       // granules are faint already: barely dimmed, so a spot inside one still shows (no whiter than over a nucleus)
-const GRANULE_PX = 128;        // granule texture size
+const GRANULE_SIZE = 1.2;      // granules drawn a little wider than their radius alone gives (instructor, 2026-10-12)…
+const GRANULE_LEVEL = 0.7;     // …and dimmer than their data peak, so they read as soft puncta, not spots
+const GRANULE_DIM = 0.7;       // granules are faint already: dimmed less, so a spot inside one still shows (no whiter than over a nucleus)
 const MAX_SCALE = 60;          // px per µm
 const SCALE_STEPS = [0.5, 1, 2, 5, 10, 20, 50];
 const GENOTYPES = ["control", "mutant"];
@@ -125,7 +121,7 @@ function setImage(sprite, img, frame) {
 export async function createViewer(root, opts) {
   const { caseId, mode, pair = null, regionIds = [] } = opts;
   const { anatomy, display } = CASES[caseId];
-  const { spotSigmaUm: SIGMA_UM, minSigmaPx: MIN_SIGMA_PX, spotGain: SPOT_GAIN, granuleGrowUm: GRANULE_GROW } = display;
+  const { spotSigmaUm: SIGMA_UM, minSigmaPx: MIN_SIGMA_PX, spotGain: SPOT_GAIN } = display;
   const firstAnimal = opts.animal || 1;
   const geometryOf = n => Promise.all(GENOTYPES.map(g => loadJSON(`data/${caseId}/geometry-${g}-${n}.json`)));
   const firstGeoms = await geometryOf(firstAnimal);
@@ -190,7 +186,6 @@ export async function createViewer(root, opts) {
 
   // ---------- one PixiJS application per field ----------
   const gaussCanvas = gaussianCanvas(64);
-  const granuleCanvas = granuleCanvases(12, GRANULE_PX);
   const grain = grainCanvas(256, 7);
   const auto = autofluorescence([bx0 - 150, by0 - 150, bx1 + 150, by1 + 150], 0.5, 11);  // reaches past any view, so no edge shows
 
@@ -226,7 +221,6 @@ export async function createViewer(root, opts) {
     vp.addChild(content);
 
     const gauss = texture(gaussCanvas);
-    const granuleTex = granuleCanvas.map(texture);
     const worlds = {};
     for (const g of GENOTYPES) {
       const w = new Container();
@@ -253,7 +247,7 @@ export async function createViewer(root, opts) {
     grainSprite.alpha = 0.07;
     app.stage.addChild(grainSprite);
 
-    const field = { el, index, app, vp, worlds, gauss, granuleTex, grainSprite, shown: GENOTYPES[index] };
+    const field = { el, index, app, vp, worlds, gauss, grainSprite, shown: GENOTYPES[index] };
     app.renderer.on("resize", () => onResize(field));
     return field;
   }
@@ -278,20 +272,19 @@ export async function createViewer(root, opts) {
         setImage(w.membrane, images[g].membrane, frame);
         setImage(w.dapi, images[g].dapi, frame);
         setImage(w.tdpNuclear, images[g].tdp43, frame);
-        // TDP-43 transport granules, drawn live: each takes a seeded shape and turn from its
-        // index, so it looks the same in every field and in the export
+        // TDP-43 transport granules, drawn live: soft, round, a little larger than a spot
         w.granules.removeChildren().forEach(c => c.destroy());
-        d.tdp43.granules.forEach(([x, y, r, peak], j) => {
-          const rand = mulberry32(7001 + 2 * j + (g === "mutant" ? 1 : 0));
-          const s = new Sprite(f.granuleTex[Math.floor(rand() * f.granuleTex.length)]);
+        for (const [x, y, r, peak] of d.tdp43.granules) {
+          const s = new Sprite(f.gauss);
           s.anchor.set(0.5);
           s.position.set(x, y);
-          s.rotation = rand() * 2 * Math.PI;
-          s.radiusUm = r + GRANULE_GROW;
+          s.sigmaUm = Math.max(SIGMA_UM, r * 0.75) * GRANULE_SIZE;
           s.peak = Math.min(1, peak * GRANULE_LEVEL);
+          s.scale.set((6 * s.sigmaUm) / 64);
+          s.alpha = s.peak;
           s.blendMode = "add";
           w.granules.addChild(s);
-        });
+        }
         // smFISH spots
         for (const ch of ["ch1", "ch2"]) {
           w.spots[ch].removeChildren().forEach(c => c.destroy());
@@ -373,11 +366,10 @@ export async function createViewer(root, opts) {
         c.alpha = 1 / (k * k);
         c.children.forEach(sp => sp.scale.set(size));
       }
-      // TDP-43 granules: the same conserved-light rule, each at its own size (half its radius
-      // standing in for a spot's σ)
+      // TDP-43 granules: the same conserved-light rule, each at its own size
       for (const sp of f.worlds[g].granules.children) {
-        const kg = Math.max(1, MIN_SIGMA_PX / (0.5 * sp.radiusUm * s));
-        sp.scale.set((2 * sp.radiusUm / GRANULE_BODY * kg) / GRANULE_PX);
+        const kg = Math.max(1, MIN_SIGMA_PX / (sp.sigmaUm * s));
+        sp.scale.set((6 * sp.sigmaUm * kg) / 64);
         sp.alpha = sp.peak / (kg * kg);
       }
     }
