@@ -212,16 +212,18 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
     const axG = el("g", {}, svg);
     if (state.scale === "comp") {
       el("line", { x1: X(ax.d0), x2: X(ax.d1), y1: ay, y2: ay, class: "tmap__axis" }, axG);
-      // every break mark carries its length; a label that would collide drops to a second line
-      const lastR = [-1e9, -1e9];
+      // every break mark carries its length; a label that would collide drops to the next line
+      // (up to three), and one that fits on none is left off (its break mark stays)
+      const lastR = [-1e9, -1e9, -1e9];
       for (const s of ax.gaps) {
         const a = LW + s.x, b = a + s.w, m = (a + b) / 2;
         el("rect", { x: a + 1, y: ay - 3, width: Math.max(0, s.w - 2), height: 6, class: "tmap__gap" }, axG);
         const len = s.b - s.a;
         el("path", { d: `M${m - 4},${ay + 4} L${m - 1},${ay - 4} M${m + 1},${ay + 4} L${m + 4},${ay - 4}`, class: "tmap__break" }, axG);
         const lw = kb(len).length * 7;
-        const line = m - lw / 2 > lastR[0] + 6 ? 0 : 1;
-        if (line) lines = 2;
+        const line = lastR.findIndex(r => m - lw / 2 > r + 6);
+        if (line < 0) continue;
+        lines = Math.max(lines, line + 1);
         const t = el("text", { x: m, y: ay + 18 + line * 14, "text-anchor": "middle", class: "tmap__tick" }, axG);
         t.textContent = kb(len);
         lastR[line] = m + lw / 2;
