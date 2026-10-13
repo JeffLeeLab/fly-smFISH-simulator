@@ -26,7 +26,7 @@ class Isoform:
     exons: list        # [[lo, hi], ...] genomic, 1-based inclusive
     strand: str
     share: float       # fraction of mature molecules (equal decay, so also of production); control production
-    group: str | None = None  # isoform group ("g1" | "g2"), for cases whose groups change production
+    group: str | None = None  # isoform group ("g1" | "g2"; "long" | "short"; an overlapping gene's name)
     weight: float = 1.0       # within-group weight
 
     @property
@@ -84,6 +84,10 @@ class Case:
         """Isoform probabilities of the mature molecules in one compartment."""
         if "isoform_groups" not in self.params:
             return np.array([i.share for i in self.isoforms])
+        if "kind_per_cell" in self.params:
+            kinds = self.params["kind_per_cell"][genotype][comp_id]
+            tot = sum(kinds.values())
+            return np.array([kinds.get(i.group, 0.0) / tot * i.weight / self._group_total(i.group) for i in self.isoforms])
         if "exon" in self.params:
             n = self.group_counts(genotype, comp_id)
             kinds = {"g1": n[0], self.params["exon"]["into"] + "x": n[1], "g2": n[2]}
@@ -102,6 +106,8 @@ class Case:
 
     def mature_per_cell(self, genotype: str) -> dict:
         """Mean mature molecules per cell, by compartment."""
+        if "kind_per_cell" in self.params:
+            return {c: sum(k.values()) for c, k in self.params["kind_per_cell"][genotype].items()}
         if "exon" in self.params:
             return {c.id: sum(self.group_counts(genotype, c.id)) for c in self.layout.compartments}
         return self.params["mature_per_cell"][genotype]
@@ -193,6 +199,11 @@ def load_case(case_id: str, params: dict) -> Case:
         elif name in params["isoforms"]:
             isoforms.append(Isoform(name, t["exons"], strand, params["isoforms"][name]))
     assert abs(sum(i.share for i in isoforms) - 1) < 1e-9, "isoform shares must sum to 1"
+    for other in params.get("other_genes", ()):
+        # an overlapping same-strand gene a probe region also detects (stai: CG31642 in S3): its
+        # own kind of mature molecule, with no production of its own, so no nascent RNA
+        for t in g["overlapping_same_strand_genes"][other]:
+            isoforms.append(Isoform(t["name"], t["exons"], strand, 0.0, other))
     if "exon" in params:
         # invented, private isoforms: each of the exon's host group with the exon spliced in; no production
         ex = params["exon"]

@@ -24,6 +24,7 @@ import math
 import numpy as np
 from PIL import Image
 from shapely import contains_xy, prepare
+from shapely.geometry import Polygon
 
 RES = 10                     # px per µm
 PSF_SIGMA_UM = 0.2          # lateral PSF (a little soft, as in the reference images)
@@ -31,13 +32,30 @@ HAZE_SIGMA_UM = 1.3          # out-of-focus light gathered by the projection
 LAYERS = ("membrane", "dapi", "tdp43")
 
 # per fibre kind: the radius at which stamp() gives full brightness, and the membrane layer's gain
-FIBRE_CORE = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25}
+FIBRE_CORE = {"axon": 0.62, "neurite": 0.6, "terminal": 0.6, "fine": 0.25, "swelling": 1.0}
 FIBRE_GAIN = {"axon": 0.9, "neurite": 0.85, "terminal": 1.0, "fine": 1.0}
+# synaptic swellings (leg motor neuron): their membrane label is brightest round the rim, as on
+# p. 9 of the reference pack; a large swelling's middle falls to 1 - this
+SWELLING_RIM = 0.45
 # neuropil (mushroom body): a dim fill under the Kenyon cells' own processes, which run as fine
 # bright streaks along the bundles (reference pack, p. 11); as fractions of a full-brightness fibre
 NEUROPIL_FILL = 0.2
 NEUROPIL_STREAKS = 0.85
 NEUROPIL_TDP43 = 1.0         # diffuse TDP-43 in the neuropil, as a fraction of the neurite level
+# unlabelled tissue seen by its autofluorescence (leg motor neuron), dimmer than the label
+CONTEXT_VNC = 0.46           # nerve-cord tissue round the cell body
+CONTEXT_SHEATH = 0.62        # the sheath along the VNC's edge
+CONTEXT_NERVE = 0.42         # the nerve the axon leaves in
+CONTEXT_CUTICLE = 0.62       # the leg's cuticle, at its outer edge
+CUTICLE_EDGE = 0.75          # the shell's profile inwards from that edge: a crisp line,
+CUTICLE_GLOW = 0.3           # a glow over a few µm,
+CUTICLE_FILL = 0.08          # and a faint translucence across the leg
+CUTICLE_JOINT = 0.65         # where one segment's end sits in the next
+CONTEXT_BRISTLE = 0.4        # bristles and their sockets
+CONTEXT_MUSCLE = 0.52        # striped muscle under the synaptic terminals
+FIBRE_UM = 9.5               # muscle fibre width (they run along the femur)
+SARCOMERE_UM = 3.2           # striation period across the fibres
+CONTEXT_EDGE_UM = 8.0        # the tissue fades out over this distance from the image's edges
 BIG_CASE_CELLS = 8           # beyond this many cells, per-cell textures are made in a window
 WINDOW_UM = 3.0              # margin around a cell in its window
 
@@ -166,6 +184,121 @@ def neuropil(cv, n):
     return base, np.clip(streaks, 0, 1.2) * base
 
 
+def context(cv, ctx, rng):
+    """The leg motor neuron's surroundings, seen only by their autofluorescence, so students can
+    tell where they are: the VNC's tissue (a cortex of cell bodies along its edge, finer neuropil
+    deeper in) and its sheath; the nerve the axon leaves in, a faint band of unlabelled axons;
+    the leg's segments, each seen through its curved shell of cuticle (a crisp bright outer edge,
+    a glow fading inwards over a few µm, a faint translucence across it), and its bristles; and
+    the femur's muscle, fibres slanting in to a tendon along its midline with striations across
+    them, each fibre's out of step with its neighbours'."""
+    out, layer = cv.zeros(), cv.zeros()
+    box = Polygon([(cv.x0, cv.y0), (cv.x0 + cv.w / cv.res, cv.y0), (cv.x0 + cv.w / cv.res, cv.y0 + cv.h / cv.res), (cv.x0, cv.y0 + cv.h / cv.res)])
+
+    def strokes(fibres, gain):
+        acc = cv.zeros()
+        for f in fibres:
+            layer[:] = 0
+            stamp(layer, cv, f, f["r"])
+            np.maximum(acc, layer, out=acc)
+        return acc * gain
+
+    if "vnc" in ctx:
+        vnc = ctx["vnc"].intersection(box)
+        cortex = vnc.difference(ctx["vnc"].buffer(-16))
+        n = int(cortex.area / 18)
+        cells = splat(cv, points_in(cortex, n, rng), rng.lognormal(0, 0.3, n).astype(np.float32), 1.25)
+        cells /= np.percentile(cells[cells > 0], 90) + 1e-9
+        deep = mask(cv, ctx["vnc"].buffer(-16), 4.0)
+        tex = (1 - deep) * (0.55 + 0.5 * np.clip(cells, 0, 1.3)) + deep * uneven(cv, rng, 0.75, 1.1, scale_um=0.7)
+        np.maximum(out, mask(cv, vnc, 1.2) * tex * CONTEXT_VNC, out=out)
+        exy, es = resample_line(ctx["vnc_edge"])
+        sheath = {"xy": exy, "s": es, "r": np.full(es.shape, 0.6), "v": np.ones_like(es), "b": 1.0}
+        np.maximum(out, blur(strokes([sheath], CONTEXT_SHEATH), 0.5 * RES) * uneven(cv, rng, 0.55, 1.1, scale_um=3.0), out=out)
+    if "nerve" in ctx:
+        np.maximum(out, strokes(ctx["nerve"], CONTEXT_NERVE) * uneven(cv, rng, 0.75, 1.1, scale_um=1.5), out=out)
+    xs = cv.x0 + (np.arange(cv.w) + 0.5) / cv.res
+    ys = cv.y0 + (np.arange(cv.h) + 0.5) / cv.res
+    X, Y = np.meshgrid(xs, ys)
+
+    def along(axis):
+        """Distance along an axis (from its start, in its direction) and across it, per pixel."""
+        (px, py), th = axis["start"], axis["axis"]
+        dx, dy = X - px, Y - py
+        return dx * math.cos(th) + dy * math.sin(th), -dx * math.sin(th) + dy * math.cos(th)
+
+    def fading(axis, a):
+        """1 along an axis, fading in over its first fade_in µm and out over its last fade_out µm."""
+        f = np.ones_like(a)
+        if axis.get("fade_in"):
+            f *= np.clip(a / axis["fade_in"], 0, 1) ** 2 * (3 - 2 * np.clip(a / axis["fade_in"], 0, 1))
+        if axis.get("fade_out"):
+            q = np.clip((a - (axis["length"] - axis["fade_out"])) / axis["fade_out"], 0, 1)
+            f *= 1 - q * q * (3 - 2 * q)
+        return f
+
+    if "muscle" in ctx:
+        pen = ctx["pennation"]
+        # fibres run from the cuticle in to a tendon along the femur's midline, converging distally
+        a, v = along(pen)
+        u, slant = np.abs(v), pen["slant"]
+        across = u * math.cos(slant) + a * math.sin(slant)
+        lengthwise = a * math.cos(slant) - u * math.sin(slant)
+        across = (across + 1.6 * np.sin(across / 7.0 + 1.3)) / FIBRE_UM   # fibres of uneven width
+        k = np.floor(across)
+        seams = 0.3 + 0.7 * np.sin(math.pi * (across - k)) ** 0.45                  # dark clefts between the fibres
+        fibre_b = 0.7 + 0.4 * ((k * 0.754877) % 1.0)                         # each fibre a little brighter or dimmer
+        bands = 0.86 + 0.14 * np.cos(2 * math.pi * (lengthwise / SARCOMERE_UM + ((k * 0.618034) % 1.0)))
+        muscle = mask(cv, ctx["muscle"], 1.5) * seams * fibre_b * bands * fading(pen, a) * uneven(cv, rng, 0.65, 1.1, scale_um=4.0)
+        np.maximum(out, muscle * CONTEXT_MUSCLE, out=out)
+    if "leg" in ctx:
+        leg = ctx["leg"]
+        # the shell glows from the leg's outline, on a canvas padded so the image's edges cast none
+        pad = 15.0
+        big = Canvas((cv.x0 - pad, cv.y0 - pad, cv.x0 + cv.w / cv.res + pad, cv.y0 + cv.h / cv.res + pad))
+        kp = int(round(pad * cv.res))
+        m = mask(big, leg["shape"])
+        shell = m * (2 * CUTICLE_EDGE * (1 - blur(m, 0.9 * RES)) + 2 * CUTICLE_GLOW * (1 - blur(m, 4.5 * RES)) + CUTICLE_FILL)
+        shell = shell[kp:kp + cv.h, kp:kp + cv.w]
+        joints = []
+        for arc in leg["joints"]:
+            jxy, js = resample_line(arc)
+            joints.append({"xy": jxy, "s": js, "r": np.full(js.shape, 0.8), "v": np.ones_like(js), "b": 1.0})
+        shell = np.maximum(shell, blur(strokes(joints, CUTICLE_JOINT), 0.6 * RES))
+        # each segment fades along its own axis (the coxa in from the body, the femur out towards the tibia)
+        fade = cv.zeros()
+        for seg in leg["segments"]:
+            np.maximum(fade, mask(cv, seg["shape"].buffer(2.0)) * fading(seg, along(seg)[0]), out=fade)
+        np.maximum(out, shell * fade * CONTEXT_CUTICLE * uneven(cv, rng, 0.6, 1.1, scale_um=2.0), out=out)
+    if "bristles" in ctx:
+        np.maximum(out, blur(strokes(ctx["bristles"], CONTEXT_BRISTLE), 0.25 * RES), out=out)
+    # fade out towards the image's edges, so the frame never shows as a hard edge in the tissue
+    ramp = lambda n: np.clip(np.minimum(np.arange(n) + 0.5, n - np.arange(n) - 0.5) / (CONTEXT_EDGE_UM * cv.res), 0, 1) ** 2
+    out *= np.outer(ramp(cv.h), ramp(cv.w)) * (3 - 2 * np.sqrt(np.outer(ramp(cv.h), ramp(cv.w))))
+    return out
+
+
+def resample_line(points, step=0.1):
+    p = np.asarray(points, float)
+    s = np.r_[0, np.cumsum(np.hypot(*np.diff(p, axis=0).T))]
+    t = np.arange(0, s[-1], step)
+    return np.c_[np.interp(t, s, p[:, 0]), np.interp(t, s, p[:, 1])], t
+
+
+def swellings(cv, fibres):
+    """Synaptic swellings, filled, their membrane label brightest round the rim (reference pack,
+    p. 9); small ones are rim all through. Returns their brightness and how much of each pixel
+    they cover, so they hide the branch running through them."""
+    cover, fill, layer = cv.zeros(), cv.zeros(), cv.zeros()
+    for f in fibres:
+        layer[:] = 0
+        stamp(layer, cv, {**f, "b": 1.0, "v": np.ones_like(f["r"])}, f["r"])
+        np.maximum(cover, layer, out=cover)
+        np.maximum(fill, layer * f["b"], out=fill)
+    rim = np.clip(cover * (1 - blur(cover, 0.45 * RES)) * 2.4, 0, 1)
+    return fill * (1 - SWELLING_RIM + SWELLING_RIM * rim), cover
+
+
 def uneven(cv, rng, lo, hi, scale_um=5.0):
     """Smooth multiplicative field: uneven labelling across the tissue."""
     f = blur(rng.standard_normal((cv.h, cv.w)).astype(np.float32), scale_um * cv.res)
@@ -187,12 +320,20 @@ def membrane(whole, skel, rng):
     out = cv.zeros()
     layer = cv.zeros()
     for f in skel["fibres"]:
+        if f["kind"] == "swelling":
+            continue
         layer[:] = 0
         stamp(layer, cv, f, FIBRE_CORE[f["kind"]])
         np.maximum(out, layer * FIBRE_GAIN[f["kind"]], out=out)
+    swell = [f for f in skel["fibres"] if f["kind"] == "swelling"]
+    if swell:
+        bright, cover = swellings(cv, swell)
+        out = out * (1 - cover) + bright
     if "neuropil" in skel:
         base, streaks = neuropil(cv, skel["neuropil"])
         np.maximum(out, base * (NEUROPIL_FILL + NEUROPIL_STREAKS * streaks), out=out)
+    if "context" in skel:
+        np.maximum(out, context(cv, skel["context"], rng), out=out)
     # membrane label is cloudy, not even: mottle the processes at fine and medium scales
     out *= uneven(cv, rng, 0.42, 1.1, scale_um=0.3) * uneven(cv, rng, 0.6, 1.06, scale_um=1.2)
     for c in skel["cells"]:

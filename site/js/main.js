@@ -25,6 +25,7 @@ const VIEWS = {
 // A case can replace a step's view; the rest are shared.
 const CASE_VIEWS = {
   mb: { 1: () => import("./steps/mb-step1.js"), 2: () => import("./steps/mb-step2.js") },
+  nmj: { 1: () => import("./steps/nmj-pending.js"), 2: () => import("./steps/nmj-pending.js") },
 };
 const viewOf = (caseId, key) => (CASE_VIEWS[caseId]?.[key] ?? VIEWS[key]);
 
@@ -53,18 +54,22 @@ function pick(r) {
   return { key: r.step };
 }
 
-// A step that fails to load says so, instead of leaving the previous step on screen. The usual
-// cause is a browser holding an older copy of some files (a hard refresh fixes it).
-function failed(err) {
+// A step that fails says so, instead of leaving the previous step on screen. When its files
+// don't load, the usual cause is a browser holding an older copy of some of them (a hard refresh
+// fixes it); when the step itself fails to start, reloading may not help, so it says that.
+function failed(err, loading) {
   console.error(err);
   unmount();
   unmount = () => {};
   const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+  const advice = loading
+    ? `The browser may be holding an older copy of part of the site. Reload the page, bypassing the cache: press <kbd>${mac ? "Cmd+Shift+R" : "Ctrl+F5"}</kbd>. Your notes are kept.`
+    : "Something in this step failed to start. Reload the page to try again; if it happens again, tell your instructor. Your notes are kept.";
   view.innerHTML = `
     <div class="locked" role="alert">
       <p class="t-label">Something went wrong</p>
       <h1 class="t-h1">This step didn’t load</h1>
-      <p class="t-story">The browser may be holding an older copy of part of the site. Reload the page, bypassing the cache: press <kbd>${mac ? "Cmd+Shift+R" : "Ctrl+F5"}</kbd>. Your notes are kept.</p>
+      <p class="t-story">${advice}</p>
       <p class="next-row"><button class="btn btn--primary btn--lg" type="button" data-act="reload">Reload the page</button></p>
     </div>`;
   view.querySelector("[data-act=reload]").addEventListener("click", () => location.reload());
@@ -94,7 +99,7 @@ async function show(r) {
   try {
     mod = await viewOf(r.caseId, choice.key)();
   } catch (err) {
-    if (my === token) failed(err);
+    if (my === token) failed(err, true);
     return;
   }
   if (my !== token) return; // a newer route arrived while loading
@@ -107,7 +112,7 @@ async function show(r) {
   try {
     cleanup = (await mod.mount(view, ctx)) || (() => {});
   } catch (err) {
-    if (my === token) failed(err);
+    if (my === token) failed(err, false);
     return;
   }
   if (my !== token) { cleanup(); return; } // left before the view finished mounting

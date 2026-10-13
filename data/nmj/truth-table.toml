@@ -1,0 +1,115 @@
+# Leg motor neuron – stai: "RNA stuck on the way".
+# The instructor answer key in machine-readable form (docs/spec.md, *Case truth tables*).
+# This file states what must be true of the simulated results; the generator implements the
+# biology separately (generator/cases.py, NMJ), and the validation gate checks one against the other.
+#
+# `uv run python -m generator.truth_table nmj` expands these rules, with the probe menu in
+# docs/transcript_models_R6.json, into data/nmj/truth-table.json (every single probe and all
+# 56 ordered pairs) and data/nmj/truth-table.md (the readable version to sign off).
+#
+# Drafted on 2026-10-13 from the decisions the instructor made that day (spec, *Case truth tables*
+# and *Simulation parameters*); signed off by the instructor the same day.
+#
+# The biology. stai makes two kinds of mRNA by its 3' end: the long-3'UTR isoforms (RB, RD) and
+# the short ones (RA, RC, RE). The long ones ride TDP-43 transport granules down the axon and make
+# up most of the RNA in the axon and synaptic terminals; the short ones mostly stay in the cell
+# body. Invented: in the mutant, viscous TDP-43 granules stall in the axon with their long-3'UTR
+# cargo, so fewer long molecules reach the synaptic terminals (51 -> 20) and more sit in the axon
+# on granules (48 -> 73). Production, splicing and decay are unchanged: the whole-cell count is
+# flat (285 -> 279), the cell body's long:short mix is flat, and transcription sites are flat.
+# CG31642 is nested in a stai intron on the same strand, so the intron probe S3 also detects its
+# mature mRNA (nucleus and cell body, the same in both genotypes): it looks like intron retention.
+# The mutant also has fewer synaptic terminals (20 -> 15), visible in the images but never measured
+# or plotted (the spots are set as a compartment total, so the fall holds per terminal too).
+#
+# A probe's expected count in a compartment is the sum, over the kinds of molecule, of that kind's
+# count times the share of the kind the probe detects.
+
+case = "nmj"
+gene = "stai"
+status = "signed-off"
+signed_off_by = "Jeff Lee (instructor)"
+signed_off_on = "2026-10-13"
+
+# The coverage row for this case (spec, *Coverage*).
+[verdicts]
+transport = "supported"     # S7: fewer spots in the synaptic terminals, more in the axon, whole cell flat: the RNA stops on the way
+granule = "supported"       # the long-3'UTR molecules in the mutant axon sit on TDP-43 granules far above chance
+isoform = "unresolved"      # only the long-3'UTR isoforms are lost, but they are also the only ones that travel: specific, or general transport failure? (Part 2)
+splicing = "ruled-out"      # in the nucleus and cell body, S1, S2, S4 and S6 keep their ratio to S7
+export = "ruled-out"        # nuclear counts and N:C unchanged
+stability = "ruled-out"     # whole-cell count unchanged
+translation = "not-tested"
+celltype = "not-tested"
+
+# Kinds of mature molecule: stai's isoforms by 3' end (within-kind weights) and the overlapping gene.
+[kinds.long]
+isoforms = { RB = 60, RD = 40 }
+
+[kinds.short]
+isoforms = { RA = 35, RC = 15, RE = 50 }
+
+[kinds.CG31642]
+gene = "CG31642"
+
+# Mean mature molecules per cell (one motor neuron per animal), by compartment and kind, [control, mutant].
+[kind_per_cell.nucleus]
+long = [3.0, 3.0]
+short = [12.0, 12.0]
+CG31642 = [3.0, 3.0]
+
+[kind_per_cell.cellbody]
+long = [30.0, 30.0]
+short = [120.0, 120.0]
+CG31642 = [20.0, 20.0]
+
+[kind_per_cell.axon]
+long = [48.0, 73.1]
+short = [12.0, 11.9]
+
+[kind_per_cell.terminals]
+long = [51.0, 20.0]
+short = [9.0, 9.0]
+
+# Share of a kind's molecules in a compartment riding on TDP-43 transport granules, [control, mutant].
+[cargo.axon]
+long = [0.10, 0.55]
+
+[rules]
+same = 0.05          # "unchanged" within ±5%
+ratio = 0.10         # a ratio rule within ±10% of its nominal ratio
+nominal = 0.20       # control means within ±20% of the nominal numbers
+appears_cap = 0.15
+chance = 0.04        # overlap at chance: within 4 percentage points of the randomised level
+share = 0.08         # overlap with cargo: within 8 percentage points of nominal cargo + chance
+ts_number = 1        # one nucleus per animal: sites may differ by one
+ts_intensity = 0.15
+
+# Key readouts, held to their rule with no allowance for counting noise: the one-probe story (S7:
+# fewer in the synaptic terminals, more in the axon, the cell body flat), the long isoforms' fall in
+# the synaptic terminals (S8), and the cell body's long:short mix (S7 + S8).
+[key]
+single = ["S7:count:terminals", "S7:count:axon", "S7:count:cellbody", "S8:count:terminals"]
+region_ratio_whole_cell = ["S7+S8"]
+
+[mature]
+tdp43_overlap = { cellbody = "chance", axon = "cargo", terminals = "chance" }
+
+[nascent]
+ts_active = 0.9      # share of nuclei with an active site
+ts_detect_min = 2    # a site is counted at 2 or more nascent molecules
+measurable = 4.0     # transcription-site intensity is compared only above this many molecules per active site
+
+# Designed nascent molecules per active site, [control, mutant]: the nascent model (each nascent
+# molecule runs from its isoform's start site to a random polymerase position), calibrated on S5 = 12
+# (cases.py), with production unchanged. 5' regions sit on more of each transcript, so their sites are
+# brighter; S8, at the very end of the long isoforms, is dim.
+[ts]
+S1 = [57.89, 57.89]
+S2 = [83.27, 83.27]
+S3 = [26.76, 26.76]
+S4 = [23.41, 23.41]
+S5 = [12.0, 12.0]
+S6 = [10.43, 10.43]
+S7 = [5.74, 5.74]
+S8 = [1.24, 1.24]

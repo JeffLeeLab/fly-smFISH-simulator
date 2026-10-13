@@ -52,10 +52,43 @@ export const CASES = {
   nmj: {
     id: "nmj",
     system: "Leg motor neuron",
-    cells: "NMJ",
+    cells: "Leg motor neuron",
     phenotype: "Climbing",
     assay: "Climbing vial",
-    available: false,
+    available: true,
+    // The function line follows FlyBase's gene summary, its wording kept (instructor, 2026-10-13).
+    target: {
+      gene: "stai",
+      orthologue: "STMN2",
+      function: "Binds tubulin and regulates microtubules; needed for axonal transport and for the growth and stability of synaptic boutons. In this motor neuron: cell body, axon and synaptic terminals.",
+      flybase: "https://flybase.org/reports/FBgn0266521",
+      orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/11075",
+    },
+    compartments: ["Nucleus", "Cell body", "Axon", "Synaptic terminals"],
+    // Students meet the last compartment as "Synaptic terminals", never "boutons" (instructor, 2026-10-13).
+    anatomy: {
+      whole: "Whole neuron",
+      flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Synaptic terminals"]],
+      projection: "2D maximum-intensity projection (simulated)",
+    },
+    display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95 },
+    plot: {
+      single: true,   // one cell per animal: animal points only, no small points (instructor, 2026-10-13)
+      labels: { nucleus: "Nucleus", cellbody: "Cell body", axon: "Axon", terminals: "Synaptic terminals" },
+      count: {
+        cats: [{ id: "nucleus" }, { id: "cellbody" }, { id: "axon" }, { id: "terminals" }],
+        note: "Spots in the one motor neuron of each animal.",
+      },
+      // the RNA stalls inside the axon, so the distal measure is the synaptic terminals alone
+      distal: {
+        label: "Proportion in synaptic terminals",
+        catLabel: "Synaptic terminals",
+        note: "Synaptic terminals / (cell body + axon + synaptic terminals).",
+        fly: "terminals",
+      },
+      overlap: ["cellbody", "axon", "terminals"],
+      overlapNote: "Share of spots on TDP-43 granules (the small puncta). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
+    },
   },
   mb: {
     id: "mb",

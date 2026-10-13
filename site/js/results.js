@@ -39,10 +39,11 @@ export function measuresFor(cs) {
     nc_ratio: {
       label: "Nucleus vs cell body (N:C)",
       axis: "ratio",
-      note: "Nuclear spots divided by cell-body spots. Small points: single cells.",
+      // `single`: one cell per animal, so a cell's point would only repeat its animal's
+      note: P.single ? "Nuclear spots divided by cell-body spots." : "Nuclear spots divided by cell-body spots. Small points: single cells.",
       cats: [{
         id: "nc", label: "Nucleus : cell body", fly: "cellbody", unit: "cells", animal: a => a.m.nc_ratio,
-        sub: a => a.raw.cells.filter(x => x.cellbody > 0).map(x => x.nucleus / x.cellbody),
+        sub: P.single ? null : a => a.raw.cells.filter(x => x.cellbody > 0).map(x => x.nucleus / x.cellbody),
       }],
     },
     share_distal: {
@@ -54,13 +55,14 @@ export function measuresFor(cs) {
     ts: {
       label: "Transcription sites",
       axis: "molecules",
-      note: "Nascent molecules at each nucleus’s transcription site (0 where there is none). Small points: single nuclei.",
-      cats: [{ id: "ts", label: "Transcription sites", fly: "nucleus", unit: "cells", animal: a => a.m.ts_level, sub: a => a.raw.cells.map(x => x.ts) }],
+      note: P.single ? "Nascent molecules at the nucleus’s transcription site (0 where there is none)."
+        : "Nascent molecules at each nucleus’s transcription site (0 where there is none). Small points: single nuclei.",
+      cats: [{ id: "ts", label: "Transcription sites", fly: "nucleus", unit: "cells", animal: a => a.m.ts_level, sub: P.single ? null : a => a.raw.cells.map(x => x.ts) }],
     },
     overlap: {
       label: "Spots in TDP-43 granules",
       axis: "share",
-      note: "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
+      note: P.overlapNote ?? "Share of spots on TDP-43 granules (the small, round puncta; large irregular aggregates are not counted). Dashed band: the share expected by chance, if the same spots were placed at random in the same compartment.",
       cats: P.overlap.map(c => ({
         id: `overlap-${c}`, label: P.labels[c], fly: c, sub: null,
         animal: a => a.m.overlap?.[c]?.observed ?? null,
@@ -206,7 +208,7 @@ export function plotSVG({ entry, channel, measure, yMax, width, height, pal, see
         if (v == null) return;
         const ax = gx + (ai - 1) * 10 * font;
         const cells = c.sub ? c.sub(a).length : null;
-        const extra = measure === "ts" ? ` · sites in ${a.m.ts_number} of ${cells} nuclei` : cells != null ? ` · ${cells} ${c.unit}` : "";
+        const extra = measure === "ts" ? (cells != null ? ` · sites in ${a.m.ts_number} of ${cells} nuclei` : "") : cells != null ? ` · ${cells} ${c.unit}` : "";
         parts.push(`<path class="splot__pt" data-animal="${ai + 1}" data-tip="${short} · animal ${ai + 1} · ${fmt(v, d)}${UNIT[measure] || ""}${extra}" tabindex="-1"
           d="${shapePath(SHAPES[ai], ax, y(v), 5.2 * font)}" fill="${pal.ink}" stroke="${pal.bg}" stroke-width="${1.5 * font}"/>`);
       });

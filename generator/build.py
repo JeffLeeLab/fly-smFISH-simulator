@@ -115,7 +115,9 @@ def public_molecules(case, m):
         "tdp43": {
             "nuclear": m.tdp43["nuclear"],
             "cytoplasmic": m.tdp43["cytoplasmic"],
-            "granules": [[round(x, 3), round(y, 3), round(r, 3), round(i, 3)] for x, y, r, i, _ in m.tdp43["granules"]],
+            # [x, y, radius, peak], plus [aspect, angle] for a stretched granule
+            "granules": [[round(x, 3), round(y, 3), round(r, 3), round(i, 3)] + ([round(a, 3), round(t, 3)] if a != 1.0 else [])
+                         for x, y, r, i, _, a, t in m.tdp43["granules"]],
         },
     }
 

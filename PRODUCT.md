@@ -12,7 +12,7 @@ Decided in `docs/spec.md` (*Rendering stack*, *Hosting and offline use*): a stat
 
 ## Users
 
-Final-year (L4) undergraduates on the *Core Skills in MCB* course, working in three groups during one 2-hour, student-led feedback session. Many are new to FISH. Each group gets one *Drosophila* neuron system (NMJ, Pdf neurons or mushroom body) and works through it at its own pace: designing a two-colour smFISH experiment, reading simulated images, and narrowing down which post-transcriptional regulation (PTR) modes fail in a humanised TDP-43 ALS model.
+Final-year (L4) undergraduates on the *Core Skills in MCB* course, working in three groups during one 2-hour, student-led feedback session. Many are new to FISH. Each group gets one *Drosophila* neuron system (leg motor neuron, Pdf neurons or mushroom body) and works through it at its own pace: designing a two-colour smFISH experiment, reading simulated images, and narrowing down which post-transcriptional regulation (PTR) modes fail in a humanised TDP-43 ALS model.
 
 The secondary user is the instructor, who wrote the cases and keeps the answer key off the site. There is no instructor view and no shared screen; groups present from their own slides.
 
@@ -38,11 +38,11 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 ## Capabilities and Constraints
 
-- Pilot scope covers three adult cases (NMJ – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 built the Pdf/*futsch* case end to end; Phase 2 has built the mushroom body, and the NMJ is still to come.
+- Pilot scope covers three adult cases (leg motor neuron – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 built the Pdf/*futsch* case end to end; Phase 2 has built the mushroom body, and the leg motor neuron is still to come.
 - In scope: animated phenotype/assay openings; probe placement from a curated 8-region menu per gene; a zoomable split-view viewer with membrane + DAPI, two smFISH channels and TDP-43 IF; configurable LUTs; a SuperPlot; the notebook; PNG export.
 - Out of scope: real image data, probe thermodynamics, user accounts, server storage, follow-up experiments, target protein readout, cell-type comparisons and glia.
 - No lock on the student's path and no limit on attempts. Exploring is never penalised, groups can always go back, and locked steps say why they are locked.
-- The site must never give the answer away. PTR-mode names do not appear in case text, there are no hints about traps or decoys, the plot has no p-values or significance stars, and the public JSON hides which isoforms each region detects.
+- The site must never give the answer away. PTR-mode names do not appear in case text (one exception: each gene card's function line follows the FlyBase gene summary, even where its wording overlaps a mode name, such as "axonal transport" or "stability" for *stai*; instructor, 2026-10-13), there are no hints about traps or decoys, the plot has no p-values or significance stars, and the public JSON hides which isoforms each region detects.
 - Every claim in the spec and the instructor material is classified in one of three layers: *Established*, *Simplified* or *Invented for this case*. The student screens show no per-claim layer badges: repeated on every screen, they cluttered the view without informing. The dashed "Simulated" pill ("Simulated teaching data" in the rail footer on every screen, "Simulated" on the activity monitor) is how students are told that the case is simulated and partly invented, and it meets the *Invented for this case* disclosure.
 - Terminology follows the spec glossary, in British English with short sentences.
 - The three open questions were settled on 2026-10-09 (see the spec): verdicts carry over between probe pairs, the TDP-43 default LUT is red-orange, and results open at the whole-neuron view.

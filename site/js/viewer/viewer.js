@@ -272,15 +272,18 @@ export async function createViewer(root, opts) {
         setImage(w.membrane, images[g].membrane, frame);
         setImage(w.dapi, images[g].dapi, frame);
         setImage(w.tdpNuclear, images[g].tdp43, frame);
-        // TDP-43 transport granules, drawn live: soft, round, a little larger than a spot
+        // TDP-43 transport granules, drawn live: soft, a little larger than a spot; round, or
+        // stretched along its angle when the data give an aspect (leg motor neuron: viscous granules)
         w.granules.removeChildren().forEach(c => c.destroy());
-        for (const [x, y, r, peak] of d.tdp43.granules) {
+        for (const [x, y, r, peak, aspect = 1, angle = 0] of d.tdp43.granules) {
           const s = new Sprite(f.gauss);
           s.anchor.set(0.5);
           s.position.set(x, y);
+          s.rotation = angle;
+          s.aspect = aspect;
           s.sigmaUm = Math.max(SIGMA_UM, r * 0.75) * GRANULE_SIZE;
           s.peak = Math.min(1, peak * GRANULE_LEVEL);
-          s.scale.set((6 * s.sigmaUm) / 64);
+          s.scale.set((6 * s.sigmaUm * aspect) / 64, (6 * s.sigmaUm) / 64);
           s.alpha = s.peak;
           s.blendMode = "add";
           w.granules.addChild(s);
@@ -369,7 +372,7 @@ export async function createViewer(root, opts) {
       // TDP-43 granules: the same conserved-light rule, each at its own size
       for (const sp of f.worlds[g].granules.children) {
         const kg = Math.max(1, MIN_SIGMA_PX / (sp.sigmaUm * s));
-        sp.scale.set((6 * sp.sigmaUm * kg) / 64);
+        sp.scale.set((6 * sp.sigmaUm * kg * sp.aspect) / 64, (6 * sp.sigmaUm * kg) / 64);
         sp.alpha = sp.peak / (kg * kg);
       }
     }

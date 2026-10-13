@@ -10,6 +10,7 @@ from dataclasses import dataclass
 
 import numpy as np
 import shapely
+from shapely import affinity
 from shapely.geometry import Point, Polygon
 from shapely.ops import unary_union
 
@@ -130,10 +131,30 @@ def _aggregate(cx, cy, area, inside, rng):
     return body
 
 
+def _heading(g: dict, x: float, y: float) -> float:
+    """Direction (radians, y down) of the axon centreline nearest to a point."""
+    c = np.asarray(g["raw"]["axon"]["centreline"])
+    i = int(np.argmin(np.hypot(c[:, 0] - x, c[:, 1] - y)))
+    d = c[min(i + 1, len(c) - 1)] - c[max(i - 1, 0)]
+    return float(np.arctan2(d[1], d[0]))
+
+
+def _zone(gr, reach):
+    """Where a spot counts as on a granule: within `reach` of its edge. A stretched granule
+    (aspect > 1) is an ellipse along its angle, its short semi-axis the radius."""
+    x, y, r, _, _, aspect, angle = gr
+    if aspect == 1.0:
+        return Point(x, y).buffer(r + reach, quad_segs=16)
+    body = affinity.scale(Point(x, y).buffer(r, quad_segs=16), aspect, 1.0, origin=(x, y))
+    return affinity.rotate(body, angle, origin=(x, y), use_radians=True).buffer(reach, quad_segs=16)
+
+
 def _tdp43(case: Case, m: Molecules, g: dict, rng: np.random.Generator) -> dict:
     """The TDP-43 layer: diffuse nuclear and cytoplasmic levels per cell (drawn into the image by
-    render.py), transport granules (the same density in both genotypes) and, in the mutant, a few
-    dense aggregates around the nucleus (drawn into the image too)."""
+    render.py), transport granules and, in the mutant, a few dense aggregates around the nucleus
+    (drawn into the image too). A granule is (x, y, radius, peak, compartment, aspect, angle):
+    round (aspect 1) unless the case stretches a compartment's granules (leg motor neuron mutant:
+    viscous granules, stretched along the axon)."""
     t = case.params["tdp43"]
     gt = t[m.genotype]
     cells = len(g["nuclei"])
@@ -164,7 +185,7 @@ def _tdp43(case: Case, m: Molecules, g: dict, rng: np.random.Generator) -> dict:
         aggregates += mine
         footprints.append(unary_union([a["shape"] for a in mine]) if mine else None)
 
-    granules = []  # (x, y, radius, peak brightness, compartment)
+    granules = []  # (x, y, radius, peak brightness, compartment, aspect, angle)
     inset = case.params.get("granule_inset_um", 0.4)
     for cp in layout.compartments:
         if cp.granules == "per_cell":
@@ -172,15 +193,21 @@ def _tdp43(case: Case, m: Molecules, g: dict, rng: np.random.Generator) -> dict:
                 free = shp.buffer(-inset)
                 if cp.aggregates and footprints[c] is not None:
                     free = free.difference(footprints[c].buffer(0.5))
-                for (px, py) in _uniform_in(free, rng.poisson(t["granules_per_cell_body"]), rng):
-                    granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id))
+                for (px, py) in _uniform_in(free, rng.poisson(gt.get("granules_per_cell_body", t.get("granules_per_cell_body"))), rng):
+                    granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id, 1.0, 0.0))
     density = gt.get("granule_density_um2", t.get("granule_density_um2"))
+    stretch = gt.get("granule_aspect", {})
     for cp in layout.compartments:
         if cp.granules == "density":
             for unit, shp in g["shared"][cp.id]:
                 inner = shp.buffer(-0.15)
                 for (px, py) in _uniform_in(inner, rng.poisson(density[cp.id] * shp.area), rng):
-                    granules.append((float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id))
+                    gr = (float(px), float(py), float(rng.uniform(*t["granule_radius_um"])), float(t["granule_peak"] * rng.normal(1, 0.15)), cp.id)
+                    if cp.id in stretch:
+                        gr += (float(rng.uniform(*stretch[cp.id])), _heading(g, px, py))
+                    else:
+                        gr += (1.0, 0.0)
+                    granules.append(gr)
     return {"nuclear": nuclear, "cytoplasmic": cytoplasmic, "granules": granules, "aggregates": aggregates, "footprints": footprints}
 
 
@@ -219,10 +246,18 @@ def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
                 here = here & (cell_unit[cp.units][m.cell] == unit)
             sel = np.flatnonzero(here)
             xy[sel] = _uniform_in(_checked(case, shp, sel.size, cp.id, unit), sel.size, rng)
-            # granule cargo: the same share in both genotypes, each molecule on one granule of the compartment
+            # granule cargo: each molecule on one granule of the compartment. A share per compartment
+            # (Pdf: the same in both genotypes), or per genotype; a case may limit cargo to some
+            # isoforms (leg motor neuron: the long-3'UTR ones)
             G = np.array([gr[:2] for gr in m.tdp43["granules"] if gr[4] == cp.id and (unit is None or shp.contains(Point(gr[0], gr[1])))])
             if len(G) and sel.size:
-                cargo = sel[rng.random(sel.size) < p["granule_cargo"].get(cp.id, 0.0)]
+                share = p["granule_cargo"].get(cp.id, 0.0)
+                if isinstance(share, dict):
+                    share = share[m.genotype]
+                pick = rng.random(sel.size) < share
+                if "cargo_isoforms" in p:
+                    pick &= np.isin(m.iso[sel], [k for k, i in enumerate(case.isoforms) if i.name in p["cargo_isoforms"]])
+                cargo = sel[pick]
                 shapely.prepare(shp)
                 for i in cargo:
                     cx, cy = G[rng.integers(len(G))]
@@ -241,11 +276,13 @@ def place(case: Case, m: Molecules, rng: np.random.Generator) -> Molecules:
     granules = m.tdp43["granules"]
     reach = p["overlap_um"]
     m.overlap = np.zeros(n, dtype=bool)
-    if granules:
+    zones = unary_union([_zone(gr, reach) for gr in granules]) if granules else None
+    if any(gr[5] != 1.0 for gr in granules):
+        m.overlap = shapely.contains_xy(zones, m.x, m.y)   # stretched granules: inside their zones
+    elif granules:
         P = np.array([gr[:3] for gr in granules])
         dist = np.hypot(m.x[:, None] - P[None, :, 0], m.y[:, None] - P[None, :, 1]) - P[None, :, 2]
         m.overlap = (dist <= reach).any(axis=1)
-    zones = unary_union([Point(px, py).buffer(r + reach, quad_segs=16) for px, py, r, _, _ in granules]) if granules else None
     chance_by = {}
 
     def chance_in(geom):

@@ -38,6 +38,10 @@ MB geometry file (site/data/mb/geometry-<genotype>-<animal>.json, written by geo
   views: {nucleus, cellbody, calyx, peduncle, lobes, lobes_ab, lobes_apbp, lobes_g}  [x0, y0, x1, y1]
 Shapes are GeoJSON-style MultiPolygons in µm, as in the Pdf files. geometry_mb.build(g, a)
 returns (public, skeleton) like geometry_pdf.build; the skeleton drives render.py.
+
+Leg motor neuron geometry file (site/data/nmj/geometry-<genotype>-<animal>.json, written by
+geometry_nmj): the Pdf schema with one cell; axon {shape, centreline, area_um2}, terminals
+{shape, area_um2} (the synaptic terminals); views {nucleus, cellbody, axon, terminals}.
 """
 
 from dataclasses import dataclass, field
@@ -103,7 +107,23 @@ MB_LAYOUT = Layout(
     area_header=("region_area_um2", None),
 )
 
-LAYOUTS = {"pdf": PDF_LAYOUT, "mb": MB_LAYOUT}
+NMJ_LAYOUT = Layout(
+    case="nmj", gene="stai", geometry_module="geometry_nmj", cells=1,
+    compartments=(
+        Comp("nucleus", "per_cell", "cells[].nucleus", "cell", overlap=False),
+        Comp("cellbody", "per_cell", "cells[].cytoplasm", "cell", granules="per_cell"),
+        Comp("axon", "shared", "axon.shape", "animal", granules="density", area=True),
+        Comp("terminals", "shared", "terminals.shape", "animal", granules="density", area=True),
+    ),
+    # the cell body, where the RNA is made, carries the region ratios (the splicing null); the
+    # distal share is the synaptic terminals alone, as the RNA stalls inside the axon
+    pools={"whole_cell": ("nucleus", "cellbody"), "distal": ("terminals",),
+           "cytoplasm": ("cellbody", "axon", "terminals")},
+    measures=("count", "nc_ratio", "share_distal", "ts_number", "ts_intensity", "ts_level", "overlap"),
+    area_header=("region_area_um2", None),
+)
+
+LAYOUTS = {"pdf": PDF_LAYOUT, "mb": MB_LAYOUT, "nmj": NMJ_LAYOUT}
 
 PDF = {
     "seed": 202609280,           # base seed for the candidate animals
@@ -208,4 +228,60 @@ MB = {
     "search": {"candidates": 120},
 }
 
-CASES = {"pdf": PDF, "mb": MB}
+# Leg motor neuron, stai ("RNA stuck on the way"). Two kinds of stai mRNA by their 3' end: the
+# long-3'UTR isoforms (RB, RD) ride TDP-43 transport granules down the axon and make up most of
+# the RNA in the axon and synaptic terminals; the short ones (RA, RC, RE) mostly stay in the cell
+# body. Invented: in the mutant, viscous TDP-43 granules stall in the axon with their long-3'UTR
+# cargo, so fewer long molecules reach the synaptic terminals and more sit in the axon on
+# granules. Production, splicing and decay are unchanged, so the whole-cell count and the cell
+# body's isoform mix stay flat. CG31642, nested in a stai intron on the same strand, is drawn too
+# (nucleus and cell body, the same in both genotypes), because the intron probe S3 also detects
+# it. One motor neuron per animal; no aggregates (instructor, 2026-10-13).
+NMJ = {
+    "seed": 202610130,
+    "animals": 3,
+    "cells": 1,                  # one motor neuron per animal
+    "animal_sd": 0.10,
+    "spot_intensity_sd": 0.10,
+    # within-group weights; the groups' shares of each compartment are set below
+    "isoform_groups": {"long": {"RB": 60, "RD": 40}, "short": {"RA": 35, "RC": 15, "RE": 50}},
+    "other_genes": ("CG31642",),  # overlapping same-strand genes drawn as their own kind (no nascent RNA)
+    # production in proportion to the whole-cell counts below (equal decay rates): long 132 : short 153
+    "production": {"control": {"long": 132 / 285, "short": 153 / 285}, "mutant": {"long": 132 / 285, "short": 153 / 285}},
+    # mean mature molecules per cell, by compartment and kind (spec: 15, 150, 60 → 85, 60 → 29 stai;
+    # long share 20%, 20%, 80% → 86%, 85% → 69%)
+    "kind_per_cell": {
+        "control": {"nucleus": {"long": 3, "short": 12, "CG31642": 3}, "cellbody": {"long": 30, "short": 120, "CG31642": 20},
+                    "axon": {"long": 48, "short": 12}, "terminals": {"long": 51, "short": 9}},
+        "mutant": {"nucleus": {"long": 3, "short": 12, "CG31642": 3}, "cellbody": {"long": 30, "short": 120, "CG31642": 20},
+                   "axon": {"long": 73.1, "short": 11.9}, "terminals": {"long": 20, "short": 9}},
+    },
+    "ts_active": 0.90,
+    "ts_reference": ("S5", 12),  # S5 sites hold about 12 nascent transcripts
+    "ts_spread_um": 0.12,
+    "ts_detect_min": 2,
+    "ts_inset_um": 1.2,
+    "granule_inset_um": 0.4,
+    # TDP-43 IF: a mild nuclear loss, a little more soluble TDP-43 in the cytoplasm, no aggregates;
+    # more transport granules in the mutant (per neuron: cell body 5 → 10, axon 5 → 25, synaptic
+    # terminals 2 → 8, as densities over the geometry's mean areas), and the mutant's axonal granules
+    # are viscous, drawn stretched along the axon. Larger than the Pdf granules (×1.3).
+    "tdp43": {
+        "control": {"nuclear": 1.0, "cytoplasmic": 0.16, "aggregates": (0, 0), "granules_per_cell_body": 5,
+                    "granule_density_um2": {"axon": 5 / 414, "terminals": 2 / 224}},
+        "mutant": {"nuclear": 0.7, "cytoplasmic": 0.20, "aggregates": (0, 0), "granules_per_cell_body": 10,
+                   "granule_density_um2": {"axon": 25 / 410, "terminals": 8 / 178},
+                   "granule_aspect": {"axon": (1.3, 1.6)}},
+        "neurite_level": 0.75,
+        "granule_radius_um": (0.36, 0.50),
+        "granule_peak": 0.45,
+    },
+    # share of the long-3'UTR molecules in the axon riding on transport granules (none elsewhere)
+    "granule_cargo": {"axon": {"control": 0.10, "mutant": 0.55}},
+    "cargo_isoforms": ("RB", "RD"),
+    "cargo_spread_um": 0.15,
+    "overlap_um": 0.3,
+    "search": {"candidates": 120},
+}
+
+CASES = {"pdf": PDF, "mb": MB, "nmj": NMJ}

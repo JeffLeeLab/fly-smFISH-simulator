@@ -202,6 +202,13 @@ class Gate:
                     need = self.rules["above"] - 2 * math.sqrt(max(obs * (1 - obs), 1e-9) / n)
                     self._ok(obs - q >= need, f"{where} {gt}", f"overlap {obs:.3f} vs randomised {q:.3f}, expected at least {need:.3f} above",
                              min(0.0, (obs - q - need) / self.rules["above"]))
+                elif e["rule"] == "share":
+                    # a nominal share rides on granules; the rest overlaps by chance
+                    c = e["nominal"][gt]
+                    want = c + (1 - c) * q
+                    tol = max(self.rules["share"], 2 * math.sqrt(max(want * (1 - want), 1e-9) / n))
+                    self._ok(abs(obs - want) <= tol, f"{where} {gt}",
+                             f"overlap {obs:.3f}, expected {want:.3f} ({c:.2f} on granules, randomised {q:.3f} for the rest) ± {tol:.3f}", (obs - want) / tol)
                 else:
                     self._ok(False, where, f"unknown overlap rule {e['rule']}")
             if e["rule"] == "above_same" and len(share) == 2:
