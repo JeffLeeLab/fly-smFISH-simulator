@@ -6,7 +6,7 @@ Signed off by the instructor on 2026-10-12: decisions 1–6 as proposed (spec, *
 
 1. **Assay view.** The T-maze is drawn front-on, as it stands on the bench: a vertical training tube above the choice point, and the T's two horizontal arms. The flies are then seen from the side, so the existing side-view walking drawings and the activity monitor's walk–pause model carry over, and no new fly drawings are needed. The landing station is redrawn to match (today's still shows the maze from above). *Alternative:* a top view, which needs new top-view walking drawings.
 2. **Training, compressed.** The real protocol is about 60 s of OCT with 12 shocks, 45 s of air, then 60 s of MCH. Proposal: one compressed cycle, OCT with three shock pulses, a breath of air, then MCH with none (*Simplified*). *Alternative:* the real 12 pulses as tick marks on a small timeline bar under the tube.
-3. **Odours and shocks without colour.** Colour belongs to the data, so the odours are ink textures: OCT a drifting stipple, MCH short wavy strokes. A shock is an ink zig-zag flashing along the grid, and the flies hop. Labels gloss the odours once: "OCT (3-octanol)", "MCH (4-methylcyclohexanol)".
+3. **Odours in muted colour; shocks in ink.** Each odour is a muted watercolour wash under its own ink texture: OCT ochre with a drifting stipple, MCH slate-teal with short wavy strokes. The washes stay clear of the data hues (smFISH green and magenta, TDP-43 red, membrane blue), and the textures mean that colour is never the only cue. (Ink only at first, since colour belongs to the data; the instructor asked for colour on 2026-10-13 so students can follow the odours coming in.) A shock is an ink zig-zag flashing along the grid, and the flies hop. Labels gloss the odours once: "OCT (3-octanol)", "MCH (4-methylcyclohexanol)".
 4. **The memory phenotype** (invented for this case). Tested a few minutes after training, the hTDP-43 WT flies mostly avoid OCT (8 of 10 in the MCH arm, performance index 0.6); the mutants choose at random (5 of 10, index 0.0). Ten drawn flies per lane stand in for about 100 (*Simplified*); the reciprocal experiment (MCH shocked) is not shown. *Signed off with the mutants at 6 of 10 (index 0.2); amended 2026-10-12 at the instructor's request to the starker alternative, chance, so the drop reads at a glance.*
 5. **Which fly we enter.** Proposal: one hTDP-43 WT fly from the MCH arm (a fly that remembered) lifts out of the maze, as the Pdf descent lifts the WT fly from its tube.
 6. **The turn into the oblique view.** The viewer shows the mushroom body in an oblique view (about 35° down from the front, turned about 30° to the side), so the cell bodies, axon bundle (peduncle) and lobes each have their own space. Proposal: the brain is drawn from the front as in the Pdf case; once it has faded, the mushroom body alone turns from the front view to the oblique view while the camera pushes in. The turn is a morph between projections of the same 3D outline (from the MaleCNS Kenyon cells), so it is true to the anatomy. *Alternative:* a cross-fade from the front view to the oblique view, with no turn.
@@ -46,8 +46,8 @@ H 0.0–4.2    (after the click) OCT flows down the tube (the stipple drifts in 
              each flash the flies hop and freeze for a beat (cause → effect); 2.2–2.6 air (the stipple
              clears); 2.6–4.2 MCH flows (wavy strokes), no flashes, the flies walk calmly.
              An odour hose runs into the tube's inlet, its free end tagged with what flows (OCT, then
-             air, then MCH), and the odour's own texture (OCT dots, MCH dashes) runs along it into
-             the tube. An ink lightning bolt beside the shock grid pops at each pulse with a running
+             air, then MCH) beside a swatch of its colour; the hose fills with that colour and the
+             odour's own texture (OCT ochre dots, MCH teal dashes) runs along it into the tube. An ink lightning bolt beside the shock grid pops at each pulse with a running
              count (×1, ×2, ×3) and fades before MCH
    reads:  0.2–2.2  this odour comes with shocks
            2.6–4.2  this one doesn't
@@ -126,7 +126,7 @@ Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: the
 
 ## As built
 
-- H: the odour hose runs into the tube's inlet. A tag at its free end names what flows (OCT, then air, then MCH), and the odour's own texture (OCT dots, MCH dashes) runs along the hose into the tube. An ink lightning bolt beside the shock grid pops at each of the three pulses with a running count (×1, ×2, ×3), and fades before MCH.
+- H: the odour hose runs into the tube's inlet. A tag at its free end names what flows (OCT, then air, then MCH) beside a swatch of its colour; the hose fills with that colour, and the odour's own texture (OCT ochre dots, MCH teal dashes) runs along it into the tube. An ink lightning bolt beside the shock grid pops at each of the three pulses with a running count (×1, ×2, ×3), and fades before MCH.
 - J: on the performance-index scale a dot marks each lane's value, and "chance" sits under the 0. The mutant lane reads (5 − 5) / 10 = 0.0.
 - K: the fly that lifts out of the maze comes from the MCH arm, the arm the WT flies mostly chose.
 - M: the 30 simulated Kenyon cells (`site/data/mb/anatomy.json`) grow as 3D paths from their cell bodies, through the calyx and along the axon bundle into the lobes. There is no outline morph.

@@ -20,7 +20,7 @@ const TOP = 30, JOINT = 186, EH = 40;          // tube top, tube/elevator joint,
 export const ARM = { y: 262, h: 36 };          // the arms
 export const DROP = ARM.y + ARM.h / 2 - (JOINT + EH / 2);   // how far the elevator slides down
 const ENTRY = 40;                              // an arm's entrance line, from the lane centre
-export const FLY_H = 20;                       // fly drawing height (full sprite frame)
+export const FLY_H = 15;                       // fly drawing height (full sprite frame)
 const WALL = [48, 176];                        // where flies walk on the tube walls (y)
 const LOCAL = 9;                               // each fly wanders this far either side of its own place
 const VIRT = 200, K = (2 * LOCAL) / VIRT;      // local walks run on a 0–200 track, scaled down by K
@@ -48,15 +48,18 @@ const lerp = (a, b, u) => a + (b - a) * u;
 
 // ---------- drawing ----------
 
-// The odour textures (ink, never a hue): OCT a stipple, MCH short wavy strokes. One pattern pair
-// per scene; `id` keeps step 1 and the landing station apart when both are on a page.
+// The odours: a muted wash of each odour's colour (OCT ochre, MCH slate-teal) under its own
+// texture, OCT a stipple and MCH short wavy strokes, so colour is never the only cue. One pattern
+// pair per scene; `id` keeps step 1 and the landing station apart when both are on a page.
 export function odourDefs(id) {
   const oct = k => `
     <pattern id="oct-${k}-${id}" class="odour-pat" width="9" height="9" patternUnits="userSpaceOnUse">
+      <rect class="odour-tint" data-odour="oct" width="9" height="9"/>
       <circle cx="2" cy="2.5" r=".9"/><circle cx="6.5" cy="5" r=".75"/><circle cx="3.5" cy="7.5" r=".6"/>
     </pattern>`;
   const mch = k => `
     <pattern id="mch-${k}-${id}" class="odour-pat" width="16" height="11" patternUnits="userSpaceOnUse">
+      <rect class="odour-tint" data-odour="mch" width="16" height="11"/>
       <path class="odour-wave" d="M1,3.5 q2,-2 4,0 t4,0"/><path class="odour-wave" d="M8,8.5 q2,-2 4,0 t4,0"/>
     </pattern>`;
   // the tube's odours flow down from the inlet; the arms' flow from their ends towards the
@@ -105,7 +108,7 @@ export function mazeMarkup(l, { id, labels = false, small = false }) {
            names what flows: dots of OCT or dashes of MCH run along it into the tube -->
       ${small ? "" : `
       <path class="feed" d="${feedD(cx)}"/><path class="feed-core" d="${feedD(cx)}"/><path class="feed-flow" d="${feedD(cx)}"/>
-      <text class="feed-tag" x="${cx + 52}" y="${FEED_Y + 4.5}"></text>`}
+      ${swatch(cx + 53, FEED_Y, "")}<text class="feed-tag" x="${cx + 66}" y="${FEED_Y + 4.5}"></text>`}
       <rect class="maze-port" x="${cx - 7}" y="${TOP - 12}" width="14" height="14" rx="2"/>
       <rect class="tube-glass" x="${tx}" y="${TOP}" width="${TW}" height="${JOINT - TOP}" rx="${TW / 2}"/>
       <g clip-path="url(#tube-${id}-${l.id})">
@@ -137,13 +140,17 @@ export function mazeMarkup(l, { id, labels = false, small = false }) {
       </g>` : ""}
       ${small ? "" : `
       <g class="odour-labels">
-        <text class="scene-small" x="${a0}" y="${ARM.y - 10}">${labels ? "OCT (3-octanol)" : "OCT"}</text>
-        <text class="scene-small" x="${a1}" y="${ARM.y - 10}" text-anchor="end">${labels ? "MCH (4-methylcyclohexanol)" : "MCH"}</text>
+        ${swatch(a0, ARM.y - 14, "oct")}<text class="scene-small" x="${a0 + 13}" y="${ARM.y - 10}">${labels ? "OCT (3-octanol)" : "OCT"}</text>
+        ${swatch(a1 - 9, ARM.y - 14, "mch")}<text class="scene-small" x="${a1 - 13}" y="${ARM.y - 10}" text-anchor="end">${labels ? "MCH (4-methylcyclohexanol)" : "MCH"}</text>
       </g>
       <g class="counter" data-arm="oct"><text class="counter-n" x="${(a0 + cx - ENTRY) / 2}" y="${ARM.y + ARM.h + 34}" text-anchor="middle">0</text><text class="scene-small" x="${(a0 + cx - ENTRY) / 2}" y="${ARM.y + ARM.h + 50}" text-anchor="middle">in the OCT arm</text></g>
       <g class="counter" data-arm="mch"><text class="counter-n" x="${(a1 + cx + ENTRY) / 2}" y="${ARM.y + ARM.h + 34}" text-anchor="middle">0</text><text class="scene-small" x="${(a1 + cx + ENTRY) / 2}" y="${ARM.y + ARM.h + 50}" text-anchor="middle">in the MCH arm</text></g>`}
     </g>`;
 }
+
+// A key to an odour's colour: a small square whose left edge is x, centred on y.
+export const swatch = (x, y, odour, s = 9) =>
+  `<rect class="odour-swatch" x="${x}" y="${y - s / 2}" width="${s}" height="${s}" rx="1.5" data-odour="${odour}"/>`;
 
 // The hose, drawn from its free end to the inlet, so the flow's dash offset runs into the tube.
 const feedD = cx => `M${cx + 46},${FEED_Y} H${cx + 6} Q${cx},${FEED_Y} ${cx},${FEED_Y + 6} V${TOP - 12}`;
@@ -193,7 +200,7 @@ export function laneFlies(l, stride) {
       x: VIRT / 2 + (r() - 0.5) * 60, face: r() < 0.5 ? 1 : -1, until: 900, xMin: 0, xMax: VIRT, beam: VIRT / 2,
       speed: [10 / K, 20 / K], pause: [0.8, 3.2], groom: 0.3, stride: stride / K,
     });
-    const heap = { dx: (r() - 0.5) * 24, dy: (r() - 0.5) * 14, rot: (r() - 0.5) * 70 + (r() < 0.2 ? 180 : 0), face: r() < 0.5 ? 1 : -1 };
+    const heap = { dx: (r() - 0.5) * 18, dy: (r() - 0.5) * 10, rot: (r() - 0.5) * 70 + (r() < 0.2 ? 180 : 0), face: r() < 0.5 ? 1 : -1 };
     // the test: a calm walk out to the fly's own spot in its arm, on the floor or the ceiling,
     // then it rests and grooms there
     const arm = l.oct.includes(k) ? "oct" : "mch";

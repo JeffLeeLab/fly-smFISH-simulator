@@ -74,7 +74,7 @@ export async function mount(root, ctx) {
       ...l, el, flies, stride: probe.stride, frames: probe.frames, ground: probe.groundOffset,
       elevator: el.querySelector(".elevator"),
       shock: el.querySelector(".shock"),
-      feed: { tag: el.querySelector(".feed-tag"), flow: el.querySelector(".feed-flow"), shown: "" },
+      feed: { tag: el.querySelector(".feed-tag"), flow: el.querySelector(".feed-flow"), core: el.querySelector(".feed-core"), key: el.querySelector(".feed-tag").previousElementSibling, shown: "" },
       bolt: { g: el.querySelector(".bolt-g"), n: el.querySelector(".bolt-n"), at: el.querySelector(".bolt-g").getAttribute("transform"), shown: -1 },
       tube: { oct: el.querySelector(".odour--tube[data-odour=oct]"), mch: el.querySelector(".odour--tube[data-odour=mch]") },
       arms: [...el.querySelectorAll(".odour--arm")],
@@ -184,10 +184,11 @@ export async function mount(root, ctx) {
       setOdour(l.tube.mch, od.tube.mch);
       l.arms.forEach(a => { a.style.opacity = (0.55 * od.arms).toFixed(3); });
       l.shock.style.opacity = shock.toFixed(3);
-      // the hose names what flows and its texture runs into the tube; the bolt pops at each pulse
+      // the hose names what flows, fills with its colour and its texture runs into the tube; the bolt pops at each pulse
       if (feed !== l.feed.shown) {
         l.feed.tag.textContent = feed ? FEED_TAG[feed] : "";
-        l.feed.flow.dataset.odour = feed || "";
+        l.feed.flow.dataset.odour = l.feed.core.dataset.odour = l.feed.key.dataset.odour = feed || "";
+        l.feed.key.style.visibility = feed ? "" : "hidden";
         l.feed.shown = feed;
       }
       l.feed.flow.style.strokeDashoffset = (-14 * tDrift).toFixed(2);

@@ -64,6 +64,8 @@
   --ink: #2B2A27;
   --wash-body: #E7E0D1; --wash-wing: rgba(255,255,255,.38); --wash-eye: #D7A089; --wash-gene: #E3D8C4;
   --wash-a: #E2D2BA; --wash-b: #E8C2AC; --wash-c: #D7D5CB;
+  /* the T-maze odours: muted washes, kept clear of the data hues (OCT ochre, MCH slate-teal) */
+  --odour-oct: #D69A3C; --odour-mch: #5C93A0;
   /* subtle texture strength */
   --tex-ink-displace: .9;   /* feDisplacementMap scale on outlines */
   --tex-ink-frequency: .03; /* feTurbulence baseFrequency */
@@ -88,6 +90,7 @@
   --ink: #E8E6DC;
   --wash-body: #3A3833; --wash-wing: rgba(255,255,255,.06); --wash-eye: #7E4C3D; --wash-gene: #4A4640;
   --wash-a: #3B352D; --wash-b: #4B3429; --wash-c: #34332F;
+  --odour-oct: #C19149; --odour-mch: #6FA3AE;
   --tex-grain-opacity: .12;
 }
 

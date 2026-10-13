@@ -6,7 +6,7 @@
 import { activity, walkPause, walkAt, lastCrossing, tube, tubeFly, actogramRows } from "./monitor.js";
 import { flyNode, groomFrame } from "./fly.js";
 import { mulberry32 } from "./prng.js";
-import { odourDefs, driftOdours } from "./tmaze.js";
+import { odourDefs, driftOdours, swatch } from "./tmaze.js";
 
 const VB = "0 0 320 180";
 const LANE_X = [10, 170], LANE_W = 140;
@@ -86,7 +86,7 @@ function vialArt() {
 
 // ---------- T-maze (live once its case is available; a still otherwise) ----------
 // Front-on, as in step 1, after the test: a short training tube, the elevator docked at the
-// choice point, and the two arms with their odours (ink textures). Most WT flies rest in the MCH
+// choice point, and the two arms with their odours (washes under textures). Most WT flies rest in the MCH
 // arm, away from the shocked odour; the mutants split half and half. They stand and groom.
 const MAZE = { tubeY: 18, tubeH: 66, tubeW: 18, armY: 100, armH: 18, dock: 11 };
 const MAZE_FLY = { h: 13, vh: 197.8, ground: 118 };   // side-view sprite: frame height, thorax to feet
@@ -125,8 +125,8 @@ function mazeArt() {
           <rect class="maze-port" x="${a0 - 5}" y="${ay - 2}" width="5" height="${ah + 4}" rx="1"/>
           <rect class="maze-port" x="${a1}" y="${ay - 2}" width="5" height="${ah + 4}" rx="1"/>
           <rect class="maze-elevator" x="${cx - d}" y="${ay - 3}" width="${2 * d}" height="${ah + 6}" rx="1.5"/>
-          <text class="station-odour" x="${a0}" y="${ay + ah + 15}">OCT</text>
-          <text class="station-odour" x="${a1}" y="${ay + ah + 15}" text-anchor="end">MCH</text>
+          ${swatch(a0, ay + ah + 11, "oct", 8)}<text class="station-odour" x="${a0 + 11}" y="${ay + ah + 15}">OCT</text>
+          ${swatch(a1 - 8, ay + ah + 11, "mch", 8)}<text class="station-odour" x="${a1 - 11}" y="${ay + ah + 15}" text-anchor="end">MCH</text>
           <g class="maze-flies">${mazeFlies(l, cx)}</g>
         </g>`;
       }).join("")}

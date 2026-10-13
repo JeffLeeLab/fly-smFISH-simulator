@@ -233,13 +233,20 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .zt2-line { stroke: var(--ink); stroke-width: 1.6; }
 
 /* ---------- the T-maze (mushroom body step 1 and its landing station) ---------- */
-/* ink only: the odours are textures and the shocks are ink flashes, since colour belongs to the data */
+/* the odours are muted washes (OCT ochre, MCH slate-teal) under their own textures, so they never
+   rest on colour alone; the shocks stay ink flashes */
 .maze-grid { fill: none; stroke: var(--ink); stroke-width: .55; opacity: .28; }
 .maze-port { fill: var(--wash-c); stroke: var(--ink); stroke-width: 1; }
 .maze-dock { fill: none; stroke: var(--ink); stroke-width: .9; stroke-dasharray: 3 2.5; opacity: .5; }
 .maze-elevator { fill: none; stroke: var(--ink); stroke-width: 1.3; }
-.odour-pat circle { fill: var(--ink); }
-.odour-wave { fill: none; stroke: var(--ink); stroke-width: .8; stroke-linecap: round; }
+.odour-tint { fill-opacity: .5; }
+.odour-tint[data-odour=oct] { fill: var(--odour-oct); }
+.odour-tint[data-odour=mch] { fill: var(--odour-mch); }
+.odour-pat circle { fill: color-mix(in srgb, var(--odour-oct) 45%, var(--ink)); }
+.odour-wave { fill: none; stroke: color-mix(in srgb, var(--odour-mch) 45%, var(--ink)); stroke-width: .8; stroke-linecap: round; }
+.odour-swatch { fill: var(--wash-c); stroke: var(--ink); stroke-width: .8; }   /* a key beside each odour's name */
+.odour-swatch[data-odour=oct] { fill: var(--odour-oct); }
+.odour-swatch[data-odour=mch] { fill: var(--odour-mch); }
 .odour { opacity: .55; }
 .odour--arm { opacity: .2; }
 .shock { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; opacity: 0; }
@@ -252,9 +259,11 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 /* the odour hose into the training tube: what flows runs along it as the odour's own texture */
 .feed { fill: none; stroke: var(--ink); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
 .feed-core { fill: none; stroke: var(--wash-c); stroke-width: 4.6; stroke-linecap: round; stroke-linejoin: round; }
+.feed-core[data-odour=oct] { stroke: color-mix(in srgb, var(--odour-oct) 60%, var(--wash-c)); }
+.feed-core[data-odour=mch] { stroke: color-mix(in srgb, var(--odour-mch) 60%, var(--wash-c)); }
 .feed-flow { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; opacity: 0; }
-.feed-flow[data-odour=oct] { opacity: .9; stroke-dasharray: .1 4.2; }
-.feed-flow[data-odour=mch] { opacity: .9; stroke-width: 1.1; stroke-dasharray: 2.4 3; }
+.feed-flow[data-odour=oct] { opacity: .9; stroke-dasharray: .1 4.2; stroke: color-mix(in srgb, var(--odour-oct) 45%, var(--ink)); }
+.feed-flow[data-odour=mch] { opacity: .9; stroke-width: 1.1; stroke-dasharray: 2.4 3; stroke: color-mix(in srgb, var(--odour-mch) 45%, var(--ink)); }
 .feed-tag { font: 500 13px var(--font-mono); fill: var(--text); }
 /* the shock symbol, in ink like the grid's flash */
 .bolt-g { opacity: 0; }
@@ -321,6 +330,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .kc-path { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 1.1); stroke-opacity: .75; stroke-linecap: round; stroke-linejoin: round; }
 .kc-soma { fill: var(--mem); fill-opacity: .55; stroke: var(--mem); stroke-width: calc(var(--px) * 1); }
 .descent__svg .odour--descent { opacity: .35; }
+.descent__svg .odour-tint { display: none; }   /* the pattern is scaled ×60 behind the whole brain: texture only */
 .descent__svg .maze-port { stroke-width: calc(var(--px) * 1.3); }
 
 /* ---------- lane legend: the hero flies land here on the way to the assays ---------- */

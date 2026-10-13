@@ -142,3 +142,28 @@ At the instructor's request, steps 3 and 6 get a full-screen view for laptop scr
 | 2 | Viewer toolbar at 1280 | The new icon pushed Pdf step 3's Split row 2 px past the width. `.vbtn` side padding went from 9 to 8 px, and Split fits again. In Flicker the row still wraps to two lines, as it did before this change ("Switch genotype F"). | Fixed (Split); Flicker wrap left as it was. |
 | 3 | Full screen, step 6 | At 1280 with the plot open, the controls panel covers the mutant's dorsal terminals (Pdf) or the end of the vertical lobe (mushroom body) in the whole view. | Accepted: the panel collapses to its header, and the state is remembered. |
 | 4 | Full screen, themes | Identical in light and dark; tours and glossary tips still show over it. | OK; the full view was approved by the instructor. |
+
+## 2026-10-13: T-maze flies smaller; odours in colour
+
+At the instructor's request the T-maze (mushroom body step 1) flies are drawn smaller, as they looked big and crowded in the tube and the arms, and the odours get colour so that students can follow them coming in. The activity monitor (Pdf step 1) is unchanged. Only the browser changed: no generated data and no generator code.
+
+- **Flies.** Drawn 25% smaller (sprite height 20 → 15). The heap in the elevator is tightened to match. Wall places, arm slots, counts and timings are unchanged.
+- **Odours.** This reverses the storyboard's "odours without colour" rule; the spec and the storyboard are updated.
+  - Each odour is a muted wash under its own texture: OCT ochre (`--odour-oct`) with the stipple, MCH slate-teal (`--odour-mch`) with the waves. Both have light and dark values, and both stay clear of the data hues.
+  - The textures are drawn in a darker shade of the same colour.
+  - The hose fills with the colour of what flows, its dots or dashes run in that colour, and a swatch beside its tag shows the colour (hidden while nothing flows; air is neutral).
+  - A swatch sits beside each arm's label, in step 1 and on the landing station.
+  - Shocks stay ink.
+
+**Checks.**
+- Contact sheet of step 1 through training, tap-down, the choice and the PI.
+- Close-ups at 1920.
+- The MB review set in both themes and at both sizes.
+- The landing station.
+- The step 2 descent at `?t=1` and `?t=6.6`.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 1, tube and heap | Flies no longer crowd the tube walls or the elevator; more of the tube and its odour shows between them. | OK. |
+| 2 | Step 1, odours | The OCT front (ochre) and the MCH front (teal) read at a glance as they fill the tube; the arms read ochre left and teal right, in both themes. | OK. |
+| 3 | Step 2 descent | The descent scales the MCH pattern ×60 behind the whole brain, so the tint would have washed the stage teal. It is hidden there (`.descent__svg .odour-tint`), and the descent looks as it did. The stage's existing warm-grey cast at `?t=6.6` was there before this change (same pixels). | Fixed. |
