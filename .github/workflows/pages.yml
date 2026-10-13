@@ -3,9 +3,10 @@
 # then uploads site/ as it is. (The molecule build itself runs locally: generator.build.)
 name: Deploy site to GitHub Pages
 
+# Manual runs only until the site is ready to go live. To publish on every push, restore:
+#   push:
+#     branches: [main]
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
