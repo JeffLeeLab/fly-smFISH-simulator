@@ -65,7 +65,7 @@ export function startMiniMonitor(svg, meta) {
 // step 1's climbs leave them (most WT flies high on the wall, the mutants low). They stand head up
 // and now and then climb a step; the mutants shake as they stand and slip back. No tapping here,
 // so the loop stays calm. The flies are drawn larger than in step 1, to read at this size.
-const VIAL_K = 0.42, VIAL_AT = [160 - 480 * VIAL_K, 90 - 235 * VIAL_K];
+const VIAL_K = 0.42, VIAL_AT = [160 - 480 * VIAL_K, 90 - 226 * VIAL_K];
 const VIAL_FLY_H = 30;                                       // in step 1 units (step 1: 18)
 const VIAL_FLIES = { wt: [0, 1, 4, 5, 8], mut: [0, 1, 5, 6, 8] };
 

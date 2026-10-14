@@ -340,7 +340,7 @@ export async function mount(root, ctx) {
       .fromTo(".d-leg", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 7.8)
       .fromTo(legParts.filter(p => !p.to).map(p => p.el), { opacity: 1 }, { opacity: 0, duration: 0.6 }, MORPH[0])
       .fromTo(trochEl, { opacity: 0 }, { opacity: 1, duration: 0.5 }, 9.0)
-      .fromTo(".d-leg", { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.in" }, 9.7)
+      .fromTo(".d-leg", { opacity: 1 }, { opacity: 0, duration: 0.45, ease: "power1.in" }, 9.45)
       .fromTo(morph, { u: 0 }, { u: 1, duration: MORPH[1] - MORPH[0], ease: "power2.inOut" }, MORPH[0])
       .fromTo(".d-break", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 8.4)
       .fromTo(".d-ctx", { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, 9.3)

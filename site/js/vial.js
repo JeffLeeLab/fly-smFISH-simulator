@@ -15,11 +15,11 @@ import { mulberry32 } from "./prng.js";
 import { gait, GAIT_HZ } from "./monitor.js";
 import { groomFrame } from "./fly.js";
 
-export const VB = { w: 960, h: 482 };
+export const VB = { w: 960, h: 458 };
 export const VW = 100;                         // vial width
-export const RIM = 50, FLOOR = 430;            // the vial's rim and its inside floor
-const PLUG = [36, 90];                         // the foam plug, top to bottom
-export const MM = (FLOOR - RIM) / 95;          // a 95 mm vial: 4 units per mm
+export const RIM = 44, FLOOR = 418;            // the vial's rim and its inside floor
+const PLUG = [30, 84];                         // the foam plug, top to bottom
+export const MM = (FLOOR - RIM) / 95;          // a 95 mm vial: about 3.9 units per mm
 export const LINE = FLOOR - 50 * MM;           // the 5 cm line
 export const FLY_H = 18;                       // fly drawing height (full sprite frame): about 2.4× life size (Simplified)
 const LIFT = 10;                               // how far the taped pair lifts at a tap
@@ -106,7 +106,7 @@ export function vialMarkup(l, { labels = false } = {}) {
 // The tape round both vials, which makes one tap treat both alike.
 export const tapeMarkup = () => {
   const [a, b] = [LANES[0].cx - VW / 2 - 5, LANES[1].cx + VW / 2 + 5];
-  return [[142, 18], [328, 18]].map(([y, h]) => `
+  return [[140, 18], [324, 18]].map(([y, h]) => `
     <g class="tape"><rect class="tape-strip" x="${a}" y="${y}" width="${b - a}" height="${h}" rx="1.5"/>
       <path class="tape-edge" d="M${a},${y + 0.6} H${b} M${a},${y + h - 0.6} H${b}"/></g>`).join("");
 };
@@ -156,7 +156,7 @@ export function indexMarkup(n) {
   }).join("");
   return `
     <g class="ci-block">
-      <text class="scene-small ci-formula" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="${FLOOR + 38}" text-anchor="middle">Climbing index = flies above the line / all flies</text>
+      <text class="scene-small ci-formula" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="${FLOOR + 31}" text-anchor="middle">Climbing index = flies above the line / all flies</text>
       ${rows}
     </g>`;
 }

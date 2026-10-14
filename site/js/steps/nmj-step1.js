@@ -36,13 +36,13 @@ export async function mount(root, ctx) {
       <h1 class="t-h1">Climbing vial</h1>
       <div class="stage stage--assay">
         <svg class="assay climb" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="Two climbing vials seen from the front, taped side by side: hTDP-43 WT on the left and the ALS mutant on the right, ten flies in each, with a line 5 cm up. The vials are tapped on the bench three times, so every fly falls to the bottom; then a timer runs for 10 seconds while the flies climb the walls. Eight of ten WT flies pass the line, a climbing index of 0.8. The mutants climb slowly, slip back, one falls, and their legs shake: two of ten pass the line, a climbing index of 0.2.">
-          ${LANES.map(l => `<text class="scene-label lane-label" x="${l.cx + l.out * (VW / 2 + 16)}" y="44" text-anchor="${l.out < 0 ? "end" : "start"}">${l.label}</text>`).join("")}
+          ${LANES.map(l => `<text class="scene-label lane-label" x="${l.cx + l.out * (VW / 2 + 16)}" y="40" text-anchor="${l.out < 0 ? "end" : "start"}">${l.label}</text>`).join("")}
           <line class="bench" x1="${bench[0]}" y1="${FLOOR + 4.6}" x2="${bench[1]}" y2="${FLOOR + 4.6}"/>
           ${LANES.map(impactMarkup).join("")}
           <g class="vials">${LANES.map(l => vialMarkup(l)).join("")}${tapeMarkup()}</g>
           ${labelMarkup(LANES[0])}
           ${LANES.map(counterMarkup).join("")}
-          <text class="climb-timer" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="21" text-anchor="middle">0.0 s</text>
+          <text class="climb-timer" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="18" text-anchor="middle">0.0 s</text>
           ${indexMarkup(final)}
         </svg>
         <span class="tag-sim assay__tag">Simulated</span>
