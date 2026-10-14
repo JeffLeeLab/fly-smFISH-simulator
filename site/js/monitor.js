@@ -50,12 +50,12 @@ export function activity(kind, days, seed) {
 // each tripod step, changes pace from one bout to the next and now and then hesitates mid-walk
 // (legs still) before carrying on. Each walk's progress is worked out up front at GAIT_HZ, so
 // a frozen frame and the beam crossings are still exact functions of time.
-const GAIT_HZ = 120;
+export const GAIT_HZ = 120;
 const smoothstep = u => (u <= 0 ? 0 : u >= 1 ? 1 : u * u * (3 - 2 * u));
 
 // Progress (0 → 1) along one walk of `dist` units at a mean speed near `v`, sampled at GAIT_HZ.
 // `calm` walks are one steady bout (the storyboard's opening walks, timed to the captions).
-function gait(r, dist, v, stride, calm = false) {
+export function gait(r, dist, v, stride, calm = false) {
   const n = calm || dist < 40 ? 1 : 1 + Math.floor(r() * (dist > 100 ? 3 : 2));   // 1–3 bouts
   const w = Array.from({ length: n }, () => 0.6 + r());
   const halt = Array.from({ length: n - 1 }, () => r() < 0.55);   // between bouts: a hesitation, or only a slow-down
@@ -85,7 +85,7 @@ function gait(r, dist, v, stride, calm = false) {
   return prog;
 }
 
-const progAt = (s, t) => {
+export const progAt = (s, t) => {
   const u = Math.min(s.prog.length - 1, Math.max(0, (t - s.t0) * GAIT_HZ));
   const i = Math.min(s.prog.length - 2, Math.floor(u));
   return s.prog[i] + (s.prog[i + 1] - s.prog[i]) * (u - i);

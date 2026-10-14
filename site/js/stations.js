@@ -1,12 +1,14 @@
 // The three-assay landing (storyboard shot F): one drawing per station, each split into a WT lane
-// (left) and a mutant lane (right). The activity monitor runs live (flies walking and pausing,
-// the beam, a tiny actogram in which the mutant's night bars stand out), as does the T-maze once
-// its case is available (flies resting and grooming in the arms); the climbing vial is a still.
+// (left) and a mutant lane (right). All three run live: the activity monitor (flies walking and
+// pausing, the beam, a tiny actogram in which the mutant's night bars stand out), the climbing
+// vial (the moment after a climb: most WT flies high, the mutants low, shaking) and the T-maze
+// (flies resting and grooming in the arms).
 
 import { activity, walkPause, walkAt, lastCrossing, tube, tubeFly, actogramRows } from "./monitor.js";
 import { flyNode, groomFrame } from "./fly.js";
 import { mulberry32 } from "./prng.js";
 import { odourDefs, driftOdours, swatch } from "./tmaze.js";
+import { LANES as VIAL_LANES, VW as VIAL_W, FLOOR as VIAL_FLOOR, vialMarkup, tapeMarkup, laneFlies as vialFlies, ambientPose as vialPose, poseTransform } from "./vial.js";
 
 const VB = "0 0 320 180";
 const LANE_X = [10, 170], LANE_W = 140;
@@ -58,30 +60,48 @@ export function startMiniMonitor(svg, meta) {
   };
 }
 
-// ---------- climbing vial (still) ----------
-// Flies tapped to the bottom climb the wall; by the moment shown most WT flies are past the line,
-// most mutants are still low.
-// [x from the vial's centre, y]; each fly's legs face the nearer wall.
-const CLIMB = {
-  wt: [[-14, 34], [14, 46], [-14, 60], [14, 76], [-14, 150]],
-  mut: [[-14, 154], [14, 142], [14, 160], [-14, 120], [14, 100]],
-};
+// ---------- climbing vial (live) ----------
+// The step 1 drawing of the taped pair, scaled into the station, with five flies per vial where
+// step 1's climbs leave them (most WT flies high on the wall, the mutants low). They stand head up
+// and now and then climb a step; the mutants shake as they stand and slip back. No tapping here,
+// so the loop stays calm. The flies are drawn larger than in step 1, to read at this size.
+const VIAL_K = 0.42, VIAL_AT = [160 - 480 * VIAL_K, 90 - 235 * VIAL_K];
+const VIAL_FLY_H = 30;                                       // in step 1 units (step 1: 18)
+const VIAL_FLIES = { wt: [0, 1, 4, 5, 8], mut: [0, 1, 5, 6, 8] };
 
 function vialArt() {
+  const b = [VIAL_LANES[0].cx - VIAL_W / 2 - 30, VIAL_LANES[1].cx + VIAL_W / 2 + 30];
   return `
-    <svg viewBox="${VB}" aria-hidden="true" class="station-svg">
-      ${["wt", "mut"].map((id, i) => {
-        const cx = LANE_X[i] + LANE_W / 2;
-        return `
-        <g>
-          <rect class="tube-glass" x="${cx - 24}" y="12" width="48" height="158" rx="7"/>
-          <rect class="tube-plug" x="${cx - 24}" y="12" width="48" height="12" rx="4"/>
-          <rect class="tube-outline" x="${cx - 24}" y="12" width="48" height="158" rx="7"/>
-          <line class="climb-line" x1="${cx - 32}" y1="86" x2="${cx + 32}" y2="86"/>
-          ${CLIMB[id].map(([dx, y]) => `<g class="fly" transform="translate(${cx + dx} ${y}) rotate(-90) scale(0.072 ${dx < 0 ? -0.072 : 0.072})"><use href="#fly-lateral-stand-0"/></g>`).join("")}
-        </g>`;
-      }).join("")}
+    <svg viewBox="${VB}" aria-hidden="true" class="station-svg station-svg--vial">
+      <g transform="translate(${VIAL_AT[0].toFixed(1)} ${VIAL_AT[1].toFixed(1)}) scale(${VIAL_K})">
+        <line class="bench" x1="${b[0]}" y1="${VIAL_FLOOR + 4.6}" x2="${b[1]}" y2="${VIAL_FLOOR + 4.6}"/>
+        ${VIAL_LANES.map(l => vialMarkup(l)).join("")}${tapeMarkup()}
+      </g>
     </svg>`;
+}
+
+// The station's flies on their seeded schedules. Returns draw(t).
+export function startMiniVial(svg, meta) {
+  const lanes = VIAL_LANES.map(l => {
+    const el = svg.querySelector(`.vial[data-lane=${l.id}] .vial-flies`);
+    const probe = tubeFly(flyNode, meta, { height: VIAL_FLY_H });
+    const all = vialFlies(l, probe.stride, probe.groundOffset);
+    const flies = VIAL_FLIES[l.id].map((k, i) => {
+      const node = i === 0 ? probe : tubeFly(flyNode, meta, { height: VIAL_FLY_H });
+      el.append(node.g);
+      return { ...all[k], node };
+    });
+    return { l, flies, stride: probe.stride, g: probe.groundOffset, frames: probe.frames };
+  });
+  return t => {
+    for (const { l, flies, stride, g, frames } of lanes) {
+      for (const f of flies) {
+        const p = vialPose(l, f, t, g, stride, frames);
+        f.node.g.setAttribute("transform", poseTransform(p));
+        f.node.node.show(p.seq, p.frame);
+      }
+    }
+  };
 }
 
 // ---------- T-maze (live once its case is available; a still otherwise) ----------
@@ -159,5 +179,6 @@ export const stationArt = { pdf: monitorArt, nmj: vialArt, mb: mazeArt };
 // the hand-off to the case's step 1. A case without an entry keeps its still art.
 export const stationLive = {
   pdf: { start: (svg, sprites) => startMiniMonitor(svg, sprites), handOff: "monitor" },
+  nmj: { start: (svg, sprites) => startMiniVial(svg, sprites), handOff: "vial" },
   mb: { start: (svg, sprites) => startMiniMaze(svg, sprites), handOff: "maze" },
 };

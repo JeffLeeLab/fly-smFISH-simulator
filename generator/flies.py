@@ -7,7 +7,8 @@ Apache-2.0, https://github.com/TuragaLab/flybody) gives per-segment meshes and t
      committed; the largest is about 30 MB);
   2. poses the body by forward kinematics (hinge joints, angles in radians; the rest pose is
      the model's spring reference: folded wings, standing legs);
-  3. projects each drawing part to a fixed view (dorsal, lateral or frontal), rasterises it,
+  3. projects each drawing part to a fixed view (dorsal, lateral, frontal, or the side view
+     turned 20° towards us), rasterises it,
      traces and simplifies its outline into a few smooth curves;
   4. writes SVG: one group per part, back to front, each with its joint pivot, so the site
      can pose and animate the legs, wings and head.
@@ -16,7 +17,8 @@ Kept: head, eyes (as a wash shape), antennae, thorax, abdomen (tergites as overl
 shapes, which draws the bands), wings (membrane and veins), halteres, and each leg as coxa,
 femur, tibia and tarsus. Dropped: bristles, ocelli, claws, mouthparts, eye facets.
 
-    uv run python -m generator.flies           # writes site/data/flies/*.svg and a contact sheet
+    uv run python -m generator.flies           # writes site/data/flies/*.svg
+    uv run python -m generator.flies turned    # only the views named
 """
 
 import json
@@ -217,10 +219,16 @@ def load_obj(path):
 
 # Each view maps world (x forward, y left, z up) to image (u right, v up) and a depth
 # (larger = nearer the viewer, drawn later).
+TURN = math.radians(20)   # the turned side view: the camera 20° below the fly's right side
+
+
 VIEWS = {
     "dorsal": lambda p: (-p[:, 1], p[:, 0], p[:, 2]),     # from above, head up
     "lateral": lambda p: (p[:, 0], p[:, 2], -p[:, 1]),    # from the fly's right side, head right
     "frontal": lambda p: (p[:, 1], p[:, 2], p[:, 0]),     # facing the fly
+    # the side view turned towards us about the long axis, so the underside of the thorax and
+    # the near (right) legs show: the leg motor neuron's descent and its locator
+    "turned": lambda p: (p[:, 0], p[:, 2] * math.cos(TURN) - p[:, 1] * math.sin(TURN), -p[:, 1] * math.cos(TURN) - p[:, 2] * math.sin(TURN)),
 }
 
 
@@ -404,6 +412,27 @@ def walking(fly, phase, stride=0.07):
     return q
 
 
+TREMOR = 3                                            # drawings in the tremor sequence
+TREMOR_PHASE = (0.05, 0.62, 0.38, 0.91, 0.71, 0.24)   # each leg's own phase (fractions of a turn), in LEGS order
+TREMOR_LIFT, TREMOR_DX = 0.026, 0.018                 # cm: how far a foot leaves and shifts
+
+
+def trembling(fly, k):
+    """The leg motor neuron mutants' tremor (invented for that case), drawing k of TREMOR: the
+    standing fly with each foot moved round a small loop of its own (out from the ground and back,
+    forward and back), a third of a turn on from drawing to drawing, so no two legs move together;
+    the knees flex with the feet, each leg kept near its standing pose. Played on twos in a seeded order, the legs shake while the body
+    stays still. Large enough to read at the climbing vial's scale (a foot moves about 2 px there),
+    above the ink boil."""
+    q = standing(fly)
+    for leg, phase in zip(LEGS, TREMOR_PHASE):
+        a = 2 * math.pi * (k / TREMOR + phase)
+        lift = TREMOR_LIFT * max(0.0, math.sin(a))
+        rest = np.array([q[n] for n in leg_joint_names(leg)])   # stay on the standing solution
+        solve_leg(fly, q, leg, stance_foot(leg, TREMOR_DX * math.cos(a), lift), flat=lift == 0.0, start=rest, prefer=rest)
+    return q
+
+
 def head_obstacle(fly, q, margin=0.011):
     """The posed head and eyes as an ellipsoid (centre, semi-axes) with a margin for the legs'
     own thickness."""
@@ -541,7 +570,7 @@ def trace_pose(fly, parts, view, frame, res=900.0):
     head = next((t[0] for t in drawn if t[1] == "head"), None)
     if head is not None:
         for t in drawn:   # the eyes are part of the head's surface; antennae sit on the face
-            if t[1] == "eye" or (t[1].startswith("antenna") and view != "lateral"):
+            if t[1] == "eye" or (t[1].startswith("antenna") and view not in ("lateral", "turned")):
                 t[0] = max(t[0], head + (1e-4 if t[1] == "eye" else 2e-4))
     drawn.sort(key=lambda t: t[0])
     return drawn
@@ -591,8 +620,10 @@ SEQUENCES = {
                "flap": [lambda fly, w=w: flying(fly, w) for w in ("open", "fore", "aft")]},
     "lateral": {"stand": [standing],
                 "walk": [lambda fly, k=k: walking(fly, 2 * math.pi * k / CYCLE) for k in range(CYCLE)],
-                **GROOM_SEQS},
+                **GROOM_SEQS,
+                "tremor": [lambda fly, k=k: trembling(fly, k) for k in range(TREMOR)]},
     "frontal": {"stand": [standing]},
+    "turned": {"stand": [standing]},
 }
 SCALE = 1000.0   # SVG units per world unit (cm): 1 unit = 10 µm
 OVERFLOW = {"flap"}   # drawn past the viewBox (spread wings), so the fly on the ground keeps its size
@@ -620,7 +651,7 @@ def write_sprite(fly, view, seqs):
     symbols = share_paths(view, drawn)
     meta = {
         "view": view, "viewBox": vb, "unitsPerCm": SCALE, "frames": {n: len(f) for n, f in posed.items()},
-        "groundY": round(-GROUND * SCALE, 1) if view != "dorsal" else None,
+        "groundY": round(-GROUND * SCALE, 1) if view in ("lateral", "frontal") else None,
         "strideUnits": round(0.07 * SCALE, 1), "fps": 12,
         "source": f"flybody {FLYBODY_COMMIT[:10]} (Vaxenburg et al. 2025, Nature; Apache-2.0), simplified",
     }
@@ -633,11 +664,14 @@ def write_sprite(fly, view, seqs):
 
 
 def main(argv) -> int:
+    """Every view, or only the views named on the command line."""
+    views = argv or list(SEQUENCES)
     print("flybody", FLYBODY_COMMIT[:10])
     fly = Fly()
     for old in OUT.glob("fly-*-*.svg"):
         old.unlink()   # single-pose files from the first pass
-    for view, seqs in SEQUENCES.items():
+    for view in views:
+        seqs = SEQUENCES[view]
         path, meta = write_sprite(fly, view, seqs)
         print(f"  wrote {path.relative_to(ROOT)}: {meta['frames']} ({path.stat().st_size // 1024} KB)")
     return 0

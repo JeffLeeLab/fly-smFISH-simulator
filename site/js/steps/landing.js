@@ -1,6 +1,5 @@
 // Step 1, shared part: the hero (knock-in sequence, 9.6 s, docs/storyboards/pdf-openings.md) and
-// the three-assay landing below it (shot F): the activity monitor runs live; the climbing vial and
-// T-maze are stills in this build.
+// the three-assay landing below it (shot F): every station runs live (stations.js).
 //
 // Deterministic: every animated state is a function of timeline time; idle grooming follows a
 // seeded schedule. `?t=3.2` freezes the hero at 3.2 s (review renders); reduced motion shows the

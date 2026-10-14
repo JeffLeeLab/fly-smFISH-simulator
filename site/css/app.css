@@ -268,6 +268,23 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 /* the shock symbol, in ink like the grid's flash */
 .bolt-g { opacity: 0; }
 .bolt { fill: var(--ink); stroke: var(--ink); stroke-width: .8; stroke-linejoin: round; }
+
+/* ---------- the climbing vial (leg motor neuron step 1 and its landing station) ---------- */
+.climb-ring { fill: none; stroke: var(--ink); stroke-width: 1.1; opacity: .6; }
+.climb-ring--back { stroke-dasharray: 3 2.5; opacity: .3; }
+.plug-foam circle { fill: var(--ink); opacity: .2; }
+.plug-edge { stroke-width: .9; opacity: .55; }
+.tape-strip { fill: var(--wash-c); fill-opacity: .6; }
+.tape-edge { fill: none; stroke: var(--ink); stroke-width: .7; opacity: .35; }
+.bench { stroke: var(--ink); stroke-width: 1.2; opacity: .45; }
+.vial-impact { opacity: 0; }
+.climb-timer { font: 500 18px var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
+/* the station draws step 1's vials at 0.42: its lines are thickened back to the station's weight */
+.station-svg--vial .tube-outline { stroke-width: 2.6; }
+.station-svg--vial .climb-ring { stroke-width: 2.2; }
+.station-svg--vial .bench { stroke-width: 2.4; }
+.station-svg--vial .tape-edge { stroke-width: 1.4; }
+.station-svg--vial .fly { stroke-width: .7px; }
 .bolt-n { font: 500 12px var(--font-mono); font-variant-numeric: tabular-nums; fill: var(--text); }
 .odour--station { opacity: .5; }
 .station-odour { font: 400 11.5px var(--font-mono); fill: var(--text-2); }   /* ≥11 px on screen at the station's size */
@@ -360,7 +377,6 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .station__lanes { display: flex; justify-content: space-between; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--text-2); }
 .station__go { margin-top: auto; font: 600 var(--fs-ui)/1.3 var(--font-sans); color: var(--accent-text); }
 .station.is-off { color: var(--text-2); }
-.climb-line { stroke: var(--ink); stroke-width: 1; stroke-dasharray: 3 3; opacity: .55; }
 @media (prefers-reduced-motion: reduce) { .station { transition: none; } a.station:hover { transform: none; } }
 
 /* ---------- locked and unavailable pages ---------- */
