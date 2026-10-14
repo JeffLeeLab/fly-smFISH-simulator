@@ -59,6 +59,14 @@ than one component:
 Candidates are T1/ProLN leg motor neurons whose soma lies within 50 um of the median soma of
 their group (a few have the soma elsewhere, which would not read as a T1 neuron in the picture).
 
+Which cell is used: the viewer draws the synaptic terminals on a femur muscle, so the cell is a
+motor neuron of a femur muscle (FEMUR_TYPES: tibia flexor first, as on p. 6 of the reference
+pack; never the femur reductor, whose muscle lies in the trochanter, although the two femur
+reductor cells have the cleanest skeletons). Their skeletons stop at the VNC's surface without a
+stump, so the exit is taken from the cells that have one: the stump's base is the nerve root,
+and the chosen cell's axon path runs from its soma to its vertex nearest that root (it must pass
+within 25 um). mn.json also carries the stump as the nerve's first stretch, for the drawing.
+
 Downloaded data is untrusted: it is only ever parsed as JSON or with struct, never executed.
 
     uv run python -m generator.connectome_nmj      # download (cached), write mn.json, sheet.png
@@ -559,6 +567,90 @@ def reindexed(r):
             "exit": new[r["exit"]], "path": [new[p] for p in r["path"]]}
 
 
+# Motor neurons whose muscle lies in the femur, where the viewer draws the synaptic terminals: the
+# tibia flexor (preferred: reference pack p. 6), its accessory flexor, the tibia extensor and the
+# long tendon muscle's femoral part (ltm2). Not the femur reductor: its muscle is in the trochanter.
+FEMUR_TYPES = ("Ti flexor MN", "Acc. ti flexor MN", "Ti extensor MN", "ltm2-femur MN")
+NERVE_REACH = 25.0   # um: a femur cell's axon must pass this close to the nerve root
+
+
+def tree_path(v, e, a, b):
+    """Vertex indices along the tree from a to b."""
+    adj = [[] for _ in range(len(v))]
+    for x, y in e.tolist():
+        adj[x].append(y)
+        adj[y].append(x)
+    pred = {a: -1}
+    q = deque([a])
+    while q:
+        u = q.popleft()
+        if u == b:
+            break
+        for x in adj[u]:
+            if x not in pred:
+                pred[x] = u
+                q.append(x)
+    path, u = [], b
+    while u != -1:
+        path.append(u)
+        u = pred[u]
+    return path[::-1]
+
+
+def nerve_root(results):
+    """Where the front leg nerve leaves the VNC, from the cells whose skeleton carries on into it
+    (an unbranched stub of 50 um or more): the stub's base (its first branch point back from the
+    end), the direction it runs, and the stub itself (3D points, base first). None if no cell has
+    a stub."""
+    stubs = []
+    for r in results:
+        if r["exit_stub_um"] < 50:
+            continue
+        path = r["path"]
+        deg = Counter(np.asarray(r["e"]).ravel().tolist())
+        k = len(path) - 1
+        while k > 0 and deg[path[k - 1]] < 3:
+            k -= 1
+        base = max(0, k - 1)
+        pts = r["v"][path[base:]]
+        stubs.append((r, pts))
+    if not stubs:
+        return None
+    root = np.mean([p[0] for _, p in stubs], axis=0)
+    direction = unit(np.mean([unit(p[-1] - p[0]) for _, p in stubs], axis=0))
+    longest = max(stubs, key=lambda s: len(s[1]))[1]
+    return {"root": root, "direction": direction, "stub": longest - longest[0] + root, "from": [r["id"] for r, _ in stubs]}
+
+
+def femur_choice(results, nerve, log=print):
+    """The cleanest motor neuron of a femur muscle: its axon path runs from the soma to the vertex
+    nearest the nerve root (within NERVE_REACH), so the exit is where the nerve is seen to leave
+    rather than a guessed twig; ranked by the clean score with that exit, tibia flexors first.
+    Returns (result with exit and path replaced, rows for the table), or (None, rows)."""
+    rows = []
+    for r in results:
+        if r["type"] not in FEMUR_TYPES:
+            continue
+        keep = r["keep"]
+        d = np.linalg.norm(r["v"][keep] - nerve["root"], axis=1)
+        nv = int(keep[int(np.argmin(d))])
+        path = tree_path(r["v"], np.asarray(r["e"]), r["soma_vertex"], nv)
+        seg = np.linalg.norm(np.diff(r["v"][path], axis=0), axis=1).sum()
+        euclid = float(np.linalg.norm(r["v"][nv] - r["v"][r["soma_vertex"]]))
+        straight = euclid / seg if seg else 0.0
+        den_cable = r["cable_um"] - seg
+        score = (straight + 1.0 / (1.0 + r["tuft_r90_um"] / 40.0) + min(1.0, euclid / 150.0)
+                 + min(1.0, den_cable / 800.0) - (1.0 if r["components"] > 1 else 0.0) - float(d.min()) / NERVE_REACH)
+        rows.append({**r, "exit": nv, "path": path, "path_um": float(seg), "euclid_um": euclid, "straightness": straight,
+                     "dendrite_cable_um": den_cable, "score": score, "root_gap_um": float(d.min())})
+    rows.sort(key=lambda x: (x["type"] != "Ti flexor MN", -x["score"]))
+    for x in rows:
+        log(f"  femur muscle: {x['id']:>11} {x['type']:<18} root gap {x['root_gap_um']:5.1f} um, path {x['path_um']:4.0f} um, "
+            f"straightness {x['straightness']:.2f}, score {x['score']:.2f}")
+    ok = [x for x in rows if x["root_gap_um"] <= NERVE_REACH]
+    return (ok[0] if ok else None), rows
+
+
 def table_row(r, rank=None):
     return {
         "rank": rank, "id": r["id"], "type": r["type"], "score": round(r["score"], 3),
@@ -652,7 +744,15 @@ def main():
           f"trees: {sum(r['tree'] for r in results)} of {len(results)}")
 
     ranked = sorted(results, key=lambda r: -r["score"])
-    best, top = ranked[0], ranked[:N_TOP]
+    top = ranked[:N_TOP]
+    nerve = nerve_root(results)
+    best = None
+    if nerve is not None:
+        print(f"front leg nerve root from the stubs of {', '.join(nerve['from'])}")
+        best, _ = femur_choice(results, nerve)
+    if best is None:
+        print("no femur-muscle motor neuron reaches the nerve root: taking the cleanest of all")
+        best = ranked[0]
     mean_dv_leg = float(np.mean([coords(r["v"][r["keep"]], axes)[:, 1].mean() for r in results]))
     dorsal_diff = dorsal_check(tab, side, axes, mean_dv_leg)
 
@@ -663,6 +763,9 @@ def main():
         "soma": [round(x, 2) for x in best["soma"]], "soma_vertex": c["soma_vertex"], "exit_vertex": c["exit"],
         "axon_path": c["path"], "vertices": np.round(c["vertices"], 2).tolist(), "edges": c["edges"],
     }
+    if nerve is not None:   # the nerve the axon leaves in, as the stub cells show it (3D um, root first)
+        cell["nerve"] = {"root": np.round(nerve["root"], 2).tolist(), "direction": np.round(nerve["direction"], 4).tolist(),
+                         "stub": np.round(nerve["stub"], 2).tolist(), "from": nerve["from"]}
     sub = cloud if len(cloud) <= N_SIDE_MAX else cloud[sorted(random.Random(SEED).sample(range(len(cloud)), N_SIDE_MAX))]
     ev = dict(axes["evidence"])
     if dorsal_diff is not None:
@@ -688,7 +791,7 @@ def main():
     leg_somata = {nm: np.array([soma[i] for i in leg if i in soma and tag_of(tab, i, "somaNeuromere") == nm])
                   for nm in NEUROMERES}
     cards = [{"id": r["id"], "score": r["score"], "straightness": r["straightness"], "soma": r["soma"],
-              **reindexed(r)} for r in top]
+              **reindexed(r)} for r in [best] + [r for r in top if r["id"] != best["id"]][:N_TOP - 1]]
     sheet(SHEET, {"axes": axes, "soma": cell["soma"], "best": cards[0], "top": cards, "cloud": cloud,
                   "leg_somata": leg_somata})
 
