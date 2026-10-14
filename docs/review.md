@@ -167,3 +167,44 @@ At the instructor's request the T-maze (mushroom body step 1) flies are drawn sm
 | 1 | Step 1, tube and heap | Flies no longer crowd the tube walls or the elevator; more of the tube and its odour shows between them. | OK. |
 | 2 | Step 1, odours | The OCT front (ochre) and the MCH front (teal) read at a glance as they fill the tube; the arms read ochre left and teal right, in both themes. | OK. |
 | 3 | Step 2 descent | The descent scales the MCH pattern ×60 behind the whole brain, so the tint would have washed the stage teal. It is hidden there (`.descent__svg .odour-tint`), and the descent looks as it did. The stage's existing warm-grey cast at `?t=6.6` was there before this change (same pixels). | Fixed. |
+
+## 2026-10-14: leg motor neuron openings (steps 1–2) and locator; the case joins the gate
+
+The leg motor neuron case was completed. Its truth table had been signed off on 2026-10-13. This work added:
+- step 1, the climbing vial, live on the landing too;
+- step 2, the descent;
+- the step 7 locator in the turned side view;
+- the fly drawings it needs (the side-view `tremor` sequence and the `turned` view);
+- the connectome cell (MaleCNS v0.9 body 807165, a tibia flexor of the front leg) and `anatomy.json`.
+
+The case was added to the Pages gate (`CASES: "pdf mb nmj"`).
+
+**Checks.**
+- **Gates:**
+  - `validate pdf --signed` (2712 checks), `validate mb --signed` (3788) and `validate nmj --signed` (2795): 0 failed.
+  - The workflow's data check (`public_models` and `truth_table` for all three cases) regenerates nothing new.
+  - `tools/pdf-identical.sh` passed.
+  - `build mb` reproduced the mushroom body's data exactly.
+- **Fly sprites:** the existing side-view drawings and the viewBox are unchanged; three tremor drawings were added.
+- **Review set:** `tools/review-shots.sh <dir> nmj` (new nmj branch: S7 + S8, transport and isoform-specific regulation both unresolved).
+- **Contact sheets:** step 1 at G, the taps, the climb and J; step 2 at 0–14 s, closely through the shortening (7.4–11 s).
+- **Live runs:**
+  - Step 1 played and replayed; the hand-off into step 2; the descent scrolled.
+  - The tremor was checked on consecutive frames at 1920, since it is too subtle to trust in a video.
+- **Step 7:** the Pdf and mushroom body slides are unchanged.
+- **Offline:** every resource on the landing, step 1 and step 2 comes from the site.
+- **Console:** no errors.
+- **Answer key:** no served file names the case's isoforms or CG31642 beyond `transcripts.json`.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 1 | The first layout centred small vials with the index under them, and the timer collided with the formula. The vials were drawn nearly full height, with each lane's readouts on its own side. | Fixed. |
+| 2 | Step 1, between climbs | The borrowed walk–pause model hung several flies head down on the walls. They now stand head up and climb a step now and then; WT flies turn back down a little, and mutants slip. | Fixed. |
+| 3 | Step 1 at 1280×720 | The Next button fell just below the fold. The scene was trimmed to the T-maze's height. | Fixed. |
+| 4 | Tremor | Three drawings in which each foot circles out from the wall and back. They read on consecutive frames at 1920 as moving legs, above the ink boil, and are subtle at 1280. | OK; for the instructor to judge in the browser. |
+| 5 | Step 2, terminals | The synaptic terminals never showed, because their coordinates were made relative to the first branch twice. | Fixed. |
+| 6 | Step 2, shortening | With only the axon morphing, the leg vanished and the axon was left as a bare zigzag. The fly's own coxa and femur now shrink into the viewer's leg, carrying the axon. | Fixed. |
+| 7 | Step 2 at 10.1 s | The shrinking leg overlapped the viewer's cuticle outline. It fades a beat earlier. | Fixed. |
+| 8 | Step 2 at 0 s | The vial's foam plug drew a grey band behind the step title. Only the wall is drawn now. | Fixed. |
+| 9 | Step 2 at 8.4 s | Labels and caption turn light while the paper is still mid-grey (charcoal 8.0–8.8 s), as in the Pdf descent at 7.9 s. | Accepted, as in the other descents. |
+| 10 | Step 2, matched swap | The last frame's outlines (neuron, VNC edge, cuticle) land on the images; step 3 opens on the same layout. | OK. |

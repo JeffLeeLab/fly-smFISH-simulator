@@ -22,7 +22,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      CASES: "pdf mb"   # signed-off cases: truth tables regenerated and gated below
+      CASES: "pdf mb nmj"   # signed-off cases: truth tables regenerated and gated below
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

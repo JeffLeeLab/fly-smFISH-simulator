@@ -150,3 +150,52 @@ Reduced motion: the labelled motor neuron (end of N) and the "Next: the first cl
 - New scripts: `site/js/vial.js` (the vials, the taps, the seeded climbs, slips and crossings, the tremor schedule), `site/js/steps/nmj-step1.js` and `stationLive.nmj`. Which flies pass the line is fixed by decision 3, while their paths, bout timings and slips are seeded. Crossing times are computed up front, so frozen frames and counter ticks stay functions of time.
 - Descent: `site/js/steps/nmj-step2.js`. The VNC outline and the motor neuron's path are written by `generator/geometry_nmj.py` from the MANC neuropil and the chosen skeleton, with the leg part laid along the flybody leg. They come from the same data as the viewer's geometry, so the final frame matches the viewer.
 - Motion source: as in the Pdf case, a seeded walk–pause model stands in until real climbing footage can be traced (spec, *Motion principles*). A short vial video from the instructor would let the climbs, pauses and slips be traced instead.
+
+## As built (2026-10-14)
+
+Built after the signed-off storyboard above, with these differences and details. The connectome changed from MANC to MaleCNS v0.9, which holds the whole male CNS, VNC included (spec, *Leg motor neuron*).
+
+**Assay** (`site/js/vial.js`, `site/js/steps/nmj-step1.js`, `stationLive.nmj`):
+- **Layout:**
+  - The taped pair stands in the middle of the stage, with the flies drawn about 2.4× life size.
+  - The counters sit beside the vials at the line.
+  - Each lane's climbing index (its sum over an ink bar on a 0–1 scale) sits on its own side; the formula appears once, under the bench.
+  - The timer sits above the vials, between the plugs.
+  - The vial scene is as tall as the T-maze's, so the Next button stays on screen at 1280×720.
+- **Climbs (decision 3):**
+  - Each fly's climb is a script in millimetres and timer seconds, walked in bursts on the activity monitor's gait.
+  - WT: five flies pass the line within 3 s of the timer, seven within 4 s, and the eighth at 7.0 s. Two stop below the line: a late starter, and one that stops at 4 cm.
+  - Mutants: the two that pass do so at about 6.5 s and 8.1 s. Two slip back a step, one falls to the floor, one never gets past the foot of the wall, and one stays on the floor.
+  - The counts (8 and 2) are checked against the schedules when the page loads.
+- **Between climbs** (shot G, the landing and the rest after J):
+  - The flies stand mostly head up and now and then climb a step.
+  - A WT fly sometimes turns and walks back down a little, and grooms.
+  - A mutant shakes as it stands and slips back after its steps.
+- **Tremor (decision 4):**
+  - Three side-view drawings, in which each foot moves round a small loop of its own (out from the wall and back, about 0.26 mm, and along it about 0.18 mm), with the knee flexing.
+  - They are played on twos, in a seeded order that never repeats a drawing, in runs broken by short still beats.
+  - Fixed joint offsets of 4–6° were not used: at the vial's scale they move a foot by under a pixel, below the ink boil.
+  - The mutants also shake while they lie on the floor after the fall and as they slip.
+- **Captions:** as above.
+
+**Descent** (`site/js/steps/nmj-step2.js`; data in `site/data/nmj/anatomy.json`, written by `generator.geometry_nmj` from the cell that `generator.connectome_nmj` caches):
+- **K:** the vial's wall wipes away (the foam plug is left out, because it drew a grey band behind the step's title). The fly lifts off head up, rotates into the side view (0.3–1.6 s) and morphs into the turned view (1.0–1.8 s).
+- **L:** the thorax, the head and the near front leg stay drawn; the rest fades.
+- **M:**
+  - The VNC outline is drawn round about 4,000 MaleCNS VNC cell bodies seen from the side, with T1–T3 marked and the T2 and T3 leg nerves dashed.
+  - The cell is MaleCNS body 807165, a tibia flexor of the front leg, whose muscle lies in the femur. The femur reductors' skeletons are cleaner, but their muscle lies in the trochanter. It is a left cell, drawn on the near (right) side.
+  - Its dendrites and its axon, out to where the femur reductors' nerve stumps show the nerve leaving, are drawn from the connectome. The axon then follows the flybody front leg down the coxa and through the trochanter, and runs up the femur to its first branch 42% of the way along.
+  - The synaptic terminals are the viewer's own branches and swellings, enlarged 4× and turned to the fly's femur, on a muscle wash.
+- **N:**
+  - The fly's front leg shrinks into the viewer's coxa, trochanter and femur while the axon shortens, vertex for vertex, into the viewer's axon. The terminals settle to the viewer's size and place.
+  - The break mark sits on the nerve between the VNC and the coxa, and leaves with the paper.
+  - Labels come in at 8.3, 9.0 and 9.7 s.
+  - The viewer's VNC edge and cuticle come in as faint blue outlines before the matched swap.
+- **Captions:** two were added to the storyboard's: 0.3 "We follow one of the hTDP-43 WT flies, a good climber." and 2.3 "Into its thorax, where the legs attach."
+- **Hand-off:** the fly that lifts off is the WT fly highest on the wall in step 1, handed off (`handOff("fly")`).
+- **No `vnc.js`:** the VNC is data, not a hand-drawn schematic.
+
+**Locator** (`CASE_LOCATOR.nmj` in `site/js/summary.js`):
+- The turned side-view fly, with its thorax and near front leg ringed.
+- An inset of the VNC and that leg holding the motor neuron in blue: dendrites, axon down the leg, and synaptic terminals.
+- Labelled "Leg motor neuron".

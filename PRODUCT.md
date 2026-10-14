@@ -38,7 +38,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 ## Capabilities and Constraints
 
-- Pilot scope covers three adult cases (leg motor neuron – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 built the Pdf/*futsch* case end to end; Phase 2 has built the mushroom body, and the leg motor neuron is still to come.
+- Pilot scope covers three adult cases (leg motor neuron – *stai*, Pdf neurons – *futsch*, mushroom body – *unc-13*). Phase 1 built the Pdf/*futsch* case end to end; Phase 2 built the mushroom body and then the leg motor neuron (2026-10-14).
 - In scope: animated phenotype/assay openings; probe placement from a curated 8-region menu per gene; a zoomable split-view viewer with membrane + DAPI, two smFISH channels and TDP-43 IF; configurable LUTs; a SuperPlot; the notebook; PNG export.
 - Out of scope: real image data, probe thermodynamics, user accounts, server storage, follow-up experiments, target protein readout, cell-type comparisons and glia.
 - No lock on the student's path and no limit on attempts. Exploring is never penalised, groups can always go back, and locked steps say why they are locked.
