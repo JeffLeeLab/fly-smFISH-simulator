@@ -10,5 +10,7 @@ data/flybody/
 .impeccable/review/
 # MaleCNS Kenyon cell skeletons (downloaded by generator.connectome_mb; not committed)
 data/mb/connectome/
+# MaleCNS leg motor neuron skeleton (downloaded by generator.connectome_nmj; not committed)
+data/nmj/connectome/
 # Office lock files
 ~$*
