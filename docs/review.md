@@ -232,3 +232,18 @@ At the instructor's request, the descent (leg motor neuron step 2) now draws the
 | --- | --- | --- | --- |
 | 1 | Brain outline | The cell bodies' contour was hook-shaped: they form a shell round the neuropil. A rounded hull is used instead, nudged 30 µm down to sit inside the drawn head. | Fixed. |
 | 2 | Muscle | As a pale wash it did not read as muscle, even labelled. It is now a warm wash with fibres slanting in to a tendon. | Fixed. |
+
+## 2026-10-14: steps 3–6 drawn faded (class name clash)
+
+The instructor saw the step 3 viewer and step 5 greyed out on localhost. The climbing vial's bench line, added with leg motor neuron step 1, was styled by `.bench { … opacity: .45 }`. But `.bench` is also the workbench layout of steps 3–6, so all four steps were drawn at 45% opacity in every case. The line's class is now `vial-bench` (`app.css`, `nmj-step1.js`, `stations.js`).
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh <dir>` for pdf, mb and nmj (60 screenshots and 12 sheets each). Steps 3–6, their full screens and step 7 are at full strength in all three cases, in both themes and at both sizes. The vial, the station and the descents are unchanged.
+- **Opacity:** the workbench computes opacity 1 on steps 3–6. The vial's bench line keeps 0.45 (1.2 px on step 1, 2.4 px on the landing station).
+- **Console:** no errors or warnings on the landing or on leg motor neuron steps 1 and 3–6.
+- The nmj review set logged under "leg motor neuron openings" was shot with the fade. Its step 3–6 sheets are replaced by this run.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Steps 3–6, all cases | Drawn at 45% opacity: the vial's `.bench` rule also matched the workbench layout. | Fixed. |
+| 2 | Leg motor neuron step 5 | The *stai* gene card says "synaptic boutons". | OK: FlyBase's wording, kept by the instructor (spec, 2026-10-13). |

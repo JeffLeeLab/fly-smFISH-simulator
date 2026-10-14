@@ -74,7 +74,7 @@ function vialArt() {
   return `
     <svg viewBox="${VB}" aria-hidden="true" class="station-svg station-svg--vial">
       <g transform="translate(${VIAL_AT[0].toFixed(1)} ${VIAL_AT[1].toFixed(1)}) scale(${VIAL_K})">
-        <line class="bench" x1="${b[0]}" y1="${VIAL_FLOOR + 4.6}" x2="${b[1]}" y2="${VIAL_FLOOR + 4.6}"/>
+        <line class="vial-bench" x1="${b[0]}" y1="${VIAL_FLOOR + 4.6}" x2="${b[1]}" y2="${VIAL_FLOOR + 4.6}"/>
         ${VIAL_LANES.map(l => vialMarkup(l)).join("")}${tapeMarkup()}
       </g>
     </svg>`;
