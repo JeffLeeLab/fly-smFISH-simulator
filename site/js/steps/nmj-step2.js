@@ -41,7 +41,7 @@ const CAPTIONS = [
   [0, "Scroll to go inside the fly ↓"],
   [0.3, "We follow one of the hTDP-43 WT flies, a good climber."],
   [2.3, "Into its thorax, where the legs attach."],
-  [4.8, "Inside the thorax lies the ventral nerve cord, the fly’s equivalent of our spinal cord."],
+  [4.8, "The central nervous system: the brain in the head, and the ventral nerve cord in the thorax, the fly’s equivalent of our spinal cord."],
   [6.0, "In blue, one leg motor neuron. Its axon runs down the leg and ends on a muscle."],
   [8.3, "The real axon is far longer. We draw it short so the whole neuron fits one view."],
   [10.8, "This is what you will look at under the microscope."],
@@ -101,6 +101,14 @@ function paintField(canvas, imgs, frame, view, s) {
   ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
+// The femur muscle: fibres slanting in to a tendon along its middle (pennate, as in the viewer's
+// images), in the muscle's own frame (centred, its long axis along x).
+function muscleFibres({ rx, ry }) {
+  let d = `M${-rx},0 H${rx}`;
+  for (let x = -rx; x < rx + 60; x += 24) d += ` M${x},0 L${x - 0.9 * ry},${-ry} M${x},0 L${x - 0.9 * ry},${ry}`;
+  return d;
+}
+
 const lerp = (a, b, u) => a + (b - a) * u;
 const lerp2 = (p, q, u) => [lerp(p[0], q[0], u), lerp(p[1], q[1], u)];
 
@@ -119,7 +127,11 @@ export async function mount(root, ctx) {
   // in geometry µm, to the left of the anatomy
   const PARTS = ["Cell body (with its nucleus)", "Axon", "Synaptic terminals (on a leg muscle)"];
   const LABEL_AT = [[nb[0] - 8, cellC[1]], [nb[0] - 2, 92], [nb[0] + 30, 150]];
-  const lead = PARTS.map(() => ({ k: 0 })), rlead = { k: 0 };
+  const lead = PARTS.map(() => ({ k: 0 }));
+  // labels while the fly is drawn: the central nervous system (one arrow to the brain, one to the
+  // VNC), the VNC, and the muscle the synaptic terminals sit on
+  const REGIONS = ["Central nervous system", "Ventral nerve cord (VNC)", "Leg muscle"];
+  const rlead = REGIONS.map(() => ({ k: 0 }));
 
   root.innerHTML = `
     <div class="descent-page">
@@ -150,12 +162,16 @@ export async function mount(root, ctx) {
               </g>
               <g class="d-fly fly"></g>
               <g class="d-vnc">
-                <path class="brain-line vnc-line" d="${A.vnc.outline}"/>
+                <path class="brain-line vnc-line" d="${A.cns.outline}"/>
                 ${A.vnc.nerves.map(d => `<path class="brain-dash vnc-nerve" d="${d}"/>`).join("")}
-                ${Object.entries(A.vnc.neuromeres).map(([k, [x, y]]) => `<text class="vnc-tag" x="${x}" y="${y}" text-anchor="middle">${k}</text>`).join("")}
+                ${Object.entries(A.vnc.neuromeres).map(([k, [x, y]]) => `<text class="vnc-tag" x="${x}" y="${y - 50}" text-anchor="middle">${k}</text>`).join("")}
               </g>
               <g class="d-leg"></g>
-              <ellipse class="mn-muscle" cx="${N.muscle.at[0]}" cy="${N.muscle.at[1]}" rx="${N.muscle.rx}" ry="${N.muscle.ry}" transform="rotate(${N.muscle.angle} ${N.muscle.at[0]} ${N.muscle.at[1]})"/>
+              <g class="mn-muscle" transform="translate(${N.muscle.at[0]} ${N.muscle.at[1]}) rotate(${N.muscle.angle})">
+                <clipPath id="muscle-clip"><ellipse rx="${N.muscle.rx}" ry="${N.muscle.ry}"/></clipPath>
+                <ellipse class="muscle-wash" rx="${N.muscle.rx}" ry="${N.muscle.ry}"/>
+                <path class="muscle-fibre" clip-path="url(#muscle-clip)" d="${muscleFibres(N.muscle)}"/>
+              </g>
               <g class="d-ctx" transform="translate(${AT.x} ${AT.y})">${contextMarkup(A)}</g>
               <g class="d-neurons" transform="translate(${AT.x} ${AT.y})">
                 <g class="d-fill">${neuronMarkup(geoC, "nrn--wt")}</g>
@@ -173,10 +189,10 @@ export async function mount(root, ctx) {
               <g class="d-break"><path class="break-mark" d="M-4,-7 L-1,7 M1,-7 L4,7"/></g>
             </svg>
             <div class="descent__labels" aria-hidden="true">
-              <svg class="d-leaders">${PARTS.map(() => `<path class="d-leader"/><path class="d-arrow"/>`).join("")}<path class="d-leader d-leader--region"/><path class="d-arrow d-arrow--region"/></svg>
+              <svg class="d-leaders">${PARTS.map(() => `<path class="d-leader"/><path class="d-arrow"/>`).join("")}${[0, 1, 2, 3].map(() => `<path class="d-leader d-leader--region"/><path class="d-arrow d-arrow--region"/>`).join("")}</svg>
               <span class="d-label d-label--fly">hTDP-43 WT</span>
               ${PARTS.map(name => `<span class="d-label d-label--part">${name}</span>`).join("")}
-              <span class="d-label d-label--region">Ventral nerve cord (VNC)</span>
+              ${REGIONS.map(name => `<span class="d-label d-label--region">${name}</span>`).join("")}
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
@@ -196,9 +212,9 @@ export async function mount(root, ctx) {
   const $$ = s => root.querySelectorAll(s);
   const section = $(".descent"), stage = $(".descent__stage"), svg = $(".descent__svg");
   const flyG = $(".d-fly"), capEl = $(".descent__cap"), frameEl = $(".descent__viewer");
-  const flyLabel = $(".d-label--fly"), partLabels = [...$$(".d-label--part")], regionLabel = $(".d-label--region");
+  const flyLabel = $(".d-label--fly"), partLabels = [...$$(".d-label--part")], regionLabels = [...$$(".d-label--region")];
   const leaders = [...$$(".d-leader:not(.d-leader--region)")], arrows = [...$$(".d-arrow:not(.d-arrow--region)")];
-  const rLeader = $(".d-leader--region"), rArrow = $(".d-arrow--region");
+  const rLeaders = [...$$(".d-leader--region")], rArrows = [...$$(".d-arrow--region")];   // the CNS label has two
   const turb = $("#descent-boil feTurbulence"), disp = $("#descent-boil feDisplacementMap");
   const axonEl = $(".mn-axon"), somaEl = $(".mn-soma"), termEl = $(".mn-term"), breakEl = $(".d-break");
   const handRect = takeHandOff("fly");
@@ -274,7 +290,7 @@ export async function mount(root, ctx) {
     vial: () => [FLY_START.x - 1400, FLY_START.y - 1800, 13000],
     fly: () => [-300, 150, 2700],
     thorax: () => [200, 260, 1300],
-    vnc: () => [180, 300, Math.max(1050, 1900 / L.aspect)],
+    vnc: () => [290, 170, Math.max(1180, 2150 / L.aspect)],
     neuron: () => [mid[0] - 14, mid[1], 250],
     drift: () => [mid[0] - 12, mid[1], 236],
     viewer: () => [L.camO.cx, L.camO.cy, L.camO.h],
@@ -292,9 +308,9 @@ export async function mount(root, ctx) {
     live.forEach(l => { l.el.style.opacity = "1"; });
     gsap.set([".bg-grey", ".bg-charcoal", ".bg-black", ".vnc-nerve", ".vnc-tag", ".d-mutant", ".descent__field canvas", ".d-fill", ".d-ctx", ".mn-muscle", ".mn-soma", ".mn-dend", ".d-break", ".d-leg", trochEl], { opacity: 0 });
     legParts.forEach(p => { p.el.setAttribute("d", p.from); p.el.style.opacity = "1"; });
-    gsap.set([frameEl, ".descent__controls", ...partLabels, regionLabel], { autoAlpha: 0 });
-    gsap.set([...leaders, ...arrows, rLeader, rArrow], { autoAlpha: 1 });
-    [...lead, rlead].forEach(l => { l.k = 0; });
+    gsap.set([frameEl, ".descent__controls", ...partLabels, ...regionLabels], { autoAlpha: 0 });
+    gsap.set([...leaders, ...arrows, ...rLeaders, ...rArrows], { autoAlpha: 1 });
+    [...lead, ...rlead].forEach(l => { l.k = 0; });
     gsap.set([".descent__title", flyLabel], { autoAlpha: 1 });
     gsap.set(".vnc-line", { drawSVG: "0%" });
     gsap.set([".mn-grow", ".term-grow"], { attr: { r: 0 } });
@@ -323,15 +339,15 @@ export async function mount(root, ctx) {
     camTo("thorax", "vnc", 4.5, 1.2, "power1.inOut");
     tl.fromTo(".vnc-line", { drawSVG: "0%" }, { drawSVG: "100%", duration: 1.3, ease: "power1.inOut" }, 4.5)
       .fromTo([".vnc-nerve", ".vnc-tag"], { opacity: 0 }, { opacity: 1, duration: 0.5 }, 5.5)
-      .fromTo(regionLabel, { autoAlpha: 0, y: -4 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" }, 4.9)
-      .fromTo(rlead, { k: 0 }, { k: 1, duration: 0.35, ease: "power2.out" }, 5.02)
+
       .fromTo(".mn-soma", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 6.0)
       .fromTo(".mn-dend", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 6.0)
       .fromTo(".mn-grow", { attr: { r: 0 } }, { attr: { r: 90 }, duration: 0.7, ease: "power1.out" }, 6.0)
       .fromTo(grow, { axon: 0 }, { axon: 1, duration: 1.2, ease: "power1.inOut" }, 6.2)
       .fromTo(".mn-muscle", { opacity: 0 }, { opacity: 1, duration: 0.5 }, 6.9)
       .fromTo(".term-grow", { attr: { r: 0 } }, { attr: { r: 60 }, duration: 0.6, ease: "power1.out" }, 7.35)
-      .fromTo([regionLabel, rLeader, rArrow], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.6)
+      .fromTo([...regionLabels.slice(0, 2), ...rLeaders.slice(0, 3), ...rArrows.slice(0, 3)], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.6)
+      .fromTo([regionLabels[2], rLeaders[3], rArrows[3]], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.95)
     // N 8–10.5: the fly and the VNC go; the neuron settles into the viewer's layout as we close in
       .fromTo(look, { wash: 8, ink: 34 }, { wash: 0, ink: 0, duration: 0.8 }, 8.0)
       .fromTo(".bg-charcoal", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 8.0)
@@ -348,6 +364,10 @@ export async function mount(root, ctx) {
       .fromTo(".d-mn", { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.in" }, 10.0);
     for (const p of legParts) if (p.to) tl.fromTo(p.el, { morphSVG: p.from }, { morphSVG: p.to, duration: MORPH[1] - MORPH[0], ease: "power2.inOut" }, MORPH[0]);
     camTo("vnc", "neuron", 8.0, 1.7);
+    [4.9, 5.5, 7.1].forEach((at, i) => {
+      tl.fromTo(regionLabels[i], { autoAlpha: 0, y: i === 2 ? 4 : -4 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" }, at)
+        .fromTo(rlead[i], { k: 0 }, { k: 1, duration: 0.35, ease: "power2.out" }, at + 0.12);
+    });
     camTo("neuron", "drift", 9.7, 0.8, "none");
     PARTS.forEach((_, i) => {
       const at = [8.3, 9.0, 9.7][i];
@@ -380,8 +400,8 @@ export async function mount(root, ctx) {
   function pointer(el, leader, arrow, k, side, [x, y], [ax, ay]) {
     const w = el.offsetWidth, h = el.offsetHeight;
     el.style.left = `${(side === "left" ? x - w : x - w / 2).toFixed(1)}px`;
-    el.style.top = `${(side === "left" ? y - h / 2 : y - h).toFixed(1)}px`;
-    const sx = side === "left" ? x + 6 : x, sy = side === "left" ? y : y + 4;
+    el.style.top = `${(side === "left" ? y - h / 2 : side === "above" ? y - h : y).toFixed(1)}px`;
+    const sx = side === "left" ? x + 6 : x, sy = side === "left" ? y : side === "above" ? y + 4 : y - 4;
     const len = Math.hypot(ax - sx, ay - sy) || 1;
     const ux = (ax - sx) / len, uy = (ay - sy) / len;
     const tip = Math.max(0, len - 2);
@@ -469,8 +489,13 @@ export async function mount(root, ctx) {
     })()];
     PARTS.forEach((_, i) => pointer(partLabels[i], leaders[i], arrows[i], lead[i].k, "left",
       toScreen(LABEL_AT[i][0] + AT.x, LABEL_AT[i][1] + AT.y), toScreen(...anchors[i])));
-    const vTop = A.vnc.neuromeres.T2;
-    pointer(regionLabel, rLeader, rArrow, rlead.k, "above", toScreen(vTop[0] - 40, vTop[1] - 230), toScreen(vTop[0] - 20, vTop[1] - 80));
+    // the CNS label above the neck, an arrow to each part; the VNC's to its left; the muscle's below the femur
+    const neck = A.cns.neck, vc = A.vnc.centre, mu = N.muscle.at;
+    const cnsAt = toScreen(neck[0] - 60, A.cns.brain[1] - 205);
+    pointer(regionLabels[0], rLeaders[0], rArrows[0], rlead[0].k, "above", cnsAt, toScreen(A.cns.brain[0] - 40, A.cns.brain[1] - 40));
+    pointer(regionLabels[0], rLeaders[1], rArrows[1], rlead[0].k, "above", cnsAt, toScreen(vc[0] + 120, vc[1] - 40));
+    pointer(regionLabels[1], rLeaders[2], rArrows[2], rlead[1].k, "left", toScreen(vc[0] - 420, vc[1] - 40), toScreen(vc[0] - 250, vc[1] - 10));
+    pointer(regionLabels[2], rLeaders[3], rArrows[3], rlead[2].k, "below", toScreen(mu[0] + 90, mu[1] + 170), toScreen(mu[0] + 90, mu[1] + 30));
 
     // caption and the dark stage
     let k = 0;

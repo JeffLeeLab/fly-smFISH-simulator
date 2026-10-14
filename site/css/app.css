@@ -359,7 +359,8 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .mn-axon { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 2.2); stroke-linecap: round; stroke-linejoin: round; }
 .mn-soma, .mn-swell { fill: var(--mem); }
 .mn-branch { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 1.6 / var(--tk, 1)); stroke-linecap: round; stroke-linejoin: round; }
-.mn-muscle { fill: var(--wash-a); fill-opacity: .55; }
+.muscle-wash { fill: var(--wash-eye); fill-opacity: .32; }
+.muscle-fibre { fill: none; stroke: color-mix(in srgb, var(--wash-eye) 55%, var(--ink)); stroke-width: calc(var(--px) * .8); stroke-opacity: .45; }
 .d-break { color: var(--ink); }
 .is-dark .d-break { color: var(--viewer-text); }
 .break-mark { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }

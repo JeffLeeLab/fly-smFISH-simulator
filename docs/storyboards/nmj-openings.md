@@ -183,6 +183,9 @@ Built after the signed-off storyboard above, with these differences and details.
 - **L:** the thorax, the head and the near front leg stay drawn; the rest fades.
 - **M:**
   - The VNC outline is drawn round about 4,000 MaleCNS VNC cell bodies seen from the side, with T1–T3 marked and the T2 and T3 leg nerves dashed.
+  - The central brain is drawn in the head (instructor, 2026-10-14), outlined round the same specimen's central-brain cell bodies, rounded because they form a shell round the neuropil. It is joined to the VNC by the neck's connective, so the central nervous system is one outline.
+  - Labels: "Central nervous system" at 4.9 s, with one arrow to the brain and one to the VNC; "Ventral nerve cord (VNC)" at 5.5 s; and "Leg muscle" at 7.1 s, under the femur (instructor, 2026-10-14). The muscle is drawn as a warm wash with fibres slanting in to a tendon, as in the viewer's images.
+  - The 4.8 s caption now names both parts: "The central nervous system: the brain in the head, and the ventral nerve cord in the thorax, the fly’s equivalent of our spinal cord."
   - The cell is MaleCNS body 807165, a tibia flexor of the front leg, whose muscle lies in the femur. The femur reductors' skeletons are cleaner, but their muscle lies in the trochanter. It is a left cell, drawn on the near (right) side.
   - Its dendrites and its axon, out to where the femur reductors' nerve stumps show the nerve leaving, are drawn from the connectome. The axon then follows the flybody front leg down the coxa and through the trochanter, and runs up the femur to its first branch 42% of the way along.
   - The synaptic terminals are the viewer's own branches and swellings, enlarged 4× and turned to the fly's femur, on a muscle wash.

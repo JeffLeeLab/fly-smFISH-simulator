@@ -789,6 +789,10 @@ def main():
         "vnc_somata_side": np.round(_view(sub, axes, cell["soma"], "side"), 1).tolist(),
         "neuromeres_side": {nm: np.round(_view(p, axes, cell["soma"], "side").mean(axis=0), 1).tolist()
                             for nm, p in leg_somata.items() if len(p)},
+        # the central brain's cell bodies, seen from the side as the VNC's are: its outline in the descent
+        "brain_somata_side": np.round(_view(np.array([soma[i] for i in brain_use if i in soma
+                                                      and "superclass:cb_intrinsic" in tab["tags"][i]]),
+                                            axes, cell["soma"], "side"), 1).tolist(),
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 

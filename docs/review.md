@@ -208,3 +208,27 @@ The case was added to the Pages gate (`CASES: "pdf mb nmj"`).
 | 8 | Step 2 at 0 s | The vial's foam plug drew a grey band behind the step title. Only the wall is drawn now. | Fixed. |
 | 9 | Step 2 at 8.4 s | Labels and caption turn light while the paper is still mid-grey (charcoal 8.0–8.8 s), as in the Pdf descent at 7.9 s. | Accepted, as in the other descents. |
 | 10 | Step 2, matched swap | The last frame's outlines (neuron, VNC edge, cuticle) land on the images; step 3 opens on the same layout. | OK. |
+
+## 2026-10-14: descent labels (instructor)
+
+At the instructor's request, the descent (leg motor neuron step 2) now draws the brain in the head and labels the central nervous system and the leg muscle.
+- **Brain:** outlined round the MaleCNS central brain's cell bodies (`brain_somata_side` in the connectome cache) and joined to the VNC through the neck, so the central nervous system is one outline (`cns` in `anatomy.json`).
+- **Labels:**
+  - "Central nervous system", with one arrow to the brain and one to the VNC;
+  - "Ventral nerve cord (VNC)", moved to the VNC's left;
+  - "Leg muscle", under the femur.
+- **Muscle:** drawn as a warm wash with pennate fibres, so it reads as muscle.
+- **Smaller changes:**
+  - The neuromere tags move off the motor neuron.
+  - The camera's VNC view widens to take in the head.
+  - The 4.8 s caption names the brain and the VNC.
+
+**Checks.**
+- Frozen frames at 3.6–9.4 s, in both themes.
+- No console errors.
+- The step 7 locator is unchanged; it still uses the VNC alone.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Brain outline | The cell bodies' contour was hook-shaped: they form a shell round the neuropil. A rounded hull is used instead, nudged 30 µm down to sit inside the drawn head. | Fixed. |
+| 2 | Muscle | As a pale wash it did not read as muscle, even labelled. It is now a warm wash with fibres slanting in to a tendon. | Fixed. |

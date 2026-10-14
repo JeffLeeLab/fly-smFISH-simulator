@@ -651,18 +651,31 @@ def anatomy():
     soma_w = np.array(ROOT_AT) - exit_rel
     P = side(V) + soma_w
 
-    # the VNC: an outline round the cloud of its cell bodies, seen from the side
-    cloud = np.array(mn["vnc_somata_side"]) * [1, math.cos(roll)] + soma_w
-    res, pad = 0.5, 30                                   # px per µm, margin
-    lo = cloud.min(axis=0) - pad
-    W, H = (np.ceil((cloud.max(axis=0) + pad - lo) * res)).astype(int)
-    img = np.zeros((H, W))
-    ij = ((cloud - lo) * res).astype(int)
-    img[ij[:, 1], ij[:, 0]] = 1
-    img = gaussian_filter(img, 9 * res)
-    cont = max(find_contours(img, img.max() * 0.06), key=len)
-    outline = Polygon(cont[:, ::-1] / res + lo).buffer(0).simplify(2.0)
+    def outline_of(cloud):   # an outline round a cloud of cell bodies seen from the side
+        res, pad = 0.5, 30                               # px per µm, margin
+        lo = cloud.min(axis=0) - pad
+        W, H = (np.ceil((cloud.max(axis=0) + pad - lo) * res)).astype(int)
+        img = np.zeros((H, W))
+        ij = ((cloud - lo) * res).astype(int)
+        img[ij[:, 1], ij[:, 0]] = 1
+        img = gaussian_filter(img, 9 * res)
+        cont = max(find_contours(img, img.max() * 0.06), key=len)
+        return Polygon(cont[:, ::-1] / res + lo).buffer(0).simplify(2.0)
+
+    # the central nervous system as the same specimen holds it: the VNC and the central brain, each
+    # outlined round its cell bodies, joined by the neck's connective (drawn: it has no cell bodies)
+    outline = outline_of(np.array(mn["vnc_somata_side"]) * [1, math.cos(roll)] + soma_w)
     vnc_xy = np.asarray(outline.exterior.coords)
+    # the brain's cell bodies form a shell round its neuropil, so its outline is their hull, rounded
+    from shapely.geometry import MultiPoint
+    BRAIN_NUDGE = (10.0, 30.0)   # µm: the dissected CNS's brain sits a little high for the drawn head
+    brain = MultiPoint(np.array(mn["brain_somata_side"]) * [1, math.cos(roll)] + soma_w + BRAIN_NUDGE).convex_hull.buffer(14).simplify(2.0)
+    tip = vnc_xy[np.argmax(vnc_xy[:, 0])]
+    bxy = np.asarray(brain.exterior.coords)
+    attach = bxy[np.argmin(np.hypot(*(bxy - tip).T))]
+    bc = np.array(brain.centroid.coords[0])
+    neck = LineString(catmull([tip - [30, 0], (tip + attach) / 2 + [10, 10], attach + (bc - attach) / np.hypot(*(bc - attach)) * 30], n=12)).buffer(24)
+    cns = unary_union([outline, brain, neck]).buffer(8).buffer(-8).simplify(2.0)
     neuromeres = {k: (np.array(v) * [1, math.cos(roll)] + soma_w).round(1).tolist() for k, v in mn["neuromeres_side"].items()}
 
     # the cell: dendrites as chains between branch points (the axon path apart), simplified
@@ -787,8 +800,10 @@ def anatomy():
         "source": {"connectome": mn["release"], "body": c["id"], "type": c["type"]},
         "fly": {"k": FLY_UM, "base": base.round(1).tolist(), "hip": hip.round(1).tolist(), "knee": knee.round(1).tolist(),
                 "ankle": leg["ankle"].round(1).tolist(), "coxae": {k: v.round(1).tolist() for k, v in leg["coxae"].items()}},
-        "vnc": {"outline": path_d(vnc_xy, closed=True), "neuromeres": neuromeres,
+        "vnc": {"outline": path_d(vnc_xy, closed=True), "neuromeres": neuromeres, "centre": np.round(outline.centroid.coords[0], 1).tolist(),
                 "nerves": [path_d(even([neuromeres[k], (np.array(neuromeres[k]) + leg["coxae"][k]) / 2 + [0, -10], leg["coxae"][k]], 12)) for k in ("T2", "T3")]},
+        "cns": {"outline": path_d(np.asarray(cns.exterior.coords), closed=True), "brain": np.round(bc, 1).tolist(),
+                "neck": np.round((tip + attach) / 2, 1).tolist()},
         "neuron": {"soma": soma_w.round(2).tolist(), "soma_r": SOMA_R_WORLD, "dendrites": dendrites,
                    "path": np.vstack(list(long_parts.values())).round(2).tolist(),
                    "parts": {k: v for k, v in zip(PATH_SPLIT, np.cumsum([0] + list(PATH_SPLIT.values()))[:-1].tolist())},
