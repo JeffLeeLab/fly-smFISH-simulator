@@ -349,6 +349,27 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .descent__svg .odour--descent { opacity: .35; }
 .descent__svg .odour-tint { display: none; }   /* the pattern is scaled ×60 behind the whole brain: texture only */
 .descent__svg .maze-port { stroke-width: calc(var(--px) * 1.3); }
+/* the leg motor neuron descent: the VNC in ink, the motor neuron in membrane blue (its terminals
+   drawn enlarged in the fly's femur, so their lines are thinned by that factor, --tk), the break
+   mark in ink on the paper, and the viewer's context outlines in faint blue */
+.d-vnc { color: var(--ink); }
+.is-dark .d-vnc { color: var(--viewer-text-2); }
+.vnc-tag { font: 500 calc(var(--px) * 12px) var(--font-sans); fill: currentColor; fill-opacity: .7; }
+.mn-dend { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * .8); stroke-opacity: .7; stroke-linecap: round; stroke-linejoin: round; }
+.mn-axon { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 2.2); stroke-linecap: round; stroke-linejoin: round; }
+.mn-soma, .mn-swell { fill: var(--mem); }
+.mn-branch { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 1.6 / var(--tk, 1)); stroke-linecap: round; stroke-linejoin: round; }
+.mn-muscle { fill: var(--wash-a); fill-opacity: .55; }
+.d-break { color: var(--ink); }
+.is-dark .d-break { color: var(--viewer-text); }
+.break-mark { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.ctx-cuticle, .ctx-edge { fill: none; stroke: var(--mem); stroke-width: calc(var(--px) * 1.1); stroke-linecap: round; }
+.ctx-edge { stroke-opacity: .7; stroke-dasharray: calc(var(--px) * 4) calc(var(--px) * 3); }
+.ctx-joint { stroke-opacity: .5; }
+.ctx-muscle { fill: var(--mem); fill-opacity: .1; }
+.d-leg { color: var(--ink); }
+.is-dark .d-leg { color: var(--viewer-text-2); }
+.leg-part { fill: none; stroke: currentColor; stroke-width: calc(var(--px) * 1.2); stroke-opacity: .55; stroke-linejoin: round; }
 
 /* ---------- lane legend: the hero flies land here on the way to the assays ---------- */
 .story--landing { position: relative; }

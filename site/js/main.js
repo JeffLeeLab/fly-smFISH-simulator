@@ -25,7 +25,7 @@ const VIEWS = {
 // A case can replace a step's view; the rest are shared.
 const CASE_VIEWS = {
   mb: { 1: () => import("./steps/mb-step1.js"), 2: () => import("./steps/mb-step2.js") },
-  nmj: { 1: () => import("./steps/nmj-step1.js"), 2: () => import("./steps/nmj-pending.js") },
+  nmj: { 1: () => import("./steps/nmj-step1.js"), 2: () => import("./steps/nmj-step2.js") },
 };
 const viewOf = (caseId, key) => (CASE_VIEWS[caseId]?.[key] ?? VIEWS[key]);
 

@@ -35,12 +35,13 @@ function textBlock(x, y, lines, size, family, fill, lh = 1.35, weight = 400, sty
   return lines.map((l, i) => `<text x="${x}" y="${y + i * size * lh}" font-family="${family}" font-size="${size}" font-weight="${weight}" font-style="${style}" fill="${fill}">${esc(l)}</text>`).join("");
 }
 
-// The fly's front-view drawing as markup for the slide: the theme's ink and wash variables give
-// way to their light fallbacks, and strokes scale with the drawing. The antennae go, as in step 2:
-// from the front they would make a face.
-export function slideFly(markup) {
-  return markup
-    .replace(/<path data-part="antenna_[a-z]+"[^>]*>(<\/path>)?/g, "")
+// The fly's drawing as markup for the slide: the theme's ink and wash variables give way to their
+// light fallbacks, and strokes scale with the drawing. From the front the antennae go, as in step 2:
+// they would make a face. `el` is the sprite frame's <g>; parts it shares with other frames
+// (<use>) are written out in place, since a copied image can't follow references.
+export function slideFly(el, { antennae = false } = {}) {
+  const markup = [...el.children].map(c => (c.tagName === "use" ? document.querySelector(c.getAttribute("href")).outerHTML.replace(/ id="[^"]*"/, "") : c.outerHTML)).join("");
+  return (antennae ? markup : markup.replace(/<path data-part="antenna_[a-z]+"[^>]*>(<\/path>)?/g, ""))
     .replace(/ vector-effect="non-scaling-stroke"/g, "")
     .replace(/var\(--fly-[a-z]+,\s*((?:[^()]|\([^()]*\))+)\)/g, "$1");
 }
@@ -48,9 +49,11 @@ export function slideFly(markup) {
 const ringsD = mp => mp.coordinates.map(poly => poly.map(r => "M" + r.map(p => `${p[0]},${p[1]}`).join("L") + "Z").join("")).join("");
 
 // Per case: where one side's neurons sit in the brain frame, how they are drawn (`neurons(geo, sw)`,
-// `sw` converting px to brain units) and the points the label line aims at. A case without an entry
-// gets the fly and brain only.
+// `sw` converting px to brain units) and the points the label line aims at; or, for a case seen from
+// the side, its own drawing (`draw`) and fly view (`view`). A case without an entry gets the fly and
+// brain only.
 export const CASE_LOCATOR = {
+  nmj: { view: "turned", file: "anatomy.json", draw: args => nmjLocator(args) },
   pdf: {
     at: NEURON_AT,
     neurons: (geo, sw) => `
@@ -75,11 +78,61 @@ export const CASE_LOCATOR = {
   },
 };
 
+// Leg motor neuron: the step 2 descent's turned side view (anatomy.json, in the fly's µm). The fly
+// with its thorax and near front leg ringed; beside it, the VNC and that leg with the one motor
+// neuron in blue (its dendrites, its axon down the leg, its synaptic terminals in the femur).
+const NMJ_BOX = [-240, -30, 700, 520];   // the inset's view of the fly, µm
+
+function nmjLocator({ fly, geo: A, cells, right, top }) {
+  const P = LIGHT;
+  const iw = 260, ih = 150, ix = right - iw, iy = top - 10;
+  const kb = Math.min((iw - 16) / (NMJ_BOX[2] - NMJ_BOX[0]), (ih - 12) / (NMJ_BOX[3] - NMJ_BOX[1]));
+  const bx = ix + iw / 2 - ((NMJ_BOX[0] + NMJ_BOX[2]) / 2) * kb, by = iy + ih / 2 - ((NMJ_BOX[1] + NMJ_BOX[3]) / 2) * kb;
+  const [vx, vy, vw, vh] = fly.viewBox;
+  const kf = 130 / vh;                                     // the fly, 130 px tall
+  const fx = ix - 56 - (vx + vw) * kf, fy = top + 4 - vy * kf;   // its thorax, at the sprite's 0,0
+  const k10 = 1 / 10;                                      // µm → sprite units
+  const cx = (NMJ_BOX[0] + NMJ_BOX[2]) / 2 * k10, cy = (NMJ_BOX[1] + NMJ_BOX[3]) / 2 * k10;
+  const rx = fx + (cx - 6) * kf, ry = fy + (cy - 2) * kf, rr = 74 * kf;   // the ring: thorax and near front leg
+  const out = [];
+  out.push(`<g transform="translate(${fx} ${fy}) scale(${kf})" stroke-width="${1.5 / kf}" stroke-linejoin="round">${fly.markup}</g>`);
+  out.push(`<circle cx="${rx}" cy="${ry}" r="${rr}" fill="none" stroke="${P.border}" stroke-width="2"/>`);
+  for (const [px, py] of [[ix, iy], [ix, iy + ih]]) {
+    const d = Math.hypot(px - rx, py - ry);
+    out.push(`<line x1="${rx + ((px - rx) / d) * rr}" y1="${ry + ((py - ry) / d) * rr}" x2="${px}" y2="${py}" stroke="${P.border}" stroke-width="2"/>`);
+  }
+  out.push(`<clipPath id="nmj-inset"><rect x="${ix}" y="${iy}" width="${iw}" height="${ih}"/></clipPath>`);
+  out.push(`<rect x="${ix}" y="${iy}" width="${iw}" height="${ih}" fill="${P.bg}" stroke="${P.border}" stroke-width="2"/>`);
+  const sw = w => w / kb;
+  const leg = ["coxa_T1_right", "femur_T1_right", "tibia_T1_right", "tarsus_T1_right"]
+    .map(part => fly.markup.match(new RegExp(`<path data-part="${part}"[^>]* d="([^"]+)"`))?.[1]).filter(Boolean)
+    .map(d => `<path d="${d.replace(/-?\d*\.?\d+/g, n => (Number(n) * 10).toFixed(1))}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.1)}" stroke-opacity=".55"/>`).join("");
+  const N = A.neuron, T = A.terminals.world;
+  const blue = `fill="none" stroke="${P.mem}" stroke-linecap="round" stroke-linejoin="round"`;
+  out.push(`<g clip-path="url(#nmj-inset)"><g transform="translate(${bx} ${by}) scale(${kb})">
+    ${leg}
+    <path d="${A.vnc.outline}" fill="none" stroke="${P.text2}" stroke-width="${sw(1.5)}"/>
+    <path d="${N.dendrites}" ${blue} stroke-width="${sw(0.6)}" stroke-opacity=".7"/>
+    <path d="M${N.path.map(p => p.join(",")).join("L")}" ${blue} stroke-width="${sw(1.8)}"/>
+    <g transform="translate(${T.at[0]} ${T.at[1]}) rotate(${T.rot}) scale(${T.k})">
+      <path d="${A.terminals.branches}" ${blue} stroke-width="${sw(1.4) / T.k}"/>
+      ${A.terminals.swellings.map(([x, y, a, b, r]) => `<ellipse cx="${x}" cy="${y}" rx="${a}" ry="${b}" transform="rotate(${r} ${x} ${y})" fill="${P.mem}"/>`).join("")}
+    </g>
+    <circle cx="${N.soma[0]}" cy="${N.soma[1]}" r="${Math.max(N.soma_r, sw(3.5))}" fill="${P.mem}"/>
+  </g></g>`);
+  // the label, under the inset, points at the cell body
+  const nx = bx + N.soma[0] * kb, ny = by + N.soma[1] * kb;
+  out.push(`<line x1="${nx}" y1="${ny + 7}" x2="${nx}" y2="${iy + ih + 14}" stroke="${P.text2}" stroke-width="1.5"/>`);
+  out.push(`<text x="${nx}" y="${iy + ih + 40}" text-anchor="middle" font-family="${P.sans}" font-size="22" fill="${P.text2}">${esc(cells)}</text>`);
+  return out.join("");
+}
+
 // The locator, the step 2 descent in one picture: the fly from the front with its head ringed,
 // and the brain enlarged beside it, the neurons on both sides in the anatomy blue. The brain's
 // frame has the head's centre at 0,0, at 10 µm per fly-sprite unit (step 2). Right-aligned at
 // `right`; returns markup.
 function locator({ fly, geo, cells, right, top, loc }) {
+  if (loc?.draw && geo) return loc.draw({ fly, geo, cells, right, top });
   const P = LIGHT;
   const iw = 260, ih = 124;                                // the brain inset
   const ix = right - iw, iy = top;

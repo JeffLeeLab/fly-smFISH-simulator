@@ -33,6 +33,11 @@ the image renderer (generator/render.py), as for the Pdf neurons.
 
 x runs left → right, y dorsal (top) → ventral (bottom), as on screen.
 
+The step 2 descent's drawing goes to site/data/nmj/anatomy.json (anatomy(), below): the fly's
+VNC and its leg motor neuron in the fly's own µm, from the MaleCNS v0.9 cell that
+generator.connectome_nmj picks and caches (run that first, once), laid into the flybody fly's
+front leg; and the viewer's outlines, for the descent's last frame.
+
     uv run python -m generator.geometry_nmj
     uv run python -m generator.geometry_nmj --sketch docs/references/nmj-compartment-sketch.png
 """
@@ -40,6 +45,7 @@ x runs left → right, y dorsal (top) → ventral (bottom), as on screen.
 import json
 import math
 import sys
+from types import SimpleNamespace
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -594,6 +600,213 @@ def sketch(path):
         print(" ", t)
 
 
+# ---------- the descent's drawing (site/data/nmj/anatomy.json) ----------
+
+# The descent's world is the fly drawing's (generator/flies.py, the side view turned 20° towards
+# us), in µm: the sprite's units × 10, the thorax at 0,0, x towards the head, y down. The leg is
+# the near front leg (T1, right). The MaleCNS cell is a left one, drawn mirrored on the right.
+FLY_UM = 10.0                   # µm per sprite unit
+ROOT_AT = (300.0, 92.0)         # where its leg nerve leaves the VNC, above the coxa's base (world µm)
+SOMA_R_WORLD = 6.0              # the real cell body, about 12 µm across
+TERMINALS_K = 4.0               # the viewer's synaptic terminals drawn this much larger in the fly's femur
+FIRST_BRANCH = 0.42             # how far along the fly's femur the axon first branches
+PATH_SPLIT = {"vnc": 18, "nerve": 18, "coxa": 24, "trochanter": 8, "femur": 18}   # vertices per stretch of the axon
+
+
+def fly_leg():
+    """The near front leg's joints in the turned view (world µm): the coxa's base, the
+    coxa–trochanter joint, the knee and the tibia's end; and the other legs' coxa bases."""
+    from . import flies
+    model = flies.Model(flies.fetch("fruitfly.xml"))
+    q = flies.standing(SimpleNamespace(model=model))
+    world = model.kinematics(q)
+    to = lambda body: np.array(flies.VIEWS["turned"](world[body][1][None]))[:2, 0] * np.array([1, -1]) * flies.SCALE * FLY_UM
+    return {"base": to("coxa_T1_right"), "hip": to("femur_T1_right"), "knee": to("tibia_T1_right"), "ankle": to("tarsus_T1_right"),
+            "coxae": {s: to(f"coxa_{s}_right") for s in ("T1", "T2", "T3")}, "roll": flies.TURN}
+
+
+def path_d(xy, closed=False, nd=1):
+    xy = np.asarray(xy)
+    return "M" + "L".join(f"{x:.{nd}f},{y:.{nd}f}" for x, y in xy) + ("Z" if closed else "")
+
+
+def anatomy():
+    """The descent's VNC, motor neuron and leg, and the viewer's outlines (see the module notes)."""
+    from scipy.ndimage import gaussian_filter
+    from skimage.measure import find_contours
+    from . import connectome_nmj
+    mn = connectome_nmj.load()
+    leg = fly_leg()
+    roll = leg["roll"]
+    c = mn["cell"]
+    ax = {k: np.array(mn["axes"][k]) for k in ("ap", "dv", "lr")}
+    soma3 = np.array(c["soma"])
+
+    def side(p3):   # MaleCNS µm → world offsets from the cell body: anterior right, ventral down, mirrored to the right side
+        r = np.atleast_2d(p3) - soma3
+        return np.c_[r @ ax["ap"], (r @ ax["dv"]) * math.cos(roll) + (r @ ax["lr"]) * math.sin(roll)]
+
+    V = np.array(c["vertices"])
+    exit_rel = side(V[c["exit_vertex"]])[0]
+    soma_w = np.array(ROOT_AT) - exit_rel
+    P = side(V) + soma_w
+
+    # the VNC: an outline round the cloud of its cell bodies, seen from the side
+    cloud = np.array(mn["vnc_somata_side"]) * [1, math.cos(roll)] + soma_w
+    res, pad = 0.5, 30                                   # px per µm, margin
+    lo = cloud.min(axis=0) - pad
+    W, H = (np.ceil((cloud.max(axis=0) + pad - lo) * res)).astype(int)
+    img = np.zeros((H, W))
+    ij = ((cloud - lo) * res).astype(int)
+    img[ij[:, 1], ij[:, 0]] = 1
+    img = gaussian_filter(img, 9 * res)
+    cont = max(find_contours(img, img.max() * 0.06), key=len)
+    outline = Polygon(cont[:, ::-1] / res + lo).buffer(0).simplify(2.0)
+    vnc_xy = np.asarray(outline.exterior.coords)
+    neuromeres = {k: (np.array(v) * [1, math.cos(roll)] + soma_w).round(1).tolist() for k, v in mn["neuromeres_side"].items()}
+
+    # the cell: dendrites as chains between branch points (the axon path apart), simplified
+    deg = np.zeros(len(V), int)
+    adj = [[] for _ in V]
+    for a, b in c["edges"]:
+        adj[a].append(b); adj[b].append(a); deg[a] += 1; deg[b] += 1
+    on_axon = set(c["axon_path"])
+    chains, seen = [], set()
+    for a0 in range(len(V)):
+        if deg[a0] == 2:
+            continue
+        for b0 in adj[a0]:
+            if (a0, b0) in seen:
+                continue
+            ch = [a0, b0]
+            seen.add((a0, b0)); seen.add((b0, a0))
+            while deg[ch[-1]] == 2:
+                nxt = adj[ch[-1]][0] if adj[ch[-1]][0] != ch[-2] else adj[ch[-1]][1]
+                seen.add((ch[-1], nxt)); seen.add((nxt, ch[-1]))
+                ch.append(nxt)
+            if sum(i in on_axon for i in ch) > len(ch) // 2:
+                continue
+            line = LineString(P[ch]).simplify(0.8)
+            if line.length >= 2.5:
+                chains.append(np.asarray(line.coords))
+    dendrites = " ".join(path_d(ch) for ch in chains)
+
+    # the long path: through the VNC to the nerve root, down the nerve (as the cells with a nerve
+    # stump show it) to the coxa's base, down the coxa, through the trochanter, up the femur
+    vnc_part = P[c["axon_path"]]
+    stub = side(np.array(c["nerve"]["stub"])) + soma_w
+    base, hip, knee = leg["base"], leg["hip"], leg["knee"]
+    fem = knee - hip
+    fem_n = np.array([-fem[1], fem[0]]) / np.hypot(*fem)
+    cox = hip - base
+    cox_n = np.array([-cox[1], cox[0]]) / np.hypot(*cox)
+    nerve = np.vstack([vnc_part[-1:], stub[1:], [stub[-1] + (base - stub[-1]) * 0.55 + cox_n * 6], [base + cox * 0.04]])
+    coxa = np.array([base + cox * 0.04, base + cox * 0.35 + cox_n * 14, base + cox * 0.7 + cox_n * 10, hip - cox * 0.04 + cox_n * 4])
+    troch = np.array([hip - cox * 0.04 + cox_n * 4, hip + fem * 0.05 - fem_n * 10, hip + fem * 0.12 - fem_n * 12])
+    fb = hip + fem * FIRST_BRANCH
+    femur = np.array([troch[-1], hip + fem * 0.25 - fem_n * 16, hip + fem * 0.35 - fem_n * 10, fb])
+
+    def even(xy, n, spline=True):
+        xy = catmull(xy, n=12) if spline and len(xy) > 2 else np.asarray(xy, float)
+        sx, ss = resample(xy, step=0.25)
+        return np.c_[np.interp(np.linspace(0, ss[-1], n), ss, sx[:, 0]), np.interp(np.linspace(0, ss[-1], n), ss, sx[:, 1])]
+    long_parts = {"vnc": even(vnc_part, PATH_SPLIT["vnc"], False), "nerve": even(nerve, PATH_SPLIT["nerve"]),
+                  "coxa": even(coxa, PATH_SPLIT["coxa"]), "trochanter": even(troch, PATH_SPLIT["trochanter"]),
+                  "femur": even(femur, PATH_SPLIT["femur"])}
+
+    # the short path: the viewer's axon (control, animal 1), from the cell body's centre, split the
+    # same way by where it runs
+    public, skel = build("control", 1)
+    ctx = skel["context"]
+    segs = {g["name"]: g for g in ctx["leg"]["segments"]}
+    cl = np.array(public["axon"]["centreline"])
+    nuc = np.array(public["cells"][0]["nucleus_centre"])
+    xy, ss = resample(np.vstack([nuc, cl]), step=0.25)
+    inside = lambda geom: np.array([geom.contains(Point(*p)) for p in xy])
+    in_vnc, in_coxa, in_troch = inside(ctx["vnc"]), inside(segs["coxa"]["shape"]), inside(segs["trochanter"]["shape"].difference(segs["coxa"]["shape"]))
+    i_vnc = int(np.argmin(in_vnc))                       # leaves the VNC
+    i_coxa = int(np.argmax(in_coxa & (np.arange(len(xy)) > i_vnc)))
+    i_troch = int(np.argmax(in_troch & (np.arange(len(xy)) > i_coxa)))
+    beyond = inside(segs["femur"]["shape"].difference(segs["trochanter"]["shape"]))
+    i_femur = int(np.argmax(beyond & (np.arange(len(xy)) > i_troch)))
+    cuts = {"vnc": (0, i_vnc), "nerve": (i_vnc, i_coxa), "coxa": (i_coxa, i_troch), "trochanter": (i_troch, i_femur), "femur": (i_femur, len(xy) - 1)}
+    short_parts = {k: even(xy[a:b + 1], PATH_SPLIT[k], False) for k, (a, b) in cuts.items()}
+    geo_at = soma_w - nuc
+    gap = short_parts["nerve"]
+    mid = gap[len(gap) // 2]
+    d = gap[-1] - gap[0]
+
+    # the synaptic terminals: the viewer's branches and swellings about the first branch point,
+    # and how they sit in the fly's femur (rotated to the femur's axis, enlarged)
+    fb_v = np.array(skel["first_branch"])
+    term = [np.asarray(LineString(f["xy"]).simplify(0.15).coords) - fb_v for f in skel["fibres"] if f["kind"] == "terminal"]
+    swell = []
+    for f in skel["fibres"]:
+        if f["kind"] != "swelling":
+            continue
+        q = f["xy"] - fb_v
+        h = q[-1] - q[0]
+        swell.append([round(float(q[:, 0].mean()), 2), round(float(q[:, 1].mean()), 2),
+                      round(float(np.hypot(*h) / 2 + f["r"].max()), 2), round(float(f["r"].max()), 2), round(math.degrees(math.atan2(h[1], h[0])), 1)])
+    th_v = segs["femur"]["axis"]
+    th_w = math.atan2(fem[1], fem[0])
+
+    # the viewer's outlines: the VNC's edge and the leg as the images show it (each piece of the
+    # cuticle's outline with the strength of the image's fade there), and the femur muscle
+    frame = public["frame"] if "frame" in public else None
+    shown = unary_union([g["shape"] for g in segs.values()])
+    pieces = []
+    for part in getattr(shown.exterior, "geoms", [shown.exterior]):
+        pxy, ps = resample(np.asarray(part.coords), step=3.0)
+        for k in range(len(pxy) - 1):
+            mpt = (pxy[k] + pxy[k + 1]) / 2
+            a = 0.0
+            for g in segs.values():
+                if g["shape"].buffer(2).contains(Point(*mpt)):
+                    t = (mpt[0] - g["start"][0]) * math.cos(g["axis"]) + (mpt[1] - g["start"][1]) * math.sin(g["axis"])
+                    f = 1.0
+                    if g["fade_in"]:
+                        u = min(1, max(0, t / g["fade_in"])); f *= u * u * (3 - 2 * u)
+                    if g["fade_out"]:
+                        u = min(1, max(0, (t - (g["length"] - g["fade_out"])) / g["fade_out"])); f *= 1 - u * u * (3 - 2 * u)
+                    a = max(a, f)
+            if a > 0.05:
+                pieces.append([path_d(pxy[k:k + 2], nd=2), round(a, 2)])
+    femur_shown = segs["femur"]["shape"].intersection(span(segs["femur"], -50, segs["femur"]["length"] - segs["femur"]["fade_out"] * 0.5))
+    muscle = ctx["muscle"].intersection(femur_shown)
+    # each segment whole, for the fly's leg to shrink into (the femur up to where it has faded)
+    legs = {"coxa": segs["coxa"]["shape"].intersection(span(segs["coxa"], segs["coxa"]["fade_in"] * 0.5, 500)),
+            "trochanter": segs["trochanter"]["shape"], "femur": femur_shown}
+    edge = np.asarray(ctx["vnc_edge"])
+
+    return {
+        "note": "The leg motor neuron descent (step 2) and the step 7 locator. World: the turned side-view fly drawing's units x 10 = µm, "
+                "thorax at 0,0, x towards the head, y down. The motor neuron is MaleCNS v0.9 body " + str(c["id"]) + " (" + str(c["type"]) +
+                "), mirrored to the right side; its path down the leg is drawn along the flybody front leg. Viewer outlines are in the "
+                "geometry's µm, placed in the world at viewer.at.",
+        "source": {"connectome": mn["release"], "body": c["id"], "type": c["type"]},
+        "fly": {"k": FLY_UM, "base": base.round(1).tolist(), "hip": hip.round(1).tolist(), "knee": knee.round(1).tolist(),
+                "ankle": leg["ankle"].round(1).tolist(), "coxae": {k: v.round(1).tolist() for k, v in leg["coxae"].items()}},
+        "vnc": {"outline": path_d(vnc_xy, closed=True), "neuromeres": neuromeres,
+                "nerves": [path_d(even([neuromeres[k], (np.array(neuromeres[k]) + leg["coxae"][k]) / 2 + [0, -10], leg["coxae"][k]], 12)) for k in ("T2", "T3")]},
+        "neuron": {"soma": soma_w.round(2).tolist(), "soma_r": SOMA_R_WORLD, "dendrites": dendrites,
+                   "path": np.vstack(list(long_parts.values())).round(2).tolist(),
+                   "parts": {k: v for k, v in zip(PATH_SPLIT, np.cumsum([0] + list(PATH_SPLIT.values()))[:-1].tolist())},
+                   "muscle": {"at": (hip + fem * 0.56).round(1).tolist(), "rx": round(0.36 * float(np.hypot(*fem)), 1), "ry": 58.0, "angle": round(math.degrees(th_w), 2)}},
+        "terminals": {"branches": " ".join(path_d(t, nd=2) for t in term), "swellings": swell,
+                      "world": {"at": fb.round(2).tolist(), "k": TERMINALS_K, "rot": round(math.degrees(th_w - th_v), 2)},
+                      "viewer": {"at": fb_v.round(2).tolist()}},
+        "viewer": {"at": geo_at.round(3).tolist(), "frame": frame,
+                   "path": np.vstack(list(short_parts.values())).round(3).tolist(),
+                   "break": {"at": mid.round(2).tolist(), "angle": round(math.degrees(math.atan2(d[1], d[0])), 1)},
+                   "vnc_edge": path_d(edge, nd=2),
+                   "cuticle": pieces,
+                   "joints": [path_d(j, nd=2) for j in ctx["leg"]["joints"]],
+                   "legs": {k: path_d(np.asarray(max(as_multi(g).geoms, key=lambda q: q.area).exterior.coords), closed=True, nd=2) for k, g in legs.items()},
+                   "muscle": " ".join(path_d(np.asarray(g.exterior.coords), closed=True, nd=2) for g in as_multi(muscle).geoms)},
+    }
+
+
 def main(argv) -> int:
     if argv[:1] == ["--sketch"]:
         sketch(argv[1])
@@ -610,6 +823,12 @@ def main(argv) -> int:
         print(f"wrote {path.name}: axon {skel['axon_length']:.0f} µm, {public['axon']['area_um2']} µm²; "
               f"synaptic terminals {public['terminals']['area_um2']} µm², {skel['swellings']} swellings")
     print(f"frame {frame}")
+    a = anatomy()
+    a["viewer"]["frame"] = frame
+    path = SITE_DATA / "nmj" / "anatomy.json"
+    path.write_text(json.dumps(a, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
+    print(f"wrote {path.name}: motor neuron {a['source']['body']} ({a['source']['type']}), {len(a['neuron']['path'])} path vertices, "
+          f"{path.stat().st_size // 1024} KB")
     return 0
 
 

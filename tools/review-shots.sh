@@ -6,7 +6,7 @@
 # that is the page's own full view, without the browser's. Writes one PNG per state and one
 # sheet per state (light | dark, small | large).
 #
-#   tools/review-shots.sh <out-dir> [case]     case: pdf (default) or mb
+#   tools/review-shots.sh <out-dir> [case]     case: pdf (default), mb or nmj
 #
 # Needs the site served (uv run python tools/serve.py) and playwright-cli on PATH.
 set -euo pipefail
@@ -24,8 +24,14 @@ case "$case" in
     routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
             "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
     ;;
+  nmj)
+    # Neutral review state, as for mb: the one-probe pair S7 + S8 and two hypotheses, both unresolved.
+    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei and brighter along the axon.","interpretation":"TDP-43 may be held up on its way down the axon."},"shortlist":["transport","isoform"],"because":{},"pair":{"ch1":"S7","ch2":"S8"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"transport":"unresolved","isoform":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
+            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+    ;;
   *)
-    echo "review-shots: unknown case '$case' (expected pdf or mb)" >&2
+    echo "review-shots: unknown case '$case' (expected pdf, mb or nmj)" >&2
     exit 1
     ;;
 esac

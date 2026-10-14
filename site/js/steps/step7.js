@@ -17,9 +17,10 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 export async function mount(root, ctx) {
   const id = ctx.caseId;
   const c = ctx.case;
-  const [g, flyMeta, geo] = await Promise.all([transcripts(id), loadFlySprite("frontal"), CASE_LOCATOR[id] ? loadJSON(`data/${id}/${CASE_LOCATOR[id].file || "geometry-control-1.json"}`) : null]);   // the locator's neurons need geometry
+  const view = CASE_LOCATOR[id]?.view || "frontal";   // the fly as the case's descent shows it
+  const [g, flyMeta, geo] = await Promise.all([transcripts(id), loadFlySprite(view), CASE_LOCATOR[id] ? loadJSON(`data/${id}/${CASE_LOCATOR[id].file || "geometry-control-1.json"}`) : null]);   // the locator's neurons need geometry
   const art = {
-    fly: { viewBox: flyMeta.viewBox.split(" ").map(Number), markup: slideFly(document.getElementById("fly-frontal-stand-0").innerHTML) },
+    fly: { viewBox: flyMeta.viewBox.split(" ").map(Number), markup: slideFly(document.getElementById(`fly-${view}-stand-0`), { antennae: view !== "frontal" }) },
     geo,
   };
 

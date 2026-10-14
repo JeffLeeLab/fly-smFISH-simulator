@@ -767,6 +767,8 @@ def main():
         cell["nerve"] = {"root": np.round(nerve["root"], 2).tolist(), "direction": np.round(nerve["direction"], 4).tolist(),
                          "stub": np.round(nerve["stub"], 2).tolist(), "from": nerve["from"]}
     sub = cloud if len(cloud) <= N_SIDE_MAX else cloud[sorted(random.Random(SEED).sample(range(len(cloud)), N_SIDE_MAX))]
+    leg_somata = {nm: np.array([soma[i] for i in leg if i in soma and tag_of(tab, i, "somaNeuromere") == nm])
+                  for nm in NEUROMERES}
     ev = dict(axes["evidence"])
     if dorsal_diff is not None:
         ev["dorsal_nerve_mn_minus_leg_mn_skeleton_dv_um"] = round(dorsal_diff, 1)
@@ -785,11 +787,11 @@ def main():
         "cell": cell,
         "candidates": [table_row(r, k + 1) for k, r in enumerate(top)],
         "vnc_somata_side": np.round(_view(sub, axes, cell["soma"], "side"), 1).tolist(),
+        "neuromeres_side": {nm: np.round(_view(p, axes, cell["soma"], "side").mean(axis=0), 1).tolist()
+                            for nm, p in leg_somata.items() if len(p)},
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")))
 
-    leg_somata = {nm: np.array([soma[i] for i in leg if i in soma and tag_of(tab, i, "somaNeuromere") == nm])
-                  for nm in NEUROMERES}
     cards = [{"id": r["id"], "score": r["score"], "straightness": r["straightness"], "soma": r["soma"],
               **reindexed(r)} for r in [best] + [r for r in top if r["id"] != best["id"]][:N_TOP - 1]]
     sheet(SHEET, {"axes": axes, "soma": cell["soma"], "best": cards[0], "top": cards, "cloud": cloud,

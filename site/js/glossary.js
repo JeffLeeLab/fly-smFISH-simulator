@@ -17,6 +17,8 @@ const ENTRIES = {
   mip: ["Maximum-intensity projection", "A 2D image that keeps the brightest pixel through a stack of focal planes."],
   humanised: ["Humanised fly (knock-in)", "The fly gene is replaced by the human gene at the same place in the genome."],
   orthologue: ["Orthologue", "The corresponding gene in another species, inherited from a common ancestor."],
+  vnc: ["Ventral nerve cord (VNC)", "The fly’s equivalent of our spinal cord. It lies in the thorax and holds the neurons that move the legs and wings."],
+  mn: ["Motor neuron", "A neuron whose axon leaves the nervous system and ends on a muscle; its signals make the muscle contract."],
   labels: ["mCD8::BFP / DAPI", "A blue membrane label expressed only in the labelled neurons / a blue DNA stain that marks nuclei."],
 };
 ENTRIES.intron = ENTRIES.exon;
