@@ -12,7 +12,7 @@ import { href } from "../router.js";
 import { loadGsap, reducedMotion } from "../gsap.js";
 import { loadFlySprite, flyNode, startBoil, stopBoil, ensureBoilFilter } from "../fly.js";
 import { tubeFly } from "../monitor.js";
-import { VB, LANES, H, FLY_H, LINE, VW, FLOOR, vialMarkup, tapeMarkup, impactMarkup, labelMarkup, counterMarkup, indexMarkup,
+import { VB, LANES, H, FLY_H, LINE, VW, FLOOR, vialMarkup, impactMarkup, labelMarkup, counterMarkup, indexMarkup,
   laneFlies, ambientPose, climbPose, liftAt, impactFlash, aboveCount, timerAt, poseTransform } from "../vial.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
 
@@ -35,11 +35,11 @@ export async function mount(root, ctx) {
       <p class="t-label story__eyebrow">Introduction · Step 1</p>
       <h1 class="t-h1">Climbing vial</h1>
       <div class="stage stage--assay">
-        <svg class="assay climb" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="Two climbing vials seen from the front, taped side by side: hTDP-43 WT on the left and the ALS mutant on the right, ten flies in each, with a line 5 cm up. The vials are tapped on the bench three times, so every fly falls to the bottom; then a timer runs for 10 seconds while the flies climb the walls. Eight of ten WT flies pass the line, a climbing index of 0.8. The mutants climb slowly, slip back, one falls, and their legs shake: two of ten pass the line, a climbing index of 0.2.">
+        <svg class="assay climb" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="Two climbing vials seen from the front, side by side: hTDP-43 WT on the left and the ALS mutant on the right, ten flies in each, with a finish line 5 cm up. The vials are tapped on the bench together three times, so every fly falls to the bottom; then a timer runs for 10 seconds while the flies climb the walls. Eight of ten WT flies pass the line, a climbing index of 0.8. The mutants climb slowly, slip back, one falls, and their legs shake: two of ten pass the line, a climbing index of 0.2.">
           ${LANES.map(l => `<text class="scene-label lane-label" x="${l.cx + l.out * (VW / 2 + 16)}" y="40" text-anchor="${l.out < 0 ? "end" : "start"}">${l.label}</text>`).join("")}
           <line class="vial-bench" x1="${bench[0]}" y1="${FLOOR + 4.6}" x2="${bench[1]}" y2="${FLOOR + 4.6}"/>
           ${LANES.map(impactMarkup).join("")}
-          <g class="vials">${LANES.map(l => vialMarkup(l)).join("")}${tapeMarkup()}</g>
+          <g class="vials">${LANES.map(l => vialMarkup(l)).join("")}</g>
           ${labelMarkup(LANES[0])}
           ${LANES.map(counterMarkup).join("")}
           <text class="climb-timer" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="18" text-anchor="middle">0.0 s</text>
@@ -179,8 +179,8 @@ export async function mount(root, ctx) {
       if (n !== l.shown) { l.counter.textContent = String(n); l.shown = n; }
       const dt = tH == null ? 9 : tH - (H.run + last / H.rate);   // story seconds since the latest crossing
       const beat = Math.max(0, 1 - dt / 0.3);
-      l.ring.style.strokeWidth = (1.1 + 2.2 * beat).toFixed(2);
-      l.ring.style.opacity = (0.6 + 0.4 * beat).toFixed(2);
+      l.ring.style.strokeWidth = (2.2 + 2.2 * beat).toFixed(2);   // at rest, the .climb-ring weight
+      l.ring.style.opacity = (0.9 + 0.1 * beat).toFixed(2);
       const s = 1 + 0.28 * Math.max(0, 1 - dt / 0.25);
       const x = +l.counter.getAttribute("x"), y = +l.counter.getAttribute("y") - 7;
       l.counter.setAttribute("transform", s > 1.001 ? `translate(${x} ${y}) scale(${s.toFixed(3)}) translate(${-x} ${-y})` : "");

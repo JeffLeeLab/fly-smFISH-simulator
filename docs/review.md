@@ -280,3 +280,13 @@ Probe-track labels now stack by their measured width, and the strip and slide la
 | 4 | Channels row | An 8 px flex gap split "Membrane +" from "DAPI". | Fixed: the name is one flex item. |
 | 5 | Viewer overlay, 1280×720 split | The longer line wraps; "data" was left alone on the second line. | Fixed: "simulated data" wraps as a unit. The wrap itself stays (already noted on 2026-10-06). |
 | 6 | Step 6 legend, 1280×720 | Wraps onto two lines with "Region N" labels. | OK: nothing is clipped. |
+
+## 2026-10-15: climbing vial gap, tape and finish line (instructor)
+
+The instructor asked for more space between the two climbing vials, and for a line label that means something to students who don't know the assay.
+- **Gap:** the vials stand half a vial width apart (centres 405 and 555, were 426 and 534; a 50-unit gap, was 10) in step 1 and in the landing station, which draws the same pair. The labels, counters, index bars and flies are placed from the centres and moved with them.
+- **Tape removed:** the two grey strips (the tape joining the vials, from the reference footage) read as two extra lines either side of the 5 cm line and covered flies. The pair still lifts and drops as one, so both lanes get the same taps.
+- **Label:** "5 cm line" became "finish line (5 cm)" (the instructor's choice of four). The counters' "above the line" and the formula still refer to it.
+- **Finish line and glass:** the ring is drawn at twice its old weight (2.2, was 1.1; the back half a firmer dash), and its pulse at each crossing rises from there (to 4.4), so the vials read less bare. A faint inner line on each wall gives the glass its thickness, behind the flies (instructor's choice from five mock-ups: heavier ink, a wash band, a red line, cm ticks, glass wall).
+
+**Checks.** `tools/review-shots.sh` for nmj: step 1 at 1280×720 and 1920×1080 in both themes, with nothing clipped and the timer centred over the gap. The landing station and two mid-run frames (`?t=5.2`, the heap; `?t=8`, the climb) checked by eye. The ring's pulse checked on a contact sheet (`?t=5.5`–`6.5`; the first WT crossing at 6.3 s). No console errors. Only leg motor neuron step 1 and its landing station use `site/js/vial.js`; `site/data` and `data/` are unchanged.

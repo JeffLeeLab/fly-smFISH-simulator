@@ -8,7 +8,7 @@ import { activity, walkPause, walkAt, lastCrossing, tube, tubeFly, actogramRows 
 import { flyNode, groomFrame } from "./fly.js";
 import { mulberry32 } from "./prng.js";
 import { odourDefs, driftOdours, swatch } from "./tmaze.js";
-import { LANES as VIAL_LANES, VW as VIAL_W, FLOOR as VIAL_FLOOR, vialMarkup, tapeMarkup, laneFlies as vialFlies, ambientPose as vialPose, poseTransform } from "./vial.js";
+import { LANES as VIAL_LANES, VW as VIAL_W, FLOOR as VIAL_FLOOR, vialMarkup, laneFlies as vialFlies, ambientPose as vialPose, poseTransform } from "./vial.js";
 
 const VB = "0 0 320 180";
 const LANE_X = [10, 170], LANE_W = 140;
@@ -61,7 +61,7 @@ export function startMiniMonitor(svg, meta) {
 }
 
 // ---------- climbing vial (live) ----------
-// The step 1 drawing of the taped pair, scaled into the station, with five flies per vial where
+// The step 1 drawing of the pair, scaled into the station, with five flies per vial where
 // step 1's climbs leave them (most WT flies high on the wall, the mutants low). They stand head up
 // and now and then climb a step; the mutants shake as they stand and slip back. No tapping here,
 // so the loop stays calm. The flies are drawn larger than in step 1, to read at this size.
@@ -75,7 +75,7 @@ function vialArt() {
     <svg viewBox="${VB}" aria-hidden="true" class="station-svg station-svg--vial">
       <g transform="translate(${VIAL_AT[0].toFixed(1)} ${VIAL_AT[1].toFixed(1)}) scale(${VIAL_K})">
         <line class="vial-bench" x1="${b[0]}" y1="${VIAL_FLOOR + 4.6}" x2="${b[1]}" y2="${VIAL_FLOOR + 4.6}"/>
-        ${VIAL_LANES.map(l => vialMarkup(l)).join("")}${tapeMarkup()}
+        ${VIAL_LANES.map(l => vialMarkup(l)).join("")}
       </g>
     </svg>`;
 }

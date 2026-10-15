@@ -157,7 +157,9 @@ Built after the signed-off storyboard above, with these differences and details.
 
 **Assay** (`site/js/vial.js`, `site/js/steps/nmj-step1.js`, `stationLive.nmj`):
 - **Layout:**
-  - The taped pair stands in the middle of the stage, with the flies drawn about 2.4× life size.
+  - The pair stands in the middle of the stage, half a vial width apart, with the flies drawn about 2.4× life size. The tape was removed on 2026-10-15 (instructor): its two strips read as extra lines either side of the 5 cm line and covered flies. The pair still lifts and drops as one, so both lanes get the same taps.
+  - The line's label reads "finish line (5 cm)", not "5 cm line" (instructor, 2026-10-15).
+  - The finish line is drawn heavier (front half 2.2, pulsing to 4.4 at each crossing), and a faint inner line on each wall gives the glass its thickness (instructor, 2026-10-15).
   - The counters sit beside the vials at the line.
   - Each lane's climbing index (its sum over an ink bar on a 0–1 scale) sits on its own side; the formula appears once, under the bench.
   - The timer sits above the vials, between the plugs.

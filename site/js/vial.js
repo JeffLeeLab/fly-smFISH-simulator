@@ -2,12 +2,12 @@
 // and tremor, shared by step 1 (the chosen assay) and its landing station.
 // docs/storyboards/nmj-openings.md, shots F–J.
 //
-// Seen front-on, as on the bench: two upright vials taped side by side (hTDP-43 WT left, the
-// mutant right), each with a foam plug and a ring marked at 5 cm. The flies are side-view drawings
-// on the vials' side walls, in profile, head up. Tapped down, they fall into a heap on the floor,
-// right themselves and climb: the WT flies in quick bursts, most past the line within 3 s; the
-// mutants late and slowly, with long pauses, two slips and a fall, their legs shaking whenever
-// they stand. Which flies end above the line is fixed (decision 3: 8 of 10 WT, 2 of 10 mutants);
+// Seen front-on, as on the bench: two upright vials side by side, tapped down together (hTDP-43 WT
+// left, the mutant right), each with a foam plug and a ring marked at 5 cm, the finish line. The
+// flies are side-view drawings on the vials' side walls, in profile, head up. Tapped down, they
+// fall into a heap on the floor, right themselves and climb: the WT flies in quick bursts, most
+// past the line within 3 s; the mutants late and slowly, with long pauses, two slips and a fall,
+// their legs shaking whenever they stand. Which flies end above the line is fixed (decision 3: 8 of 10 WT, 2 of 10 mutants);
 // their paths, bursts and pauses are seeded. Every pose is a function of time, so a frozen frame
 // (?t=) or a replay always looks the same.
 
@@ -22,7 +22,7 @@ const PLUG = [30, 84];                         // the foam plug, top to bottom
 export const MM = (FLOOR - RIM) / 95;          // a 95 mm vial: about 3.9 units per mm
 export const LINE = FLOOR - 50 * MM;           // the 5 cm line
 export const FLY_H = 18;                       // fly drawing height (full sprite frame): about 2.4× life size (Simplified)
-const LIFT = 10;                               // how far the taped pair lifts at a tap
+const LIFT = 10;                               // how far the pair lifts at a tap (both together)
 const LOCAL = 7;                               // a fly at rest wanders this far up or down its wall
 export const N_FLIES = 10;
 
@@ -36,8 +36,8 @@ export const H = {
 export const impactAt = k => H.taps[k] + H.up + H.down;
 
 export const LANES = [
-  { id: "wt", cx: 426, out: -1, label: "hTDP-43 WT", seed: 731, mut: false },
-  { id: "mut", cx: 534, out: 1, label: "hTDP-43 ALS mutant", seed: 845, mut: true },
+  { id: "wt", cx: 405, out: -1, label: "hTDP-43 WT", seed: 731, mut: false },      // half a vial apart
+  { id: "mut", cx: 555, out: 1, label: "hTDP-43 ALS mutant", seed: 845, mut: true },
 ];
 
 // The climbs (decision 3; invented for this case), in timer seconds after the climb starts (τ).
@@ -81,8 +81,9 @@ const lerp = (a, b, u) => a + (b - a) * u;
 
 // ---------- drawing ----------
 
-// One vial at centre cx: the glass, the foam plug and the 5 cm ring (its back half behind the
-// flies, its front half in front), with groups for the flies. `small` drops the labels.
+// One vial at centre cx: the glass (a faint inner line on each wall for its thickness), the foam
+// plug and the 5 cm ring (its back half behind the flies, its front half in front), with groups
+// for the flies. `small` drops the labels.
 export function vialMarkup(l, { labels = false } = {}) {
   const x0 = l.cx - VW / 2, x1 = l.cx + VW / 2, b = FLOOR + 4, r = 9;
   const outline = `M${x0 - 2},${RIM} H${x0} V${b - r} Q${x0},${b} ${x0 + r},${b} H${x1 - r} Q${x1},${b} ${x1},${b - r} V${RIM} H${x1 + 2}`;
@@ -93,6 +94,7 @@ export function vialMarkup(l, { labels = false } = {}) {
   return `
     <g class="vial" data-lane="${l.id}">
       <path class="tube-glass" d="${outline}"/>
+      <path class="tube-wall" d="M${x0 + 3.5},${PLUG[1] + 8} V${FLOOR - 14} M${x1 - 3.5},${PLUG[1] + 8} V${FLOOR - 14}"/>
       <path class="climb-ring climb-ring--back" d="${ring("back")}"/>
       <g class="vial-flies"></g>
       <path class="tube-outline" d="${outline}"/>
@@ -102,14 +104,6 @@ export function vialMarkup(l, { labels = false } = {}) {
       <path class="tube-outline plug-edge" d="M${x0 + 1.5},${PLUG[1]} H${x1 - 1.5}"/>
     </g>`;
 }
-
-// The tape round both vials, which makes one tap treat both alike.
-export const tapeMarkup = () => {
-  const [a, b] = [LANES[0].cx - VW / 2 - 5, LANES[1].cx + VW / 2 + 5];
-  return [[140, 18], [324, 18]].map(([y, h]) => `
-    <g class="tape"><rect class="tape-strip" x="${a}" y="${y}" width="${b - a}" height="${h}" rx="1.5"/>
-      <path class="tape-edge" d="M${a},${y + 0.6} H${b} M${a},${y + h - 0.6} H${b}"/></g>`).join("");
-};
 
 // Short ink marks where the vials hit the bench, one set per vial.
 export const impactMarkup = l => {
@@ -127,7 +121,7 @@ export const labelMarkup = l => {
   return `
     <g class="vial-labels">
       <text class="scene-small" x="${x}" y="${(PLUG[0] + PLUG[1]) / 2 + 4}" text-anchor="end">foam plug</text>
-      <text class="scene-small" x="${x}" y="${LINE - 8}" text-anchor="end">5 cm line</text>
+      <text class="scene-small" x="${x}" y="${LINE - 8}" text-anchor="end">finish line (5 cm)</text>
       <text class="scene-small" x="${x}" y="${FLOOR - 24}" text-anchor="end">vial</text>
     </g>`;
 };
