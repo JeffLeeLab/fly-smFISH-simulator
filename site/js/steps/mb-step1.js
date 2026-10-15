@@ -36,7 +36,7 @@ export async function mount(root, ctx) {
           <defs>${odourDefs(ID)}</defs>
           ${LANES.map(l => mazeMarkup(l, { id: ID, labels: l.id === "wt" }) + piMarkup(l, counts(l))).join("")}
         </svg>
-        <span class="tag-sim assay__tag">Simulated</span>
+        <span class="tag-sim assay__tag">Simulated data</span>
       </div>
       <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
       <div class="assay__controls">

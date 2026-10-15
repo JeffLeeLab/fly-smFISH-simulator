@@ -8,6 +8,7 @@
 
 import { mulberry32 } from "./prng.js";
 import { CASES } from "./content.js";
+import { regionLabel } from "./data.js";
 
 const SHAPES = ["circle", "square", "triangle"];
 const GENO = [["control", "WT"], ["mutant", "Mutant"]];
@@ -229,7 +230,11 @@ export function plotTable(entry, pair, channel, measure, cs) {
     })).join("")}</tbody></table>`;
 }
 
-export function plotTitle(pair, channel, measure, cs) {
-  const who = channel === "ch1" ? `${pair.ch1} (smFISH 1)` : channel === "ch2" ? `${pair.ch2} (smFISH 2)` : `${pair.ch1} + ${pair.ch2} (white, both regions)`;
-  return `${who} · ${measuresOf(cs)[measure].label} · mean ± SD, n = 3 animals · simulated data`;
+// The plot's title in two parts: which regions, and what is plotted (the PNG sets them on two lines).
+export function plotTitleParts(pair, channel, measure, cs) {
+  const a = regionLabel(pair.ch1), b = regionLabel(pair.ch2);
+  const who = channel === "ch1" ? `${a} (smFISH 1)` : channel === "ch2" ? `${b} (smFISH 2)` : `${a} + ${b} (white, both regions)`;
+  return [who, `${measuresOf(cs)[measure].label} · mean ± SD, n = 3 animals · simulated data`];
 }
+
+export const plotTitle = (...args) => plotTitleParts(...args).join(" · ");

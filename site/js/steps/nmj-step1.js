@@ -45,7 +45,7 @@ export async function mount(root, ctx) {
           <text class="climb-timer" x="${(LANES[0].cx + LANES[1].cx) / 2}" y="18" text-anchor="middle">0.0 s</text>
           ${indexMarkup(final)}
         </svg>
-        <span class="tag-sim assay__tag">Simulated</span>
+        <span class="tag-sim assay__tag">Simulated data</span>
       </div>
       <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
       <div class="assay__controls">

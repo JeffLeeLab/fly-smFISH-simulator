@@ -8,7 +8,7 @@ import { MODES } from "../content.js";
 import { caseState, updateCase } from "../store.js";
 import { bind } from "../forms.js";
 import { href, go } from "../router.js";
-import { transcripts } from "../data.js";
+import { transcripts, regionLabel } from "../data.js";
 import { createMap } from "../map.js";
 import { term } from "../glossary.js";
 import { popCard } from "../popcard.js";
@@ -125,7 +125,7 @@ export async function mount(root, ctx) {
       const slot = root.querySelector(`[data-slot=${k}]`), r = byId.get(pair[k]);
       slot.classList.toggle("is-filled", !!r);
       slot.classList.toggle("is-next", k === next);
-      slot.querySelector(".pslot__id").textContent = r ? r.id : "";
+      slot.querySelector(".pslot__id").textContent = r ? regionLabel(r.id) : "";
       slot.querySelector(".pslot__len").textContent = r ? `${nt(r.length_nt)} nt` : "Click a region on the map";
       slot.querySelector(".pslot__clear").hidden = !r;
     }

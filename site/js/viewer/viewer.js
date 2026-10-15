@@ -16,7 +16,7 @@
 
 import { Application, CanvasSource, Container, Filter, GlProgram, ImageSource, Rectangle, Sprite, Texture, TilingSprite, UniformGroup, defaultFilterVert } from "pixi.js";
 import { Viewport } from "pixi-viewport";
-import { loadJSON } from "../data.js";
+import { loadJSON, regionLabel } from "../data.js";
 import { copyCanvas } from "../export.js";
 import { CASES } from "../content.js";
 import { term } from "../glossary.js";
@@ -344,14 +344,14 @@ export async function createViewer(root, opts) {
     fields.forEach(f => {
       const g = f.shown;
       const probes = mode === "results" && pair
-        ? `<span class="d" style="--c:${FISH_LUT.ch1.color}"></span>${pair.ch1} · <span class="d" style="--c:${FISH_LUT.ch2.color}"></span>${pair.ch2} · `
-        : `<span class="d" style="--c:${TDP_LUTS[state.tdpLut].color}"></span>TDP-43 IF · `;
+        ? `<span class="d" style="--c:${FISH_LUT.ch1.color}"></span>${regionLabel(pair.ch1)} · <span class="d" style="--c:${FISH_LUT.ch2.color}"></span>${regionLabel(pair.ch2)} · `
+        : `<span class="d" style="--c:${TDP_LUTS[state.tdpLut].color}"></span>TDP-43 protein · `;
       f.el.querySelector(".viewer__overlay").innerHTML =
-        `${probes}${GENOTYPE_LABEL[g]} · animal ${state.animal} · simulated`;
+        `${probes}${GENOTYPE_LABEL[g]} · animal ${state.animal} · simulated&nbsp;data`;
     });
     const legend = root.querySelector(".viewer__legend");
     if (legend && pair) {
-      const a = pair.ch1, b = pair.ch2;
+      const a = regionLabel(pair.ch1), b = regionLabel(pair.ch2);
       legend.innerHTML = `White: carries ${a} and ${b} · ${FISH_LUT.ch1.name} only: ${a} without ${b} · ${FISH_LUT.ch2.name} only: ${b} without ${a} · Bright nuclear spots: ${term("ts", "transcription sites")}`;
     }
   }
@@ -530,28 +530,39 @@ export async function createViewer(root, opts) {
       const c = f.app.renderer.extract.canvas({ target: f.app.stage, resolution: scale, frame: f.app.screen.clone(), clearColor: "#000000" });
       const ox = i * (fw * scale + gap);
       g.drawImage(c, ox, 0, fw * scale, fh * scale);
-      // overlay: same text as on screen, scaled for a slide
+      // overlay: same text as on screen, scaled for a slide; in results mode the gene leads, so
+      // a slide names its gene. Pieces wrap onto a new line rather than run past the field.
       const px = Math.round(11 * scale * 1.15);
-      g.font = `${px}px "IBM Plex Mono", ui-monospace, monospace`;
+      const mono = `${px}px "IBM Plex Mono", ui-monospace, monospace`;
       g.textBaseline = "top";
       g.shadowColor = "#000";
       g.shadowBlur = 3 * scale;
-      const text = f.el.querySelector(".viewer__overlay").textContent;
-      let x = ox + 8 * scale, y = 6 * scale;
-      if (mode === "results" && pair) {
-        for (const [ch, label] of [["ch1", pair.ch1], ["ch2", pair.ch2]]) {
-          g.fillStyle = FISH_LUT[ch].color;
+      const parts = f.el.querySelector(".viewer__overlay").textContent.split(" · ");
+      const pieces = mode === "results" && pair
+        ? [{ text: CASES[caseId].target.gene, font: `italic 500 ${Math.round(px * 1.15)}px Newsreader, Georgia, serif` },
+          { text: regionLabel(pair.ch1), dot: FISH_LUT.ch1.color }, { text: regionLabel(pair.ch2), dot: FISH_LUT.ch2.color },
+          ...parts.slice(2).map(text => ({ text }))]
+        : parts.map(text => ({ text }));
+      const x0 = ox + 8 * scale, xMax = ox + fw * scale - 8 * scale, lineH = px * 1.4;
+      let x = x0, y = 6 * scale;
+      const sep = " · ";
+      pieces.forEach((p, i) => {
+        g.font = mono;
+        const sw = i < pieces.length - 1 ? g.measureText(sep).width : 0;
+        g.font = p.font || mono;
+        const tw = g.measureText(p.text).width;
+        if (x > x0 && x + (p.dot ? px * 0.9 : 0) + tw + sw > xMax) { x = x0; y += lineH; }
+        if (p.dot) {
+          g.fillStyle = p.dot;
           g.beginPath(); g.arc(x + px * 0.35, y + px * 0.55, px * 0.32, 0, Math.PI * 2); g.fill();
           x += px * 0.9;
-          g.fillStyle = "#E8E6DC";
-          g.fillText(`${label} · `, x, y);
-          x += g.measureText(`${label} · `).width;
         }
-        g.fillText(text.split(" · ").slice(2).join(" · "), x, y);
-      } else {
         g.fillStyle = "#E8E6DC";
-        g.fillText(text, x, y);
-      }
+        g.fillText(p.text, x, y);
+        x += tw;
+        g.font = mono;
+        if (sw) { g.fillText(sep, x, y); x += sw; }
+      });
       // scale bar
       const len = f.scaleLen;
       const barPx = len * f.vp.scale.x * scale;

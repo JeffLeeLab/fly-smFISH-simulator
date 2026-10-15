@@ -11,9 +11,24 @@
 // Ported from docs/mockups/step5-target-probe-map.html.
 
 import { term } from "./glossary.js";
+import { regionLabel } from "./data.js";
 
 const NS = "http://www.w3.org/2000/svg";
 const fmt = n => n.toLocaleString("en-GB");
+// half the width of a region label in Plex Mono (0.6 em a character) at font size fs
+const halfLabel = (text, fs) => text.length * fs * 0.3;
+
+// Centres (lx) for the pair's labels above their brackets: pushed apart until they clear each
+// other by `gap`, then shifted together to stay within lo–hi.
+function placeLabels(chosen, fs, gap, lo, hi) {
+  if (!chosen.length) return;
+  for (const c of chosen) { c.label = regionLabel(c.id); c.hw = halfLabel(c.label, fs); c.lx = c.cx; }
+  const [l, r = l] = [...chosen].sort((a, b) => a.cx - b.cx);
+  const d = l.hw + r.hw + gap, mid = (l.cx + r.cx) / 2;
+  if (r !== l && r.cx - l.cx < d) { l.lx = mid - d / 2; r.lx = mid + d / 2; }
+  const shift = Math.max(0, lo - (l.lx - l.hw)) || Math.min(0, hi - (r.lx + r.hw));
+  for (const c of chosen) c.lx += shift;
+}
 const kb = n => (n >= 1000 ? `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)} kb` : `${n} nt`);
 
 function el(tag, attrs = {}, parent) {
@@ -134,7 +149,10 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
     const items = g.probe_regions.map(p => {
       const t = toT(g, p.lo, p.hi);
       const x0 = X(t[0]), x1 = X(t[1]), cx = (x0 + x1) / 2;
-      return { p, x0, x1, cx, l: Math.min(x0, cx - 13), r: Math.max(x1, cx + 13) };
+      // the label is centred over its bracket, but kept clear of the gutter's "Probe regions"
+      const label = regionLabel(p.id), hw = halfLabel(label, 12) + 3;
+      const lx = Math.min(Math.max(cx, LW - 6 + hw), LW + W + 16 - hw);
+      return { p, label, x0, x1, lx, l: Math.min(x0, lx - hw), r: Math.max(x1, lx + hw) };
     }).sort((a, b) => a.l - b.l);
     for (const q of items) { let r = 0; while (rows[r] !== undefined && rows[r] > q.l - 4) r++; rows[r] = q.r; q.row = r; }
     const PH = 26 * rows.length + 18;
@@ -248,13 +266,13 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
       const gp = el("g", readOnly ? { class: `tmap__probe is-static${ch ? ` is-${ch}` : ""}`, "data-region": q.p.id } : {
         class: `tmap__probe${ch ? ` is-${ch}` : ""}`, tabindex: 0, role: "button", "data-region": q.p.id,
         "aria-pressed": String(!!ch),
-        "aria-label": `Probe region ${q.p.id}, ${fmt(q.p.length_nt)} nt${ch ? `, in smFISH ${ch === "ch1" ? 1 : 2}` : ""}`,
+        "aria-label": `${q.label}, ${fmt(q.p.length_nt)} nt${ch ? `, in smFISH ${ch === "ch1" ? 1 : 2}` : ""}`,
       }, svg);
       el("rect", { class: "tmap__hit", x: q.l, y: py - 16, width: Math.max(24, q.r - q.l), height: 26 }, gp);
       const w = Math.max(3, q.x1 - q.x0);
       el("path", { class: "tmap__bracket", d: `M${q.x0},${py + 5} L${q.x0},${py} L${q.x0 + w},${py} L${q.x0 + w},${py + 5}` }, gp);
-      const t = el("text", { x: q.cx, y: py - 5, "text-anchor": "middle", class: "tmap__pid" }, gp);
-      t.textContent = q.p.id;
+      const t = el("text", { x: q.lx, y: py - 5, "text-anchor": "middle", class: "tmap__pid" }, gp);
+      t.textContent = q.label;
       // while a channel is free, an unchosen region previews the channel a click would fill:
       // a dashed bracket and dashed guides down its edges (provisional; a chosen region is solid)
       if (!ch && next) {
@@ -275,7 +293,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
         gp.addEventListener("click", () => onPick(q.p.id));
         gp.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(q.p.id); } });
       }
-      gp.addEventListener("mouseenter", ev => tip(ev, `<b>${q.p.id}</b> · ${fmt(q.p.length_nt)} nt<br>${g.chrom}:${fmt(q.p.lo)}–${fmt(q.p.hi)}`));
+      gp.addEventListener("mouseenter", ev => tip(ev, `<b>${q.label}</b> ·${fmt(q.p.length_nt)} nt<br>${g.chrom}:${fmt(q.p.lo)}–${fmt(q.p.hi)}`));
       gp.addEventListener("mousemove", moveTip);
       gp.addEventListener("mouseleave", hideTip);
       if (q.p.id === focused) gp.focus();
@@ -365,16 +383,11 @@ export function drawStrip(svg, g, pair, width) {
     const x0 = X(a), x1 = Math.max(X(b), X(a) + 2);
     return { ch, id: p.id, x0, x1, cx: (x0 + x1) / 2 };
   }).filter(Boolean);
-  if (chosen.length === 2) {
-    const [l, r] = chosen[0].cx <= chosen[1].cx ? chosen : [chosen[1], chosen[0]];
-    const need = 24 - (r.cx - l.cx);
-    if (need > 0) { l.lx = l.cx - need / 2; r.lx = r.cx + need / 2; }
-  }
+  placeLabels(chosen, 11, 8, 0, width);
   for (const c of chosen) {
     el("rect", { x: c.x0, y: LAB + 3, width: c.x1 - c.x0, height: bottom - LAB - 3, class: `strip__band strip__band--${c.ch}` }, bands);
     el("path", { d: `M${c.x0},${LAB + 6} L${c.x0},${LAB + 3} L${c.x1},${LAB + 3} L${c.x1},${LAB + 6}`, class: `strip__bracket strip__bracket--${c.ch}` }, heads);
-    const lx = Math.min(width - 9, Math.max(9, c.lx ?? c.cx));
-    el("text", { x: lx, y: LAB - 2, "text-anchor": "middle", class: `strip__id strip__id--${c.ch}` }, heads).textContent = c.id;
+    el("text", { x: c.lx, y: LAB - 2, "text-anchor": "middle", class: `strip__id strip__id--${c.ch}` }, heads).textContent = c.label;
   }
   svg.setAttribute("viewBox", `0 0 ${width} ${bottom}`);
   svg.setAttribute("width", width);
@@ -436,16 +449,12 @@ export function slideMap(g, pair, { x, y, width, P }) {
     const x0 = X(a), x1 = Math.max(X(b), X(a) + 3);
     return { ch, id: p.id, x0, x1, cx: (x0 + x1) / 2 };
   }).filter(Boolean);
-  if (chosen.length === 2) {
-    const [l, r] = chosen[0].cx <= chosen[1].cx ? chosen : [chosen[1], chosen[0]];
-    const need = 52 - (r.cx - l.cx);
-    if (need > 0) { l.lx = l.cx - need / 2; r.lx = r.cx + need / 2; }
-  }
+  placeLabels(chosen, 22, 24, x, x + width);
   const bands = chosen.map(c => {
     const ink = P[c.ch];
     return `<rect x="${c.x0}" y="${bandTop}" width="${c.x1 - c.x0}" height="${bottom - bandTop}" fill="${ink}" fill-opacity=".14"/>
       <path d="M${c.x0},${bandTop + 7} L${c.x0},${bandTop} L${c.x1},${bandTop} L${c.x1},${bandTop + 7}" fill="none" stroke="${ink}" stroke-width="3"/>
-      <text x="${c.lx ?? c.cx}" y="${bandTop - 9}" text-anchor="middle" font-family="${P.mono}" font-size="22" font-weight="500" fill="${ink}">${c.id}</text>`;
+      <text x="${c.lx}" y="${bandTop - 9}" text-anchor="middle" font-family="${P.mono}" font-size="22" font-weight="500" fill="${ink}">${c.label}</text>`;
   });
   return { svg: bands.join("") + out.join(""), height: bottom - y };
 }

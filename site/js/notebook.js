@@ -6,6 +6,7 @@ import { CASES, STEPS, MODES, MODE_GROUPS, VERDICTS, groupOf } from "./content.j
 import { caseState, storage, onChange } from "./store.js";
 import { bind } from "./forms.js";
 import { href } from "./router.js";
+import { regionLabel } from "./data.js";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
@@ -13,7 +14,6 @@ let tab, drawer, unbind = () => {}, offStore = () => {};
 let current = { caseId: null, step: 1 };
 let isOpen = false;
 
-const pair2 = (a, b) => `<div class="nb-pair">${a}${b}</div>`;
 const area = (bindKey, label, placeholder, rows = 3) => `
   <label class="field"><span class="field__label">${label}</span>
     <textarea class="textarea" rows="${rows}" data-bind="${bindKey}" placeholder="${placeholder}"></textarea></label>`;
@@ -77,7 +77,7 @@ function drawerBody(caseId) {
     : `<p class="t-ui t-muted">Nothing shortlisted yet.</p>`;
 
   const chip = (k, cls) => s.pair[k]
-    ? `<span class="chip ${cls}">smFISH ${k === "ch1" ? 1 : 2} · <span class="t-data">${esc(s.pair[k])}</span></span>`
+    ? `<span class="chip ${cls}">smFISH ${k === "ch1" ? 1 : 2} · <span class="t-data">${esc(regionLabel(s.pair[k]))}</span></span>`
     : `<span class="chip">smFISH ${k === "ch1" ? 1 : 2} · empty</span>`;
   const probe = `<div class="nb-chips">${chip("ch1", "chip--ch1")}${chip("ch2", "chip--ch2")}</div>`;
 
@@ -99,7 +99,7 @@ function drawerBody(caseId) {
     </header>
     ${storageWarning()}
     <div class="nb-body">
-      ${section(3, STEPS[3].title, pair2(area("clue.observation", "Observation", "What do you see?", 4), area("clue.interpretation", "Interpretation", "What could explain it?", 4)), seen(3))}
+      ${section(3, STEPS[3].title, area("clue.observation", "Observation", "What do you see?", 4), seen(3))}
       ${section(4, STEPS[4].title, shortlist, seen(4))}
       ${section(5, STEPS[5].title, probe, seen(5))}
       ${section(6, STEPS[6].title, renderCompare(caseId), seen(6))}

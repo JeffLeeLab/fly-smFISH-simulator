@@ -12,8 +12,8 @@ import { renderCompare } from "../notebook.js";
 import { hasWebGL2, renderNoWebGL } from "../viewer/gl.js";
 import { renderControls, viewerPrefs } from "../viewer/controls.js";
 import { fullView } from "../viewer/fullview.js";
-import { loadJSON, transcripts } from "../data.js";
-import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle } from "../results.js";
+import { loadJSON, transcripts, regionLabel } from "../data.js";
+import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle, plotTitleParts } from "../results.js";
 import { CASES } from "../content.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
 import { createMap, drawStrip } from "../map.js";
@@ -27,6 +27,7 @@ export async function mount(root, ctx) {
   const cs = CASES[id];
   const measures = measuresFor(cs);
   const { pair } = caseState(id);
+  const lab = { ch1: regionLabel(pair.ch1), ch2: regionLabel(pair.ch2) };
   const g = await transcripts(id);
 
   root.innerHTML = `
@@ -36,10 +37,10 @@ export async function mount(root, ctx) {
         <div class="next-row">
           <span class="pstrip-wrap">
             <button type="button" class="pstrip popcard__trigger" aria-expanded="false" aria-controls="probe-card"
-              aria-label="Your probe pair: smFISH 1 on ${pair.ch1}, smFISH 2 on ${pair.ch2}. Show them on the transcript map">
+              aria-label="Your probe pair: smFISH 1 on ${lab.ch1}, smFISH 2 on ${lab.ch2}. Show them on the transcript map">
               <span class="pstrip__key" aria-hidden="true">
-                <span><span class="cdot cdot--ch1"></span>smFISH 1 · <span class="t-data">${pair.ch1}</span></span>
-                <span><span class="cdot cdot--ch2"></span>smFISH 2 · <span class="t-data">${pair.ch2}</span></span>
+                <span><span class="cdot cdot--ch1"></span>smFISH 1 · <span class="t-data">${lab.ch1}</span></span>
+                <span><span class="cdot cdot--ch2"></span>smFISH 2 · <span class="t-data">${lab.ch2}</span></span>
               </span>
               <span class="pstrip__fig"><svg class="pstrip__svg" aria-hidden="true"></svg></span>
             </button>
@@ -59,7 +60,7 @@ export async function mount(root, ctx) {
         <div class="results__bar">
           <button type="button" class="btn results__toggle" aria-expanded="false" aria-controls="results-plot">${CHEVRON_ICON}<span>Show plot</span></button>
           <div class="seg" role="group" aria-label="Channel">
-            <button type="button" data-channel="ch1" aria-pressed="true"><span class="cdot cdot--ch1" aria-hidden="true"></span>smFISH 1 · ${pair.ch1}</button><button type="button" data-channel="ch2" aria-pressed="false"><span class="cdot cdot--ch2" aria-hidden="true"></span>smFISH 2 · ${pair.ch2}</button><button type="button" data-channel="both" aria-pressed="false"><span class="cdot cdot--both" aria-hidden="true"></span>Both</button>
+            <button type="button" data-channel="ch1" aria-pressed="true" aria-label="smFISH 1, ${lab.ch1}"><span class="cdot cdot--ch1" aria-hidden="true"></span>${lab.ch1}</button><button type="button" data-channel="ch2" aria-pressed="false" aria-label="smFISH 2, ${lab.ch2}"><span class="cdot cdot--ch2" aria-hidden="true"></span>${lab.ch2}</button><button type="button" data-channel="both" aria-pressed="false"><span class="cdot cdot--both" aria-hidden="true"></span>Both</button>
           </div>
           <label class="results__measure"><span class="vh">Measure</span>
             <select class="select" data-act="measure">${Object.entries(measures).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>
@@ -183,8 +184,11 @@ export async function mount(root, ctx) {
     else if (b.dataset.act === "plot-png") {
       const W = 1920, H = 1080;
       const pal = { ...LIGHT, ink: LIGHT[plot.channel] };
-      const inner = `<text x="64" y="84" font-family="${LIGHT.sans}" font-size="34" font-weight="600" fill="${LIGHT.text}">${plotTitle(pair, plot.channel, plot.measure, cs)}</text>
-        <g transform="translate(40,120)">${plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: W - 80, height: H - 220, pal, font: 2.2, cs })}</g>
+      // two-line header: gene and regions, then what is plotted (the slide names its gene)
+      const [who, what] = plotTitleParts(pair, plot.channel, plot.measure, cs);
+      const inner = `<text x="64" y="76" font-family="${LIGHT.sans}" font-size="34" font-weight="600" fill="${LIGHT.text}"><tspan font-family="${LIGHT.serif}" font-style="italic" font-weight="500">${cs.target.gene}</tspan> · ${who}</text>
+        <text x="64" y="116" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${what}</text>
+        <g transform="translate(40,150)">${plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: W - 80, height: H - 250, pal, font: 2.2, cs })}</g>
         <text x="64" y="${H - 40}" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${measures[plot.measure].note} · Simulated teaching data</text>`;
       await copyCanvas(await svgToCanvas(inner, W, H, LIGHT.bg), `smFISH-${id}-plot-${plot.measure}.png`, b);
     } else if (b.classList.contains("splot__cat") && viewer) viewer.flyTo(b.dataset.fly);

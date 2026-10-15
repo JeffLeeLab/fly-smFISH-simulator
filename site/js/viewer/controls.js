@@ -1,11 +1,12 @@
-// Side-pane controls for the viewer: channel toggles with solo, the TDP-43 brightness (on its
-// row) and LUT (dimmed to 40%, its granules to 70%, automatically while any smFISH channel is on),
-// and the animal. In full screen the same element floats over the fields (fullview.js).
+// Side-pane controls for the viewer: channel toggles with solo; on the line under TDP-43's row,
+// its LUT and brightness (dimmed to 40%, its granules to 70%, automatically while any smFISH
+// channel is on); and the animal. In full screen the same element floats over the fields (fullview.js).
 // LUT and brightness choices are kept per browser.
 
 import { read, write } from "../store.js";
 import { FISH_LUT, TDP_LUTS } from "./viewer.js";
 import { term } from "../glossary.js";
+import { regionLabel } from "../data.js";
 import { SUN_ICON } from "../icons.js";
 
 export const viewerPrefs = () => ({ tdpLut: "red-orange", tdpBrightness: 1, ...(read("viewer") || {}) });
@@ -16,7 +17,7 @@ export function renderControls(el, viewer, { mode, pair }) {
     rows.push(["ch1", "smFISH 1", FISH_LUT.ch1.color, pair.ch1]);
     rows.push(["ch2", "smFISH 2", FISH_LUT.ch2.color, pair.ch2]);
   }
-  rows.push(["tdp", "TDP-43 IF", null, null]);
+  rows.push(["tdp", "TDP-43 protein", null, null]);
   rows.push(["blue", "Membrane + DAPI", "#5F78C0", null]);
 
   el.innerHTML = `
@@ -26,16 +27,16 @@ export function renderControls(el, viewer, { mode, pair }) {
         <ul class="vctl__rows" role="list">
           ${rows.map(([k, name, color, region]) => `
             <li>
-              <div class="vctl__row${k === "tdp" ? " vctl__row--tdp" : ""}">
+              <div class="vctl__row">
                 <label class="vctl__toggle"><input type="checkbox" data-ch="${k}">
                   <span class="vctl__dot" data-dot="${k}" style="--c:${color || TDP_LUTS[viewer.state.tdpLut].color}"></span>
-                  ${name}${region ? ` · <span class="t-data">${region}</span>` : ""}</label>
-                ${k === "tdp" ? `<label class="vctl__bright" title="TDP-43 brightness">${SUN_ICON}<span class="vh">TDP-43 brightness</span><input type="range" min="0.2" max="1.6" step="0.1" data-act="bright"></label>` : ""}
+                  <span>${name.replace("DAPI", term("dapi", "DAPI"))}${region ? ` · <span class="t-data">${regionLabel(region)}</span>` : ""}</span></label>
                 <button type="button" class="btn vctl__solo" data-solo="${k}" aria-pressed="false" aria-label="Show ${name} alone">Solo</button>
               </div>
               ${k === "tdp" ? `
               <div class="vctl__sub">
                 <label>${term("lut", "LUT")} <select class="select" data-act="lut">${Object.entries(TDP_LUTS).map(([v, l]) => `<option value="${v}">${l.label}</option>`).join("")}</select></label>
+                <label class="vctl__bright" title="TDP-43 brightness">${SUN_ICON}<span class="vh">TDP-43 brightness</span><input type="range" min="0.2" max="1.6" step="0.1" data-act="bright"></label>
               </div>
               ${mode === "results" ? `<p class="vctl__note">Dimmed while smFISH is on, to avoid a false white.</p>` : ""}` : ""}
             </li>`).join("")}

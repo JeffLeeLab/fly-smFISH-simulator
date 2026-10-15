@@ -52,7 +52,7 @@ export function onChange(fn) {
 export function blankCase() {
   return {
     visited: [],                                    // steps opened at least once
-    clue: { observation: "", interpretation: "" },  // step 3
+    clue: { observation: "" },                      // step 3
     shortlist: [],                                  // step 4: mode ids, in card order
     because: {},                                    // step 4: mode id -> "because…"
     pair: { ch1: null, ch2: null },                 // step 5: region ids

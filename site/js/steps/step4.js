@@ -1,4 +1,4 @@
-// Step 4: shortlist modes from the clue alone (the target gene is not known yet).
+// Step 4: shortlist modes from the step 3 notes alone (the target gene is not known yet).
 // Same cards, same order, for every case; at least two, no maximum; optional "because…".
 
 import { MODES, MODE_GROUPS, MODE_ORDER } from "../content.js";
@@ -25,10 +25,10 @@ export function mount(root, ctx) {
   root.innerHTML = `
     <div class="bench">
       <header class="bench__head">
-        <div class="bench__title"><p class="t-label">RBP clue · Step 4</p><h1 class="t-h2">Hypotheses</h1></div>
+        <div class="bench__title"><p class="t-label">RBP dysfunction · Step 4</p><h1 class="t-h2">Hypotheses</h1></div>
       </header>
       <section class="bench__main hyp-main" aria-labelledby="hyp-intro">
-        <p class="t-body" id="hyp-intro">Which ways of regulating RNA could explain the TDP-43 clue? Shortlist at least two. They don’t have to compete: several can be true at once. The cards are grouped by where TDP-43 acts.</p>
+        <p class="t-body" id="hyp-intro">As an RNA-binding protein (RBP), TDP-43 regulates RNA metabolism. How would the TDP-43 dysfunction you observed in the previous step affect RNA regulation?<br>Shortlist at least two. They don’t have to compete: several can be true at once. The cards are grouped by where TDP-43 acts.</p>
         <div class="hyp-groups">
           ${MODE_GROUPS.map(g => `
             <fieldset class="hyp-group">
@@ -37,12 +37,11 @@ export function mount(root, ctx) {
             </fieldset>`).join("")}
         </div>
       </section>
-      <aside class="bench__side" aria-label="Your clue and shortlist">
+      <aside class="bench__side" aria-label="Your notes and shortlist">
         <div class="recap">
-          <h2 class="t-label">Your clue notes (step 3)</h2>
+          <h2 class="t-label">Your notes (step 3)</h2>
           <p class="recap__item"><b>Observation</b><span data-recap="observation"></span></p>
-          <p class="recap__item"><b>Interpretation</b><span data-recap="interpretation"></span></p>
-          <a class="t-ui" href="${href(id, 3)}">Back to the clue</a>
+          <a class="t-ui" href="${href(id, 3)}">Back to step 3</a>
         </div>
         <p class="t-ui-lg" id="hyp-count" aria-live="polite"></p>
         <p class="next-row" id="hyp-next"></p>
@@ -58,7 +57,7 @@ export function mount(root, ctx) {
       li.classList.toggle("is-on", on);
       li.querySelector(".hyp__box").checked = on;
     });
-    for (const k of ["observation", "interpretation"]) {
+    for (const k of ["observation"]) {
       const el = root.querySelector(`[data-recap=${k}]`);
       el.textContent = s.clue[k] || "Not written yet.";
       el.classList.toggle("t-muted", !s.clue[k]);

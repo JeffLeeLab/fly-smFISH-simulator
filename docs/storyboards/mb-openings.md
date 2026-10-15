@@ -30,7 +30,7 @@ F  ambient   the T-maze station, live: a small front-on maze per lane after the 
 
 ## 3 · Chosen assay: T-maze (`#/mb/step-1`), 15.3 s (3.5 s before the group's action, 11.8 s after)
 
-Layout per lane (WT left, mutant right): the training tube (lined with the shock grid, a fine helical hatch) stands above the choice point; at its foot a short sliding chamber (the elevator) carries the flies down to the T; the OCT arm runs to one side and the MCH arm to the other, the same sides in both lanes. A counter (mono numbers) sits under each arm. "Simulated" pill at the bottom right of the stage.
+Layout per lane (WT left, mutant right): the training tube (lined with the shock grid, a fine helical hatch) stands above the choice point; at its foot a short sliding chamber (the elevator) carries the flies down to the T; the OCT arm runs to one side and the MCH arm to the other, the same sides in both lanes. A counter (mono numbers) sits under each arm. "Simulated data" pill at the bottom right of the stage.
 
 ```
 G 0.0–3.5    [transition in: the station expands (Flip), 0.8 s]  ten flies per lane wander on the walls
@@ -108,7 +108,7 @@ O  10.5–14.0 matched swap: the outline settles at the viewer's opening positio
    [transition out: route to #/mb/step-3 with the viewer's opening frame identical to O's last frame]
 ```
 
-Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: the first clue" button.
+Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: TDP-43 dysfunction" button.
 
 ## Checks
 

@@ -172,7 +172,7 @@ O  10.5–14.0 matched swap: the neuron outline (from the same geometry file the
    [transition out: route to #/pdf/step-3 with the viewer's opening frame identical to O's last frame]
 ```
 
-Reduced motion: the labelled head–brain–neuron end frame and the "Next: the first clue" button.
+Reduced motion: the labelled head–brain–neuron end frame and the "Next: TDP-43 dysfunction" button.
 
 As built ([descent-frames.png](descent-frames.png)):
 - One 14 s timeline, set by the scroll position (the stage stays pinned for three screens). The camera is the SVG view box, in µm, with the origin at the centre of the head; strokes keep one width on screen at every zoom.
@@ -182,7 +182,7 @@ As built ([descent-frames.png](descent-frames.png)):
 - Once the brain has drawn on, M names its two main regions with ink labels and arrows, like the compartment labels in N: each arrow runs from the label's text to the region and ends in an arrowhead. "Central brain" appears at 5.75 s above the brain, its arrow pointing down into it. "Optic lobe" appears at 6.05 s below the optic lobe on the viewer's right, its arrow pointing up into the lobe's outer part, which stays clear of the neurons. Both fade out at 7.3–7.6 s, as the camera starts to push in towards the neurons at 7.5 s.
 - N labels the four compartments one at a time, in the viewer's names and order: "Nucleus", "Cell body", "Axon", "Dorsal terminals (synapses)" (7.9, 8.5, 9.1 and 9.7 s; the gloss in brackets is the one place the label differs from the viewer's "Dorsal terminals"). Each label sits to the left of the neuron, with an arrow from the edge of its text to the structure (drawn in screen space every frame, so it always starts at the text). Caption: "Four small Pdf neurons (s-LNvs). Their dorsal terminals (synapses) remodel every day."
 - The last caption (12.4 s) reads "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)." The two fields at the end are labelled "hTDP-43 WT" and "hTDP-43 mutant", matching the step 3 viewer. The openings say "ALS mutant"; the microscopy steps say "hTDP-43 mutant", because the fly carries an ALS-linked point mutation.
-- O's frame is drawn from the viewer's own membrane and DAPI images (animal 1), tinted and added on black as the viewer does, at its "Whole neuron" scale, inside a frame laid out like the viewer's. On "Next: the first clue", step 3's viewer grows out of this frame, and the TDP-43 channel appears there: the clue.
+- O's frame is drawn from the viewer's own membrane and DAPI images (animal 1), tinted and added on black as the viewer does, at its "Whole neuron" scale, inside a frame laid out like the viewer's. On "Next: TDP-43 dysfunction", step 3's viewer grows out of this frame, and the TDP-43 channel appears there.
 - Reduced motion shows the end of N (the labelled neurons, close up) with the Next button.
 
 ## Checks (from the storyboard rules)

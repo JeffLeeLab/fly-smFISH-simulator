@@ -247,3 +247,36 @@ The instructor saw the step 3 viewer and step 5 greyed out on localhost. The cli
 | --- | --- | --- | --- |
 | 1 | Steps 3–6, all cases | Drawn at 45% opacity: the vial's `.bench` rule also matched the workbench layout. | Fixed. |
 | 2 | Leg motor neuron step 5 | The *stai* gene card says "synaptic boutons". | OK: FlyBase's wording, kept by the instructor (spec, 2026-10-13). |
+
+## 2026-10-15: step 3 and 4 copy, "Region N" labels, simulated data (instructor)
+
+The instructor's review notes:
+- **Step 3** asks for an observation only. The Interpretation field went from step 3, the drawer and the step 4 recap; nothing else read it. The example is now about TDP-43 but describes only the control.
+- **"Clue" is gone** from the student text: the stage is "RBP dysfunction".
+- **Step 4** has a new prompt.
+- **TDP-43 protein** is the name in the step 3 chip, the Channels row and the viewer overlay.
+- **"(simulated data)"** appears on the projection label, the overlay and the step 1 pill.
+- **Glossary:** a new projection definition and a DAPI hover.
+- **Probe regions** show as "Region N" (display only: `regionLabel()` in `data.js`). Internal IDs and every data file are unchanged.
+- **Exported PNGs** name the gene.
+
+Probe-track labels now stack by their measured width, and the strip and slide labels push apart by it. The TDP-43 brightness slider moved to the LUT line, and the step 6 channel buttons show the dot and the region (both instructor's choice, so they fit at 1280×720).
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj, against a baseline shot from HEAD. `tools/shot-diff.py` lists only the screens expected to change: step 1 (pill), the step 2 label frame (projection label), the rail on steps 1–7, and steps 3–7.
+- **Exports**, captured from the clipboard for all three cases:
+  - Plot PNG: two-line header with the gene in italics.
+  - Viewer PNG (split): the gene leads, and the line wraps inside its field.
+  - Summary slide: "smFISH 1 · Region 7" clears slot 2, and the map labels clear each other.
+- **Hovers:** the DAPI and projection tips show the new text. A click on "DAPI" leaves the Membrane + DAPI channel on.
+- **No console errors.**
+- **`site/data` and `data/` unchanged**, so the Pdf baseline and the Pages data gate are unaffected.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Steps 3 and 6, Channels, 1280×720 | "TDP-43 protein" ran under the brightness slider's sun icon. | Fixed: the slider (now 52 px) sits beside the LUT select on the line below (instructor). |
+| 2 | Step 6 plot bar, 1280×720 | "smFISH 1 · Region 7" buttons pushed "Copy as PNG" onto a second line and shortened the viewer. | Fixed: the buttons show the channel dot and the region; the accessible names keep "smFISH 1, Region 7" (instructor). |
+| 3 | Steps 5 and 7 probe track (Pdf, leg motor neuron) | "Region 1" overlapped the gutter's "Probe regions". | Fixed: labels are kept clear of the gutter. |
+| 4 | Channels row | An 8 px flex gap split "Membrane +" from "DAPI". | Fixed: the name is one flex item. |
+| 5 | Viewer overlay, 1280×720 split | The longer line wraps; "data" was left alone on the second line. | Fixed: "simulated data" wraps as a unit. The wrap itself stays (already noted on 2026-10-06). |
+| 6 | Step 6 legend, 1280×720 | Wraps onto two lines with "Region N" labels. | OK: nothing is clipped. |

@@ -31,7 +31,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 ## Operating Context
 
 - One live 2-hour session, run three groups at a time. Students use their own Windows and macOS laptops in current Chrome, Edge, Firefox or Safari, often with low-end integrated graphics. The minimum viewport is 1280×720, with trackpad pinch and scroll.
-- The flow has seven steps in five stages (Introduction → RBP clue → Experimental design → Observe → Conclude), with each step at its own hash URL so a group can recover after a refresh.
+- The flow has seven steps in five stages (Introduction → RBP dysfunction → Experimental design → Observe → Conclude), with each step at its own hash URL so a group can recover after a refresh.
 - Students record notes in a lab notebook drawer stored in localStorage on their own browser. Nothing is uploaded.
 - Evidence leaves the site only as PNGs (viewer, plot and a 16:9 Part 1 summary) and students' own screenshots, which go into the group's own PowerPoint for Part 2. Every image is labelled "simulated".
 - A companion lecture covers RNA/RBP "Core Skills". FlyBase is the external reference students are sent to.
@@ -66,7 +66,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 
 1. **Narrow, don't solve.** Every screen supports reasoning from evidence. None of them reveals the answer.
 2. **One truth, everywhere.** The viewer, map and plot read the same pre-computed data, so they cannot disagree.
-3. **Honest about what is simulated.** Say what is established, what is simplified and what is invented: the instructor material classifies each claim, and the "Simulated" pill tells students the case is partly invented. Label every image and animation as simulated.
+3. **Honest about what is simulated.** Say what is established, what is simplified and what is invented: the instructor material classifies each claim, and the dashed "Simulated data" pill tells students the case is partly invented. Label every image and animation as simulated.
 4. **Exploring is free.** No penalties, no locks without a reason, no time pressure. A new probe pair is always one click away.
 5. **Readable by a novice.** A FISH-naive student must be able to read the images using only the decoder legend and the "How two-colour smFISH works" explainer.
 

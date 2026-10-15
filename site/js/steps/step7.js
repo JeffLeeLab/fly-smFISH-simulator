@@ -6,7 +6,7 @@ import { MODES, VERDICTS } from "../content.js";
 import { caseState, onChange } from "../store.js";
 import { bind } from "../forms.js";
 import { href } from "../router.js";
-import { loadJSON, transcripts } from "../data.js";
+import { loadJSON, transcripts, regionLabel } from "../data.js";
 import { createMap } from "../map.js";
 import { loadFlySprite } from "../fly.js";
 import { summarySVG, slideFly, SLIDE, CASE_LOCATOR } from "../summary.js";
@@ -60,7 +60,7 @@ export async function mount(root, ctx) {
     root.querySelector(".summary__facts").innerHTML = `
       <div><dt>Neuron system</dt><dd>${esc(c.system)}</dd></div>
       <div><dt>Target</dt><dd><i>${esc(c.target.gene)}</i></dd></div>
-      <div><dt>Probe pair</dt><dd><span class="chip chip--ch1">smFISH 1 · <span class="t-data">${esc(s.pair.ch1 || "–")}</span></span> <span class="chip chip--ch2">smFISH 2 · <span class="t-data">${esc(s.pair.ch2 || "–")}</span></span></dd></div>`;
+      <div><dt>Probe pair</dt><dd><span class="chip chip--ch1">smFISH 1 · <span class="t-data">${esc(regionLabel(s.pair.ch1) || "–")}</span></span> <span class="chip chip--ch2">smFISH 2 · <span class="t-data">${esc(regionLabel(s.pair.ch2) || "–")}</span></span></dd></div>`;
     root.querySelector(".summary__verdicts").innerHTML = ["supported", "ruled-out", "unresolved"].map(v => {
       const modes = s.shortlist.filter(m => s.verdicts[m] === v);
       const label = VERDICTS.find(x => x.id === v).label;

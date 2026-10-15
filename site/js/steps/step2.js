@@ -127,7 +127,7 @@ export async function mount(root, ctx) {
               <p class="descent__vtop">Simulated confocal images · membrane + DAPI</p>
               ${["hTDP-43 WT", "hTDP-43 mutant"].map((l, i) => `
                 <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
-              <p class="descent__vbar">2D maximum-intensity projection (simulated)</p>
+              <p class="descent__vbar">2D maximum-intensity projection (simulated data)</p>
             </div>
             <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears with the Pdf neurons in blue on both sides; we close in on the four on the left, each with a cell body, an axon running up and medially, and dorsal terminals (synapses). They end as two microscope fields: WT left, mutant right.">
               <defs>
@@ -169,14 +169,14 @@ export async function mount(root, ctx) {
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
           <div class="descent__controls">
-            <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: the first clue</a>
+            <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a>
           </div>
         </div>
       </section>
       <div class="story descent__after">
         <p class="t-story">The Pdf neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day.</p>
         <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will find four compartments: nucleus, cell body, axon and dorsal terminals (synapses).</p>
-        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: the first clue</a></p>
+        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
       </div>
     </div>`;
 

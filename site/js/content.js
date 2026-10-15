@@ -23,7 +23,7 @@ export const CASES = {
     anatomy: {
       whole: "Whole neuron",
       flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Dorsal terminals"]],
-      projection: "2D maximum-intensity projection (simulated)",
+      projection: "2D maximum-intensity projection (simulated data)",
     },
     // Lateral PSF σ in µm (FWHM ≈ 0.28 µm); spots below minSigmaPx are drawn larger and dimmer (same total light).
     display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95 },
@@ -69,7 +69,7 @@ export const CASES = {
     anatomy: {
       whole: "Whole neuron",
       flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["axon", "Axon"], ["terminals", "Synaptic terminals"]],
-      projection: "2D maximum-intensity projection (simulated)",
+      projection: "2D maximum-intensity projection (simulated data)",
     },
     display: { spotSigmaUm: 0.12, minSigmaPx: 0.85, spotGain: 0.95 },
     plot: {
@@ -111,7 +111,7 @@ export const CASES = {
     anatomy: {
       whole: "Mushroom body",
       flyTo: [["nucleus", "Nucleus"], ["cellbody", "Cell body"], ["peduncle", "Axon bundle"], ["lobes", "Lobes"]],
-      projection: "Oblique maximum-intensity projection (simulated)",
+      projection: "Oblique maximum-intensity projection (simulated data)",
     },
     // larger and brighter than true size, so spots read like the Pdf case's in a structure three times its size
     display: { spotSigmaUm: 0.2, minSigmaPx: 1.0, spotGain: 1.1 },
@@ -152,7 +152,7 @@ export const STEPS = {
 
 export const STAGES = [
   { name: "Introduction", steps: [1, 2] },
-  { name: "RBP clue", steps: [3, 4] },
+  { name: "RBP dysfunction", steps: [3, 4] },
   { name: "Experimental design", steps: [5] },
   { name: "Observe", steps: [6] },
   { name: "Conclude", steps: [7] },

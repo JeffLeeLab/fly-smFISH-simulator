@@ -6,6 +6,7 @@
 import { MODES } from "./content.js";
 import { LIGHT } from "./export.js";
 import { slideMap } from "./map.js";
+import { regionLabel } from "./data.js";
 import { BRAIN, BRAIN_BOX, NEURON_AT } from "./brain.js";
 import { MB_AT, MB_BIG, projector } from "./mbanatomy.js";
 
@@ -190,8 +191,8 @@ export function summarySVG({ c, s, date, g, art }) {
   out.push(label(80, y, "PROBE PAIR"));
   let kx = 262;
   for (const [k, n] of [["ch1", 1], ["ch2", 2]]) {
-    out.push(`<circle cx="${kx + 10}" cy="${y - 8}" r="10" fill="${P[k]}"/><text x="${kx + 30}" y="${y}" font-family="${P.sans}" font-size="26" fill="${P.text}">smFISH ${n} · <tspan font-family="${P.mono}">${esc(s.pair[k] || "–")}</tspan></text>`);
-    kx += 270;
+    out.push(`<circle cx="${kx + 10}" cy="${y - 8}" r="10" fill="${P[k]}"/><text x="${kx + 30}" y="${y}" font-family="${P.sans}" font-size="26" fill="${P.text}">smFISH ${n} · <tspan font-family="${P.mono}">${esc(regionLabel(s.pair[k]) || "–")}</tspan></text>`);
+    kx += 320;
   }
   out.push(`<text x="${W - 80}" y="${y}" text-anchor="end" font-family="${P.sans}" font-size="22" fill="${P.text2}">Isoforms 5′ → 3′ · introns compressed</text>`);
   const map = slideMap(g, s.pair, { x: 80, y: y + 14, width: W - 160, P });

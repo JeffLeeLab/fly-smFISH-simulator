@@ -119,7 +119,7 @@ export async function mount(root, ctx) {
           ${ldMarkup()}
           ${lanes.map(l => laneMarkup(l, l.rows)).join("")}
         </svg>
-        <span class="tag-sim assay__tag">Simulated</span>
+        <span class="tag-sim assay__tag">Simulated data</span>
       </div>
       <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
       <div class="assay__controls">

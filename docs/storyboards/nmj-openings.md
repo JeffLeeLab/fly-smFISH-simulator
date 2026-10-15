@@ -43,7 +43,7 @@ F  ambient   the climbing vial station, live (stationLive.nmj): the moment after
 
 ## 3 · Chosen assay: climbing vial (`#/nmj/step-1`), 15.3 s (3.5 s before the group's action, 11.8 s after)
 
-Layout per lane (WT left, mutant right): one upright vial with a foam plug at the top, and a ring marked round it at 5 cm (drawn as a thin ellipse, front and back). The two vials stand side by side, joined by a strip of tape, so one tap treats both alike, as on the bench. A counter (mono numbers) under each vial reads the flies above the line, and a timer (mono) sits between the vials. "Simulated" pill at the bottom right of the stage.
+Layout per lane (WT left, mutant right): one upright vial with a foam plug at the top, and a ring marked round it at 5 cm (drawn as a thin ellipse, front and back). The two vials stand side by side, joined by a strip of tape, so one tap treats both alike, as on the bench. A counter (mono numbers) under each vial reads the flies above the line, and a timer (mono) sits between the vials. "Simulated data" pill at the bottom right of the stage.
 
 Reference footage, for the mechanics only (as `references/dam-motion/` is for the activity monitor): ["The Climbing Assay – In the Fly Lab"](https://www.youtube.com/watch?v=nI-ed8NKUg0) (Alicia Hidalgo Lab, University of Birmingham; 39–47 s), not stored in the repo. What it shows, and what is taken from it:
 - Two empty vials taped side by side are lifted a few centimetres and dropped onto the bench together, twice in about a second. Taken (three taps), with the tape.
@@ -132,7 +132,7 @@ O  10.5–14.0 matched swap: the outline settles at the viewer's opening positio
    [transition out: route to #/nmj/step-3 with the viewer's opening frame identical to O's last frame]
 ```
 
-Reduced motion: the labelled motor neuron (end of N) and the "Next: the first clue" button.
+Reduced motion: the labelled motor neuron (end of N) and the "Next: TDP-43 dysfunction" button.
 
 ## Checks
 

@@ -7,7 +7,7 @@ A teaching web app: final-year students design two-colour smFISH probes and read
 - `PRODUCT.md`: users, purpose, constraints, brand commitments. The site must never give the answer away.
 - `docs/spec.md`: pedagogy, case truth tables, simulation parameters, screen spec, stack.
 - `docs/style-directions/tokens.css` and `Style directions review.md`: the frozen visual direction.
-- `docs/transcript_models_R6.json`: transcript models and probe menus. Probe IDs follow the spec's menus (numbered 5′→3′); if the two disagree, the spec wins.
+- `docs/transcript_models_R6.json`: transcript models and probe menus. Probe IDs follow the spec's menus (numbered 5′→3′); if the two disagree, the spec wins. The IDs are internal (data, generator, truth tables, answer key): the site shows them as "Region N" with the same number (F6 → "Region 6"), so show students `regionLabel(id)` (`site/js/data.js`), never the raw ID.
 - `docs/mockups/` and `docs/style-directions/` are design records and are not served.
 
 ## Tooling
