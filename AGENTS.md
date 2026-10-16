@@ -29,6 +29,7 @@ Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock 
   - *Part 2*, *Future implementation ideas*.
 - `DESIGN.md`: the design system as built (YAML tokens, then components and do's and don'ts). The frozen direction is `docs/style-directions/tokens.css` and `Style directions review.md`; where DESIGN.md disagrees with the tokens, the tokens win.
 - `docs/storyboards/<case>-openings.md`: steps 1–2 for each case, with "As built" notes.
+- `docs/storyboards/targets-step.md`: the planned new step 4, "TDP-43 and its targets" (not built yet). Its end-frame mock-up is `docs/mockups/step4-targets-endframe.html`, drawn by `docs/mockups/step4-targets-neuron.py`.
 - `docs/transcript_models_R6.json`: transcript models and probe menus, including the answer-key fields.
 - `docs/review.md`: one entry per review run. `docs/references/`: reference packs, compartment sketches, gene models. `docs/mockups/` and `docs/style-directions/`: design records.
 

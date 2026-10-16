@@ -25,6 +25,15 @@
         ],
         "createdAt": "2026-10-05T14:34:08.033Z",
         "reason": "Frozen design token: --bg #F0EEE6 ivory in docs/style-directions/tokens.css, chosen in the Phase 0 style phase (docs/spec.md Design tokens)"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "docs/mockups/step4-targets-endframe.html"
+        ],
+        "createdAt": "2026-10-16T16:56:10.263Z",
+        "reason": "Frozen design token: --bg #F0EEE6 ivory in docs/style-directions/tokens.css (Phase 0 style phase); the mock-up links the site's own tokens.css, as site/index.html does"
       }
     ]
   }
