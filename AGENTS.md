@@ -2,48 +2,78 @@
 
 A teaching web app: final-year students design two-colour smFISH probes and read simulated confocal images of *Drosophila* neurons in a TDP-43 ALS model. A static site with no build step.
 
-## Sources of truth
+Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock neurons, *futsch*, regions F1–F8), `mb` (mushroom body, *unc-13*, U1–U8) and `nmj` (leg motor neuron & NMJ, *stai*, S1–S8).
 
-- `PRODUCT.md`: users, purpose, constraints, brand commitments. The site must never give the answer away.
-- `docs/spec.md`: pedagogy, case truth tables, simulation parameters, screen spec, stack.
-- `docs/style-directions/tokens.css` and `Style directions review.md`: the frozen visual direction.
-- `docs/transcript_models_R6.json`: transcript models and probe menus. Probe IDs follow the spec's menus (numbered 5′→3′); if the two disagree, the spec wins. The IDs are internal (data, generator, truth tables, answer key): the site shows them as "Region N" with the same number (F6 → "Region 6"), so show students `regionLabel(id)` (`site/js/data.js`), never the raw ID.
-- `docs/mockups/` and `docs/style-directions/` are design records and are not served.
+## Rules
 
-## Tooling
+- **Never give the answer away.** Check any student-facing text against `PRODUCT.md` (*Capabilities and Constraints*).
+- **Only `site/` is served** (the Pages workflow uploads `path: site`). The answer key in `docs/` and `data/` is readable on GitHub, and that is accepted. Keep `mature_in`, `nascent_in` and `also_detects` out of the public JSON (`generator.public_models` refuses them).
+- **Probe IDs are internal.** They follow the spec's menus, numbered 5′→3′; if `docs/transcript_models_R6.json` disagrees, the spec wins. Students see `regionLabel(id)` from `site/js/data.js` ("Region 6" for F6), never the raw ID.
+- **Python only through uv** (Python 3.14): `uv sync`, `uv run …`, `uv add <package>`. No `pip`, system `python3` or hand-made venv.
+- **Test over HTTP with `uv run python tools/serve.py`** (http://localhost:8765). It sends `Cache-Control: no-store`; `python -m http.server` doesn't, and browsers then mix new and cached files. Never use `file://`.
+- **Write British English** (colour, centre, behaviour) in docs, comments, commit messages and student-facing text. Keep US spelling only where code requires it (CSS `color`, API names).
+- **Keep this file current:** update the code map when you add, rename or split a file.
 
-- **Python is managed with uv.** The generator and every build script run in this repo's uv environment (`pyproject.toml`, `uv.lock`, Python 3.14). Set up with `uv sync`, run with `uv run <script>`, and add dependencies with `uv add <package>` so `uv.lock` stays in step. Don't use `pip`, the system `python3` or a hand-made venv.
-- **Local server:** `uv run python tools/serve.py` (http://localhost:8765). It sends `Cache-Control: no-store`; plain `python -m http.server` doesn't, and browsers then mix new and cached old files after edits (steps fail to load, new elements appear unstyled). Always test over HTTP, never from `file://`.
-- **Generated data:** the site only reads files in `site/data/`, written by scripts in `generator/`. Commit the output; the Pages workflow fails if it is out of date. Truth tables and private molecule records go in `data/`, which is never served. For a case, in order:
-  - `uv run python -m generator.public_models` (transcript maps without the answer key)
-  - `uv run python -m generator.geometry_pdf` (geometry for every genotype and animal; one script per case)
-  - `uv run python -m generator.truth_table pdf` (expands `data/pdf/truth-table.toml`)
-  - `uv run python -m generator.build pdf` (chooses the animals, places molecules, renders images, writes tables; about a minute)
-  - `uv run python -m generator.validate pdf --signed` (the gate; fails on any mismatch or an unsigned truth table)
-  - Mushroom body (`mb`), same order: `uv run python -m generator.connectome_mb` first (once: downloads 450 Kenyon cells from the public MaleCNS bucket into `data/mb/connectome/`, not committed), then `generator.geometry_mb` (six geometry files plus `site/data/mb/anatomy.json`; add `--sketch docs/references/mb-compartment-sketch.png` for the compartment sketch), `generator.truth_table mb`, `generator.build mb` (about 2 minutes) and `generator.validate mb --signed`.
-  - Leg motor neuron (`nmj`), same order: `uv run python -m generator.connectome_nmj` first (once: downloads the MaleCNS tags and a sample of front-leg motor neuron skeletons into `data/nmj/connectome/`, not committed, and writes a contact sheet there), then `generator.geometry_nmj` (six geometry files plus `site/data/nmj/anatomy.json` for the descent and the step 7 locator; add `--sketch docs/references/nmj-compartment-sketch.png` for the compartment sketch), `generator.truth_table nmj`, `generator.build nmj` (about a minute) and `generator.validate nmj --signed`.
-  - `tools/pdf-identical.sh` re-runs the Pdf pipeline and fails unless the output is byte-identical (hashes in `tools/pdf-baseline.sha256`); run it after any change to shared generator code.
-  - The Pages workflow gates `CASES: "pdf mb nmj"`: add a case there only once its truth table is signed off.
-- **Story artwork:** `uv run python -m generator.flies` (fly drawings from flybody; downloads the meshes into `data/flybody/`, not committed) and `uv run python -m generator.textures` (paper grain and watercolour washes). Both write into `site/`. The dorsal fly sprite has a `flap` sequence (three wingbeat drawings, without wing veins) that extends past the sprite's viewBox, which the fly on the ground sets. The side-view sprite has a `tremor` sequence (the leg motor neuron mutants), and `fly-turned.svg` is the side view turned 20° towards us (that case's descent and locator). `generator.flies <view> …` rebuilds only the views named (the whole set takes about 6 minutes).
-- **Animation review:** `tools/contact-sheet.sh '<url with {t}>' out.png <times…>` renders frames through the page's frozen-time mode (`?t=` seconds) and tiles them; `tools/frozen-time.sh <video.webm>` reports dead stretches in a `playwright-cli` recording (the subtle ink boil can vanish in video compression, so confirm "frozen" holds with screenshots).
-- **Browser checks:** `playwright-cli` (a global install, not a project dependency) for screenshots, window sizes (`resize 1280 720`), video recordings (`video-start` / `video-stop`) and the offline test (`network-state-set offline`; or list `performance.getEntriesByType('resource')` and check that every URL is local). Sessions start with empty localStorage, so seed the notebook state before testing gated steps. `tools/review-shots.sh <out-dir> [pdf|mb|nmj]` does this for the whole review set of a case (Pdf by default): every step at 1280×720 and 1920×1080 in both themes, animations at their end frames (the descent also at `?t=6.6`, with the whole brain on screen), steps 3 and 6 also in full screen (step 6 with the plot open), one sheet per screen. `tools/shot-diff.py` gives a pixel diff of two review-shot folders. Each review run is logged in `docs/review.md`.
-- **The public repo is fine.** The answer key in `docs/` is readable on GitHub, and that is accepted. What matters is that the site never serves it, so keep stripping `mature_in`, `nascent_in` and `also_detects` from the public JSON.
+## Delegation
 
-## Image generation (Impeccable comps and plates)
+- **Search with Haiku.** Explore and search the codebase through Haiku subagents (in Claude Code: the Agent tool with `model: "haiku"`; the Explore type for read-only work).
+- **Give simple edits to Haiku, then review.** Simple code edits and documentation updates can go to Haiku subagents. Name the exact files and the change wanted. As the orchestrator, review the diff yourself and re-run any gate yourself; don't trust a subagent's report that it passed.
+- **Do the substantial work yourself.** Substantial reasoning, substantial code changes and design work (including student-facing text and science judgement) stay in the main thread.
 
-Claude Code has no native image tool here, and `impeccable generate-image` fails because no OpenAI key is set. Antigravity is this project's image tool. Whenever Impeccable calls for "the harness-native image tool", use:
+## Where to look
 
-```sh
-mkdir -p <out-dir>
-agy-delegate --tier flash --yolo --dir <out-dir> --timeout 8m \
-  "Use your built-in generate_image tool to create: <prompt>. Save it as <out-dir>/<name>.png. \
-Do not draw it with code (no PIL, SVG or ImageMagick). Write nothing else. Reply: IMAGE_TOOL_USED, FILE."
-```
+- `PRODUCT.md`: users, purpose, constraints, brand, accessibility minimums.
+- `docs/spec.md` (about 870 lines; read only the section you need):
+  - *Introduction*: the biology, PTR modes, and the case truth tables (the instructor answer key) under *Simulations*.
+  - *Part 1 › Implementation spec*: Architecture, Transcript models and probe menus, Geometry references, Simulation parameters, Rendering stack, Visual design and navigation (art direction, theme, rail, notebook, layouts, plot, export), Openings (steps 1–2), Steps 3–4, Steps 5–7, Motion principles, Viewer features, Image realism model, Student-facing text (gene cards, glossary), Hosting and offline use.
+  - *Part 2*, *Future implementation ideas*.
+- `DESIGN.md`: the design system as built (YAML tokens, then components and do's and don'ts). The frozen direction is `docs/style-directions/tokens.css` and `Style directions review.md`; where DESIGN.md disagrees with the tokens, the tokens win.
+- `docs/storyboards/<case>-openings.md`: steps 1–2 for each case, with "As built" notes.
+- `docs/transcript_models_R6.json`: transcript models and probe menus, including the answer-key fields.
+- `docs/review.md`: one entry per review run. `docs/references/`: reference packs, compartment sketches, gene models. `docs/mockups/` and `docs/style-directions/`: design records.
 
-- `--yolo` is required. Under `--mode plan`, agy hides `generate_image` and reports that it has none, and `agy models` lists no image models. Neither means that image generation is unavailable.
-- The build thread writes every prompt, because Impeccable comps are never delegated. agy only renders them.
-- Save under `.impeccable/mocks/` as Impeccable directs.
-- Verify each file yourself: it exists, `sips` reports a PNG of the expected size, and it looks right when opened. A code-drawn image is a failure, not a comp.
-- Then run `impeccable embed-prompt <image> --prompt "<exact prompt>"`, and write any `.json` sidecar that Impeccable asks for. `impeccable` isn't on PATH: call it as the Impeccable skill does, at `<skill dir>/scripts/impeccable`.
-- Reference images (comp crops, page screenshots): give the path in the prompt. This is untested, so check that the result follows the reference.
-- `buildPath` in `.impeccable/config.json` is `code`. Comp-first runs only if the user flips the toggle or changes that value.
+## Code map
+
+**site/** (the served app)
+- `index.html` loads only `js/main.js`; an importmap points PixiJS at `vendor/`.
+- `js/main.js`: app shell (rail, notebook, views). Its `VIEWS` and `CASE_VIEWS` choose each step's module; `js/router.js` only parses `#/<case>/step-<n>`.
+- `js/steps/`: one module per step. Steps 1–2 differ by case: `step1.js` and `step2.js` are Pdf (the default), replaced by `mb-step*.js` and `nmj-step*.js`. Steps 3–7 are shared and read the case's data. `landing.js` is `#/`; `locked.js` shows the reason from `lockReason()` in `content.js`.
+- `js/viewer/`: `viewer.js` (split and flicker viewer, the only PixiJS import), `controls.js` (channels, LUTs, brightness), `fullview.js` (full screen, steps 3 and 6), `gl.js` (WebGL 2 check and fallback), `textures.js`.
+- Student-facing text: `content.js` (cases, steps, stages, mode cards, lock rules), `glossary.js` (`ENTRIES`), `summary.js` (Part 1 summary slide and locator text), `notebook.js` (drawer labels). Story prose and headings are inline in `steps/*.js`.
+- State: `store.js` owns localStorage (`smfish:v1:`, per case); `theme.js` uses `smfish:theme`.
+- Data and results: `data.js` (`loadJSON`, `transcripts()`, `regionLabel()`), `map.js` (transcript map), `results.js` (step 6 SuperPlot from `tables.json`), `export.js` (PNG).
+- Story layer: `fly.js` (sprites, ink boil), `gsap.js` (loads the vendored GSAP), `caption.js`, `handoff.js` (elements carried across a route change), `stations.js` (landing), `brain.js` (descent); per case `monitor.js` (`pdf`), `tmaze.js` and `mbanatomy.js` (`mb`), `vial.js` (`nmj`).
+- UI helpers: `popcard.js` (help cards), `tour.js` (once-per-browser tours), `forms.js` (fields bound to the store), `icons.js`, `prng.js` (seeded, so animations replay identically).
+- `css/`: `tokens.css` (the live tokens: the frozen set plus `--text-3` and the odour colours), `base.css`, `app.css` (layouts, per-case animation), `fonts.css`.
+- `data/` and `textures/`: generated (below); never edit by hand.
+
+**generator/** (run as `uv run python -m generator.<name>`)
+- Scripts: `public_models`, `connectome_mb`, `connectome_nmj`, `geometry_<case>`, `truth_table`, `build`, `validate`, `flies`, `textures`.
+- Libraries: `paths` (paths, case → gene), `cases` (per-case parameters), `model` (inputs, region membership), and `simulate`, `render` and `tables` (used by `build`). `geometry_mb` and `geometry_nmj` import shape helpers from `geometry_pdf`.
+
+**tools/**: `serve.py`, `pdf-identical.sh` (with `pdf-baseline.sha256`), `review-shots.sh`, `shot-diff.py`, `contact-sheet.sh`, `frozen-time.sh` (usage below).
+
+## Generated data
+
+The site reads only `site/data/`. Commit the output: the Pages workflow regenerates it and fails if it differs. Truth tables and full molecule records stay in `data/<case>/`. For a case, in order:
+
+1. `generator.connectome_<case>` (`mb` and `nmj`, once): downloads MaleCNS data into `data/<case>/connectome/`, not committed.
+2. `generator.public_models`: transcript maps without the answer key.
+3. `generator.geometry_<case>`: six geometry files, plus `site/data/<case>/anatomy.json` for `mb` and `nmj` (the descent; for `nmj` also the step 7 locator). For those two, add `--sketch docs/references/<case>-compartment-sketch.png` for the compartment sketch.
+4. `generator.truth_table <case>`: expands `data/<case>/truth-table.toml`.
+5. `generator.build <case>`: chooses animals, places molecules, renders images, writes tables (1–2 minutes).
+6. `generator.validate <case> --signed`: the gate; fails on any mismatch or an unsigned truth table.
+
+- After any change to shared generator code (`geometry_pdf` included), run `tools/pdf-identical.sh`: the Pdf output must stay byte-identical.
+- The Pages workflow gates `CASES: "pdf mb nmj"`; add a case only once its truth table is signed off.
+- **Artwork:** `generator.flies [<view> …]` writes fly sprites from flybody into `site/data/flies/` (meshes cached in `data/flybody/`; all views take about 6 minutes). `generator.textures` writes paper grain and washes into `site/textures/`. Sprite sequences (`flap`, `tremor`) and views are documented in `flies.py`.
+
+## Review and browser checks
+
+- `tools/review-shots.sh <out-dir> [pdf|mb|nmj]`: the review set for a case (every step at 1280×720 and 1920×1080 in both themes, animation end frames, full screen for steps 3 and 6). `tools/shot-diff.py <old> <new>` pixel-diffs two sets. Log each run in `docs/review.md`.
+- `tools/contact-sheet.sh '<url with {t}>' out.png <times…>` tiles frames through the page's frozen-time mode (`?t=` seconds). `tools/frozen-time.sh <video.webm>` reports dead stretches in a recording; video compression can hide the ink boil, so confirm with screenshots.
+- `playwright-cli` (a global install) for screenshots, `resize 1280 720`, `video-start` / `video-stop` and the offline test (`network-state-set offline`, or check that every URL in `performance.getEntriesByType('resource')` is local). Sessions start with empty localStorage: seed the notebook state before testing gated steps.
+
+## Image generation (Impeccable)
+
+There is no native image tool here, and `impeccable generate-image` fails (no OpenAI key). When Impeccable calls for "the harness-native image tool", follow `docs/image-generation.md` (Antigravity's `generate_image` through `agy-delegate --yolo`). `buildPath` in `.impeccable/config.json` is `code`.

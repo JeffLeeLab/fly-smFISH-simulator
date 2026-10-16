@@ -70,7 +70,7 @@ export function renderRail(el, route, s) {
     <a class="rail__brand" href="#/">smFISH Simulator</a>
     ${caseBox(route)}
     <ol class="rail__stages" role="list">${stages(route, s)}</ol>
-    <div class="rail__foot">${themeButton()}<span class="tag-sim">Simulated teaching data</span></div>`;
+    <div class="rail__foot">${themeButton()}<p class="rail__contact">Questions? <a href="mailto:jeff.lee@glasgow.ac.uk">jeff.lee@glasgow.ac.uk</a></p><span class="tag-sim">Simulated teaching data</span></div>`;
   const theme = el.querySelector("[data-act=theme]");
   theme.addEventListener("click", toggleTheme);
   el.querySelector("[data-act=choose]")?.addEventListener("click", toChooser);

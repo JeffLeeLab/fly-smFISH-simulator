@@ -46,8 +46,8 @@
 .rail__case-go { color: var(--accent-text); font-weight: 500; }
 .rail__case:hover .rail__case-go { text-decoration: underline; text-decoration-thickness: 1px; }
 .rail__stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-4); }
-/* short windows: a two-line system name ("Leg motor neuron & NMJ") must still fit at 1280×720 */
-@media (max-height: 760px) { .rail { padding-top: var(--sp-5); } .rail__stages { gap: var(--sp-3); } }
+/* short windows: a two-line system name ("Leg motor neuron & NMJ") and the contact must still fit at 1280×720 */
+@media (max-height: 760px) { .rail { padding-top: var(--sp-5); gap: var(--sp-3); } .rail__stages { gap: var(--sp-3); } .rail > .rail__foot { gap: var(--sp-2); } }
 .rail__stage-name { display: block; margin-bottom: var(--sp-1); }
 .rail__stage ol { list-style: none; margin: 0; padding: 0; }
 .rail__step {
@@ -64,6 +64,9 @@ a.rail__step:hover { color: var(--text); text-decoration: underline; text-decora
 .rail__why { display: block; padding: 0 0 4px 32px; font: 400 var(--fs-ui)/1.35 var(--font-sans); color: var(--text-2); }
 .rail__foot { margin-top: auto; display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-3); }
 .rail__theme { padding-left: 6px; }
+.rail__contact { margin: 0; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--text-2); }
+.rail__contact a { display: block; color: inherit; }
+.rail__contact a:hover { color: var(--text); }
 .rail__theme-dot {
   content: ""; width: 12px; height: 12px; border-radius: 50%; flex: none;
   border: 1.5px solid var(--text); background: linear-gradient(90deg, var(--text) 50%, transparent 50%);

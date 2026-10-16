@@ -504,7 +504,7 @@ PixiJS draws the microscopy viewer; everything else is plain HTML, CSS, SVG and 
 | Conclude | 7 Interpret & revise → Part 2 | none |
 
 - Vertical rail on the left, the same full rail (about 200 px wide) in every layout. The workbench steps 3–6 still fit 1280×720 without page scroll.
-- The rail footer carries the dashed "Simulated teaching data" pill on every screen: the student-facing disclosure that the case is simulated and partly invented.
+- The rail footer carries the dashed "Simulated teaching data" pill on every screen: the student-facing disclosure that the case is simulated and partly invented. Above it, under the theme toggle, a contact: "Questions?" and the instructor's address as a mailto link (instructor, 2026-10-16).
 - Each page's label names its stage and step ("RBP dysfunction · Step 3"; step 4's reads "RBP dysfunction · Step 4"; instructor, 2026-10-15); the opening's reads "Introduction · Start".
 - **Neuron-system box**, under the brand, in a light clay tint (clay at 13% over the field colour, a clay-tinted hairline border, the pane radius):
 	- At the opening, before a system is chosen, it reads "Choose a neuron system / to continue ↓". It marks where the group is, so no step is highlighted, and every step is greyed and not a link until a system is chosen. Clicking it scrolls to the opening's "Choose your neuron system" heading and moves focus there (smooth, unless reduced motion is set).
