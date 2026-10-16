@@ -1,6 +1,7 @@
 // Student-facing structure: cases, steps, stages and the mode cards.
-// Text follows docs/spec.md (Student-facing text). Case text never names a PTR mode;
-// mode names appear only on the generic mode cards and the notebook built from them.
+// Text follows docs/spec.md (Student-facing text). Case text never names a PTR mode; mode names
+// appear only in generic text: the step 4 primer's stations, the mode cards and the notebook
+// built from them.
 
 export const CASES = {
   pdf: {
@@ -10,9 +11,12 @@ export const CASES = {
     phenotype: "Sleep & circadian rhythm",
     assay: "Activity monitor assay",
     available: true,
-    // Shown from step 5 on: the target gene is unknown during steps 1–4.
+    // Named in step 4 (`about`: what the protein does and where, the TDP-43 evidence, the candidate
+    // sentence; no mode names, nothing on where the mRNA goes). The gene card (`function`, links)
+    // waits for probe design, step 6.
     target: {
       gene: "futsch",
+      about: "Futsch (MAP1B in humans) organises microtubules in the axons and dorsal terminals of these neurons. TDP-43 regulates futsch mRNA in fly motor neurons. That makes it a candidate: if mutant TDP-43 fails to regulate it, these neurons could run short of Futsch, which could explain why the mutant keeps waking at night.",
       orthologue: "MAP1B",
       function: "A microtubule-associated protein that organises microtubules in synaptic terminals and is needed for normal bouton formation. In these Pdf neurons: cell bodies, axons and dorsal terminals, which remodel every day.",
       flybase: "https://flybase.org/reports/FBgn0259108",
@@ -59,6 +63,7 @@ export const CASES = {
     // The function line follows FlyBase's gene summary, its wording kept (instructor, 2026-10-13).
     target: {
       gene: "stai",
+      about: "Stathmin (stai, STMN2 in humans) regulates microtubules in the axon and synaptic terminals of this motor neuron. STMN2 is one of the best-known TDP-43 targets in human neurons. That makes stai a candidate: if mutant TDP-43 fails to regulate it, the neuron could run short of stathmin, which could explain why the mutants climb poorly.",
       orthologue: "STMN2",
       function: "Binds tubulin and regulates microtubules; needed for axonal transport and for the growth and stability of synaptic boutons. In this motor neuron: cell body, axon and synaptic terminals.",
       flybase: "https://flybase.org/reports/FBgn0266521",
@@ -99,6 +104,7 @@ export const CASES = {
     available: true,
     target: {
       gene: "unc-13",
+      about: "UNC-13 (UNC13A in humans) prepares synaptic vesicles for release at the Kenyon cells’ synapses in the lobes. UNC13A is one of the best-known TDP-43 targets in human neurons. That makes unc-13 a candidate: if mutant TDP-43 fails to regulate it, these neurons could run short of UNC-13, which could explain why the mutants fail the memory test.",
       orthologue: "UNC13A",
       function: "A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, dendrites, axons and the synapses in the lobes.",
       flybase: "https://flybase.org/reports/FBgn0025726",
@@ -144,18 +150,19 @@ export const STEPS = {
   1: { title: "Phenotype", layout: "story" },
   2: { title: "Anatomy", layout: "story" },
   3: { title: "TDP-43 dysfunction", layout: "workbench" },
-  4: { title: "Hypotheses", layout: "workbench" },
-  5: { title: "Target & probe design", layout: "workbench" },
-  6: { title: "Microscopy reveal", layout: "workbench" },
-  7: { title: "Interpret & revise", layout: "story" },
+  4: { title: "TDP-43 and its targets", layout: "story" },
+  5: { title: "Hypotheses", layout: "workbench" },
+  6: { title: "Probe design", layout: "workbench" },
+  7: { title: "Microscopy reveal", layout: "workbench" },
+  8: { title: "Interpret & revise", layout: "story" },
 };
 
 export const STAGES = [
   { name: "Introduction", steps: [1, 2] },
   { name: "RBP dysfunction", steps: [3, 4] },
-  { name: "Experimental design", steps: [5] },
-  { name: "Observe", steps: [6] },
-  { name: "Conclude", steps: [7] },
+  { name: "Experimental design", steps: [5, 6] },
+  { name: "Observe", steps: [7] },
+  { name: "Conclude", steps: [8] },
 ];
 
 export const stageOf = step => STAGES.find(s => s.steps.includes(step)).name;
@@ -214,14 +221,32 @@ export const VERDICTS = [
 // Gates between stages. Returns the reason a step is locked, or null if it is open.
 // Reasons are checked in order, so the earliest missing piece is the one named.
 export function lockReason(step, s) {
-  if (step >= 5 && s.shortlist.length < 2) {
-    return { text: "Shortlist at least two modes in step 4 to open the probe design.", fix: 4 };
+  if (step >= 6 && s.shortlist.length < 2) {
+    return { text: "Shortlist at least two modes in step 5 to open the probe design.", fix: 5 };
   }
-  if (step >= 6 && !(s.pair.ch1 && s.pair.ch2)) {
-    return { text: "Choose two probe regions to see the results.", fix: 5 };
+  if (step >= 7 && !(s.pair.ch1 && s.pair.ch2)) {
+    return { text: "Choose two probe regions to see the results.", fix: 6 };
   }
-  if (step >= 7 && s.shortlist.some(m => !s.verdicts[m])) {
-    return { text: "Give every shortlisted mode a verdict to revise your explanation. Unresolved counts.", fix: 6 };
+  if (step >= 8 && s.shortlist.some(m => !s.verdicts[m])) {
+    return { text: "Give every shortlisted mode a verdict to revise your explanation. Unresolved counts.", fix: 7 };
   }
   return null;
 }
+
+// ---------- the target and the question (from step 4 on) ----------
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const WORD = /(?<![\w-])[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*(?![\w-])/g;
+
+// Case text as HTML, escaped first: the fly gene in italic, matched case-sensitively so the
+// proteins ("Futsch", "UNC-13") stay roman, and hyphenated names ("TDP-43", "unc-13") never break
+// at the hyphen.
+export function caseProse(c, text) {
+  return esc(text).replace(WORD, w => w === c.target.gene ? `<i class="nw">${w}</i>`
+    : w.includes("-") ? `<span class="nw">${w}</span>` : w);
+}
+
+// The question the hypotheses answer, carried from step 4 to the hypotheses, step 8, the notebook
+// and the summary slide: plain parts (the gene is the middle one), or HTML.
+export const questionParts = c => ["Which steps in the life of ", c.target.gene, " mRNA go wrong when TDP-43 carries the ALS mutation?"];
+export const question = c => caseProse(c, questionParts(c).join(""));

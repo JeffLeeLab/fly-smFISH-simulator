@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Review screenshots (spec, Phase 1 review loop): every step of a case at 1280×720 and 1920×1080,
 # light and dark, with a filled-in notebook so the gated steps open and the first-run tours
-# marked as seen. Animated steps are frozen at their end frames (?t=). Steps 3 and 6 are also
-# shot in full screen (step 6 with the plot open); a scripted click is not a user gesture, so
+# marked as seen. Animated steps are frozen at their end frames (?t=). Steps 3 and 7 are also
+# shot in full screen (step 7 with the plot open); a scripted click is not a user gesture, so
 # that is the page's own full view, without the browser's. Writes one PNG per state and one
 # sheet per state (light | dark, small | large).
 #
@@ -14,22 +14,22 @@ out_arg="$1"; case="${2:-pdf}"
 # Per-case notebook state and step routes (the step-2 retimes are the animation end frames).
 case "$case" in
   pdf)
-    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["splicing","transport"],"because":{},"pair":{"ch1":"F6","ch2":"F5"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"splicing":"ruled-out","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    state='{"steps":8,"visited":[1,2,3,4,5,6,7,8],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["splicing","transport"],"because":{},"pair":{"ch1":"F6","ch2":"F5"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"splicing":"ruled-out","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
     routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
-            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+            "#/$case/step-3" "?t=54.6#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7" "#/$case/step-8")
     ;;
   mb)
     # Neutral review state: both hypotheses unresolved, so no verdict is given away.
-    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["isoform","transport"],"because":{},"pair":{"ch1":"U2","ch2":"U4"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"isoform":"unresolved","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    state='{"steps":8,"visited":[1,2,3,4,5,6,7,8],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei.","interpretation":"Less TDP-43 may reach the nucleus."},"shortlist":["isoform","transport"],"because":{},"pair":{"ch1":"U2","ch2":"U4"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"isoform":"unresolved","transport":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
     routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
-            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+            "#/$case/step-3" "?t=54.6#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7" "#/$case/step-8")
     ;;
   nmj)
     # The climbing vial ends at 16.9 s (the timer runs in real time since 2026-10-16).
     # Neutral review state, as for mb: the one-probe pair S7 + S8 and two hypotheses, both unresolved.
-    state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei and brighter along the axon.","interpretation":"TDP-43 may be held up on its way down the axon."},"shortlist":["transport","isoform"],"because":{},"pair":{"ch1":"S7","ch2":"S8"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"transport":"unresolved","isoform":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
+    state='{"steps":8,"visited":[1,2,3,4,5,6,7,8],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei and brighter along the axon.","interpretation":"TDP-43 may be held up on its way down the axon."},"shortlist":["transport","isoform"],"because":{},"pair":{"ch1":"S7","ch2":"S8"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"transport":"unresolved","isoform":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
     routes=("?t=9.6#/" "?t=16.9#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
-            "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
+            "#/$case/step-3" "?t=54.6#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7" "#/$case/step-8")
     ;;
   *)
     echo "review-shots: unknown case '$case' (expected pdf, mb or nmj)" >&2
@@ -39,7 +39,7 @@ esac
 mkdir -p "$out_arg"
 out="$(cd "$out_arg" && pwd)"
 base="${REVIEW_URL:-http://localhost:8765/}"
-names=(hero step1 step2-brain step2-labels step2-end step3 step4 step5 step6 step7)
+names=(hero step1 step2-brain step2-labels step2-end step3 step4 step5 step6 step7 step8)
 repo="$(pwd)"
 cd "$out"   # playwright-cli writes screenshots relative to where the session was opened
 for theme in light dark; do
@@ -57,8 +57,8 @@ for theme in light dark; do
       sleep "${REVIEW_WAIT:-3}"
       playwright-cli screenshot --filename="${names[$i]}-$theme-$size.png" >/dev/null
     done
-    for st in 3 6; do
-      plot=""; [ "$st" = 6 ] && plot="document.querySelector('.results__toggle').click();"
+    for st in 3 7; do
+      plot=""; [ "$st" = 7 ] && plot="document.querySelector('.results__toggle').click();"
       playwright-cli goto about:blank >/dev/null
       playwright-cli goto "$base#/$case/step-$st" >/dev/null
       sleep "${REVIEW_WAIT:-3}"
@@ -70,7 +70,7 @@ for theme in light dark; do
 done
 playwright-cli kill-all >/dev/null 2>&1 || true
 cd "$repo"
-uv run python - "$out" "${names[@]}" step3-full step6-full <<'PY'
+uv run python - "$out" "${names[@]}" step3-full step7-full <<'PY'
 import sys
 from pathlib import Path
 from PIL import Image, ImageDraw

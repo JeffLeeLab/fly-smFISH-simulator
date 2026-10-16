@@ -1,9 +1,9 @@
 // The Part 1 summary slide (16:9, 1920×1080, light background for white slides), the starting
-// point for Part 2: case, genotypes and a locator for the neurons; the probe pair on the
-// transcript map; mode verdicts; Claim and Uncertainty. One SVG serves as the on-page preview and
-// the copied PNG. Empty fields stay as blank placeholders, so copying always works.
+// point for Part 2: case, genotypes and a locator for the neurons; the question from step 4; the
+// probe pair on the transcript map; mode verdicts; Claim and Uncertainty. One SVG serves as the
+// on-page preview and the copied PNG. Empty fields stay as blank placeholders, so copying always works.
 
-import { MODES } from "./content.js";
+import { MODES, questionParts } from "./content.js";
 import { LIGHT } from "./export.js";
 import { slideMap } from "./map.js";
 import { regionLabel } from "./data.js";
@@ -186,8 +186,16 @@ export function summarySVG({ c, s, date, g, art }) {
   if (art) out.push(locator({ ...art, loc: CASE_LOCATOR[c.id], cells: c.cells, right: W - 80, top: 56 }));
   out.push(`<line x1="80" x2="${W - 80}" y1="256" y2="256" stroke="${P.grid}" stroke-width="2"/>`);
 
-  // the probe pair on the transcript map
+  // the question from step 4, one line across the slide, set like the probe pair's row
   let y = 306;
+  out.push(label(80, y, "QUESTION"));
+  // set as on screen: upright, between large quiet quotation marks, the opening one hung in the margin
+  const [qline] = wrap(questionParts(c).join(""), serifFont(30), W - 80 - 262 - 30, 1);
+  out.push(`<text x="259" y="${y + 13}" text-anchor="end" font-family="${P.serif}" font-size="51" fill="${P.text3}">\u201C</text>`);
+  out.push(`<text x="262" y="${y + 1}" font-family="${P.serif}" font-size="30" fill="${P.text}">${esc(qline).replace(` ${esc(c.target.gene)} `, ` <tspan font-style="italic">${esc(c.target.gene)}</tspan> `)}<tspan dx="2" dy="12" font-size="51" fill="${P.text3}">\u201D</tspan></text>`);
+  y += 54;
+
+  // the probe pair on the transcript map
   out.push(label(80, y, "PROBE PAIR"));
   let kx = 262;
   for (const [k, n] of [["ch1", 1], ["ch2", 2]]) {
@@ -244,7 +252,7 @@ export function summarySVG({ c, s, date, g, art }) {
   const unc = [um, s.uncertainty.why].filter(Boolean).join(": ");
   const fields = [["CLAIM · OUR LEADING EXPLANATION", s.claim], ["UNCERTAINTY · THE STRONGEST REMAINING ALTERNATIVE", unc]];
   let laid;
-  for (const [size, max] of [[34, 3], [30, 3], [27, 4], [24, 4]]) {
+  for (const [size, max] of [[34, 3], [30, 3], [27, 4], [24, 4], [22, 4]]) {
     laid = fields.map(([name, text]) => ({ name, size, lines: text ? wrap(text, serifFont(size), rw, max) : null }));
     const h = laid.reduce((a, f) => a + 44 + (f.lines ? f.lines.length : 2) * f.size * 1.35 + 26, 0) - 26;
     if (top + h - 22 <= bottom) break;

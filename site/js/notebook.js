@@ -1,8 +1,8 @@
 // Lab notebook: a drawer on the right, collapsed to a tab, filled step by step.
-// In step 6 it docks into the side pane as the Compare tab (renderCompare), so there is one
+// In step 7 it docks into the side pane as the Compare tab (renderCompare), so there is one
 // notebook, not two. Everything is stored per browser; nothing is uploaded.
 
-import { CASES, STEPS, MODES, MODE_GROUPS, VERDICTS, groupOf } from "./content.js";
+import { CASES, STEPS, MODES, MODE_GROUPS, VERDICTS, groupOf, question } from "./content.js";
 import { caseState, storage, onChange } from "./store.js";
 import { bind } from "./forms.js";
 import { href } from "./router.js";
@@ -21,10 +21,10 @@ const area = (bindKey, label, placeholder, rows = 3) => `
 export const storageWarning = () => storage.available ? "" : `
   <p class="notice nb-warn" role="status">This browser is blocking storage, so these notes will be lost if the page is refreshed. Copying PNGs still works.</p>`;
 
-// Mode verdict cards (step 6), grouped as on the step 4 cards. Used by the drawer and the compare pane.
+// Mode verdict cards (step 7), grouped as on the step 5 cards. Used by the drawer and the compare pane.
 export function renderModeCards(caseId) {
   const s = caseState(caseId);
-  if (!s.shortlist.length) return `<p class="t-ui t-muted">No modes shortlisted yet. Shortlist them in <a href="${href(caseId, 4)}">step 4</a>.</p>`;
+  if (!s.shortlist.length) return `<p class="t-ui t-muted">No modes shortlisted yet. Shortlist them in <a href="${href(caseId, 5)}">step 5</a>.</p>`;
   return MODE_GROUPS.map(g => {
     const modes = g.modes.filter(m => s.shortlist.includes(m));
     if (!modes.length) return "";
@@ -99,11 +99,12 @@ function drawerBody(caseId) {
     </header>
     ${storageWarning()}
     <div class="nb-body">
+      ${seen(4) ? `<section class="nb-sec yourq" aria-labelledby="nb-q"><h3 class="t-label" id="nb-q">Your question</h3><p class="yourq__text">${question(c)}</p></section>` : ""}
       ${section(3, STEPS[3].title, area("clue.observation", "Observation", "What do you see?", 4), seen(3))}
-      ${section(4, STEPS[4].title, shortlist, seen(4))}
-      ${section(5, STEPS[5].title, probe, seen(5))}
-      ${section(6, STEPS[6].title, renderCompare(caseId), seen(6))}
-      ${section(7, STEPS[7].title, revise, seen(7))}
+      ${section(5, STEPS[5].title, shortlist, seen(5))}
+      ${section(6, STEPS[6].title, probe, seen(6))}
+      ${section(7, STEPS[7].title, renderCompare(caseId), seen(7))}
+      ${section(8, STEPS[8].title, revise, seen(8))}
     </div>`;
 }
 
@@ -120,7 +121,7 @@ function render() {
   unbind();
   offStore();
   const { caseId, step } = current;
-  const docked = step === 6;
+  const docked = step === 7;
   const hidden = !caseId || docked;
   document.body.dataset.notebook = hidden ? (docked ? "docked" : "none") : "drawer";
   if (hidden) {

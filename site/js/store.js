@@ -51,24 +51,33 @@ export function onChange(fn) {
 
 export function blankCase() {
   return {
+    steps: 8,                                       // the numbering `visited` uses (see migrate)
     visited: [],                                    // steps opened at least once
     clue: { observation: "" },                      // step 3
-    shortlist: [],                                  // step 4: mode ids, in card order
-    because: {},                                    // step 4: mode id -> "because…"
-    pair: { ch1: null, ch2: null },                 // step 5: region ids
-    predictions: {},                                // step 5: mode id -> { text, cantTest } (cleared with a new pair)
-    features: "",                                   // retired (was step 5); kept so saved notebooks load
-    results: { observation: "", interpretation: "" },// step 6
-    verdicts: {},                                   // step 6: mode id -> "ruled-out" | "supported" | "unresolved"
-    evidence: {},                                   // step 6: mode id -> one line
-    claim: "",                                      // step 7
-    uncertainty: { mode: "", why: "" },             // step 7
+    shortlist: [],                                  // step 5: mode ids, in card order
+    because: {},                                    // step 5: mode id -> "because…"
+    pair: { ch1: null, ch2: null },                 // step 6: region ids
+    predictions: {},                                // step 6: mode id -> { text, cantTest } (cleared with a new pair)
+    features: "",                                   // retired (was in probe design); kept so saved notebooks load
+    results: { observation: "", interpretation: "" },// step 7
+    verdicts: {},                                   // step 7: mode id -> "ruled-out" | "supported" | "unresolved"
+    evidence: {},                                   // step 7: mode id -> one line
+    claim: "",                                      // step 8
+    uncertainty: { mode: "", why: "" },             // step 8
   };
+}
+
+// Notebooks saved before step 4 (TDP-43 and its targets) was added had seven steps, so their old
+// steps 4–7 are now 5–8. Only `visited` holds step numbers; the rest is keyed by field. The saved
+// copy is left as it is until the next write, so reading it again gives the same answer.
+function migrate(saved) {
+  if (saved.steps === 8 || !Array.isArray(saved.visited)) return saved;
+  return { ...saved, steps: 8, visited: saved.visited.map(n => (n >= 4 ? n + 1 : n)) };
 }
 
 export function caseState(caseId) {
   const saved = read("case:" + caseId);
-  return { ...blankCase(), ...(saved || {}) };
+  return { ...blankCase(), ...migrate(saved || {}) };
 }
 
 export function updateCase(caseId, fn) {

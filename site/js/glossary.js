@@ -24,6 +24,9 @@ const ENTRIES = {
   vnc: ["Ventral nerve cord (VNC)", "The fly’s equivalent of our spinal cord. It lies in the thorax and holds the neurons that move the legs and wings."],
   mn: ["Motor neuron", "A neuron whose axon leaves the nervous system and ends on a muscle; its signals make the muscle contract."],
   labels: ["mCD8::BFP / DAPI", "A blue membrane label expressed only in the labelled neurons / a blue DNA stain that marks nuclei."],
+  rbp: ["RNA-binding protein (RBP)", "A protein that binds particular RNAs and controls what happens to them after they are made."],
+  ptr: ["Post-transcriptional regulation", "Control of an RNA after it has been transcribed: how it is spliced, exported from the nucleus, kept or broken down, moved and translated."],
+  granule: ["RNA granule", "A cluster of mRNAs and RNA-binding proteins with no membrane round it. Granules can carry mRNAs, store them or hold back their translation."],
 };
 ENTRIES.intron = ENTRIES.exon;
 

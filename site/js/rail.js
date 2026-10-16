@@ -8,10 +8,11 @@ import { CASES, STAGES, STEPS, lockReason } from "./content.js";
 import { href } from "./router.js";
 import { currentTheme, toggleTheme } from "./theme.js";
 
+// one line each, so eight steps fit the rail at 1280×720
 const SHORT_REASON = {
-  5: "Needs two shortlisted modes",
-  6: "Needs two probe regions",
-  7: "Needs a verdict for every mode",
+  6: "Needs two modes",
+  7: "Needs a probe pair",
+  8: "Needs every verdict",
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);

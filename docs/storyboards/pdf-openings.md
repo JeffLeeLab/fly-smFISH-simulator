@@ -199,7 +199,7 @@ As built ([descent-frames.png](descent-frames.png)):
 - Each read has time to land before the next; no two reads overlap: yes, see the times above.
 - A transition at every seam: Flip (hero → legend, station → stage), clip wipe and shared fly (assay → descent), matched swap (descent → viewer).
 - Text: captions are 1–2 lines of crisp HTML, never painted into the artwork.
-- The ending rhymes with the opening: the Part 1 summary PNG (step 7) names the pair and echoes the descent with a locator: the fly from the front, its brain enlarged, the Pdf neurons in blue.
+- The ending rhymes with the opening: the Part 1 summary PNG (step 8) names the pair and echoes the descent with a locator: the fly from the front, its brain enlarged, the Pdf neurons in blue.
 
 ## Build notes
 

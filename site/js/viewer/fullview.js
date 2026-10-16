@@ -1,6 +1,6 @@
-// Full screen for the microscope (steps 3 and 6). The bench takes the whole screen on the dark
+// Full screen for the microscope (steps 3 and 7). The bench takes the whole screen on the dark
 // tokens, whatever the theme: the viewer keeps its toolbar, fields and legend, its controls float
-// over the fields' top-right corner (collapsible, remembered per browser), and in step 6 the plot
+// over the fields' top-right corner (collapsible, remembered per browser), and in step 7 the plot
 // drawer comes along under it. The browser goes full screen too where it can; the request is for
 // the root element, so glossary tips and tours, which live on <body>, still show. Where it can't
 // (a phone, or a refused request), the in-page view still hides the site around it.

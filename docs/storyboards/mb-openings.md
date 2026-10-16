@@ -118,7 +118,7 @@ Reduced motion: the labelled oblique mushroom body (end of N) and the "Next: TDP
 - Reads never overlap, and each has time to land: see the times above.
 - A transition at every seam: Flip (station → stage), clip wipe and shared fly (assay → descent), matched swap (descent → viewer).
 - Text: captions are 1–2 lines of HTML, never painted into the artwork.
-- The ending rhymes with the opening: the step 7 summary locator shows the fly from the front, its brain enlarged, the mushroom bodies in blue.
+- The ending rhymes with the opening: the step 8 summary locator shows the fly from the front, its brain enlarged, the mushroom bodies in blue.
 
 ## Build notes
 

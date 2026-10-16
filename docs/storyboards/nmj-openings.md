@@ -20,7 +20,7 @@ Students meet the system as "Leg motor neuron & NMJ" (instructor, 2026-10-16) an
    - *The neuron (proposal):* its part in the VNC follows the chosen MANC skeleton; its part in the leg is drawn along the flybody leg, since MANC stops where the leg nerve leaves the VNC.
    - *Which leg:* it follows the motor neuron chosen from MANC (any of T1, T2 or T3; instructor, 2026-10-13). If MANC offers a clean one, a front leg (T1) is easiest to read in a side view.
 7. **The shortening.** *Proposal:* during the push-in, the middle of the axon gathers behind an ink break symbol (//), and the cell body and synaptic terminals move to their places in the viewer's opening frame. The break symbol belongs to the drawn world and leaves with the paper, so the microscope field stays clean. The axon is simply short there, and the caption has said so. *Alternative:* keep a small break mark on the viewer's axon as an overlay, like the transcript map's intron break marks.
-8. **The step 7 locator** (instructor, 2026-10-13: the view from steps 1–2). The fly in the descent's side view, turned slightly towards us, with its thorax and the chosen leg ringed. Beside it is a framed inset of the VNC and that leg, holding the one motor neuron in blue on one side only, labelled "Leg motor neuron".
+8. **The step 8 locator** (instructor, 2026-10-13, when it was step 7: the view from steps 1–2). The fly in the descent's side view, turned slightly towards us, with its thorax and the chosen leg ringed. Beside it is a framed inset of the VNC and that leg, holding the one motor neuron in blue on one side only, labelled "Leg motor neuron".
 
 ## Whole piece
 
@@ -148,7 +148,7 @@ Reduced motion: the labelled motor neuron (end of N) and the "Next: TDP-43 dysfu
 - Reads never overlap, and each has time to land: see the times above.
 - A transition at every seam: Flip (station → stage), clip wipe and shared fly (assay → descent), matched swap (descent → viewer).
 - Text: captions are 1–2 lines of HTML, never painted into the artwork.
-- The ending rhymes with the opening: the step 7 summary locator shows the fly in the same side view, its thorax and leg ringed, the motor neuron in blue (decision 8).
+- The ending rhymes with the opening: the step 8 summary locator shows the fly in the same side view, its thorax and leg ringed, the motor neuron in blue (decision 8).
 - The tremor survives review: subtle motion can vanish in video compression, so check it on contact sheets and screenshots (`tools/contact-sheet.sh`), not only in recordings.
 
 ## Build notes

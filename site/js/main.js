@@ -20,6 +20,7 @@ const VIEWS = {
   5: () => import("./steps/step5.js"),
   6: () => import("./steps/step6.js"),
   7: () => import("./steps/step7.js"),
+  8: () => import("./steps/step8.js"),
 };
 
 // A case can replace a step's view; the rest are shared.

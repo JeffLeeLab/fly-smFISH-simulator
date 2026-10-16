@@ -1,10 +1,14 @@
-// The step 1 assay narration: two lines that roll up, as in broadcast captions. The newest caption
-// wipes in on the lower line; the one before it moves up, shrinks a little and turns quiet, so a
-// slower reader can finish it while the next one arrives. Later captions are never shown early.
+// The story narration (the step 1 assays, step 4): two lines that roll up, as in broadcast
+// captions. The newest caption wipes in on the lower line; the one before it moves up, shrinks a
+// little and turns quiet, so a slower reader can finish it while the next one arrives. Later
+// captions are never shown early.
 //
 // The upper line is always the caption before the current one in `order`, so frozen (`?t=`),
 // skipped and replayed states are a function of story time, like the rest of the page. Only a
 // single step forward in `order` animates; any other change is set directly.
+//
+// Captions are trusted constant HTML, so they can hold glossary terms (glossary.js). The upper line
+// is hidden from screen readers (they have heard it), so its terms leave the tab order.
 
 export function rollCaption(gsap, box, captions, order, animate) {
   box.innerHTML = `<span class="assay__prev" aria-hidden="true"></span><span class="assay__cap"></span>`;
@@ -28,8 +32,9 @@ export function rollCaption(gsap, box, captions, order, animate) {
     key = next;
     gsap.killTweensOf([prevEl, capEl]);
     gsap.set([prevEl, capEl], { clearProps: "transform,transformOrigin,color,clipPath" });
-    prevEl.textContent = next ? captions[before] ?? "" : "";
-    capEl.textContent = next ? captions[next] : "";
+    prevEl.innerHTML = next ? captions[before] ?? "" : "";
+    prevEl.querySelectorAll("button").forEach(b => { b.tabIndex = -1; });
+    capEl.innerHTML = next ? captions[next] : "";
     if (!next || !animate) return;
     if (rolls) {
       const dy = from - prevEl.getBoundingClientRect().top;

@@ -1,13 +1,13 @@
 ---
 version: 1
-slug: "site-js-steps-step5-js"
-primary_target: "site/js/steps/step5.js"
+slug: "site-js-steps-step6-js"
+primary_target: "site/js/steps/step6.js"
 related_targets: ["site/js/map.js","site/css/app.css"]
 ---
 
-# Step 5: Target & probe design
+# Step 6: Probe design (step 5, "Target & probe design", until 2026-10-16)
 
-Scope: the step 5 screen (#/<case>/step-5), every case. Visitor mode: Operate. A final-year group at a 1280×720 laptop picks two probe regions on a real FlyBase transcript map, may write predictions for that pair, and opens the results. Results stay one click away (predictions are optional); the map drawing is in scope; the "features" field is removed (from step 5 and the notebook drawer).
+Scope: the step 6 screen (#/<case>/step-6; built as step 5), every case. Visitor mode: Operate. A final-year group at a 1280×720 laptop picks two probe regions on a real FlyBase transcript map, may write predictions for that pair, and opens the results. Results stay one click away (predictions are optional); the map drawing is in scope; the "features" field is removed (from step 5 and the notebook drawer).
 
 ## Direction contract
 

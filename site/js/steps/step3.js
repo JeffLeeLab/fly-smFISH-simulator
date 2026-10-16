@@ -27,13 +27,13 @@ export async function mount(root, ctx) {
         <div id="viewer"></div>
       </section>
       <aside class="bench__side" aria-label="Notebook: step 3">
-        <p class="t-body">Look at TDP-43 protein (${term("if", "IF")}) in both genotypes. Write down what you see.</p>
+        <p class="t-body"><span class="nw">TDP-43</span> is an <span class="nw">${term("rbp", "RNA-binding protein")}.</span> Look at TDP-43 protein (${term("if", "IF")}) in both genotypes. Write down what you see.</p>
         <div id="controls"></div>
         ${storageWarning()}
         <label class="field"><span class="field__label">Observation</span>
           <textarea class="textarea" rows="4" data-bind="clue.observation" placeholder="What do you see?"></textarea>
           <span class="field__hint">Example: “In the control, TDP-43 protein is mostly in the nucleus.”</span></label>
-        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 4)}">Next: hypotheses</a></p>
+        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 4)}">Next: TDP-43 and its targets</a></p>
       </aside>
     </div>`;
 

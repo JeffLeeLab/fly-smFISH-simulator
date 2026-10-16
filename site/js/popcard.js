@@ -1,4 +1,4 @@
-// A help card on a trigger (step 5's "How two-colour smFISH works", step 6's probe map): hovering
+// A help card on a trigger (step 6's "How two-colour smFISH works", step 7's probe map): hovering
 // or keyboard focus opens it, a click (or Enter) keeps it open, and Esc, its close button or a
 // click elsewhere hides it. Fixed to the viewport, under its trigger or, when there is more room,
 // above it; kept inside the workbench (clear of the notebook tab) and no further left than the

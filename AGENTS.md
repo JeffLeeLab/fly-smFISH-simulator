@@ -25,11 +25,11 @@ Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock 
 - `PRODUCT.md`: users, purpose, constraints, brand, accessibility minimums.
 - `docs/spec.md` (about 870 lines; read only the section you need):
   - *Introduction*: the biology, PTR modes, and the case truth tables (the instructor answer key) under *Simulations*.
-  - *Part 1 › Implementation spec*: Architecture, Transcript models and probe menus, Geometry references, Simulation parameters, Rendering stack, Visual design and navigation (art direction, theme, rail, notebook, layouts, plot, export), Openings (steps 1–2), Steps 3–4, Steps 5–7, Motion principles, Viewer features, Image realism model, Student-facing text (gene cards, glossary), Hosting and offline use.
+  - *Part 1 › Implementation spec*: Architecture, Transcript models and probe menus, Geometry references, Simulation parameters, Rendering stack, Visual design and navigation (art direction, theme, rail, notebook, layouts, plot, export), Openings (steps 1–2), Steps 3–5, Steps 6–8, Motion principles, Viewer features, Image realism model, Student-facing text (gene cards, glossary), Hosting and offline use.
   - *Part 2*, *Future implementation ideas*.
 - `DESIGN.md`: the design system as built (YAML tokens, then components and do's and don'ts). The frozen direction is `docs/style-directions/tokens.css` and `Style directions review.md`; where DESIGN.md disagrees with the tokens, the tokens win.
 - `docs/storyboards/<case>-openings.md`: steps 1–2 for each case, with "As built" notes.
-- `docs/storyboards/targets-step.md`: the planned new step 4, "TDP-43 and its targets" (not built yet). Its end-frame mock-up is `docs/mockups/step4-targets-endframe.html`, drawn by `docs/mockups/step4-targets-neuron.py`.
+- `docs/storyboards/targets-step.md`: step 4, "TDP-43 and its targets" (built 2026-10-16, its animation redesigned the same day and slowed down on 2026-10-17; "As built", "Redesign" and "Revisions" at the end). Its end-frame mock-up is `docs/mockups/step4-targets-endframe.html`, drawn by `docs/mockups/step4-targets-neuron.py`; the live drawing is `site/js/mrnalife.js`.
 - `docs/transcript_models_R6.json`: transcript models and probe menus, including the answer-key fields.
 - `docs/review.md`: one entry per review run. `docs/references/`: reference packs, compartment sketches, gene models. `docs/mockups/` and `docs/style-directions/`: design records.
 
@@ -38,12 +38,12 @@ Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock 
 **site/** (the served app)
 - `index.html` loads only `js/main.js`; an importmap points PixiJS at `vendor/`.
 - `js/main.js`: app shell (rail, notebook, views). Its `VIEWS` and `CASE_VIEWS` choose each step's module; `js/router.js` only parses `#/<case>/step-<n>`.
-- `js/steps/`: one module per step. Steps 1–2 differ by case: `step1.js` and `step2.js` are Pdf (the default), replaced by `mb-step*.js` and `nmj-step*.js`. Steps 3–7 are shared and read the case's data. `landing.js` is `#/`; `locked.js` shows the reason from `lockReason()` in `content.js`.
+- `js/steps/`: one module per step. Steps 1–2 differ by case: `step1.js` and `step2.js` are Pdf (the default), replaced by `mb-step*.js` and `nmj-step*.js`. Steps 3–8 are shared and read the case's data: `step3.js` TDP-43 dysfunction, `step4.js` TDP-43 and its targets, `step5.js` hypotheses, `step6.js` probe design, `step7.js` microscopy reveal, `step8.js` interpret & revise. `landing.js` is `#/`; `locked.js` shows the reason from `lockReason()` in `content.js`.
 - `js/viewer/`: `viewer.js` (split and flicker viewer, the only PixiJS import), `controls.js` (channels, LUTs, brightness), `fullview.js` (full screen, steps 3 and 6), `gl.js` (WebGL 2 check and fallback), `textures.js`.
-- Student-facing text: `content.js` (cases, steps, stages, mode cards, lock rules), `glossary.js` (`ENTRIES`), `summary.js` (Part 1 summary slide and locator text), `notebook.js` (drawer labels). Story prose and headings are inline in `steps/*.js`.
+- Student-facing text: `content.js` (cases, steps, stages, mode cards, lock rules, the step 4 target text and `question()`), `glossary.js` (`ENTRIES`), `summary.js` (Part 1 summary slide and locator text), `notebook.js` (drawer labels). Story prose and headings are inline in `steps/*.js`.
 - State: `store.js` owns localStorage (`smfish:v1:`, per case); `theme.js` uses `smfish:theme`.
-- Data and results: `data.js` (`loadJSON`, `transcripts()`, `regionLabel()`), `map.js` (transcript map), `results.js` (step 6 SuperPlot from `tables.json`), `export.js` (PNG).
-- Story layer: `fly.js` (sprites, ink boil), `gsap.js` (loads the vendored GSAP), `caption.js`, `handoff.js` (elements carried across a route change), `stations.js` (landing), `brain.js` (descent); per case `monitor.js` (`pdf`), `tmaze.js` and `mbanatomy.js` (`mb`), `vial.js` (`nmj`).
+- Data and results: `data.js` (`loadJSON`, `transcripts()`, `regionLabel()`), `map.js` (transcript map), `results.js` (step 7 SuperPlot from `tables.json`), `export.js` (PNG).
+- Story layer: `fly.js` (sprites, ink boil), `gsap.js` (loads the vendored GSAP), `caption.js`, `handoff.js` (elements carried across a route change), `stations.js` (landing), `brain.js` (descent), `storycam.js` (the step 4 camera: the SVG viewBox as a function of time, labels in screen space), `mrnalife.js` (the step 4 neuron, also drawn small beside the hypotheses); per case `monitor.js` (`pdf`), `tmaze.js` and `mbanatomy.js` (`mb`), `vial.js` (`nmj`).
 - UI helpers: `popcard.js` (help cards), `tour.js` (once-per-browser tours), `forms.js` (fields bound to the store), `icons.js`, `prng.js` (seeded, so animations replay identically).
 - `css/`: `tokens.css` (the live tokens: the frozen set plus `--text-3` and the odour colours), `base.css`, `app.css` (layouts, per-case animation), `fonts.css`.
 - `data/` and `textures/`: generated (below); never edit by hand.
@@ -60,7 +60,7 @@ The site reads only `site/data/`. Commit the output: the Pages workflow regenera
 
 1. `generator.connectome_<case>` (`mb` and `nmj`, once): downloads MaleCNS data into `data/<case>/connectome/`, not committed.
 2. `generator.public_models`: transcript maps without the answer key.
-3. `generator.geometry_<case>`: six geometry files, plus `site/data/<case>/anatomy.json` for `mb` and `nmj` (the descent; for `nmj` also the step 7 locator). For those two, add `--sketch docs/references/<case>-compartment-sketch.png` for the compartment sketch.
+3. `generator.geometry_<case>`: six geometry files, plus `site/data/<case>/anatomy.json` for `mb` and `nmj` (the descent; for `nmj` also the step 8 locator). For those two, `--sketch docs/references/<case>-compartment-sketch.png` redraws the compartment sketch; that run writes only the sketch, so run the script again without it for the data.
 4. `generator.truth_table <case>`: expands `data/<case>/truth-table.toml`.
 5. `generator.build <case>`: chooses animals, places molecules, renders images, writes tables (1–2 minutes).
 6. `generator.validate <case> --signed`: the gate; fails on any mismatch or an unsigned truth table.

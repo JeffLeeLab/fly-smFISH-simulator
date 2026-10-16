@@ -1,4 +1,4 @@
-// Step 6 results: the SuperPlot, read from the pre-computed tables (site/data/<case>/tables.json),
+// Step 7 results: the SuperPlot, read from the pre-computed tables (site/data/<case>/tables.json),
 // so the validation gate covers everything shown. Exact values appear on hover and in a table
 // for screen readers.
 // SuperPlot (Lord et al. 2020): sub-units (cells) as faint small points, the 3 animal means as

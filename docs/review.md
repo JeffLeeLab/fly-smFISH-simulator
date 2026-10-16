@@ -328,3 +328,95 @@ The instructor reworded the opening and the first two steps for all three cases,
 | 4 | Opening budget, leg motor neuron | The real-time timer took the opening to 41.9 s. | Fixed: the end of the climb is tightened, so the opening runs 40.5 s (instructor accepted). |
 | 5 | Step 2 story text, Pdf | The draft said the terminals are "most fasciculated" at ZT2, which reverses Fernández et al. 2008. | Fixed: "most branched at ZT2" (instructor). |
 | 6 | Descent stage | Removing the in-stage Next left the caption hugging the window's bottom edge. | Fixed: the caption takes the bottom padding. |
+
+## 2026-10-16: step 4, "TDP-43 and its targets", and the eight-step flow (instructor)
+
+A new step 4 bridges the TDP-43 observation and the hypotheses (storyboard `docs/storyboards/targets-step.md`, with its *As built* section). Hypotheses move to step 5, probe design to step 6 (renamed from "Target & probe design"), the reveal to step 7 and Interpret & revise to step 8.
+- **Step 4:** a 25.2 s drawing of the life of a target mRNA in a fly neuron, TDP-43 at each station (`site/js/mrnalife.js`, `site/js/steps/step4.js`), six roll-up captions with three new glossary hovers, then the case's target as a candidate and the question "Which steps in the life of *gene* mRNA go wrong when TDP-43 carries the ALS mutation?".
+- **Carried forward:** the question heads the hypotheses' side pane (with a small copy of the drawing whose stations light up when a card is hovered or focused), sits above the step 8 Claim, is a row on the summary slide and heads the notebook drawer.
+- **Elsewhere:** step 3 says that TDP-43 is an RNA-binding protein; the hypotheses prompt and the "because…" placeholder are reworded; probe design has a line on what smFISH shows; the rail's lock reasons are one line each; old notebooks are migrated (visited steps 4–7 become 5–8).
+
+**Checks.**
+- **Walk:** steps 1–8 in all three cases with no console messages. The three gates lock, name the step that fixes them ("Go to step 5: Hypotheses" and so on) and show the short rail reasons.
+- **Rail:** fits 1280×720 in all three cases, with and without the lock reasons (the leg motor neuron's two-line name included).
+- **Step 4:** contact sheets at the storyboard times and full-resolution crops of 18 frames; `?t=25.2` equals the reduced-motion frame (no pixel differs by more than 8 levels); 60 fps through playback; motion in every sampled frame of the stage (the boil holds the end frame live); Skip and Replay work; Next ends at 713 px at 1280×720 in all three cases.
+- **Hypotheses:** no page or pane scroll at 1280×720 (the main column still scrolls a little with two cards open, as before; the new prompt is a line shorter). Hovering a card, and focusing each card in turn, rings the right stations (isoform- and cell-type-specific none); leaving clears them.
+- **Probe design:** the map fits its column in all three cases and both themes at 1280×720.
+- **Migration:** an old notebook (`visited` 1–7, no `steps`) shows steps 1–3 and 5–8 done and step 4 to do, and is saved with `steps: 8` on the next write.
+- **Summary PNG:** a long Claim and Uncertainty fit in all three cases.
+- **Data:** `generator.validate --signed` passes for pdf (2712 checks), mb (3788) and nmj (2795). `site/data` changes only in the nmj anatomy note ("step 8 locator"). Every resource on step 4 is local.
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj (now 11 states plus two full screens, steps 3 and 7), inspected.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 4, frame 0 | One free TDP-43 crossed the close-up's top edge and the other sat on the "…UGUGUGUG…" text. | Fixed: both start above the target strand, inside the box. |
+| 2 | Step 4, transport arrow | Drawn as one path, the arrowhead appeared before the shaft was done. | Fixed: the shaft draws, then the head. |
+| 3 | Probe design, 1280×720 | The new smFISH line pushed the map column into scrolling (mb 41 px, nmj 23 px, pdf 5 px) and the help link below the fold. | Fixed (instructor's choice): the map's minimum row pitch is 26 px instead of 32. |
+| 4 | Steps 7–8, read-only maps | They start at the minimum pitch, so #3 would have tightened them too. | Fixed: maps start at 32 px; only a fitted map goes down to 26. |
+| 5 | Summary slide | The question at the top of the right column pushed a long Claim and Uncertainty into the footer. | Fixed (instructor's choice): the question is its own row above the probe pair; the claim sizes go down to 22 px. |
+| 6 | Hypotheses prompt | "TDP-43" broke at its hyphen. | Fixed: no break inside "TDP-43" or a hyphenated gene name. |
+| 7 | Step 4 target text, probe design line | An italic gene name ran into the roman word after it ("*unc-13* a"). | Fixed: a small italic correction. |
+| 8 | `generator.geometry_nmj --sketch` | The plan's command only redraws the sketch; it doesn't write the geometry. | Ran the script without `--sketch` as well; AGENTS.md now says so. |
+| 9 | Step 3 side pane (review set, mb and nmj) | The full stop after the new "RNA-binding protein" hover wrapped onto a line of its own: a glossary button breaks like one box. | Fixed: the hover and its punctuation stay together, here and after the hypotheses prompt's hover. Older hovers followed by punctuation (step 2 story text, the landing) are unchanged. |
+
+## 2026-10-16: step 4 redesigned in the descent's motion language; roll-up fix (instructor)
+
+The instructor asked for four changes to the new step 4:
+- fix the stage's "beat" at each caption change;
+- drop the TDP-43 symbol beside the question;
+- redesign the animation from scratch in the step 2 descent's motion language (lines drawn on; elements, labels and particles coming together gradually; the ink boil only on the final still);
+- rename the station "RNA granule" to "RNA transport granule".
+
+The storyboard's new *Redesign* section (`docs/storyboards/targets-step.md`) has the motion language, the shot list (25.4 s) and the reasons. The code is `site/js/storycam.js` (new) and `site/js/steps/step4.js` (rewritten); `mrnalife.js` gained class hooks and the travelling tube, and still draws the same end frame.
+
+**Checks.**
+- **Roll-up:** a per-frame log of the page's width against the window's through three rolls on step 4 and on step 1 (pdf, mb and nmj), at 1280×720 and 1920×1080: no overflow frames (48–54 before).
+- **Contact sheets:** stage crops at about 30 times across A–H at 1280×720, the growth (B) at 1920×1080, and close sheets of the granule crossing into the axon.
+- **End frame:** `?t=25.4` equals the drawing as written (`lifeSVG()` swapped in unanimated: no pixel differs) and the reduced-motion frame (no pixel differs).
+- **Filters:** off on every filtered group from A to G and on from 24.4 s. Skip starts the boil; Replay and leaving the page stop it.
+- **Frame rate:** 60 fps through playback at 1280×720 and 1920×1080 (no frame over 16.8 ms). The first run in a fresh browser had three one-off frames of 230–300 ms.
+- **Recording:** a live recording run through `tools/frozen-time.sh`. Since its whole-frame mean misses small motions, changed pixels were also counted inside the stage frame by frame: there is no still stretch during the journey.
+- **Every case and theme:** Next ends at 713 px at 1280×720 in all three cases, light and dark. The journey labels read in the dark theme, and stay on their anchors after a resize mid-journey. The hypotheses' small drawing is unchanged and its rings still light. No console messages.
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj (step 4's end frame is now `?t=25.4`), inspected.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Steps 1 and 4, caption roll-up | The rolled-up line starts scaled up from its left edge, so for about 0.25 s it reached 151 px (1280) or 293 px (1920) past the right edge. With classic scrollbars a scrollbar flashed, and the full-width stage shrank and grew back: the "beat". | Fixed: the caption box clips sideways (`overflow-x: clip`; not `hidden`, since the outgoing line rises above the box). |
+| 2 | Step 4, camera | Zooming the viewBox with the ink and rim filters on gave frames of up to 233 ms (measured before the build). | Fixed by design: no filter while the camera moves; the ink and the rim come on at the still. |
+| 3 | Step 4, the new frame | The fixed-ratio wrapper (`aspect-ratio`) rounded the drawing's height down by a fraction of a pixel. That scaled the whole drawing by 0.006%, and crisp lines antialiased differently from the drawing as written. | Fixed: the SVG stays in the page flow. Its width and height attributes fix its shape, so a moving viewBox can't re-lay out the page. |
+| 4 | Step 4, export (D) | The finished mRNA's TDP-43 started on top of a nuclear TDP-43. | Fixed: the mRNA starts 6 units lower and lines up with the pore before it leaves. |
+| 5 | Step 4, camera stops | The nucleus stop cut the looped intron or the lower envelope; the cell-body stop cut the cell body's lower edge. | Fixed: the stops were moved and enlarged (storyboard *Details settled at build*). |
+| 6 | Step 4, granule crossing into the axon | The two shapes' swellings crossed at the axon's base and left a kink for about 0.2 s. A hand-over between them still left a corner. | Fixed: while the granule travels, the neurite and the axon are drawn as one tube. |
+| 7 | Step 4, journey labels | Most were up for under a second. | Fixed: each stays until its camera move starts, and fades as the camera moves on. |
+| 8 | Step 4, the old end frame | Diffed against the new one, the old end frame differed on crisp lines: GSAP had left 100% dash arrays and identity matrices on the parts it drew. | Superseded: the new step writes the markup's own values back at the end. |
+| 9 | Step 4, growth (B) | The last compartment name, "Terminals", was fully on screen for only about 0.25 s before the names left. | Fixed: the names come in from 5.3 s. |
+
+## 2026-10-17: step 4 slowed down; drawing, labels, panels and the question's style (instructor)
+
+The instructor asked for these changes in all three cases (storyboard *Revisions (2026-10-17)*):
+- the journey slowed so students can read it (25.4 s → 54.6 s);
+- the neurite's dendrites removed;
+- "SYNAPTIC TERMINALS" and "non-target RNA";
+- both panel headings at 22 px;
+- the question upright between hanging quotation marks wherever it appears;
+- the side note right-aligned;
+- "Stathmin (*stai*, STMN2 in humans)";
+- a few TDP-43 molecules in the cytoplasm, by translation and decay, in the axon and in a terminal.
+
+The instructor chose the quotation style, its use everywhere, and the gene name for *stai* only.
+
+**Checks.**
+- **Contact sheet:** 30 frames across the new timeline (nmj, 1280×720). Each station holds with its caption and label. The camera pushes in slowly through each hold. The new TDP-43 arrive in their own shots.
+- **End frame:** `?t=54.6` equals the drawing as written and the reduced-motion frame (no pixel differs in either comparison).
+- **Frame rate:** 60 fps through the whole 54.6 s at 1920×1080 (no frame over 16.8 ms).
+- **Layout:** Next ends at 708 px at 1280×720 in all three cases and both themes (713 before; the target heading is smaller). "SYNAPTIC TERMINALS" clears the Schematic tag, and "non-target RNA" clears its strand.
+- **The question elsewhere:** checked in the hypotheses pane, the notebook drawer and step 8. On the summary slide it still fits one line in every case (its right edge is at 1365–1408 of 1840).
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj (step 4 at `?t=54.6`), inspected.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 4, close-up | "non-target RNA" is 95 units long and would have run into the strands' 5′ ends at x 420. | Fixed: the strands start at x 450; the sequences and the bound TDP-43 moved with them. |
+| 2 | Step 4, "SYNAPTIC TERMINALS" | Centred where "TERMINALS" was (x 836), it overlapped the Schematic tag by about 6 units at 1280×720. | Fixed: centred at x 818. |
+| 3 | Step 4, TDP-43 | Four new molecules in the cytoplasm would have outnumbered the nucleus (five), against "enriched in the nucleus". | Fixed: three more in the nucleus (eight there in all). |
+| 4 | Summary slide | The slide's palette had no quiet text grey for the quotation marks. | Added `text3` (#66655F, the light theme's `--text-3`) to `LIGHT` in `export.js`. |
+| 5 | Docs (Haiku's edit) | The *stai* inserted into the spec and storyboard rows was in roman. | Fixed: italic, as gene names are in the docs. The mock-up page (`docs/mockups/step4-targets-endframe.html`) keeps the old text: it is a design record. |

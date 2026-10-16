@@ -1,4 +1,4 @@
-// Transcript map with the probe track (step 5), drawn as SVG from the public transcript models.
+// Transcript map with the probe track (step 6), drawn as SVG from the public transcript models.
 // Every gene runs 5′→3′ left to right. Introns are compressed by default (under 300 nt stay at
 // exon scale; longer ones get a log width, at most 40% of the map, with a break mark and their
 // true length); "To scale" shows true proportions with a 2 kb bar. Monochrome until probes are
@@ -6,7 +6,7 @@
 // channel is free, hovering or focusing a region previews it in that channel's ink. The map is
 // drawn at its column's pixel width (one SVG unit per CSS pixel, so its text keeps its size) and
 // redrawn when the column changes width. Given a column to fill (fitTo), the isoform rows spread
-// out and the exons thicken to use its height, within limits. Read-only (step 6's probe-map card):
+// out and the exons thicken to use its height, within limits. Read-only (step 7's probe-map card):
 // the same drawing with the pair in its inks, but the regions can't be chosen.
 // Ported from docs/mockups/step5-target-probe-map.html.
 
@@ -86,7 +86,9 @@ function buildAxis(g, width, scale) {
   return { map, gaps: segs.filter(s => s.gap), d0, d1 };
 }
 
-const RH_MIN = 32, RH_MAX = 52;   // isoform row pitch, px
+// isoform row pitch, px: maps start at 32; one fitted to its column goes up to 52, or down to 26
+// (the mushroom body's seven isoforms under the probe-design line at 1280×720)
+const RH_START = 32, RH_MIN = 26, RH_MAX = 52;
 
 export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly = false }) {
   // the name gutter fits the longest isoform name (Plex Mono 12px: 7.2px a character) or the
@@ -95,7 +97,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
   for (const k in g.overlapping_same_strand_genes) for (const t of g.overlapping_same_strand_genes[k]) names.push(t.name);
   const LW = Math.ceil(Math.max(62, ...names.map(n => n.length * 7.2))) + 16;
   const nRows = names.length;
-  let RH = RH_MIN;
+  let RH = RH_START;
   const state = { scale: "comp", pair: { ch1: null, ch2: null } };
   host.classList.add("tmap");
   host.innerHTML = `
@@ -318,7 +320,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
     if (b) { state.scale = b.dataset.scale; render(); }
   });
 
-  // the row pitch grows to fill fitTo's height (less a little air), between RH_MIN and RH_MAX;
+  // the row pitch fits fitTo's height (less a little air), between RH_MIN and RH_MAX;
   // the drawing's height is linear in the pitch, so one step lands it
   let fitting = false;
   function fit() {
@@ -343,7 +345,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
   };
 }
 
-// The probe strip (step 6 header): the map's rows in its compressed coordinates, drawn small and
+// The probe strip (step 7 header): the map's rows in its compressed coordinates, drawn small and
 // without names or the probe track; the pair's two regions are ink bands under a bracket and ID.
 // Drawn at `width` px; returns the height used.
 export function drawStrip(svg, g, pair, width) {

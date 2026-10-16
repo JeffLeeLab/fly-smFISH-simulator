@@ -793,7 +793,7 @@ def anatomy():
     edge = np.asarray(ctx["vnc_edge"])
 
     return {
-        "note": "The leg motor neuron descent (step 2) and the step 7 locator. World: the turned side-view fly drawing's units x 10 = µm, "
+        "note": "The leg motor neuron descent (step 2) and the step 8 locator. World: the turned side-view fly drawing's units x 10 = µm, "
                 "thorax at 0,0, x towards the head, y down. The motor neuron is MaleCNS v0.9 body " + str(c["id"]) + " (" + str(c["type"]) +
                 "), mirrored to the right side; its path down the leg is drawn along the flybody front leg. Viewer outlines are in the "
                 "geometry's µm, placed in the world at viewer.at.",

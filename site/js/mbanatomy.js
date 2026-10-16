@@ -1,4 +1,4 @@
-// The mushroom body in the brain (the descent and the step 7 locator): where the left one sits in
+// The mushroom body in the brain (the descent and the step 8 locator): where the left one sits in
 // brain.js's µm, how much larger it is drawn in the whole brain, and the projection of the 30
 // simulated Kenyon cells (site/data/mb/anatomy.json) as in generator/connectome_mb.project.
 
