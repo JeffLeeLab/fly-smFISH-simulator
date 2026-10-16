@@ -15,8 +15,10 @@ import { tubeFly } from "../monitor.js";
 import { VB, LANES, H, FLY_H, LINE, VW, FLOOR, vialMarkup, impactMarkup, labelMarkup, counterMarkup, indexMarkup,
   laneFlies, ambientPose, climbPose, liftAt, impactFlash, aboveCount, timerAt, poseTransform } from "../vial.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
+import { rollCaption } from "../caption.js";
 
 const G_END = 3.5;
+const CAP = { i: 3, i2: 7 };   // H-time each caption takes over: every caption is up for at least 3 s
 const ID = "step";
 
 const CAPTIONS = {
@@ -33,7 +35,7 @@ export async function mount(root, ctx) {
   root.innerHTML = `
     <div class="story story--assay">
       <p class="t-label story__eyebrow">Introduction · Step 1</p>
-      <h1 class="t-h1">Climbing vial</h1>
+      <h1 class="t-h1">Locomotion: climbing assay</h1>
       <div class="stage stage--assay">
         <svg class="assay climb" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="Two climbing vials seen from the front, side by side: hTDP-43 WT on the left and the ALS mutant on the right, ten flies in each, with a finish line 5 cm up. The vials are tapped on the bench together three times, so every fly falls to the bottom; then a timer runs for 10 seconds while the flies climb the walls. Eight of ten WT flies pass the line, a climbing index of 0.8. The mutants climb slowly, slip back, one falls, and their legs shake: two of ten pass the line, a climbing index of 0.2.">
           ${LANES.map(l => `<text class="scene-label lane-label" x="${l.cx + l.out * (VW / 2 + 16)}" y="40" text-anchor="${l.out < 0 ? "end" : "start"}">${l.label}</text>`).join("")}
@@ -47,19 +49,19 @@ export async function mount(root, ctx) {
         </svg>
         <span class="tag-sim assay__tag">Simulated data</span>
       </div>
-      <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
+      <p class="assay__caption" aria-live="polite"></p>
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Tap the flies down</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the fly</a>
         <button class="btn btn--quiet" type="button" data-act="skip">Skip</button>
         <button class="btn btn--quiet" type="button" data-act="replay" hidden>Tap them down again</button>
       </div>
-      <p class="t-story t-muted">Flies climb upwards by instinct. Tapped to the bottom of a vial, they turn and climb the wall within a second. In the climbing assay the vials are tapped down, and after a set time the flies above a line are counted; climbing declines with age and in many fly models of motor neuron disease. Each vial here holds ten flies, as on the bench, and the timer runs a little fast.</p>
+      <p class="assay__note"><span class="t-label run-in">Climbing assay</span> Flies climb upwards by instinct. Tapped to the bottom of a vial, they turn and climb the wall within seconds. In this assay, the vials are tapped down, and after a set time the flies above a finish line are counted; climbing declines with age and in many fly models of motor neuron disease. Each vial here holds ten flies.</p>
     </div>`;
 
   const stage = root.querySelector(".stage--assay");
   const svg = root.querySelector(".climb");
-  const capEl = root.querySelector(".assay__cap");
+  const capBox = root.querySelector(".assay__caption");
   const ends = root.querySelectorAll(".assay__end");
   const btn = { start: root.querySelector("[data-act=start]"), skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
   const handRect = takeHandOff("vial");
@@ -101,7 +103,7 @@ export async function mount(root, ctx) {
   tlG.fromTo(q(".vial-labels text"), { autoAlpha: 0, y: 4 }, { autoAlpha: 1, y: 0, duration: 0.3, stagger: 0.35 }, 0.8)
     .to({}, { duration: 0.01 }, G_END - 0.01);
 
-  // ---------- H–J: the taps, the climb, the climbing index, the way on (11.8 s) ----------
+  // ---------- H–J: the taps, the climb, the climbing index, the way on (13.4 s) ----------
   const tlH = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
   tlH.fromTo(q(".counter, .climb-timer"), { autoAlpha: 0, y: 4 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 0.3)
     .fromTo(q(".ci-formula"), { autoAlpha: 0, y: 4 }, { autoAlpha: 1, y: 0, duration: 0.35 }, H.index)
@@ -116,13 +118,7 @@ export async function mount(root, ctx) {
   let phase = "g", tClick = G_END;
   const t0 = performance.now();
   const clock = () => (frozen != null ? Math.min(frozen, G_END) : still ? G_END : (performance.now() - t0) / 1000);
-  let capKey = "";
-  const setCaption = key => {
-    if (key === capKey) return;
-    capKey = key;
-    capEl.textContent = key ? CAPTIONS[key] : "";
-    if (key && frozen == null && !still) gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" });
-  };
+  const setCaption = rollCaption(gsap, capBox, CAPTIONS, Object.keys(CAPTIONS), frozen == null && !still);   // CAPTIONS is in story order
   // each fly falls from where it was when the vials were picked up
   const takeOrigins = tc => lanes.forEach(l => l.flies.forEach(f => { f.origin = f.last || ambientPose(l, f, tc, l.g, l.stride, l.frames); }));
   function startTapping(tc) {
@@ -161,7 +157,7 @@ export async function mount(root, ctx) {
       setCaption(tlG.time() >= 0.8 ? "g" : "");
     } else {
       tH = endedAt != null && frozen == null && !still ? H.end + (performance.now() - endedAt) / 1000 : tlH.time();
-      setCaption(tH < H.run ? "h" : tH < 4.4 ? "i" : tH < H.stop ? "i2" : "j");
+      setCaption(tH < CAP.i ? "h" : tH < CAP.i2 ? "i" : tH < H.stop ? "i2" : "j");
     }
     const tWall = phase === "g" ? clock() : tClick + (tH ?? 0);
     const lift = tH == null ? 0 : liftAt(tH), flash = tH == null ? 0 : impactFlash(tH);

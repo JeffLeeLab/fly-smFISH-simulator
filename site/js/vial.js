@@ -27,11 +27,12 @@ const LOCAL = 7;                               // a fly at rest wanders this far
 export const N_FLIES = 10;
 
 // H-time (seconds after "Tap the flies down"): three taps, the fall, the righting, then the timer
-// runs 0 → 10 s in 7 s (decision 2: time runs 1.43× fast; Simplified), and the index builds.
+// runs 0 → 10 s in real time (instructor, 2026-10-16; decision 2 had it 1.43× fast), and the index builds
+// as soon as it stops, so the opening stays near its 40 s budget.
 export const H = {
   taps: [0, 0.36, 0.72], up: 0.12, down: 0.08,
-  right: [0.95, 1.35], run: 1.4, rate: 10 / 7, timer: 10,
-  stop: 8.4, index: 8.7, rest: 10.6, next: 10.8, end: 11.8,
+  right: [0.95, 1.35], run: 1.4, rate: 1, timer: 10,
+  stop: 11.4, index: 11.4, rest: 12.6, next: 12.8, end: 13.4,
 };
 export const impactAt = k => H.taps[k] + H.up + H.down;
 

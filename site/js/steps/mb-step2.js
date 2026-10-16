@@ -116,11 +116,11 @@ export async function mount(root, ctx) {
           <div class="descent__bg" aria-hidden="true"><i class="bg-grey"></i><i class="bg-charcoal"></i><i class="bg-black"></i></div>
           <div class="descent__title"><p class="t-label">Introduction · Step 2</p><h1 class="t-h1">Anatomy</h1></div>
           <div class="descent__scene">
-            <div class="descent__viewer" aria-hidden="true">
-              <p class="descent__vtop">Simulated confocal images · membrane + DAPI</p>
+            <div class="descent__viewer">
+              <p class="descent__vtop" aria-hidden="true">Simulated confocal images · membrane + DAPI</p>
               ${["hTDP-43 WT", "hTDP-43 mutant"].map((l, i) => `
-                <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
-              <p class="descent__vbar">${ctx.case.anatomy?.projection || "Oblique maximum-intensity projection (simulated data)"}</p>
+                <div class="descent__field" data-field="${i}" aria-hidden="true"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
+              <p class="descent__vbar">${(ctx.case.anatomy?.projection || "Oblique maximum-intensity projection (simulated data)").replace("maximum-intensity projection", term("mip", "maximum-intensity projection"))}</p>
             </div>
             <svg class="descent__svg" role="img" aria-label="An hTDP-43 WT fly from the T-maze turns to face us; we push into its head, where the brain appears with the mushroom bodies in blue on both sides, growing from their cell bodies along an axon bundle into the lobes. The left one turns to an oblique view while we close in on it: cell bodies, axon bundle and lobes. It ends as two microscope fields: WT left, mutant right.">
               <defs>
@@ -155,15 +155,12 @@ export async function mount(root, ctx) {
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
-          <div class="descent__controls">
-            <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a>
-          </div>
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">Each mushroom body holds about 2,000 Kenyon cells. Their cell bodies sit in a cap at the back of the brain. Each cell sends out one neurite: it first branches into dendrites, where the cell receives its input, then runs on as an axon, bundled with all the others, to the lobes, where its synapses are. The lobes come in three systems (α/β, α′/β′ and γ), each made by its own Kenyon cells. This simulation follows 30 of them, 10 in each system, seen from an oblique angle so every part has its own space.</p>
+        <p class="t-story">The mushroom bodies are the fly’s centre for learning and memory, often likened to our hippocampus. Each holds about 2,000 Kenyon cells, whose cell bodies sit in a cap at the back of the brain. A Kenyon cell sends out one neurite: it first branches into dendrites, where the cell receives its input, then runs on as an axon, bundled with all the others, to the lobes, where its synapses are. Kenyon cells come in three classes (α/β, α′/β′ and γ), each forming its own lobes. This simulation follows 30 of them, 10 of each class, seen from an oblique angle so every part has its own space.</p>
         <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made in all Kenyon cells) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, axon bundle and lobes. The dendrites are drawn but not counted.</p>
-        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
+        <p class="next-row"><a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
       </div>
     </div>`;
 
@@ -272,7 +269,7 @@ export async function mount(root, ctx) {
     grow.g = 0; turn.u = 0; big.k = MB_BIG;
     flyParts.forEach(l => { l.el.style.opacity = l.fadeIn ? "0" : "1"; });
     gsap.set([".bg-grey", ".bg-charcoal", ".bg-black", ".brain-dash", ".d-mutant", ".descent__field canvas", ".d-fill"], { opacity: 0 });
-    gsap.set([frameEl, ".descent__controls", ...partLabels, ...regionLabels], { autoAlpha: 0 });
+    gsap.set([frameEl, ...partLabels, ...regionLabels], { autoAlpha: 0 });
     gsap.set([...leaders, ...arrows, ...rLeaders, ...rArrows], { autoAlpha: 1 });
     [...lead, ...rlead].forEach(l => { l.k = 0; });
     gsap.set([".descent__title", flyLabel], { autoAlpha: 1 });
@@ -333,7 +330,6 @@ export async function mount(root, ctx) {
       .fromTo(".d-mutant", { opacity: 0, x: L.shift + 70 }, { opacity: 1, x: L.shift, duration: 0.8, ease: "power2.out" }, 12.4)
       .fromTo(".descent__field canvas", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 12.7)
       .fromTo(".nrn", { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 13.3)
-      .fromTo(".descent__controls", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 13.5)
       .to({}, { duration: 0.01 }, DUR - 0.01);
     tl.progress(p);
     draw();
@@ -453,7 +449,6 @@ export async function mount(root, ctx) {
     build();
     tl.time(STILL_T);
     draw();
-    gsap.set($(".descent__controls"), { autoAlpha: 1 });
   } else if (frozen != null) {
     build();
     window.scrollTo(0, pinnedAt(Math.min(1, frozen / DUR)));
@@ -486,7 +481,7 @@ export async function mount(root, ctx) {
   const onResize = () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { build(); window.ScrollTrigger?.refresh(); }, 120); };
   window.addEventListener("resize", onResize);
 
-  root.querySelector("[data-act=next]").addEventListener("click", () => handOff("viewer", frameEl));
+  root.querySelector("[data-act=next]").addEventListener("click", () => { if (frameEl.getBoundingClientRect().bottom > 0) handOff("viewer", frameEl); });
   window.__descent = { get tl() { return tl; }, cam, hand, handRect };
 
   return () => {

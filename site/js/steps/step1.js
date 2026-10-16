@@ -12,6 +12,7 @@ import { loadGsap, reducedMotion } from "../gsap.js";
 import { loadFlySprite, flyNode, groomFrame, startBoil, stopBoil, ensureBoilFilter } from "../fly.js";
 import { BINS, DAY_S, activity, walkPause, walkAt, crossingsBy, lastCrossing, timelapse, lapseAt, tube, tubeFly, actogramRows } from "../monitor.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
+import { rollCaption } from "../caption.js";
 import { mulberry32 } from "../prng.js";
 
 const W = 960, HT = 458;
@@ -112,7 +113,7 @@ export async function mount(root, ctx) {
   root.innerHTML = `
     <div class="story story--assay">
       <p class="t-label story__eyebrow">Introduction · Step 1</p>
-      <h1 class="t-h1">Activity monitor</h1>
+      <h1 class="t-h1">Sleep &amp; circadian rhythm: activity monitor assay</h1>
       <div class="stage stage--assay">
         <svg class="assay" viewBox="0 0 ${W} ${HT}" role="img" aria-label="Activity monitor. Two glass tubes, hTDP-43 WT on the left and the ALS mutant on the right, each with one fly, food at the left end, a cotton plug at the right and an infrared beam across the middle. Below each tube, an actogram of beam crossings per half hour over three days of 12 hours light and 12 hours dark. By day the two flies are alike; at night the WT fly sleeps while the mutant keeps waking. Brains were collected at ZT2.">
           <rect class="night-wash" x="0" y="0" width="${W}" height="${HT}" opacity="0"/>
@@ -121,19 +122,19 @@ export async function mount(root, ctx) {
         </svg>
         <span class="tag-sim assay__tag">Simulated data</span>
       </div>
-      <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
+      <p class="assay__caption" aria-live="polite"></p>
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Start the light–dark days</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
         <button class="btn btn--quiet" type="button" data-act="skip">Skip</button>
         <button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay the days</button>
       </div>
-      <p class="t-story t-muted">The monitor counts every walk through the beam, day and night. Over days of 12 hours light and 12 hours dark, the counts show when each fly is active and when it sleeps: a fly that does not cross the beam for five minutes or more is counted as asleep.</p>
+      <p class="assay__note"><span class="t-label run-in">Activity monitor assay</span> The monitor counts every walk through the beam, day and night. Over days of 12 hours light and 12 hours dark, the counts show when each fly is active and when it sleeps: a fly that does not cross the beam for five minutes or more is counted as asleep.</p>
     </div>`;
 
   const stage = root.querySelector(".stage--assay");
   const svg = root.querySelector(".assay");
-  const capEl = root.querySelector(".assay__cap");
+  const capBox = root.querySelector(".assay__caption");
   const ends = root.querySelectorAll(".assay__end");
   const btn = { start: root.querySelector("[data-act=start]"), skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
   const handRect = takeHandOff("monitor");
@@ -188,13 +189,7 @@ export async function mount(root, ctx) {
   let phase = "g";
   const t0 = performance.now();
   const clock = () => (frozen != null ? Math.min(frozen, G_END) : still ? G_END : (performance.now() - t0) / 1000);
-  let capKey = "";
-  const setCaption = key => {
-    if (key === capKey) return;
-    capKey = key;
-    capEl.textContent = key ? CAPTIONS[key] : "";
-    if (key && frozen == null && !still) gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" });
-  };
+  const setCaption = rollCaption(gsap, capBox, CAPTIONS, Object.keys(CAPTIONS), frozen == null && !still);   // CAPTIONS is in story order
 
   function startDays(tc) {
     phase = "days";

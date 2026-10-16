@@ -25,9 +25,10 @@ case "$case" in
             "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
     ;;
   nmj)
+    # The climbing vial ends at 16.9 s (the timer runs in real time since 2026-10-16).
     # Neutral review state, as for mb: the one-probe pair S7 + S8 and two hypotheses, both unresolved.
     state='{"visited":[1,2,3,4,5,6,7],"clue":{"observation":"TDP-43 looks dimmer in the mutant nuclei and brighter along the axon.","interpretation":"TDP-43 may be held up on its way down the axon."},"shortlist":["transport","isoform"],"because":{},"pair":{"ch1":"S7","ch2":"S8"},"predictions":{},"features":"","results":{"observation":"","interpretation":""},"verdicts":{"transport":"unresolved","isoform":"unresolved"},"evidence":{},"claim":"","uncertainty":{"mode":"","why":""}}'
-    routes=("?t=9.6#/" "?t=15.3#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
+    routes=("?t=9.6#/" "?t=16.9#/$case/step-1" "?t=6.6#/$case/step-2" "?t=10.1#/$case/step-2" "?t=14#/$case/step-2"
             "#/$case/step-3" "#/$case/step-4" "#/$case/step-5" "#/$case/step-6" "#/$case/step-7")
     ;;
   *)

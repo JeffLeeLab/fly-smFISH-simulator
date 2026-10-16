@@ -290,3 +290,41 @@ The instructor asked for more space between the two climbing vials, and for a li
 - **Finish line and glass:** the ring is drawn at twice its old weight (2.2, was 1.1; the back half a firmer dash), and its pulse at each crossing rises from there (to 4.4), so the vials read less bare. A faint inner line on each wall gives the glass its thickness, behind the flies (instructor's choice from five mock-ups: heavier ink, a wash band, a red line, cm ticks, glass wall).
 
 **Checks.** `tools/review-shots.sh` for nmj: step 1 at 1280×720 and 1920×1080 in both themes, with nothing clipped and the timer centred over the gap. The landing station and two mid-run frames (`?t=5.2`, the heap; `?t=8`, the climb) checked by eye. The ring's pulse checked on a contact sheet (`?t=5.5`–`6.5`; the first WT crossing at 6.3 s). No console errors. Only leg motor neuron step 1 and its landing station use `site/js/vial.js`; `site/data` and `data/` are unchanged.
+
+## 2026-10-16: opening and step 1–2 wording, roll-up captions, one Next on the descent (instructor)
+
+The instructor reworded the opening and the first two steps for all three cases, keeping the text short.
+- **Landing:** the hero reads "Studying ALS in humanised flies", with an ALS hover and the caption "They look the same, but behave differently." on screen from the first frame. The station cards lead with the phenotype, then a "… system" line (NMJ hover on the leg motor neuron card) and the assay. Their lane labels are paler, at the top corners (`--text-3`).
+- **Names:** the system names are "Pdf clock neurons" and "Leg motor neuron & NMJ" (rail, notebook, tab title, step 7, summary PNG). The step 1 headings read "Phenotype: assay".
+- **Step 1:** the captions roll up on all three assays (`site/js/caption.js`). The caption before the current one moves up and shrinks gradually from 22 to 18 px. The climbing timer runs in real time, and the opening runs 40.5 s (accepted). Each assay's description is a quiet 16 px sans note with a small-caps run-in label.
+- **Step 2:**
+  - The descent's end frame gives "maximum-intensity projection" the viewer's hover.
+  - Only the Next button below the story text remains, and the matched swap to step 3 runs from it.
+  - The story text is reworded for all three cases. Pdf now says "most branched at ZT2" and has a new ZT hover.
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj, against a baseline shot from HEAD (a worktree served on port 8766). `tools/shot-diff.py` lists only the screens expected to change:
+  - The hero and step 1.
+  - All three step 2 frames: the stage's scene is taller without the controls row, so the camera framing moves.
+  - The rail on steps 3–7: tighter spacing below 760 px of window height, and the new system names at both sizes.
+  - Step 7's summary.
+  - The full-screen views of steps 3 and 6 match, apart from 2–3 px of native-control antialiasing.
+- **Mid-run frames:**
+  - The roll-up slowed to 0.04× shows the gradual shrink and the fade to `--text-3`.
+  - The climbing run: the counts are 8 and 2, and it ends at 16.9 s with Next. Replay and Skip work.
+  - The caption box stays 62 px high in every state, so the controls don't move.
+- **Descent:**
+  - The projection term is the topmost element under the pointer (`elementFromPoint`), and its tip shows.
+  - Nothing focusable sits inside `aria-hidden`.
+  - With the Next button scrolled into view at 1280×720, the end frame's bottom is still at 213–271 px. Step 3's viewer grows out of it.
+- **Contrast:** `--text-3` measures 5.3:1 (light) and 5.16:1 (dark).
+- **No console errors.** `site/data` and `data/` are unchanged.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Rail, 1280×720, leg motor neuron | The two-line "Leg motor neuron & NMJ" pushed the rail 16 px past the window. | Fixed: tighter rail spacing below 760 px of window height. |
+| 2 | Step 1 captions, Pdf | The longest caption (898 px) wrapped in the 853 px measure, so the roll-up would have grown to three lines. | Fixed: the caption runs the stage's width; the upper line never wraps (ellipsis). |
+| 3 | Roll-up mid-transition | The outgoing line overlapped the rising one. | Fixed: it fades out faster (0.25 s, 12 px up). |
+| 4 | Opening budget, leg motor neuron | The real-time timer took the opening to 41.9 s. | Fixed: the end of the climb is tightened, so the opening runs 40.5 s (instructor accepted). |
+| 5 | Step 2 story text, Pdf | The draft said the terminals are "most fasciculated" at ZT2, which reverses Fernández et al. 2008. | Fixed: "most branched at ZT2" (instructor). |
+| 6 | Descent stage | Removing the in-stage Next left the caption hugging the window's bottom edge. | Fixed: the caption takes the bottom padding. |

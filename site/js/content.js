@@ -5,10 +5,10 @@
 export const CASES = {
   pdf: {
     id: "pdf",
-    system: "Pdf neurons",
+    system: "Pdf clock neurons",
     cells: "s-LNvs",
-    phenotype: "Sleep and daily rhythm",
-    assay: "Activity monitor",
+    phenotype: "Sleep & circadian rhythm",
+    assay: "Activity monitor assay",
     available: true,
     // Shown from step 5 on: the target gene is unknown during steps 1–4.
     target: {
@@ -51,10 +51,10 @@ export const CASES = {
   },
   nmj: {
     id: "nmj",
-    system: "Leg motor neuron",
+    system: "Leg motor neuron & NMJ",
     cells: "Leg motor neuron",
-    phenotype: "Climbing",
-    assay: "Climbing vial",
+    phenotype: "Locomotion",
+    assay: "Climbing assay",
     available: true,
     // The function line follows FlyBase's gene summary, its wording kept (instructor, 2026-10-13).
     target: {
@@ -94,8 +94,8 @@ export const CASES = {
     id: "mb",
     system: "Mushroom body",
     cells: "Kenyon cells",
-    phenotype: "Learning and memory",
-    assay: "T-maze",
+    phenotype: "Learning & memory",
+    assay: "T-maze assay",
     available: true,
     target: {
       gene: "unc-13",

@@ -11,7 +11,7 @@ Fly drawings: [flies.png](flies.png), from the flybody model (`generator/flies.p
 3. **Which fly we enter.** Proposal: the hTDP-43 WT fly (left lane). At the end, the neuron outline moves to the left half and the mutant's neurons slide in on the right, so the frame becomes the split viewer (control left, mutant right).
 4. **The sleep phenotype** (invented for this case; needs your sign-off). Proposal: by day both flies look alike; at night the WT fly sleeps in long bouts, while the mutant keeps waking (short sleep bouts, more night-time beam crossings). A weaker rise in activity before lights-on is shown in the bars but not narrated.
 5. **Fly motion source.** The spec asks for keyframes traced from real assay videos. Without footage, proposal: a seeded walk–pause model (bout lengths and speeds drawn from fixed distributions, with slips and turns), legs animated as drawn frames played on twos (12 per second, in step with the ink boil). If you can share a short tube or open-field video, I will trace it instead.
-6. **Hero title.** Proposal: "Two flies, one human gene" (from the chosen style page), with the caption "They look the same." completing as "Their behaviour isn't." on scroll.
+6. **Hero title.** Proposal: "Two flies, one human gene" (from the chosen style page), with the caption "They look the same." completing as "Their behaviour isn't." on scroll. *Amended 2026-10-16 (instructor):* the title is "Studying ALS in humanised flies"; the caption is one line, "They look the same, but behave differently.", on screen from the first frame (instructor, 2026-10-16; it no longer wipes in at 8.2 s); nothing is added on scroll.
 
 ## Whole piece
 
@@ -24,12 +24,12 @@ Fly drawings: [flies.png](flies.png), from the flybody model (`generator/flies.p
 
 ## 1 · Hero (`#/`), 9.6 s, plays once on load, then idles
 
-Layout: rail on the left; the title, a one-line subtitle and the caption on the left (left-aligned, never centred); the two flies on the right, standing, heads up. Frame 0 is a finished image.
+Layout: rail on the left; the title, a two-sentence introduction and the caption on the left (left-aligned, never centred); the two flies on the right, standing, heads up. Frame 0 is a finished image.
 
 Revised at review: the knock-in is literal and carries most of the sequence. A human *TDP-43* cassette flies in and knocks the fly's *TBPH* cassette out of the chromosome, instead of the exon blocks morphing in place. Second review: the knock-ins stay on screen after the sequence (no retraction), the chromosome lines are labelled "genomic DNA", and grooming bouts ease in and out instead of snapping back to standing.
 
 ```
-A  0.0–0.8   [frame 0 is finished]  title, subtitle, two identical flies standing · flies idle · camera still
+A  0.0–0.8   [frame 0 is finished]  title, subtitle, caption ("They look the same, but behave differently."; instructor, 2026-10-16), two identical flies standing · flies idle · camera still
    reads:  0.0–0.8  two flies, side by side, the same
 
 B  0.8–1.6   a thin leader line draws from each fly's thorax to its locus below it (DrawSVG): a stretch
@@ -55,23 +55,24 @@ D  6.6–8.2   one point change is marked on the right cassette only: a heavier 
    reads:  6.6–7.4  one mark, on the right fly's gene only
            7.4–8.2  the flies are named: hTDP-43 WT (left), hTDP-43 ALS mutant (right)
 
-E  8.2–9.6   caption fades up with a short clip wipe: "They look the same." The flies, their leader
-             lines and the knocked-in loci all stay, so the end frame shows what each fly carries
-   reads:  8.4–9.6   "They look the same."
+E  8.2–9.6   hold (instructor, 2026-10-16): the caption is already on screen from the first frame, so nothing wipes
+             in here. The flies, their leader lines and the knocked-in loci all stay, so the end frame shows what
+             each fly carries
+   reads:  0.0–9.6   "They look the same, but behave differently." (on screen throughout; no change at 8.2 s)
 
    idle (not counted): the flies groom in turn, never together; first bouts at 10.0 s and 12.5 s.
    Each bout: the front legs rise (0.5 s), rub together in front of the head for one or two cycles
    (never through it), then settle back to standing (0.9 s, slowing as the feet come down)
    [transition out, on scroll: the two flies fly and shrink into a WT | mutant legend at the top of
-    the assay scene (Flip); the caption completes: "Their behaviour isn't."]
+    the assay scene (Flip)]
 ```
 
-As built (transition out): the caption completes as soon as the page scrolls. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
+As built (transition out): the caption does not change on scroll. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
 
 As built (flight): the stand-ins fly.
 - Their wings are half open as they take off and land (the first and last 5% of the transition) and beat in between. The beat alternates two drawings, wings swept forward and wings swept back, changing on twos (12 per second) in real time, with the two flies out of step. If the scroll pauses mid-way, a fly hovers there with its wings still beating. It is a stylised wingbeat: a real fly beats about 200 times a second.
 - The dorsal fly sprite has a "flap" sequence of three drawings (half open, forward, back), posed from flybody's wing joints; the legs keep the standing pose. The wings are drawn as membrane only, without veins, as on a beating wing. The drawings extend past the sprite's viewBox, which is still set by the fly on the ground, so the sprite's size doesn't change.
-- A window too tall to scroll never runs the scroll-driven transition. There the flies set off on their own 0.8 s after the hero sequence ends and fly for 2.2 s (power2.inOut), and the caption completes as usual. Replay flies them back up in 1.2 s before the hero sequence replays. This flight stands in for the scroll transition, which is paced by the user and not counted in the budget, so it isn't counted either; it blocks nothing, and the stations stay usable.
+- A window too tall to scroll never runs the scroll-driven transition. There the flies set off on their own 0.8 s after the hero sequence ends and fly for 2.2 s (power2.inOut), and the caption stays as it is. Replay flies them back up in 1.2 s before the hero sequence replays. This flight stands in for the scroll transition, which is paced by the user and not counted in the budget, so it isn't counted either; it blocks nothing, and the stations stay usable.
 
 Reduced motion: the end frame of E (flies labelled, caption shown).
 
@@ -87,6 +88,8 @@ F  ambient   three stations in a row, each split WT lane (left) | mutant lane (r
    reads:  (self-paced) three experiments, one per neuron system; the Pdf neuron one is moving
    [transition out, on click: the activity monitor expands into the stage (Flip); URL #/pdf/step-1]
 ```
+
+As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Sleep & circadian rhythm"), with the system ("Pdf clock neuron system") and the assay ("Activity monitor assay") below the drawing, and the lane labels sit above it.
 
 As built: the climbing vial (WT flies mostly past the line, mutants mostly low) and the T-maze (WT flies gathered in one arm, mutants split evenly) are still drawings, dimmed, marked "Not available in this build". The activity monitor's tiny actogram shows three days, with the night halves shaded. The station grows into the stage across the route change (its screen position is handed to step 1, which scales the stage up from there). The mini monitor's flies walk as in step 1 (see the walking note in section 3).
 
@@ -131,6 +134,10 @@ As built (walking, in the landing's mini monitor and in step 1's real-time walki
 - The opening walks in step 1 stay one steady bout, so the first beam crossing still lands during shot G (the WT fly's first crossing is at about 3.1 s, the mutant's at about 2.9 s).
 - Progress along each walk is computed up front at 120 Hz, so frozen frames (`?t=`) and the exact beam crossings are still functions of time. The gaits have their own seeded generator (seed + 7), so the draws that make the walk–pause schedules (when to pause, where to walk) are unchanged.
 - The leg drawings still follow the distance walked: the feet never slide, and the legs stand still during a hesitation. Bobbing of the body up and down is deliberately not modelled.
+
+As built (captions, 2026-10-16): the step 1 captions roll up, as in broadcast captions. The newest caption wipes in on the lower line (the same 0.6 s clip wipe as before); the caption before it moves up to the upper line, set at 18 px against the current caption's 22 px. As it rolls up it shrinks gradually from 22 px to 18 px during the 0.45 s move (a scale from its top-left corner) and turns to the quiet label ink (`--text-3`); it never snaps. The oldest fades out upwards. A later caption is never shown early, and the upper line is always the caption before the current one in story order, so frozen, skipped and replayed states depend only on story time. The caption runs the stage's width rather than the 70ch story measure, so each caption fits on one line at 1280 × 720 (the longest, this assay's first, is 898 px of 968). The upper line truncates with an ellipsis rather than wrapping, so the controls never move. The two lines were already reserved, so nothing below shifts. The timings above are unchanged.
+
+As built (assay note, 2026-10-16; instructor): the activity monitor's description under the controls is a quiet sans note (`.assay__note`, 16px Instrument Sans, regular, `--text-2`), not the 18px serif story text, so it does not compete with the narration. It opens with the run-in label "Activity monitor assay" in the eyebrow style (`t-label`). The text is unchanged.
 
 Reduced motion: the finished actograms with the ZT2 marker, shown on click.
 
@@ -184,6 +191,7 @@ As built ([descent-frames.png](descent-frames.png)):
 - The last caption (12.4 s) reads "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)." The two fields at the end are labelled "hTDP-43 WT" and "hTDP-43 mutant", matching the step 3 viewer. The openings say "ALS mutant"; the microscopy steps say "hTDP-43 mutant", because the fly carries an ALS-linked point mutation.
 - O's frame is drawn from the viewer's own membrane and DAPI images (animal 1), tinted and added on black as the viewer does, at its "Whole neuron" scale, inside a frame laid out like the viewer's. On "Next: TDP-43 dysfunction", step 3's viewer grows out of this frame, and the TDP-43 channel appears there.
 - Reduced motion shows the end of N (the labelled neurons, close up) with the Next button.
+- As built (2026-10-16): the Next button is the descent's only one, below the story text; the in-stage button that faded in under O at 13.5 s is gone. The matched swap runs from that button while O is still at least partly on screen (about a third at 1280 × 720 once the button is scrolled into view); otherwise the link navigates. O's bottom bar gives "maximum-intensity projection" the glossary hover. The story text now opens on the Pdf peptide and ends its paragraph on ZT2 (glossary: Zeitgeber time).
 
 ## Checks (from the storyboard rules)
 

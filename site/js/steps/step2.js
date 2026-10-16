@@ -123,11 +123,11 @@ export async function mount(root, ctx) {
           <div class="descent__bg" aria-hidden="true"><i class="bg-grey"></i><i class="bg-charcoal"></i><i class="bg-black"></i></div>
           <div class="descent__title"><p class="t-label">Introduction · Step 2</p><h1 class="t-h1">Anatomy</h1></div>
           <div class="descent__scene">
-            <div class="descent__viewer" aria-hidden="true">
-              <p class="descent__vtop">Simulated confocal images · membrane + DAPI</p>
+            <div class="descent__viewer">
+              <p class="descent__vtop" aria-hidden="true">Simulated confocal images · membrane + DAPI</p>
               ${["hTDP-43 WT", "hTDP-43 mutant"].map((l, i) => `
-                <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
-              <p class="descent__vbar">2D maximum-intensity projection (simulated data)</p>
+                <div class="descent__field" data-field="${i}" aria-hidden="true"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
+              <p class="descent__vbar">${(ctx.case.anatomy?.projection || "2D maximum-intensity projection (simulated data)").replace("maximum-intensity projection", term("mip", "maximum-intensity projection"))}</p>
             </div>
             <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly turns to face us; we push into its head, where the brain appears with the Pdf neurons in blue on both sides; we close in on the four on the left, each with a cell body, an axon running up and medially, and dorsal terminals (synapses). They end as two microscope fields: WT left, mutant right.">
               <defs>
@@ -168,15 +168,12 @@ export async function mount(root, ctx) {
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
-          <div class="descent__controls">
-            <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a>
-          </div>
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">The Pdf neurons sit on each side of the brain. This simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day.</p>
-        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will find four compartments: nucleus, cell body, axon and dorsal terminals (synapses).</p>
-        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
+        <p class="t-story">The Pdf neurons are master clock neurons: they release the neuropeptide Pdf (pigment-dispersing factor), which keeps the brain’s other clock neurons in step. They sit on each side of the brain; this simulation follows the four small ventral lateral neurons (s-LNvs) on one side. Their cell bodies lie near the accessory medulla; their axons run up towards the top of the brain and end in the dorsal terminals, where their synapses are. The terminals remodel every day and are most branched at ${term("zt", "ZT2")}, when these brains were collected.</p>
+        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made only in these neurons) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, axon and dorsal terminals (synapses).</p>
+        <p class="next-row"><a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
       </div>
     </div>`;
 
@@ -269,7 +266,7 @@ export async function mount(root, ctx) {
     Object.assign(cam, stop("tube"));
     live.forEach(l => { l.el.style.opacity = l.fadeIn ? "0" : "1"; });
     gsap.set([".bg-grey", ".bg-charcoal", ".bg-black", ".brain-dash", ".d-mutant", ".descent__field canvas"], { opacity: 0 });
-    gsap.set([frameEl, ".descent__controls", ...partLabels, ...regionLabels], { autoAlpha: 0 });
+    gsap.set([frameEl, ...partLabels, ...regionLabels], { autoAlpha: 0 });
     gsap.set([...leaders, ...arrows, ...rLeaders, ...rArrows], { autoAlpha: 1 });
     [...lead, ...rlead].forEach(l => { l.k = 0; });
     gsap.set([".descent__title", flyLabel], { autoAlpha: 1 });
@@ -331,7 +328,6 @@ export async function mount(root, ctx) {
       .fromTo(".d-mutant", { opacity: 0, x: L.shift + 70 }, { opacity: 1, x: L.shift, duration: 0.8, ease: "power2.out" }, 12.4)
       .fromTo(".descent__field canvas", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 12.7)
       .fromTo(".nrn", { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 13.3)
-      .fromTo(".descent__controls", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 13.5)
       .to({}, { duration: 0.01 }, DUR - 0.01);
     tl.progress(p);
     draw();
@@ -417,7 +413,6 @@ export async function mount(root, ctx) {
     build();
     tl.time(STILL_T);
     draw();
-    gsap.set($(".descent__controls"), { autoAlpha: 1 });
   } else if (frozen != null) {
     build();
     window.scrollTo(0, pinnedAt(Math.min(1, frozen / DUR)));
@@ -452,7 +447,7 @@ export async function mount(root, ctx) {
   window.addEventListener("resize", onResize);
 
   // the matched swap: step 3's viewer grows out of this frame
-  root.querySelector("[data-act=next]").addEventListener("click", () => handOff("viewer", frameEl));
+  root.querySelector("[data-act=next]").addEventListener("click", () => { if (frameEl.getBoundingClientRect().bottom > 0) handOff("viewer", frameEl); });
   window.__descent = { get tl() { return tl; }, cam, hand, handRect };   // for review tooling
 
   return () => {

@@ -13,6 +13,7 @@ import { loadFlySprite, flyNode, startBoil, stopBoil, ensureBoilFilter } from ".
 import { tubeFly } from "../monitor.js";
 import { VB, LANES, H, FLY_H, DROP, TUBE_SPAN, odourDefs, driftOdours, mazeMarkup, piMarkup, laneFlies, flyPose, poseTransform, armCounts, odourAt, shockAt, boltAt, feedAt } from "../tmaze.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
+import { rollCaption } from "../caption.js";
 
 const G_END = 3.5;
 const FEED_TAG = { oct: "OCT", air: "air", mch: "MCH" };
@@ -30,7 +31,7 @@ export async function mount(root, ctx) {
   root.innerHTML = `
     <div class="story story--assay">
       <p class="t-label story__eyebrow">Introduction · Step 1</p>
-      <h1 class="t-h1">T-maze</h1>
+      <h1 class="t-h1">Learning &amp; memory: T-maze assay</h1>
       <div class="stage stage--assay">
         <svg class="assay tmaze" viewBox="0 0 ${VB.w} ${VB.h}" role="img" aria-label="T-maze, seen from the front. Two mazes, hTDP-43 WT on the left and the ALS mutant on the right, each with ten flies. The flies are trained in a tube lined with a shock grid: the odour OCT comes with mild shocks, the odour MCH with none. Minutes later they are moved to the choice point between an OCT arm and an MCH arm. Eight of ten WT flies avoid OCT, a performance index of 0.6; the mutant flies split five and five, a performance index of 0, as if they chose at random.">
           <defs>${odourDefs(ID)}</defs>
@@ -38,19 +39,19 @@ export async function mount(root, ctx) {
         </svg>
         <span class="tag-sim assay__tag">Simulated data</span>
       </div>
-      <p class="assay__caption" aria-live="polite"><span class="assay__cap"></span></p>
+      <p class="assay__caption" aria-live="polite"></p>
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Train the flies</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
         <button class="btn btn--quiet" type="button" data-act="skip">Skip</button>
         <button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay the training</button>
       </div>
-      <p class="t-story t-muted">In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point, between an arm smelling of each odour. Flies that remember avoid the shocked odour. Each count stands for a group of about a hundred flies.</p>
+      <p class="assay__note"><span class="t-label run-in">T-maze assay</span> In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point, between an arm smelling of each odour. Flies that remember avoid the shocked odour. Each count stands for a group of about a hundred flies.</p>
     </div>`;
 
   const stage = root.querySelector(".stage--assay");
   const svg = root.querySelector(".tmaze");
-  const capEl = root.querySelector(".assay__cap");
+  const capBox = root.querySelector(".assay__caption");
   const ends = root.querySelectorAll(".assay__end");
   const btn = { start: root.querySelector("[data-act=start]"), skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
   const handRect = takeHandOff("maze");
@@ -110,13 +111,7 @@ export async function mount(root, ctx) {
   let phase = "g", tClick = G_END;
   const t0 = performance.now();
   const clock = () => (frozen != null ? Math.min(frozen, G_END) : still ? G_END : (performance.now() - t0) / 1000);
-  let capKey = "";
-  const setCaption = key => {
-    if (key === capKey) return;
-    capKey = key;
-    capEl.textContent = key ? CAPTIONS[key] : "";
-    if (key && frozen == null && !still) gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" });
-  };
+  const setCaption = rollCaption(gsap, capBox, CAPTIONS, Object.keys(CAPTIONS), frozen == null && !still);   // CAPTIONS is in story order
   function startTraining(tc) {
     phase = "train";
     tClick = tc;

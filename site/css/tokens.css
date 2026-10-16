@@ -44,6 +44,7 @@
   --muted: #87867F;       /* ≥3:1 graphics only, never body text */
   --text: #141413;
   --text-2: #3D3D3A;      /* secondary text, 9.4:1 */
+  --text-3: #66655F;      /* quiet labels (landing lane labels, the rolled-up caption), 5.3:1 on field */
   --accent: #D97757;      /* clay: fills, current step, focus rings; never text */
   --on-accent: #141413;   /* text on clay (≈5.9:1); white on clay fails */
   --accent-text: #A8492C; /* links and accent text on ivory, 4.9:1 */
@@ -83,6 +84,7 @@
   --muted: #9C9A91;
   --text: #F0EEE6;
   --text-2: #B0AEA5;
+  --text-3: #97958C;
   --accent-text: #E59A80;
   --viewer-frame: #141413;
   --ch1-ink: #4CC27A;

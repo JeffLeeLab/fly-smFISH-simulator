@@ -214,6 +214,7 @@ The palette is warm neutrals with one restrained accent. All the saturated hues 
 - **Pencil Hairline** (`hairline`) and **Graphite Hairline** (`hairline-strong`): all borders and dividers. They are decorative, so no contrast minimum applies.
 - **Stone** (`stone`): non-text graphics at 3:1 or more, such as UTR blocks on the map, rail numbers and placeholders. Never body text.
 - **Lamp Black** (`ink-black`) and **Slate Ink** (`ink-grey`, 9.4:1): primary and secondary text. Slate Ink also draws CDS blocks on the transcript map.
+- **Quiet label ink** (`text-3` in `tokens.css`: `#66655F` in light, 5.3:1 on the field; `#97958C` in dark): quiet labels only, such as the lane labels above the drawings on the landing station cards, and the previous caption on the roll-up caption line of the step 1 assays, at 18px (instructor, 2026-10-16); the current caption, at 22px, is not set in it. It is lighter than Slate Ink, so it never carries the current running text.
 - **Warm Charcoal** (`charcoal-bg`, `#1F1E1C`): the dark-theme page, chosen in the style phase as slightly lighter than `#141413`. The dark theme's panel, field, hairline, stone and text values follow it (`charcoal-panel`, `charcoal-field`, `charcoal-hairline`, `charcoal-hairline-strong`, `stone-dark`, `ivory-text`, `ash-text`).
 - **Viewer Surround** (`viewer-frame`; dark theme `viewer-frame-dark`) and **Field Black** (`viewer-field`): the frame around the microscope field, and the field itself. The field is black in both themes.
 
@@ -250,8 +251,8 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 - **Headline** (500, 40px, 1.05): step titles in the story layout.
 - **Title** (500, 28px): step titles in the workbench layout ("Microscopy reveal").
 - **Subtitle** (500, 18px): section heads inside a step.
-- **Story** (400, 18px, 1.6, max 70ch): the serif narrative in steps 1–2 and 7. The hero caption is the same face in italic at 22–24px.
-- **Body** (400, 16px, 1.55): sans body text, explanations and the glossary.
+- **Story** (400, 18px, 1.6, max 70ch): the serif narrative in steps 1–2 and 7. The hero caption is the same face in italic at 22–24px. The step 1 caption is italic at 22px; once rolled up, the previous caption is italic at 18px in quiet label ink (instructor, 2026-10-16).
+- **Body** (400, 16px, 1.55): sans body text, explanations, the glossary and the assay note under the step 1 controls (`.assay__note`, in `text-2`, not the serif story text; instructor, 2026-10-16).
 - **UI Large** (500, 14px): mode-card titles, field text.
 - **UI** (400, 13px): controls, chips, tabs, verdict buttons, predictions and evidence lines. This is the minimum size for anything interactive.
 - **Label** (600, 11px, 0.08em, uppercase): eyebrows ("OBSERVE · STEP 6"), rail stage names and mode-group labels.
@@ -269,7 +270,7 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 
 There are two layouts on one token set.
 
-- **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border; the workbench layout uses the same rail) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title and subtitle beside the flies, never a centred hero.
+- **Story layout** (steps 1–2 and 7): a vertical progress rail on the left (about 200px, hairline right border; the workbench layout uses the same rail) and a single serif column up to `70ch`. Animations and the fly use a full-width stage. The hero is left-aligned, with the title beside the flies and a short introduction under it, never a centred hero.
 - **Workbench layout** (steps 3–6): the same 200px rail as the story layout. The grid is `rail | viewer | side pane` (side pane `clamp(277px, 19vw, 342px)`), with the step header across the top. In step 6 the viewer fills the main column and the plot sits in a drawer docked under it. Spacing is 12px between rows and 24px between columns. The main column (the viewer, in steps 3 and 6) takes the width between the rail and the side pane. The side pane scrolls on its own; the viewer never does.
 - **Step 5:** a workbench like steps 3, 4 and 6. The gene card runs across the head. The main column holds the transcript map (a header with title, isoform count and scale toggle, the map, one legend box) and, directly under the legend box, the "How two-colour smFISH works" help link. The side pane (hairline left rule, scrolling on its own; `clamp(277px, 19vw, 342px)`, as on every workbench step) reads top to bottom: "Your pair" (its label row aligned with the map header line), a one-line instruction, two channel slots side by side, Swap channels, a full-width Show results, then "Predictions (optional)". The map is drawn at its column's pixel width and redrawn on resize, so its 11–12px text never shrinks. At 1280×720 everything down to Show results fits on screen; the predictions start below it and scroll in the side pane.
 
@@ -339,10 +340,10 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 A segmented bar of three equal parts (Ruled out · Supported · Unresolved) with a 1px `hairline` border, hairline dividers and 3px outer corners. The selected segment fills with clay and uses `on-clay` text at weight 600. Unselected segments are transparent with `ink-grey` text. All three verdicts look the same when selected: "unresolved" is a valid answer and must not look like a failure.
 
 ### Navigation (Progress Rail)
-The same full rail, about 200px wide with a hairline right border, appears in every layout. From the top: the brand, the neuron-system box, the five stages with their steps, then the theme toggle and the "Simulated teaching data" tag.
+The same full rail, about 200px wide with a hairline right border, appears in every layout. From the top: the brand, the neuron-system box, the five stages with their steps, then the theme toggle and the "Simulated teaching data" tag. In windows under 760px tall the rail's top padding drops from 32px to 24px and the gap between stages from 16px to 12px, so a two-line system name ("Leg motor neuron & NMJ") still fits at 1280×720 without the rail scrolling (2026-10-16).
 - **Neuron-system box:** a light clay tint over `ivory-field` (clay mixed 13% into the field colour, 22% on hover), a 1px border of clay mixed 45% into `hairline`, and 3px corners. The name is 14px at weight 600, and the action line is `clay-ink` accent text.
   - At the opening no system is chosen. The box is a button reading "Choose a neuron system", with "to continue ↓" under it, and it marks where the student is (`aria-current="page"`). Clicking it scrolls to the opening's "Choose your neuron system" heading and focuses it.
-  - Once a system is chosen, the box is a link: "NEURON SYSTEM" in Label style, the system's name ("Pdf neurons") and "Change system". It goes back to the opening, where a group can choose again. Notes are kept.
+  - Once a system is chosen, the box is a link: "NEURON SYSTEM" in Label style, the system's name ("Pdf clock neurons", instructor, 2026-10-16) and "Change system". It goes back to the opening, where a group can choose again. Notes are kept.
 - **Stages and steps:** stage names in Label style; under each, steps as UI rows with a mono step number in `stone`. The current step has a 2px clay left border and weight 600; completed steps use `ink-black`, and upcoming steps `ink-grey`. At the opening no step is highlighted, and every step is greyed and is not a link until a system is chosen.
 - **Locked steps** give a reason in words ("Choose two probe regions to see the results"), never just a padlock.
 

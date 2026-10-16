@@ -46,6 +46,8 @@
 .rail__case-go { color: var(--accent-text); font-weight: 500; }
 .rail__case:hover .rail__case-go { text-decoration: underline; text-decoration-thickness: 1px; }
 .rail__stages { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--sp-4); }
+/* short windows: a two-line system name ("Leg motor neuron & NMJ") must still fit at 1280×720 */
+@media (max-height: 760px) { .rail { padding-top: var(--sp-5); } .rail__stages { gap: var(--sp-3); } }
 .rail__stage-name { display: block; margin-bottom: var(--sp-1); }
 .rail__stage ol { list-style: none; margin: 0; padding: 0; }
 .rail__step {
@@ -116,6 +118,7 @@ body:not([data-notebook="drawer"]) .notebook { display: none; }
 .story { padding: var(--sp-6) var(--sp-7) 96px; display: flex; flex-direction: column; gap: var(--sp-5); }
 .story > * { max-width: var(--measure); }
 .story > .stage { max-width: none; }
+.story > .assay__caption { max-width: none; }   /* runs the stage's width, so each caption fits on one line */
 .story__eyebrow { margin-bottom: calc(-1 * var(--sp-3)); }
 .stage {
   position: relative; min-height: 360px;
@@ -206,7 +209,13 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .stage--assay { background: transparent; min-height: 0; overflow: hidden; }
 .stage--assay .assay { display: block; width: 100%; height: auto; }
 .assay__tag { position: absolute; right: var(--sp-3); bottom: var(--sp-2); }
-.assay__caption { font: italic 400 22px/1.35 var(--font-serif); color: var(--text); min-height: 2.8em; margin: calc(-1 * var(--sp-2)) 0 0; }
+.assay__caption { position: relative; font: italic 400 22px/1.35 var(--font-serif); color: var(--text); min-height: 2.8em; margin: calc(-1 * var(--sp-2)) 0 0; }
+/* the roll-up (caption.js): the caption before the current one, one line up and quiet */
+.assay__prev { display: block; font-size: var(--fs-story); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* never pushes the controls down */
+.assay__ghost { position: absolute; left: 0; right: 0; }
+.t-label.run-in { margin-right: .3em; }
+/* the assay's description under the controls: a quiet sans note, so it doesn't compete with the narration */
+.assay__note { font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); color: var(--text-2); }
 .assay__controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-3); min-height: 36px; margin-top: calc(-1 * var(--sp-3)); max-width: none !important; }
 .night-wash { fill: var(--assay-night); }
 .tube-glass { fill: var(--field); fill-opacity: .5; }
@@ -293,7 +302,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .descent.is-still { height: auto; }
 .descent__stage {
   position: sticky; top: 0; height: 100vh; min-height: 520px; overflow: hidden;
-  display: grid; grid-template-rows: minmax(0, 1fr) auto auto; color: var(--text);
+  display: grid; grid-template-rows: minmax(0, 1fr) auto; color: var(--text);
   --descent-grey: rgba(140, 132, 118, .3);
 }
 [data-theme="dark"] .descent__stage { --descent-grey: rgba(0, 0, 0, .3); }
@@ -306,7 +315,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .descent__title { position: absolute; z-index: 3; top: var(--sp-6); left: var(--sp-7); }
 .descent__title h1 { margin: 0; }
 .descent__scene { position: relative; z-index: 1; min-height: 0; }
-.descent__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; }
+.descent__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
 .descent__viewer {
   position: absolute; inset: var(--sp-5) var(--sp-7) var(--sp-2); visibility: hidden;
   display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 34px minmax(0, 1fr) 23px; gap: 0 6px;
@@ -326,8 +335,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .d-label--region { font: 500 14px var(--font-sans); }
 .d-leader--region { stroke: var(--ink); stroke-opacity: .7; }
 .d-arrow--region { fill: var(--ink); fill-opacity: .8; }
-.descent__caption { position: relative; z-index: 2; margin: 0; padding: var(--sp-3) var(--sp-7) 0; min-height: 2.8em; font: italic 400 22px/1.35 var(--font-serif); }
-.descent__controls { position: relative; z-index: 2; visibility: hidden; display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2) var(--sp-5); padding: var(--sp-2) var(--sp-7) var(--sp-5); min-height: 64px; }
+.descent__caption { position: relative; z-index: 2; margin: 0; padding: var(--sp-3) var(--sp-7) var(--sp-5); min-height: 2.8em; font: italic 400 22px/1.35 var(--font-serif); }
 .descent__stage.is-dark { color: var(--viewer-text); }
 .is-dark .d-label, .is-dark .descent__caption { color: var(--viewer-text); }
 .descent__after { padding-top: var(--sp-6); }
@@ -395,7 +403,8 @@ a.station:hover, a.station:focus-visible { border-color: var(--text-2); transfor
 .station__art svg { display: block; width: 100%; height: 100%; }
 .station.is-off .station__art { opacity: .62; }
 .station__name { font: 500 var(--fs-h3)/1.3 var(--font-serif); }
-.station__lanes { display: flex; justify-content: space-between; font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--text-2); }
+.station__lanes { display: flex; justify-content: space-between; margin-bottom: calc(-1 * var(--sp-1)); font: 400 var(--fs-ui)/1.3 var(--font-sans); color: var(--text-3); }
+.station__sub > span { display: block; }
 .station__go { margin-top: auto; font: 600 var(--fs-ui)/1.3 var(--font-sans); color: var(--accent-text); }
 .station.is-off { color: var(--text-2); }
 @media (prefers-reduced-motion: reduce) { .station { transition: none; } a.station:hover { transform: none; } }

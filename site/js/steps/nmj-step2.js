@@ -140,11 +140,11 @@ export async function mount(root, ctx) {
           <div class="descent__bg" aria-hidden="true"><i class="bg-grey"></i><i class="bg-charcoal"></i><i class="bg-black"></i></div>
           <div class="descent__title"><p class="t-label">Introduction · Step 2</p><h1 class="t-h1">Anatomy</h1></div>
           <div class="descent__scene">
-            <div class="descent__viewer" aria-hidden="true">
-              <p class="descent__vtop">Simulated confocal images · membrane + DAPI</p>
+            <div class="descent__viewer">
+              <p class="descent__vtop" aria-hidden="true">Simulated confocal images · membrane + DAPI</p>
               ${["hTDP-43 WT", "hTDP-43 mutant"].map((l, i) => `
-                <div class="descent__field" data-field="${i}"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
-              <p class="descent__vbar">${ctx.case.anatomy?.projection || "2D maximum-intensity projection (simulated data)"}</p>
+                <div class="descent__field" data-field="${i}" aria-hidden="true"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
+              <p class="descent__vbar">${(ctx.case.anatomy?.projection || "2D maximum-intensity projection (simulated data)").replace("maximum-intensity projection", term("mip", "maximum-intensity projection"))}</p>
             </div>
             <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly highest on the vial's wall rights itself and turns a little towards us; we push into its thorax, where the ventral nerve cord appears. One motor neuron lights up in blue: its cell body and dendrites in the nerve cord, its axon running out through the leg nerve, down the leg and into the femur, where it ends in synaptic terminals on a muscle. The axon is then drawn much shorter, behind a break mark, so the whole neuron fits one view: cell body, axon and synaptic terminals. It ends as two microscope fields: WT left, mutant right.">
               <defs>
@@ -196,15 +196,12 @@ export async function mount(root, ctx) {
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
-          <div class="descent__controls">
-            <a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a>
-          </div>
         </div>
       </section>
       <div class="story descent__after">
-        <p class="t-story">The legs are moved by ${term("mn", "motor neurons")} whose cell bodies sit in the ${term("vnc", "ventral nerve cord (VNC)")}, the fly’s equivalent of our spinal cord. This simulation follows one of them, a motor neuron of the front leg; its cell body and dendrites in the VNC are traced from a reconstruction of the male fly’s nervous system (MaleCNS). Its dendrites receive input in the VNC. Its axon leaves through the leg nerve, runs down the coxa and through the trochanter into the femur, and ends in synaptic terminals on a leg muscle, which it makes contract. The real axon is about half a millimetre long; the images draw it far shorter, so the whole cell fits one view.</p>
-        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made with OK371-GAL4) shows its shape in blue, and ${term("labels", "DAPI")} marks its nucleus in the same blue. The VNC, the leg’s cuticle and the muscle show faintly by their own glow. In the images you will count spots in four compartments: nucleus, cell body, axon and synaptic terminals. The dendrites are drawn here but not in the images.</p>
-        <p class="next-row"><a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
+        <p class="t-story">The legs are moved by ${term("mn", "motor neurons")} whose cell bodies sit in the ${term("vnc", "ventral nerve cord (VNC)")}, the fly’s equivalent of our spinal cord. This simulation follows one of them, a motor neuron of the front leg. Its dendrites receive input in the VNC. Its axon leaves through the leg nerve, runs down the coxa and through the joint into the femur, and ends in synaptic terminals on a leg muscle, which it makes contract. This contact is the neuromuscular junction (NMJ). The real axon is about half a millimetre long; the images draw it far shorter, so the whole cell fits one view.</p>
+        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made with OK371-GAL4) shows its shape in blue, and ${term("labels", "DAPI")} marks its nucleus in the same blue. The VNC, the leg’s cuticle and the muscle show faintly by their own glow. In the images you will count spots in four compartments: nucleus, cell body, axon and synaptic terminals. For simplicity, the images leave out the dendrites.</p>
+        <p class="next-row"><a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
       </div>
     </div>`;
 
@@ -308,7 +305,7 @@ export async function mount(root, ctx) {
     live.forEach(l => { l.el.style.opacity = "1"; });
     gsap.set([".bg-grey", ".bg-charcoal", ".bg-black", ".vnc-nerve", ".vnc-tag", ".d-mutant", ".descent__field canvas", ".d-fill", ".d-ctx", ".mn-muscle", ".mn-soma", ".mn-dend", ".d-break", ".d-leg", trochEl], { opacity: 0 });
     legParts.forEach(p => { p.el.setAttribute("d", p.from); p.el.style.opacity = "1"; });
-    gsap.set([frameEl, ".descent__controls", ...partLabels, ...regionLabels], { autoAlpha: 0 });
+    gsap.set([frameEl, ...partLabels, ...regionLabels], { autoAlpha: 0 });
     gsap.set([...leaders, ...arrows, ...rLeaders, ...rArrows], { autoAlpha: 1 });
     [...lead, ...rlead].forEach(l => { l.k = 0; });
     gsap.set([".descent__title", flyLabel], { autoAlpha: 1 });
@@ -384,7 +381,6 @@ export async function mount(root, ctx) {
       .fromTo(".d-mutant", { opacity: 0, x: L.shift + 70 }, { opacity: 1, x: L.shift, duration: 0.8, ease: "power2.out" }, 12.4)
       .fromTo(".descent__field canvas", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 12.7)
       .fromTo([".nrn", ".nmj-ctx"], { opacity: 1 }, { opacity: 0, duration: 0.6, ease: "power1.inOut" }, 13.3)
-      .fromTo(".descent__controls", { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.4 }, 13.5)
       .to({}, { duration: 0.01 }, DUR - 0.01);
     tl.progress(p);
     draw();
@@ -517,7 +513,6 @@ export async function mount(root, ctx) {
     build();
     tl.time(STILL_T);
     draw();
-    gsap.set($(".descent__controls"), { autoAlpha: 1 });
   } else if (frozen != null) {
     build();
     window.scrollTo(0, pinnedAt(Math.min(1, frozen / DUR)));
@@ -552,7 +547,7 @@ export async function mount(root, ctx) {
   window.addEventListener("resize", onResize);
 
   // the matched swap: step 3's viewer grows out of this frame
-  root.querySelector("[data-act=next]").addEventListener("click", () => handOff("viewer", frameEl));
+  root.querySelector("[data-act=next]").addEventListener("click", () => { if (frameEl.getBoundingClientRect().bottom > 0) handOff("viewer", frameEl); });
   window.__descent = { get tl() { return tl; }, cam, hand, handRect };   // for review tooling
 
   return () => {

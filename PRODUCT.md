@@ -73,7 +73,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 ## Accessibility & Inclusion
 
 - WCAG AA contrast in both light and dark themes. Minimum text sizes: body ≥16 px, UI text ≥13 px, overlays and plot ticks ≥11 px.
-- Reduced motion shows still end frames. The opening animations stay under 40 seconds and can be skipped and replayed.
+- Reduced motion shows still end frames. The opening animations stay under 40 seconds (the leg motor neuron case runs 40.5 s with its real-time climbing timer; instructor, 2026-10-16) and can be skipped and replayed.
 - The transcript map's probe regions are themselves keyboard-operable buttons (Tab to a region; Enter or Space chooses or removes it), focus stays on the region when the map redraws, click targets are at least 24 px wide, and each channel slot has a × button that clears its region.
 - Fallback states for missing WebGL 2 and for blocked localStorage (copying PNGs still works).
 - Genotype is always shown by position and label, never by colour alone. Control is always on the left.

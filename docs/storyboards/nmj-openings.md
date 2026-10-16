@@ -2,12 +2,12 @@
 
 Signed off by the instructor on 2026-10-13: decisions 1–8 as proposed. Decisions 3, 4, 6 and 8 started from the instructor's own choices of the same day: the mutants' climbing index under 30% of WT, their legs shaking (subtle but noticeable), a side or slightly turned view for the descent with new VNC and leg drawings, the locator in that view, and the "Simulated" pill at the bottom right of the stage as in the other cases. Same format as the [Pdf](pdf-openings.md) and [mushroom body](mb-openings.md) storyboards: each shot lists what is seen, its event and the camera, then its **reads**, the things the viewer must understand, in order, each with a start and end time. One read at a time; a shot is as long as its reads need. The hero (segment 1) is shared by all cases and is not repeated here.
 
-Students meet the system as "Leg motor neuron" and its last compartment as "Synaptic terminals", never "boutons" (instructor, 2026-10-13).
+Students meet the system as "Leg motor neuron & NMJ" (instructor, 2026-10-16) and its last compartment as "Synaptic terminals", never "boutons" (instructor, 2026-10-13).
 
 ## Decisions (signed off 2026-10-13)
 
 1. **Assay view.** *Proposal:* two upright vials drawn front-on, as on the bench, hTDP-43 WT left and the mutant right. The flies climb the side walls in profile, head up, so the existing side-view walking drawings carry over (rotated, as in today's still at the landing), and the activity monitor's walk–pause model drives them. *Alternative:* flies on the front wall seen from above, which needs new top-view climbing drawings.
-2. **The protocol, compressed.** *Proposal:* three taps on the bench, then 10 s of climbing on a timer, shown in 7 s (time runs 1.4× fast; *Simplified*). A line at 5 cm, labelled (a common choice; some labs use 8 cm). Ten flies per vial, as on the bench, so the drawn count is the real count.
+2. **The protocol, compressed.** *Proposal:* three taps on the bench, then 10 s of climbing on a timer, shown in 7 s (time runs 1.4× fast; *Simplified*). A line at 5 cm, labelled (a common choice; some labs use 8 cm). Ten flies per vial, as on the bench, so the drawn count is the real count. *Amended 2026-10-16 (instructor):* the timer runs in real time, 0 → 10 s in 10 s, so the speed-up is gone. The flies' climbs are still scripted in timer seconds, so they now play out about 1.4× slower on screen. Each caption stays up for at least 3 s, because the narration passed too quickly to read.
 3. **The climbing phenotype** (invented for this case; instructor, 2026-10-13: the mutants under 30%). *Proposal for the numbers:* at 10 s, 8 of 10 hTDP-43 WT flies are above the line (climbing index 0.8) and 2 of 10 mutants (0.2). That is under 30% both as an index and as a share of WT (a quarter). Climbing index = flies above the line / all flies.
 4. **The tremor** (invented for this case; instructor, 2026-10-13: the legs shake, subtle but noticeable). *Proposal for how:* new side-view `tremor` drawings from flybody (`generator/flies.py`). The joints between femur and tibia and between tibia and tarsus are offset by ±4–6° in two or three poses, played on twos (12 per second, so the legs shake about 6 times a second). Each fly gets its own seed and phase, and the body itself stays still.
    - Mutant flies shake whenever they stand, pause or slip; they don't shake mid-stride, where the walk drawings follow the distance walked.
@@ -26,7 +26,7 @@ Students meet the system as "Leg motor neuron" and its last compartment as "Syna
 
 - **Logline.** Two flies carry the same human gene, one with a single change. Tapped to the bottom of a vial, one climbs straight up and the other can't keep up, its legs shaking, so we look inside at the neuron that drives the leg.
 - **World, motif, actor.** As in the Pdf case: ivory paper, boiling ink, membrane blue only for the labelled neuron. The pair runs from the hero to the two vials, the split and the viewer: hTDP-43 WT on the left, the mutant on the right. One persistent actor: hero flies → legend → the flies in the vials → the WT fly that passed the line → its thorax → the VNC → its leg motor neuron → the viewer's outline.
-- **Budget.** 38.9 s, as for the other cases: hero 9.6 s, climbing vial 15.3 s, descent 14 s. Skip and Replay on every segment; captions are 1–2 lines of HTML; no audio. Reduced motion shows each segment's end frame.
+- **Budget.** 38.9 s, as for the other cases: hero 9.6 s, climbing vial 15.3 s, descent 14 s. *Amended 2026-10-16:* with the real-time timer the climbing vial is 16.9 s, so the total is 40.5 s, 0.5 s over the 40 s limit. The instructor accepted this on 2026-10-16, choosing to tighten the end of the climb rather than speed the timer up again or cut another segment. Skip and Replay on every segment; captions are 1–2 lines of HTML; no audio. Reduced motion shows each segment's end frame.
 - **Flies.** Side view on the vial walls, head up (walking, pausing, slipping, grooming, and the mutants' tremor). The descent uses the side view turned slightly towards us.
 
 ## 2 · Three-assay landing (`#/`), ambient
@@ -41,7 +41,9 @@ F  ambient   the climbing vial station, live (stationLive.nmj): the moment after
    [transition out, on click: the station expands into the stage (Flip); URL #/nmj/step-1]
 ```
 
-## 3 · Chosen assay: climbing vial (`#/nmj/step-1`), 15.3 s (3.5 s before the group's action, 11.8 s after)
+As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Locomotion"), with the system ("Leg motor neuron & NMJ system", NMJ with its glossary hover) and the assay ("Climbing assay") below the drawing, and the lane labels sit above it.
+
+## 3 · Chosen assay: climbing vial (`#/nmj/step-1`), 16.9 s (3.5 s before the group's action, 13.4 s after; amended 2026-10-16, was 15.3 s and 11.8 s)
 
 Layout per lane (WT left, mutant right): one upright vial with a foam plug at the top, and a ring marked round it at 5 cm (drawn as a thin ellipse, front and back). The two vials stand side by side, joined by a strip of tape, so one tap treats both alike, as on the bench. A counter (mono numbers) under each vial reads the flies above the line, and a timer (mono) sits between the vials. "Simulated data" pill at the bottom right of the stage.
 
@@ -66,31 +68,37 @@ H 0.0–1.4    (after the click) the taped pair of vials lifts a little and drop
              (0.2 s each, a short ink impact mark under each vial at each tap); the flies fall to the bottom
              in a heap and right themselves within about 0.5 s; the timer resets to 0.0 s and the counters to 0
    reads:  0.2–1.4  every fly starts at the bottom
-   caption: 0.0 "Three taps on the bench, and every fly ends up at the bottom."
+   captions: 0.0–3.0 "Three taps on the bench, and every fly ends up at the bottom."
 
-I 1.4–8.4    the timer runs from 0 to 10 s (decision 2). The WT flies climb straight up in quick bursts with
-             short pauses and a little sideways wander; most pass the line within the first 3 s of the timer
-             and spread up the vial, and 8 of them are above it at 10 s. At each crossing the line thickens
-             for a beat and the counter ticks up (cause → effect). The mutants start late and climb slowly
-             with long pauses; some stall part-way, two slip back down a step and one falls to the bottom;
-             at every pause their legs shake (decision 4); 2 of them pass the line
-   reads:  1.7–4.4  the WT flies climb fast and pass the line
-           4.4–6.4  the mutants are slow and slip back
-           6.4–8.4  their legs shake
-   captions: 1.4 "Most hTDP-43 WT flies pass the line within 10 seconds."
-             4.4 "The mutants climb slowly and slip back, and their legs shake."
+I 1.4–11.4   the timer runs from 0 to 10 s in real time (decision 2, as amended). The WT flies climb straight up in
+             quick bursts with short pauses and a little sideways wander; most pass the line within the first 3 s
+             of the timer (by 4.4 s here) and spread up the vial, and 8 of them are above it at 10 s (the eighth
+             at 7 s of the timer, 8.4 s here). At each crossing the line thickens for a beat and the counter ticks
+             up (cause → effect). The mutants start late and climb slowly with long pauses; some stall part-way,
+             two slip back down a step and one falls to the bottom; at every pause their legs shake (decision 4);
+             2 of them pass the line (at about 6.5 and 8.1 s of the timer, 7.9 and 9.5 s here)
+   reads:  1.8–4.4  the WT flies climb fast and pass the line
+           4.4–7.0  the mutants are slow and slip back
+           7.0–11.4 their legs shake
+   captions: 3.0–7.0  "Most hTDP-43 WT flies pass the line within 10 seconds."
+             7.0–11.4 "The mutants climb slowly and slip back, and their legs shake."
 
-J 8.4–11.8   the timer stops at 10.0 s and the counters hold (8 and 2). Under each vial the climbing index
-             builds: "Climbing index = flies above the line / all flies", then 8 / 10 = 0.8 for WT and
-             2 / 10 = 0.2 for the mutant, and a short ink bar on a 0–1 scale with a dot at each lane's value.
-             From 10.6 s the flies rest and groom (the mutants' legs still shake faintly); the "Next: look
-             inside the fly" button
-   reads:  8.7–10.6 one number for climbing: the share of flies that passed the line
-           10.8–11.8 where to go next (the hold continues, untimed, until the group moves on)
-   caption: 8.4 "Climbing index: the share of flies above the line at 10 seconds."
+J 11.4–13.4  the timer stops at 10.0 s and the counters hold (8 and 2). From 11.4 s the climbing index builds:
+             "Climbing index = flies above the line / all flies", then 8 / 10 = 0.8 for WT and 2 / 10 = 0.2 for the
+             mutant, and a short ink bar on a 0–1 scale with a dot at each lane's value. From 12.6 s the flies rest
+             and groom (the mutants' legs still shake faintly); the "Next: look inside the fly" button appears at 12.8 s
+   reads:  11.4–12.8 one number for climbing: the share of flies that passed the line
+           12.8–13.4 where to go next (the hold continues, untimed, until the group moves on)
+   caption: 11.4 "Climbing index: the share of flies above the line at 10 seconds."
 ```
 
+Amended 2026-10-16 (decision 2; instructor): H–J are longer because the timer is now real time. Previous H-time marks: the timer stopped at 8.4 s, the index appeared at 8.7 s, the rest began at 10.6 s, the Next button at 10.8 s and the end was 11.8 s; the captions began at 1.4, 4.4 and 8.4 s. The taps and the righting are unchanged, and the climb still starts at 1.4 s. H–J now runs 0–13.4 s (was 0–11.8 s; the instructor's later tightening of the end of the climb, 2026-10-16, is in the Budget line and the step 1 timings in the spec). Every caption is up for at least 3 s.
+
 Reduced motion: the end frame of G. On "Tap the flies down", the finished counts and both climbing indices with the Next button, as in the other cases. Skip jumps to the end of G or of H–J; Replay taps the vials again.
+
+As built (captions, 2026-10-16): the captions roll up, as in broadcast captions. The newest caption wipes in on the lower line (the same 0.6 s clip wipe as before); the caption before it moves up to the upper line, set at 18 px against the current caption's 22 px. As it rolls up it shrinks gradually from 22 px to 18 px during the 0.45 s move (a scale from its top-left corner) and turns to the quiet label ink (`--text-3`); it never snaps. The oldest fades out upwards. A later caption is never shown early, and the upper line is always the caption before the current one in story order, so frozen, skipped and replayed states depend only on story time. The caption runs the stage's width, so each fits on one line at 1280 × 720 (the longest caption in the three assays, the activity monitor's first, is 898 px of 968); the upper line truncates rather than wraps, so the controls never move. Step 2's captions keep a single line.
+
+As built (assay note, 2026-10-16; instructor): the climbing vial's description under the controls is a quiet sans note (`.assay__note`, 16px Instrument Sans, regular, `--text-2`), not the 18px serif story text, so it does not compete with the narration. It opens with the run-in label "Climbing assay" in the eyebrow style (`t-label`).
 
 ## 4 · Descent (`#/nmj/step-2`), scroll-driven, 14 s at a steady scroll
 
@@ -204,3 +212,8 @@ Built after the signed-off storyboard above, with these differences and details.
 - The turned side-view fly, with its thorax and near front leg ringed.
 - An inset of the VNC and that leg holding the motor neuron in blue: dendrites, axon down the leg, and synaptic terminals.
 - Labelled "Leg motor neuron".
+
+**Descent (as built, 2026-10-16; instructor):**
+- The Next button ("Next: TDP-43 dysfunction") is the descent's only one, below the story text; the in-stage button that faded in under N at 13.5 s is gone. The matched swap runs from that button while the end frame is still at least partly on screen; otherwise the link navigates.
+- The end frame's bottom bar gives "maximum-intensity projection" the glossary hover.
+- The story text drops the MaleCNS tracing clause, says "through the joint", adds "This contact is the neuromuscular junction (NMJ).", and ends "For simplicity, the images leave out the dendrites."

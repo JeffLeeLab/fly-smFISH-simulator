@@ -130,14 +130,21 @@ function groomSchedule(seed, first, until = 600) {
   return out;
 }
 
+// The system line on each station card: CASES[id].system as a "… system" phrase, with NMJ's glossary hover.
+const STATION_SYSTEM = {
+  nmj: `Leg motor neuron &amp; ${term("nmj", "NMJ")} system`,
+  pdf: "Pdf clock neuron system",
+  mb: "Mushroom body system",
+};
+
 function stations() {
   return CASE_ORDER.map(id => {
     const c = CASES[id];
     const body = `
-      <span class="station__art">${stationArt[id]()}</span>
-      <span class="station__name">${c.assay}</span>
       <span class="station__lanes"><span>hTDP-43 WT</span><span>hTDP-43 ALS mutant</span></span>
-      <span class="t-ui t-muted">${c.system} · ${c.phenotype.toLowerCase()}</span>
+      <span class="station__art">${stationArt[id]()}</span>
+      <span class="station__name">${c.phenotype}</span>
+      <span class="station__sub t-ui t-muted"><span>${STATION_SYSTEM[id]}</span><span>${c.assay}</span></span>
       <span class="station__go">${c.available ? "Choose this system →" : "Not available in this build"}</span>`;
     return c.available
       ? `<li><a class="station" data-case="${id}" href="${href(id, 1)}">${body}</a></li>`
@@ -151,9 +158,9 @@ export async function mount(root) {
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero__text">
           <p class="t-label">Introduction · Start</p>
-          <h1 class="t-display" id="hero-title">Two flies, one human gene</h1>
-          <p class="t-story t-muted">In both flies the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i> (${term("humanised", "humanised")}): the normal version, or one carrying an ALS-linked point mutation.</p>
-          <p class="hero__caption"><span class="hero__cap1">They look the same.</span> <span class="hero__cap2">Their behaviour isn’t.</span></p>
+          <h1 class="t-display" id="hero-title">Studying ALS in humanised flies</h1>
+          <p class="t-story t-muted">${term("als", "ALS")} is a fatal disease in which motor neurons degenerate. In these two flies, the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i> (${term("humanised", "humanised")}): the wild-type (WT) version, or one carrying an ALS-linked point mutation.</p>
+          <p class="hero__caption"><span class="hero__cap">They look the same, but behave differently.</span></p>
           <p class="hero__controls"><button class="btn btn--quiet" type="button" data-act="skip">Skip</button><button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay</button></p>
           <p class="hero__cue t-ui t-muted">Scroll to see how they behave ↓</p>
         </div>
@@ -164,7 +171,7 @@ export async function mount(root) {
         </div>
       </section>
       <h2 class="t-h2 landing__choose" id="choose" tabindex="-1">Choose your neuron system</h2>
-      <p class="t-story">Each group works with one system. Each assay compares hTDP-43 WT (left) with the ALS mutant (right).</p>
+      <p class="t-story">In these simulated data, the mutant flies behave abnormally in three assays, each depending on a different neuron system. Each group works with one system.</p>
       <div class="legend" role="list" aria-label="Lanes in every station">
         ${FLIES.map(f => `
         <span class="legend__item" role="listitem">
@@ -184,7 +191,10 @@ export async function mount(root) {
     const station = root.querySelector(`.station[data-case=${id}]`);
     if (!station) continue;
     liveDraws.push(live.start(station.querySelector("svg"), lateral));
-    station.addEventListener("click", e => handOff(live.handOff, e.currentTarget.querySelector(".station__art")));
+    station.addEventListener("click", e => {
+      if (e.target.closest(".gl")) return;   // a glossary term on the card pins its tip (glossary.js) instead of navigating
+      handOff(live.handOff, e.currentTarget.querySelector(".station__art"));
+    });
   }
   const legendFlies = [...root.querySelectorAll(".legend__fly")];
   legendFlies.forEach(el => el.setAttribute("viewBox", meta.viewBox));
@@ -203,8 +213,6 @@ export async function mount(root) {
   const P = new URLSearchParams(location.search);
   const frozen = P.has("t") ? Number(P.get("t")) : null;
   const still = reducedMotion();
-  const cap1 = root.querySelector(".hero__cap1");
-  const cap2 = root.querySelector(".hero__cap2");
 
   // Cassettes move as plain {x, y, r, sx, sy} objects written to their transform each frame, so
   // rotation and squash pivot on the cassette's centre and a frozen frame is exact.
@@ -228,8 +236,6 @@ export async function mount(root) {
   gsap.set(q(".gene, .geno, .gene-mutation, .cassette--human, .gene-name--fly, .dna-label"), { autoAlpha: 0 });
   gsap.set(q(".impact"), { drawSVG: "0%" });
   gsap.set(q(".gene-tick"), { drawSVG: "50% 50%" });
-  gsap.set(cap1, { autoAlpha: 0, clipPath: "inset(0 100% 0 0)" });
-  gsap.set(cap2, { autoAlpha: 0 });
 
   // B 0.8–1.6: leader lines draw from each fly to its locus; the loci appear as they arrive
   tl.to(q(".leader"), { drawSVG: "100%", duration: 0.8 }, 0.8)
@@ -278,9 +284,8 @@ export async function mount(root) {
     .fromTo(q(".gene-dot"), { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.25, ease: "power2.out" }, 6.8)
     .fromTo(q(".gene-mut-label"), { autoAlpha: 0, x: -4 }, { autoAlpha: 1, x: 0, duration: 0.3, ease: "power2.out" }, 6.85)
     .fromTo(q(".geno"), { autoAlpha: 0, y: 6 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.12 }, 7.4)
-  // E 8.2–9.6: the caption lands; the knock-ins stay, linked to their flies
-    .to(cap1, { autoAlpha: 1, clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out" }, 8.2)
-    .to({}, { duration: 0.4 }, 9.2);   // the caption's read runs to 9.6 s
+  // E 8.2–9.6: a hold; the knock-ins stay, linked to their flies (the caption is on screen from the start)
+    .to({}, { duration: 0.4 }, 9.2);
   drawPoses();
 
   const controls = { skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
@@ -319,7 +324,7 @@ export async function mount(root) {
   const leaders = svg.querySelector(".leaders");
   const [, , vw0, vh0] = meta.viewBox.split(" ").map(Number);
   const rel = (m, x, y, base) => { const p = new DOMPoint(x, y).matrixTransform(m); return [p.x - base.left, p.y - base.top]; };
-  const legendState = { p: 0, cap: false };
+  const legendState = { p: 0 };
   function drawLegend() {
     // down first, then across: the flies drop past the hero text before sliding to the legend
     const p = legendState.p, e = gsap.parseEase("power2.inOut")(p), ex = gsap.parseEase("power2.in")(p), ey = gsap.parseEase("power2.out")(p);
@@ -340,11 +345,6 @@ export async function mount(root) {
     });
     drawWings(clock());
     leaders.style.opacity = String(Math.max(0, 1 - p / 0.25));
-    const cap = p > 0.06;
-    if (cap !== legendState.cap) {
-      legendState.cap = cap;
-      gsap.to(cap2, { autoAlpha: cap ? 1 : 0, duration: still ? 0 : cap ? 0.5 : 0.3, ease: "power2.out" });
-    }
   }
   const flap = meta.frames.flap ? n => `#fly-dorsal-flap-${n}` : null;
   drawWings = t => {
