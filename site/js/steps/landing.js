@@ -24,8 +24,8 @@ const MUTATION_AT = 146;   // in the last exon: most ALS-linked TDP-43 mutations
 // The mutant stands turned a little and slightly lower, so the pair reads as two animals rather
 // than one drawing copied; pose and behaviour stay the same (no visible defect).
 const FLIES = [
-  { id: "wt", x: 172, out: -1, turn: 0, dx: 0, dy: 0, label: "hTDP-43 WT", sub: "fly TBPH → human TDP-43" },
-  { id: "mut", x: 468, out: 1, turn: 8, dx: 4, dy: 5, label: "hTDP-43 ALS mutant", sub: "the same knock-in + one point mutation" },
+  { id: "wt", x: 172, out: -1, turn: 0, dx: 0, dy: 0, label: "hTDP-43 WT" },
+  { id: "mut", x: 468, out: 1, turn: 8, dx: 4, dy: 5, label: "hTDP-43 ALS mutant" },
 ];
 const FLY_Y = 104, FLY_H = 300, STRIP_Y = 352, STRIP_W = 180;
 const CW = STRIP_W + 12, CH = 28;   // a gene cassette's frame
@@ -35,7 +35,6 @@ const behind = (f, d) => {
   const a = f.turn * Math.PI / 180;
   return [f.x + f.dx - d * Math.sin(a), FLY_Y + f.dy + d * Math.cos(a)];
 };
-const italicGenes = s => s.replace("TBPH", '<tspan font-style="italic">TBPH</tspan>').replace("TDP-43", '<tspan font-style="italic">TDP-43</tspan>');
 
 // Where each fly's knock-in moves: the slot in its chromosome, the aim point below and inside it
 // (the human cassette strikes up and outwards from there), and the arc of the fly cassette it
@@ -109,7 +108,6 @@ function scene() {
       <g class="geno-labels">${FLIES.map(f => `
         <g class="geno" data-fly="${f.id}">
           <text class="scene-label" x="${f.x}" y="440" text-anchor="middle">${f.label}</text>
-          <text class="scene-small" x="${f.x}" y="458" text-anchor="middle">${italicGenes(f.sub)}</text>
         </g>`).join("")}</g>
     </svg>`;
 }
@@ -159,15 +157,13 @@ export async function mount(root) {
         <div class="hero__text">
           <p class="t-label">Introduction · Start</p>
           <h1 class="t-display" id="hero-title">Studying ALS in humanised flies</h1>
-          <p class="t-story t-muted">${term("als", "ALS")} is a fatal disease in which motor neurons degenerate. In these two flies, the fly gene <i>TBPH</i> has been replaced by human <i>TDP-43</i> (${term("humanised", "humanised")}): the wild-type (WT) version, or one carrying an ALS-linked point mutation.</p>
+          <p class="t-story t-muted">${term("als", "ALS")} is a fatal disease of motor neurons. These two flies are ${term("humanised", "humanised")}: human <i>TDP-43</i> replaces the fly gene <i>TBPH</i>, wild-type (WT) version in one, an <span class="nw">ALS-linked</span> mutation in the other.</p>
           <p class="hero__caption"><span class="hero__cap">They look the same, but behave differently.</span></p>
-          <p class="hero__controls"><button class="btn btn--quiet" type="button" data-act="skip">Skip</button><button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay</button></p>
-          <p class="hero__cue t-ui t-muted">Scroll to see how they behave ↓</p>
         </div>
         <div class="hero__art">
           <div class="hero__wash" aria-hidden="true"></div>
           ${scene()}
-          <span class="tag-sim hero__tag">Schematic</span>
+          <p class="hero__tools"><button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button><button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay animation</button><span class="tag-sim">Schematic</span></p>
         </div>
       </section>
       <h2 class="t-h2 landing__choose" id="choose" tabindex="-1">Choose your neuron system</h2>

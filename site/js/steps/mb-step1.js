@@ -43,7 +43,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Train the flies</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
-        <button class="btn btn--quiet" type="button" data-act="skip">Skip</button>
+        <button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button>
         <button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay the training</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">T-maze assay</span> In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point, between an arm smelling of each odour. Flies that remember avoid the shocked odour. Each count stands for a group of about a hundred flies.</p>

@@ -67,6 +67,8 @@ E  8.2–9.6   hold (instructor, 2026-10-16): the caption is already on screen f
     the assay scene (Flip)]
 ```
 
+As built (hero text, 2026-10-17, instructor): the introduction reads "ALS is a fatal disease of motor neurons. These two flies are humanised: human *TDP-43* replaces the fly gene *TBPH*, wild-type (WT) version in one, an ALS-linked mutation in the other." ("ALS-linked" never breaks at its hyphen). The genotype labels are the names alone, with no line under them. "Skip animation" and "Replay animation" sit with the "Schematic" tag at the drawing's bottom right; the text column ends with the caption (no scroll cue).
+
 As built (transition out): the caption does not change on scroll. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
 
 As built (flight): the stand-ins fly.

@@ -53,7 +53,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Tap the flies down</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the fly</a>
-        <button class="btn btn--quiet" type="button" data-act="skip">Skip</button>
+        <button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button>
         <button class="btn btn--quiet" type="button" data-act="replay" hidden>Tap them down again</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">Climbing assay</span> Flies climb upwards by instinct. Tapped to the bottom of a vial, they turn and climb the wall within seconds. In this assay, the vials are tapped down, and after a set time the flies above a finish line are counted; climbing declines with age and in many fly models of motor neuron disease. Each vial here holds ten flies.</p>

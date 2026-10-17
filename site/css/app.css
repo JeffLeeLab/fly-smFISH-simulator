@@ -170,8 +170,6 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .hero__text { display: flex; flex-direction: column; gap: var(--sp-4); position: relative; z-index: 1; }
 .hero__text h1 { margin: 0; }
 .hero__caption { font: italic 400 24px/1.35 var(--font-serif); color: var(--text); min-height: 2.8em; }
-.hero__controls { display: flex; gap: var(--sp-2); min-height: 28px; margin-top: calc(-1 * var(--sp-2)); }
-.hero__cue { margin-top: var(--sp-2); }
 .hero__art { position: relative; align-self: stretch; display: grid; place-items: center; min-height: 420px; }
 .hero__scene { position: relative; z-index: 1; width: 100%; max-height: min(560px, calc(100vh - 96px)); overflow: visible; }
 .hero__wash {
@@ -183,7 +181,8 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 /* the story pages are printed on paper: the background with grain baked in (no blend layers) */
 .app[data-layout="story"] { background: var(--bg) url("../textures/paper-light.webp") repeat; background-size: 384px; }
 [data-theme="dark"] .app[data-layout="story"] { background-image: url("../textures/paper-dark.webp"); }
-.hero__tag { position: absolute; right: var(--sp-3); bottom: var(--sp-3); z-index: 3; }
+/* the scene's own controls and its tag, together under the drawing */
+.hero__tools { position: absolute; right: var(--sp-3); bottom: var(--sp-3); z-index: 3; display: flex; align-items: center; gap: var(--sp-2); margin: 0; }
 
 /* fly drawings take the theme's inks and washes (story layer only) */
 .fly { --fly-ink: var(--ink); --fly-wash: var(--wash-body); --fly-eye: var(--wash-eye); --fly-wing: var(--wash-wing); stroke-width: 1.4px; }
