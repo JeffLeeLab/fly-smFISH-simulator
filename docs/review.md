@@ -420,3 +420,22 @@ The instructor chose the quotation style, its use everywhere, and the gene name 
 | 3 | Step 4, TDP-43 | Four new molecules in the cytoplasm would have outnumbered the nucleus (five), against "enriched in the nucleus". | Fixed: three more in the nucleus (eight there in all). |
 | 4 | Summary slide | The slide's palette had no quiet text grey for the quotation marks. | Added `text3` (#66655F, the light theme's `--text-3`) to `LIGHT` in `export.js`. |
 | 5 | Docs (Haiku's edit) | The *stai* inserted into the spec and storyboard rows was in roman. | Fixed: italic, as gene names are in the docs. The mock-up page (`docs/mockups/step4-targets-endframe.html`) keeps the old text: it is a design record. |
+
+## 2026-10-17: opening tightened; boxed animation controls; station cards without lane labels (instructor)
+
+The instructor asked for these changes:
+- the hero introduction reworded ("ALS is a fatal disease of motor neurons. These two flies are humanised: …"), with "ALS-linked" kept on one line;
+- the lines under the two hero flies dropped (they repeated the introduction), and the scroll cue removed;
+- Skip and Replay moved beside the hero's Schematic tag and named "Skip animation" / "Replay animation", as on step 4; Skip renamed the same way on all three step 1 pages;
+- the animation controls on the hero, step 1 and step 4 drawn as ghost buttons (a hairline box at rest) instead of quiet ones; the tour's Skip stays quiet;
+- the lane labels removed from the three station cards (the legend above them names the lanes once), and the landing intro reworded ("…mutant flies behave abnormally in three assays, each relying on a different neuron system. Your group works with one system.").
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for pdf, inspected (hero, step 1 and step 4 at both sizes and in both themes). The set shows frozen end frames, where Skip and Replay are hidden, so the buttons were checked live instead.
+- **Buttons, live:** hero (both themes), step 4 (both themes) and step 1 for pdf, mb and nmj (light), at 1280×720. On step 4 Next still ends at 704 px; on Pdf step 1 the controls row ends at 712 px.
+- **Station cards:** 1280×720 in both themes; the drawing now starts 17 px below the card's top edge, the card's own padding.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Hero | "ALS-linked" broke at its hyphen across two lines. | Fixed: wrapped in `.nw`. |
+| 2 | Process | The change was first checked only by spot screenshots; the review set wasn't run until the instructor asked. | Fixed: AGENTS.md (CLAUDE.md) now says to run the review set before committing any change a student would see, and `.claude/launch.json` starts `tools/serve.py` for the desktop app's browser pane. |

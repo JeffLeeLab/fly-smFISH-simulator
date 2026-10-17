@@ -145,8 +145,8 @@ export async function mount(root, ctx) {
       </div>
       <div class="assay__controls">
         <a class="btn btn--primary btn--lg" href="${href(ctx.caseId, 5)}">Next: hypotheses</a>
-        <button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button>
-        <button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay animation</button>
+        <button class="btn" type="button" data-act="skip">Skip animation</button>
+        <button class="btn" type="button" data-act="replay" hidden>Replay animation</button>
       </div>
     </div>`;
 

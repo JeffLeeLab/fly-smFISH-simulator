@@ -91,7 +91,7 @@ F  ambient   three stations in a row, each split WT lane (left) | mutant lane (r
    [transition out, on click: the activity monitor expands into the stage (Flip); URL #/pdf/step-1]
 ```
 
-As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Sleep & circadian rhythm"), with the system ("Pdf clock neuron system") and the assay ("Activity monitor assay") below the drawing, and the lane labels sit above it.
+As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Sleep & circadian rhythm"), with the system ("Pdf clock neuron system") and the assay ("Activity monitor assay") below the drawing. Since 2026-10-17 the card has no lane labels; the legend above the stations names the lanes.
 
 As built: the climbing vial (WT flies mostly past the line, mutants mostly low) and the T-maze (WT flies gathered in one arm, mutants split evenly) are still drawings, dimmed, marked "Not available in this build". The activity monitor's tiny actogram shows three days, with the night halves shaded. The station grows into the stage across the route change (its screen position is handed to step 1, which scales the stage up from there). The mini monitor's flies walk as in step 1 (see the walking note in section 3).
 

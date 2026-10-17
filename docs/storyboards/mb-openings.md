@@ -28,7 +28,7 @@ F  ambient   the T-maze station, live: a small front-on maze per lane after the 
    [transition out, on click: the station expands into the stage (Flip); URL #/mb/step-1]
 ```
 
-As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Learning & memory"), with the system ("Mushroom body system") and the assay ("T-maze assay") below the drawing, and the lane labels sit above it.
+As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Learning & memory"), with the system ("Mushroom body system") and the assay ("T-maze assay") below the drawing. Since 2026-10-17 the card has no lane labels; the legend above the stations names the lanes.
 
 ## 3 · Chosen assay: T-maze (`#/mb/step-1`), 15.3 s (3.5 s before the group's action, 11.8 s after)
 

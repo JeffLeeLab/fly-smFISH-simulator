@@ -126,8 +126,8 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Start the light–dark days</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
-        <button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button>
-        <button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay the days</button>
+        <button class="btn" type="button" data-act="skip">Skip animation</button>
+        <button class="btn" type="button" data-act="replay" hidden>Replay the days</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">Activity monitor assay</span> The monitor counts every walk through the beam, day and night. Over days of 12 hours light and 12 hours dark, the counts show when each fly is active and when it sleeps: a fly that does not cross the beam for five minutes or more is counted as asleep.</p>
     </div>`;

@@ -139,7 +139,6 @@ function stations() {
   return CASE_ORDER.map(id => {
     const c = CASES[id];
     const body = `
-      <span class="station__lanes"><span>hTDP-43 WT</span><span>hTDP-43 ALS mutant</span></span>
       <span class="station__art">${stationArt[id]()}</span>
       <span class="station__name">${c.phenotype}</span>
       <span class="station__sub t-ui t-muted"><span>${STATION_SYSTEM[id]}</span><span>${c.assay}</span></span>
@@ -163,11 +162,11 @@ export async function mount(root) {
         <div class="hero__art">
           <div class="hero__wash" aria-hidden="true"></div>
           ${scene()}
-          <p class="hero__tools"><button class="btn btn--quiet" type="button" data-act="skip">Skip animation</button><button class="btn btn--quiet" type="button" data-act="replay" hidden>Replay animation</button><span class="tag-sim">Schematic</span></p>
+          <p class="hero__tools"><button class="btn" type="button" data-act="skip">Skip animation</button><button class="btn" type="button" data-act="replay" hidden>Replay animation</button><span class="tag-sim">Schematic</span></p>
         </div>
       </section>
       <h2 class="t-h2 landing__choose" id="choose" tabindex="-1">Choose your neuron system</h2>
-      <p class="t-story">In these simulated data, the mutant flies behave abnormally in three assays, each depending on a different neuron system. Each group works with one system.</p>
+      <p class="t-story">In these simulated data, mutant flies behave abnormally in three assays, each relying on a different neuron system. Your group works with one system.</p>
       <div class="legend" role="list" aria-label="Lanes in every station">
         ${FLIES.map(f => `
         <span class="legend__item" role="listitem">

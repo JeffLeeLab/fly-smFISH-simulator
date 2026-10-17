@@ -41,7 +41,7 @@ F  ambient   the climbing vial station, live (stationLive.nmj): the moment after
    [transition out, on click: the station expands into the stage (Flip); URL #/nmj/step-1]
 ```
 
-As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Locomotion"), with the system ("Leg motor neuron & NMJ system", NMJ with its glossary hover) and the assay ("Climbing assay") below the drawing, and the lane labels sit above it.
+As built (cards, 2026-10-16): the station card follows the spec's *Openings*. The title is the phenotype ("Locomotion"), with the system ("Leg motor neuron & NMJ system", NMJ with its glossary hover) and the assay ("Climbing assay") below the drawing. Since 2026-10-17 the card has no lane labels; the legend above the stations names the lanes.
 
 ## 3 · Chosen assay: climbing vial (`#/nmj/step-1`), 16.9 s (3.5 s before the group's action, 13.4 s after; amended 2026-10-16, was 15.3 s and 11.8 s)
 

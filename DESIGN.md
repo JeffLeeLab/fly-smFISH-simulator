@@ -214,7 +214,7 @@ The palette is warm neutrals with one restrained accent. All the saturated hues 
 - **Pencil Hairline** (`hairline`) and **Graphite Hairline** (`hairline-strong`): all borders and dividers. They are decorative, so no contrast minimum applies.
 - **Stone** (`stone`): non-text graphics at 3:1 or more, such as UTR blocks on the map, rail numbers and placeholders. Never body text.
 - **Lamp Black** (`ink-black`) and **Slate Ink** (`ink-grey`, 9.4:1): primary and secondary text. Slate Ink also draws CDS blocks on the transcript map.
-- **Quiet label ink** (`text-3` in `tokens.css`: `#66655F` in light, 5.3:1 on the field; `#97958C` in dark): quiet labels only, such as the lane labels above the drawings on the landing station cards, and the previous caption on the roll-up caption line of the step 1 assays, at 18px (instructor, 2026-10-16); the current caption, at 22px, is not set in it. It is lighter than Slate Ink, so it never carries the current running text.
+- **Quiet label ink** (`text-3` in `tokens.css`: `#66655F` in light, 5.3:1 on the field; `#97958C` in dark): quiet labels only, such as the previous caption on the roll-up caption line of the step 1 assays, at 18px (instructor, 2026-10-16); the current caption, at 22px, is not set in it. It is lighter than Slate Ink, so it never carries the current running text.
 - **Warm Charcoal** (`charcoal-bg`, `#1F1E1C`): the dark-theme page, chosen in the style phase as slightly lighter than `#141413`. The dark theme's panel, field, hairline, stone and text values follow it (`charcoal-panel`, `charcoal-field`, `charcoal-hairline`, `charcoal-hairline-strong`, `stone-dark`, `ivory-text`, `ash-text`).
 - **Viewer Surround** (`viewer-frame`; dark theme `viewer-frame-dark`) and **Field Black** (`viewer-field`): the frame around the microscope field, and the field itself. The field is black in both themes.
 
@@ -313,7 +313,7 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 
 ### Buttons
 - **Shape:** near-square (3px).
-- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Choose a new pair", the fly-to buttons and "Copy as PNG".
+- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Choose a new pair", the fly-to buttons and "Copy as PNG", and for the animation controls ("Skip animation", "Replay animation" and step 1's replays) so they read as buttons (instructor, 2026-10-17). A quiet variant without the border at rest is kept for the tour's "Skip".
 - **Hover / Focus (provisional, not in the mockups):** hover fills with `ivory-panel`. Focus-visible shows a 2px clay outline offset by 2px. Colour transitions take about 150ms; nothing moves or scales.
 - **Primary action (provisional)** ("Show results"): a clay fill with `on-clay` text. Use it on at most one control per screen.
 
