@@ -439,3 +439,35 @@ The instructor asked for these changes:
 | --- | --- | --- | --- |
 | 1 | Hero | "ALS-linked" broke at its hyphen across two lines. | Fixed: wrapped in `.nw`. |
 | 2 | Process | The change was first checked only by spot screenshots; the review set wasn't run until the instructor asked. | Fixed: AGENTS.md (CLAUDE.md) now says to run the review set before committing any change a student would see, and `.claude/launch.json` starts `tools/serve.py` for the desktop app's browser pane. |
+
+## 2026-10-19: text edits, the NMJ label, the step 4 bounce, a rationed descent scroll and Skip (instructor)
+
+The instructor asked for these changes:
+- **Hero:** "ALS is a fatal neurodegenerative disease." The ALS hover is rewritten: a devastating neurodegenerative disease that kills motor neurons; known in the UK as motor neurone disease (MND); it can also affect other neuron types, including those controlling sleep and cognition.
+- **Leg motor neuron descent:** an arrow label "Neuromuscular junction (NMJ)" on the synaptic terminals on the muscle. The 6.0 s caption now ends "This connection is called the neuromuscular junction (NMJ)."
+- **Step 4 captions:** reworded with RBPs as the subject, plus a new C2 at 7.0 s, "RBPs regulate an RNA's life cycle." In shot A, the free TDP-43 now bounce lightly off the non-target RNA as they fade.
+- **Step 6:** "At first, it's most informative to design probes against a constitutive exon and a constitutive intron.", with a glossary hover on "constitutive".
+- **Pdf step 1:** "ZT2" in the last caption gets the Zeitgeber hover, which now adds that the dorsal terminals are most branched at ZT2 and that this daily remodelling needs tight control of gene expression.
+- **Descents:** Chrome scrolled through them almost at once. The forward scroll is now rationed: at most twice the descent's pace, and at most 1.2 s of story ahead of the animation. The page can't pass a descent until it has ended. The first caption reads "Scroll slowly to go inside the fly ↓", and a "Skip animation" button sits at the stage's bottom right.
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for pdf, mb and nmj, run twice (before and after fix 5). Inspected: the hero, Pdf step 1, the three step 2 states, step 4 and step 6, at both sizes and in both themes. `tools/shot-diff.py` between the two runs shows that only the step 2 states changed; all other shots differ by at most 8 levels (anti-aliasing). Frozen frames hide Skip, so it was checked live.
+- **Bounce:** frozen frames at the four touches (2.4, 2.8, 3.2 and 3.6 s) at 1920×1080. Each TDP-43 meets the line, and each starts clear of the sequences and inside the box.
+- **Step 4 captions:** at 1280×720 all seven fit on one line; the widest is 921 of 968 px.
+- **Scroll:** checked live in Chrome (playwright) with hard wheel bursts and the End key on all three descents. Story time advanced 2 s per second while the wheel ran and stopped within a second after it. The text below appeared only once the descent reached 14 s. Scrolling back up is not held. The same holds after a window resize.
+- **Skip:** checked live on all three descents at 1280×720.
+  - It goes straight to the end frame, Next is in view (660–696 px) and focused, and Skip hides.
+  - Part of the microscope frame stays on screen, so Next still hands off into step 3's viewer.
+  - Skip returns when the group scrolls back up.
+  - It reads on paper, charcoal and black, in both themes.
+- **Glossary hovers:** ALS (hero), ZT2 (Pdf step 1) and constitutive (step 6).
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Descents | The first version capped only the timeline. After a flick, the descent played on by itself while the page scrolled on to the story text (instructor). | Fixed: the scroll itself is rationed, and the page is held at the descent's end until the descent has ended. |
+| 2 | `scrollScrub` | It kept the timeline object, but a resize rebuilds the timeline, so after any resize the descent would have stopped responding. | Fixed before commit: it takes a getter. |
+| 3 | NMJ label | At 1280×720 its left end ran into the axon where it leaves the VNC. | Fixed: moved right; clear of the axon at both sizes. |
+| 4 | Step 4, shot A | At t = 0, one free TDP-43 sat on the "…UGUGUGUG…" text and another's tail touched the box corner. | Fixed: start points moved. |
+| 5 | Descent captions | The room kept for Skip narrows the caption to 844 px at 1280×720, so some captions wrap. A wrapping caption made the caption row taller and the scene shorter. The scene is laid out only on build, so the screen-space labels could drift off the drawing; the NMJ's long captions already did this. | Fixed: the caption row always holds two lines (95 px), so the scene is 625 px at 1280×720 for every caption. |
+| 6 | Step 6, mb, 1280×720 | The lede is now three lines. The "How two-colour smFISH works" link ends 11 px below the panel's edge, so the panel needs 12 px of scroll. | Accepted (instructor): the panel scrolls by design, and the map and probe track still fit. |
+| 7 | ZT2 hover | The request said the terminals are "most fasciculated" at ZT2, which reverses Fernández et al. 2008 (as in the 2026-10-16 run). | Written as "most branched". |
