@@ -22,7 +22,7 @@
 import { href } from "../router.js";
 import { term } from "../glossary.js";
 import { loadJSON } from "../data.js";
-import { loadGsap, reducedMotion } from "../gsap.js";
+import { loadGsap, reducedMotion, scrollScrub } from "../gsap.js";
 import { loadFlySprite } from "../fly.js";
 import { handOff, takeHandOff } from "../handoff.js";
 
@@ -38,11 +38,11 @@ const KEEP = new Set(["thorax", "head", "eye", "coxa_T1_right", "femur_T1_right"
 const BLUE = { membrane: "#5F78C0", dapi: "#5A78EB" };
 
 const CAPTIONS = [
-  [0, "Scroll to go inside the fly ↓"],
+  [0, "Scroll slowly to go inside the fly ↓"],
   [0.3, "We follow one of the hTDP-43 WT flies, a good climber."],
   [2.3, "Into its thorax, where the legs attach."],
   [4.8, "The central nervous system: the brain in the head, and the ventral nerve cord in the thorax, the fly’s equivalent of our spinal cord."],
-  [6.0, "In blue, one leg motor neuron. Its axon runs down the leg and ends on a muscle."],
+  [6.0, "In blue, one leg motor neuron. Its axon runs down the leg and ends on a muscle. This connection is called the neuromuscular junction (NMJ)."],
   [8.3, "The real axon is far longer. We draw it short so the whole neuron fits one view."],
   [10.8, "This is what you will look at under the microscope."],
   [12.4, "hTDP-43 WT on the left, the ALS mutant on the right (labelled hTDP-43 mutant)."],
@@ -129,8 +129,11 @@ export async function mount(root, ctx) {
   const LABEL_AT = [[nb[0] - 8, cellC[1]], [nb[0] - 2, 92], [nb[0] + 30, 150]];
   const lead = PARTS.map(() => ({ k: 0 }));
   // labels while the fly is drawn: the central nervous system (one arrow to the brain, one to the
-  // VNC), the VNC, and the muscle the synaptic terminals sit on
-  const REGIONS = ["Central nervous system", "Ventral nerve cord (VNC)", "Leg muscle"];
+  // VNC), the VNC, the muscle the synaptic terminals sit on, and the junction they make with it
+  const REGIONS = ["Central nervous system", "Ventral nerve cord (VNC)", "Leg muscle", "Neuromuscular junction (NMJ)"];
+  // the NMJ's arrow ends on the swelling nearest the middle of the terminals (terminal coordinates)
+  const swMid = [0, 1].map(k => T.swellings.reduce((a, s) => a + s[k], 0) / T.swellings.length);
+  const nmjSwell = T.swellings.reduce((a, b) => (Math.hypot(b[0] - swMid[0], b[1] - swMid[1]) < Math.hypot(a[0] - swMid[0], a[1] - swMid[1]) ? b : a));
   const rlead = REGIONS.map(() => ({ k: 0 }));
 
   root.innerHTML = `
@@ -146,7 +149,7 @@ export async function mount(root, ctx) {
                 <div class="descent__field" data-field="${i}" aria-hidden="true"><canvas></canvas><p class="viewer__label">${l}</p></div>`).join("")}
               <p class="descent__vbar">${(ctx.case.anatomy?.projection || "2D maximum-intensity projection (simulated data)").replace("maximum-intensity projection", term("mip", "maximum-intensity projection"))}</p>
             </div>
-            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly highest on the vial's wall rights itself and turns a little towards us; we push into its thorax, where the ventral nerve cord appears. One motor neuron lights up in blue: its cell body and dendrites in the nerve cord, its axon running out through the leg nerve, down the leg and into the femur, where it ends in synaptic terminals on a muscle. The axon is then drawn much shorter, behind a break mark, so the whole neuron fits one view: cell body, axon and synaptic terminals. It ends as two microscope fields: WT left, mutant right.">
+            <svg class="descent__svg" role="img" aria-label="The hTDP-43 WT fly highest on the vial's wall rights itself and turns a little towards us; we push into its thorax, where the ventral nerve cord appears. One motor neuron lights up in blue: its cell body and dendrites in the nerve cord, its axon running out through the leg nerve, down the leg and into the femur, where it ends in synaptic terminals on a muscle: the neuromuscular junction (NMJ). The axon is then drawn much shorter, behind a break mark, so the whole neuron fits one view: cell body, axon and synaptic terminals. It ends as two microscope fields: WT left, mutant right.">
               <defs>
                 <filter id="descent-boil" x="-5%" y="-5%" width="110%" height="110%">
                   <feTurbulence type="fractalNoise" baseFrequency=".03" numOctaves="2" seed="3"/>
@@ -189,13 +192,14 @@ export async function mount(root, ctx) {
               <g class="d-break"><path class="break-mark" d="M-4,-7 L-1,7 M1,-7 L4,7"/></g>
             </svg>
             <div class="descent__labels" aria-hidden="true">
-              <svg class="d-leaders">${PARTS.map(() => `<path class="d-leader"/><path class="d-arrow"/>`).join("")}${[0, 1, 2, 3].map(() => `<path class="d-leader d-leader--region"/><path class="d-arrow d-arrow--region"/>`).join("")}</svg>
+              <svg class="d-leaders">${PARTS.map(() => `<path class="d-leader"/><path class="d-arrow"/>`).join("")}${[0, 1, 2, 3, 4].map(() => `<path class="d-leader d-leader--region"/><path class="d-arrow d-arrow--region"/>`).join("")}</svg>
               <span class="d-label d-label--fly">hTDP-43 WT</span>
               ${PARTS.map(name => `<span class="d-label d-label--part">${name}</span>`).join("")}
               ${REGIONS.map(name => `<span class="d-label d-label--region">${name}</span>`).join("")}
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
+          <button class="btn descent__skip" type="button" data-act="skip" hidden>Skip animation</button>
         </div>
       </section>
       <div class="story descent__after">
@@ -345,6 +349,7 @@ export async function mount(root, ctx) {
       .fromTo(".term-grow", { attr: { r: 0 } }, { attr: { r: 60 }, duration: 0.6, ease: "power1.out" }, 7.35)
       .fromTo([...regionLabels.slice(0, 2), ...rLeaders.slice(0, 3), ...rArrows.slice(0, 3)], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.6)
       .fromTo([regionLabels[2], rLeaders[3], rArrows[3]], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 7.95)
+      .fromTo([regionLabels[3], rLeaders[4], rArrows[4]], { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.in" }, 8.25)
     // N 8–10.5: the fly and the VNC go; the neuron settles into the viewer's layout as we close in
       .fromTo(look, { wash: 8, ink: 34 }, { wash: 0, ink: 0, duration: 0.8 }, 8.0)
       .fromTo(".bg-charcoal", { opacity: 0 }, { opacity: 1, duration: 0.8, ease: "power1.inOut" }, 8.0)
@@ -361,7 +366,7 @@ export async function mount(root, ctx) {
       .fromTo(".d-mn", { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.in" }, 10.0);
     for (const p of legParts) if (p.to) tl.fromTo(p.el, { morphSVG: p.from }, { morphSVG: p.to, duration: MORPH[1] - MORPH[0], ease: "power2.inOut" }, MORPH[0]);
     camTo("vnc", "neuron", 8.0, 1.7);
-    [4.9, 5.5, 7.1].forEach((at, i) => {
+    [4.9, 5.5, 7.1, 7.7].forEach((at, i) => {
       tl.fromTo(regionLabels[i], { autoAlpha: 0, y: i === 2 ? 4 : -4 }, { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" }, at)
         .fromTo(rlead[i], { k: 0 }, { k: 1, duration: 0.35, ease: "power2.out" }, at + 0.12);
     });
@@ -485,13 +490,17 @@ export async function mount(root, ctx) {
     })()];
     PARTS.forEach((_, i) => pointer(partLabels[i], leaders[i], arrows[i], lead[i].k, "left",
       toScreen(LABEL_AT[i][0] + AT.x, LABEL_AT[i][1] + AT.y), toScreen(...anchors[i])));
-    // the CNS label above the neck, an arrow to each part; the VNC's to its left; the muscle's below the femur
+    // the CNS label above the neck, an arrow to each part; the VNC's to its left; the muscle's below the
+    // femur; the NMJ's above it, its arrow on the synaptic terminals
     const neck = A.cns.neck, vc = A.vnc.centre, mu = N.muscle.at;
     const cnsAt = toScreen(neck[0] - 60, A.cns.brain[1] - 205);
     pointer(regionLabels[0], rLeaders[0], rArrows[0], rlead[0].k, "above", cnsAt, toScreen(A.cns.brain[0] - 40, A.cns.brain[1] - 40));
     pointer(regionLabels[0], rLeaders[1], rArrows[1], rlead[0].k, "above", cnsAt, toScreen(vc[0] + 120, vc[1] - 40));
     pointer(regionLabels[1], rLeaders[2], rArrows[2], rlead[1].k, "left", toScreen(vc[0] - 420, vc[1] - 40), toScreen(vc[0] - 250, vc[1] - 10));
     pointer(regionLabels[2], rLeaders[3], rArrows[3], rlead[2].k, "below", toScreen(mu[0] + 90, mu[1] + 170), toScreen(mu[0] + 90, mu[1] + 30));
+    const nr = tt.rot * Math.PI / 180, [nx, ny] = nmjSwell;
+    pointer(regionLabels[3], rLeaders[4], rArrows[4], rlead[3].k, "above", toScreen(mu[0] + 255, mu[1] - 190),
+      toScreen(tt.at[0] + tt.k * (nx * Math.cos(nr) - ny * Math.sin(nr)), tt.at[1] + tt.k * (nx * Math.sin(nr) + ny * Math.cos(nr))));
 
     // caption and the dark stage
     let k = 0;
@@ -506,7 +515,7 @@ export async function mount(root, ctx) {
   }
 
   // ---------- scroll, frozen review frames, reduced motion (as in the other descents) ----------
-  let st = null, smooth = null;
+  let stopScrub = null;
   const pinnedAt = q => window.scrollY + section.getBoundingClientRect().top + q * (section.offsetHeight - window.innerHeight);
   if (still) {
     section.classList.add("is-still");
@@ -520,14 +529,7 @@ export async function mount(root, ctx) {
     draw();
   } else {
     build();
-    const target = { p: 0 };
-    st = window.ScrollTrigger.create({
-      trigger: section, start: "top top", end: "bottom bottom",
-      onUpdate: self => {
-        smooth?.kill();
-        smooth = gsap.to(target, { p: self.progress, duration: 0.45, ease: "power3.out", onUpdate: () => tl.progress(target.p) });
-      },
-    });
+    stopScrub = scrollScrub(gsap, section, () => tl, { skip: root.querySelector("[data-act=skip]"), next: root.querySelector("[data-act=next]") });
     // hand-off from step 1: the fly grows out of where it stood on the vial's wall
     if (handRect && window.scrollY < 4) {
       const r = flyG.getBoundingClientRect();
@@ -554,8 +556,7 @@ export async function mount(root, ctx) {
     window.removeEventListener("resize", onResize);
     clearInterval(boilTimer);
     clearTimeout(resizeTimer);
-    st?.kill();
-    smooth?.kill();
+    stopScrub?.();
     tl?.kill();
     delete window.__descent;
   };

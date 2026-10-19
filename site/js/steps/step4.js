@@ -11,7 +11,7 @@
 // camera moves: the ink filter and the rim come on at the still (H), and the ink boils only once
 // the end frame is reached in live play. Reduced motion shows the end frame, which equals ?t=54.6.
 //
-//   A  0–6.5    the close-up fills the stage: two TDP-43 clasp the UG run; others drift past
+//   A  0–6.5    the close-up fills the stage: two TDP-43 clasp the UG run; others bounce off the non-target RNA
 //   B  6.5–12.5 it shrinks into its box; the neuron grows out from its cell body; compartments named
 //   C 12.5–20.5 the nucleus: chromatin gathers, TDP-43 comes in through the pores; splicing
 //   D 20.5–27   the pore: the finished mRNA leaves the nucleus
@@ -38,14 +38,15 @@ const { lin, io1, io2, out2, smoother } = ease;
 
 // One line each at the stage's width; trusted constants (caption.js), so they can hold terms.
 const CAPTIONS = {
-  c1: `TDP-43 is an ${term("rbp", "RNA-binding protein")}. It binds RNAs with UG-rich sequences: its targets.`,
-  c2: "In the nucleus, splicing removes a target’s introns. One gene can make several isoforms.",
-  c3: "The finished mRNA leaves the nucleus through a nuclear pore.",
-  c4: "In the cytoplasm, it is translated into protein and, in the end, broken down.",
-  c5: `Neurons send many mRNAs down the axon in ${term("granule", "granules")}, to make protein where it is needed.`,
-  c6: `Each step is a mode of ${term("ptr", "post-transcriptional regulation")}. TDP-43 takes part in many.`,
+  c1: `TDP-43 is an ${term("rbp", "RNA-binding protein")}. It binds target RNAs with UG-rich sequences and regulates them.`,
+  c2: "RBPs regulate an RNA’s life cycle.",
+  c3: "In the nucleus, splicing removes a target’s introns, so a single gene can make several isoforms.",
+  c4: "RBPs help mature mRNAs leave the nucleus through a nuclear pore.",
+  c5: "In the cytoplasm, RBPs regulate protein translation of an mRNA and its eventual decay.",
+  c6: `Neurons also send many mRNAs down the axon, packaged in RBP ${term("granule", "granules")}, to make protein where it is needed.`,
+  c7: `Each step is a mode of ${term("ptr", "post-transcriptional regulation")}. TDP-43 takes part in many.`,
 };
-const CAPTION_AT = [[A + 0.3, "c1"], [C, "c2"], [D, "c3"], [E, "c4"], [F, "c5"], [G, "c6"]];
+const CAPTION_AT = [[A + 0.3, "c1"], [B + 0.5, "c2"], [C, "c3"], [D, "c4"], [E, "c5"], [F, "c6"], [G, "c7"]];
 
 // ---------- the camera: stops are [centre x, centre y, height] in the drawing's units ----------
 const REST = { stop: [492, 141, 270], viewBox: "0 6 984 270", aspect: 984 / 270 };   // the end frame
@@ -74,9 +75,11 @@ const camAt = camTrack(REST.stop, [
 const ZOOM = 2.4, BOX_C = [466, 54], STAGE_C = [492, 141];
 // the two that bind: start [x, y, angle], the point their path bends towards, their place on the UG run
 const BIND = [{ from: [452, 25, -14], via: [485, 19], on: [499, 36.6], at: A + 0.8 }, { from: [574, 22, 16], via: [550, 17], on: [533, 36.6], at: A + 1.1 }];
-// the rest drift past the non-target RNA without binding and leave: [x, y, angle], drift over 6 s, fade-out time
-const DRIFT = [{ at: [392, 60, 24], by: [24, 4], out: A + 2.6 }, { at: [470, 63, -8], by: [26, 1], out: A + 3.0 },
-  { at: [574, 83, 14], by: [-8, 3], out: A + 3.4 }, { at: [430, 84, -16], by: [14, -3], out: A + 3.8 }];
+// the rest drift onto the non-target RNA (its line at y 72), touch it and bounce lightly off, fading as
+// they go: where each touches it [x, y], its drift towards it [x, y per s], its angle, when it touches
+const BOUNCE = [{ hit: [462, 67.6], v: [3, 5], a: -10, at: A + 2.4 }, { hit: [556, 67.6], v: [-4, 2.4], a: -6, at: A + 2.8 },
+  { hit: [576, 76.9], v: [-1.5, -3], a: 8, at: A + 3.2 }, { hit: [468, 76.8], v: [3.5, -3.2], a: -8, at: A + 3.6 }];
+const REBOUND = { v: 7, tau: 0.7, spin: 14, fade: 0.9 };   // the push off (units per s), how fast it dies away (s), the turn it gives (°), the fade (s)
 
 // ---------- B: the neuron grows out from its cell body; the outline leads, the wash follows ----------
 const SOMA_C = [176, 160], GROW = { at: B + 0.5, dur: 3.6, r: 830, lag: 30 };
@@ -244,7 +247,7 @@ export async function mount(root, ctx) {
 
   // A
   const zoom = one(".life-zoom");
-  zoom.querySelector(".seq").insertAdjacentHTML("beforebegin", DRIFT.map(() => `<use class="cu-free" href="#life-tdp"/>`).join(""));
+  zoom.querySelector(".seq").insertAdjacentHTML("beforebegin", BOUNCE.map(() => `<use class="cu-free" href="#life-tdp"/>`).join(""));
   const binders = all(".cu-tdp").map(placed), drifters = all(".cu-free"), cuLabels = all(".cu-label");
   // B
   const arcs = all(".env-arc"), walls = one(".env-wall"), nucWash = one(".nuc-wash"), nucOl = one(".nuc-ol");
@@ -334,7 +337,7 @@ export async function mount(root, ctx) {
     ends5.forEach(d => attr(d, "r", rest ? "1.8" : num(1.8 * zw)));
     setStill(t >= STILL);
 
-    // A: two TDP-43 travel to the UG run and close their lobes on it; the others pass the non-target RNA by
+    // A: two TDP-43 travel to the UG run and close their lobes on it; the others bounce off the non-target RNA
     const z = ramp(t, B, 1.4, smoother), k = ZOOM + (1 - ZOOM) * z;
     attr(zoom, "transform", z >= 1 ? null : `translate(${num(STAGE_C[0] + (BOX_C[0] - STAGE_C[0]) * z)} ${num(STAGE_C[1] + (BOX_C[1] - STAGE_C[1]) * z)}) scale(${num(k)}) translate(${-BOX_C[0]} ${-BOX_C[1]})`);
     show(zoom, Math.max(win(t, -1, 0, B + 5.5, B + 5.9), ramp(t, G + 3.0, 0.6)));
@@ -347,9 +350,17 @@ export async function mount(root, ctx) {
       attr(b.el.lastElementChild, "transform", a > 0 ? `rotate(${num(-a)} 1.75 -3)` : null);
     });
     drifters.forEach((el, i) => {
-      const m = DRIFT[i], u = clamp01((t - A) / 6);
-      attr(el, "transform", `translate(${num(m.at[0] + m.by[0] * u)},${num(m.at[1] + m.by[1] * u)}) rotate(${m.at[2]}) scale(.9)`);
-      show(el, 1 - ramp(t, m.out, 0.8));
+      const m = BOUNCE[i], off = m.hit[1] < 72 ? -1 : 1;   // the side it bounces off to
+      const dt = Math.min(t, m.at + 0.2 + REBOUND.fade) - m.at;   // still once it has faded
+      let [x, y] = m.hit, a = m.a;
+      if (dt < 0) { x += m.v[0] * dt; y += m.v[1] * dt; }
+      else {   // the push off the RNA dies away; the glancing touch turns it a little
+        x += 0.7 * m.v[0] * dt;
+        y += off * REBOUND.v * REBOUND.tau * (1 - Math.exp(-dt / REBOUND.tau));
+        a -= Math.sign(m.v[0]) * off * REBOUND.spin * (1 - Math.exp(-dt / 0.5));
+      }
+      attr(el, "transform", `translate(${num(x)},${num(y)}) rotate(${num(a)}) scale(.9)`);
+      show(el, 1 - ramp(t, m.at + 0.2, REBOUND.fade));
     });
     cuLabels.forEach((el, i) => show(el, ramp(t, A + 4.2 + 0.6 * i, 0.5)));
 

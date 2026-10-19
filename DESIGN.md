@@ -313,7 +313,7 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 
 ### Buttons
 - **Shape:** near-square (3px).
-- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Choose a new pair", the fly-to buttons and "Copy as PNG", and for the animation controls ("Skip animation", "Replay animation" and step 1's replays) so they read as buttons (instructor, 2026-10-17). A quiet variant without the border at rest is kept for the tour's "Skip".
+- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Choose a new pair", the fly-to buttons and "Copy as PNG", and for the animation controls ("Skip animation", "Replay animation" and step 1's replays) so they read as buttons (instructor, 2026-10-17). The step 2 descents' "Skip animation" sits at the pinned stage's bottom right, beside the caption, and takes the viewer's ink (`--viewer-text`, a 35% border) once the stage turns dark (2026-10-19). A quiet variant without the border at rest is kept for the tour's "Skip".
 - **Hover / Focus (provisional, not in the mockups):** hover fills with `ivory-panel`. Focus-visible shows a 2px clay outline offset by 2px. Colour transitions take about 150ms; nothing moves or scales.
 - **Primary action (provisional)** ("Show results"): a clay fill with `on-clay` text. Use it on at most one control per screen.
 

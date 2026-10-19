@@ -18,7 +18,7 @@
 import { href } from "../router.js";
 import { term } from "../glossary.js";
 import { loadJSON } from "../data.js";
-import { loadGsap, reducedMotion } from "../gsap.js";
+import { loadGsap, reducedMotion, scrollScrub } from "../gsap.js";
 import { loadFlySprite } from "../fly.js";
 import { BRAIN } from "../brain.js";
 import { handOff, takeHandOff } from "../handoff.js";
@@ -42,7 +42,7 @@ const REGIONS = [
 const TURN = [7.5, 8.9];                       // the turn into the oblique view (s)
 
 const CAPTIONS = [
-  [0, "Scroll to go inside the fly ↓"],
+  [0, "Scroll slowly to go inside the fly ↓"],
   [0.3, "We follow one of the hTDP-43 WT flies."],
   [2.3, "Into its head."],
   [4.8, "Inside the head: the brain."],
@@ -155,6 +155,7 @@ export async function mount(root, ctx) {
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
+          <button class="btn descent__skip" type="button" data-act="skip" hidden>Skip animation</button>
         </div>
       </section>
       <div class="story descent__after">
@@ -442,7 +443,7 @@ export async function mount(root, ctx) {
   }
 
   // ---------- scroll, frozen review frames, reduced motion (as in the Pdf descent) ----------
-  let st = null, smooth = null;
+  let stopScrub = null;
   const pinnedAt = q => window.scrollY + section.getBoundingClientRect().top + q * (section.offsetHeight - window.innerHeight);
   if (still) {
     section.classList.add("is-still");
@@ -456,14 +457,7 @@ export async function mount(root, ctx) {
     draw();
   } else {
     build();
-    const target = { p: 0 };
-    st = window.ScrollTrigger.create({
-      trigger: section, start: "top top", end: "bottom bottom",
-      onUpdate: self => {
-        smooth?.kill();
-        smooth = gsap.to(target, { p: self.progress, duration: 0.45, ease: "power3.out", onUpdate: () => tl.progress(target.p) });
-      },
-    });
+    stopScrub = scrollScrub(gsap, section, () => tl, { skip: root.querySelector("[data-act=skip]"), next: root.querySelector("[data-act=next]") });
     if (handRect && window.scrollY < 4) {
       const r = flyG.getBoundingClientRect();
       if (r.width) {
@@ -488,8 +482,7 @@ export async function mount(root, ctx) {
     window.removeEventListener("resize", onResize);
     clearInterval(boilTimer);
     clearTimeout(resizeTimer);
-    st?.kill();
-    smooth?.kill();
+    stopScrub?.();
     tl?.kill();
     delete window.__descent;
   };

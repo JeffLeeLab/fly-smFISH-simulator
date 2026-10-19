@@ -13,6 +13,7 @@ import { loadFlySprite, flyNode, groomFrame, startBoil, stopBoil, ensureBoilFilt
 import { BINS, DAY_S, activity, walkPause, walkAt, crossingsBy, lastCrossing, timelapse, lapseAt, tube, tubeFly, actogramRows } from "../monitor.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
 import { rollCaption } from "../caption.js";
+import { term } from "../glossary.js";
 import { mulberry32 } from "../prng.js";
 
 const W = 960, HT = 458;
@@ -37,7 +38,7 @@ const CAPTIONS = {
   g: "Each fly lives in its own tube. Every time it walks through the infrared beam, the monitor counts one crossing.",
   h1: "Activity builds up as an actogram: each bar is the crossings in half an hour.",
   h2: "At night, the hTDP-43 WT fly sleeps. The mutant keeps waking.",
-  i: "Brains for the microscope were collected at ZT2, two hours after lights on.",
+  i: `Brains for the microscope were collected at ${term("zt", "ZT2")}, two hours after lights on.`,
 };
 const ZT_TICKS = [0, 6, 12, 18, 24];
 

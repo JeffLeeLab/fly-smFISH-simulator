@@ -337,7 +337,11 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .d-label--region { font: 500 14px var(--font-sans); }
 .d-leader--region { stroke: var(--ink); stroke-opacity: .7; }
 .d-arrow--region { fill: var(--ink); fill-opacity: .8; }
-.descent__caption { position: relative; z-index: 2; margin: 0; padding: var(--sp-3) var(--sp-7) var(--sp-5); min-height: 2.8em; font: italic 400 22px/1.35 var(--font-serif); }
+.descent__caption { position: relative; z-index: 2; margin: 0; padding: var(--sp-3) calc(var(--sp-7) + 140px) var(--sp-5) var(--sp-7); min-height: calc(2 * 1.35em + var(--sp-3) + var(--sp-5)); font: italic 400 22px/1.35 var(--font-serif); }   /* the right padding keeps the caption clear of Skip; two lines always held, so a caption that wraps never resizes the scene (the descents lay out once, on build) */
+/* Skip animation: bottom right of the pinned stage, beside the caption; on the dark stage it takes the viewer's ink */
+.descent__skip { position: absolute; z-index: 3; right: var(--sp-7); bottom: var(--sp-5); }
+.is-dark .descent__skip { color: var(--viewer-text); border-color: color-mix(in srgb, var(--viewer-text) 35%, transparent); }
+.is-dark .descent__skip:hover { background: color-mix(in srgb, var(--viewer-text) 10%, transparent); border-color: color-mix(in srgb, var(--viewer-text) 60%, transparent); }
 .descent__stage.is-dark { color: var(--viewer-text); }
 .is-dark .d-label, .is-dark .descent__caption { color: var(--viewer-text); }
 .descent__after { padding-top: var(--sp-6); }

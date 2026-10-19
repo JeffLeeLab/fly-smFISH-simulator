@@ -67,7 +67,7 @@ E  8.2–9.6   hold (instructor, 2026-10-16): the caption is already on screen f
     the assay scene (Flip)]
 ```
 
-As built (hero text, 2026-10-17, instructor): the introduction reads "ALS is a fatal disease of motor neurons. These two flies are humanised: human *TDP-43* replaces the fly gene *TBPH*, wild-type (WT) version in one, an ALS-linked mutation in the other." ("ALS-linked" never breaks at its hyphen). The genotype labels are the names alone, with no line under them. "Skip animation" and "Replay animation" sit with the "Schematic" tag at the drawing's bottom right; the text column ends with the caption (no scroll cue).
+As built (hero text, 2026-10-17, instructor): the introduction reads "ALS is a fatal neurodegenerative disease. These two flies are humanised: human *TDP-43* replaces the fly gene *TBPH*, wild-type (WT) version in one, an ALS-linked mutation in the other." ("ALS-linked" never breaks at its hyphen). The genotype labels are the names alone, with no line under them. "Skip animation" and "Replay animation" sit with the "Schematic" tag at the drawing's bottom right; the text column ends with the caption (no scroll cue). Reworded 2026-10-19 (instructor).
 
 As built (transition out): the caption does not change on scroll. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
 
@@ -122,7 +122,7 @@ H  0.0–8.4   (after the click) three days pass, 2.8 s each: a light–dark bar
 I  8.4–10.6  the clock runs on into day 4 and stops at ZT2 (0.23 s), where a thin ink marker drops
              onto the short day-4 row of both actograms, with the label "ZT2 · brains collected here"
    reads:  8.7–10.6  the time the brains were taken: two hours after lights on
-   caption: "Brains for the microscope were collected at ZT2, two hours after lights on."
+   caption: "Brains for the microscope were collected at ZT2, two hours after lights on." (ZT2 has the glossary hover; 2026-10-19.)
 
 J  10.6–11.8 hold: flies rest and groom; the "Next: look inside the brain" button
    reads:  10.8–11.8 where to go next (the hold continues, untimed, until the group moves on)

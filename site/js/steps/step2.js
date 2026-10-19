@@ -15,7 +15,7 @@
 import { href } from "../router.js";
 import { term } from "../glossary.js";
 import { loadJSON } from "../data.js";
-import { loadGsap, reducedMotion } from "../gsap.js";
+import { loadGsap, reducedMotion, scrollScrub } from "../gsap.js";
 import { loadFlySprite } from "../fly.js";
 import { BRAIN, NEURON_AT } from "../brain.js";
 import { handOff, takeHandOff } from "../handoff.js";
@@ -38,7 +38,7 @@ const REGIONS = [
 ];
 
 const CAPTIONS = [
-  [0, "Scroll to go inside the fly ↓"],
+  [0, "Scroll slowly to go inside the fly ↓"],
   [0.3, "We follow the hTDP-43 WT fly."],
   [2.3, "Into its head."],
   [4.8, "Inside the head: the brain."],
@@ -168,6 +168,7 @@ export async function mount(root, ctx) {
             </div>
           </div>
           <p class="descent__caption" aria-live="polite"><span class="descent__cap"></span></p>
+          <button class="btn descent__skip" type="button" data-act="skip" hidden>Skip animation</button>
         </div>
       </section>
       <div class="story descent__after">
@@ -406,7 +407,7 @@ export async function mount(root, ctx) {
   }
 
   // ---------- scroll, frozen review frames, reduced motion ----------
-  let st = null, smooth = null;
+  let stopScrub = null;
   const pinnedAt = q => window.scrollY + section.getBoundingClientRect().top + q * (section.offsetHeight - window.innerHeight);
   if (still) {
     section.classList.add("is-still");
@@ -420,14 +421,7 @@ export async function mount(root, ctx) {
     draw();
   } else {
     build();
-    const target = { p: 0 };
-    st = window.ScrollTrigger.create({
-      trigger: section, start: "top top", end: "bottom bottom",
-      onUpdate: self => {
-        smooth?.kill();
-        smooth = gsap.to(target, { p: self.progress, duration: 0.45, ease: "power3.out", onUpdate: () => tl.progress(target.p) });
-      },
-    });
+    stopScrub = scrollScrub(gsap, section, () => tl, { skip: root.querySelector("[data-act=skip]"), next: root.querySelector("[data-act=next]") });
     // hand-off from step 1: the fly grows out of where it stood in its tube
     if (handRect && window.scrollY < 4) {
       const r = flyG.getBoundingClientRect();
@@ -454,8 +448,7 @@ export async function mount(root, ctx) {
     window.removeEventListener("resize", onResize);
     clearInterval(boilTimer);
     clearTimeout(resizeTimer);
-    st?.kill();
-    smooth?.kill();
+    stopScrub?.();
     tl?.kill();
     delete window.__descent;
   };

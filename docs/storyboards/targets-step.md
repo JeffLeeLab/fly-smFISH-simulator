@@ -113,12 +113,13 @@ One line each at the stage's width (22 px italic serif, about 90 characters at m
 
 | Id | Shot | Caption |
 | --- | --- | --- |
-| C1 | A | TDP-43 is an RNA-binding protein. It binds RNAs with UG-rich sequences: its targets. |
-| C2 | C | In the nucleus, splicing removes a target's introns. One gene can make several isoforms. |
-| C3 | D | The finished mRNA leaves the nucleus through a nuclear pore. |
-| C4 | E | In the cytoplasm, it is translated into protein and, in the end, broken down. |
-| C5 | F | Neurons send many mRNAs down the axon in granules, to make protein where it is needed. |
-| C6 | G | Each step is a mode of post-transcriptional regulation. TDP-43 takes part in many. |
+| C1 | A | TDP-43 is an RNA-binding protein. It binds target RNAs with UG-rich sequences and regulates them. |
+| C2 | B | RBPs regulate an RNA's life cycle. |
+| C3 | C | In the nucleus, splicing removes a target's introns, so a single gene can make several isoforms. |
+| C4 | D | RBPs help mature mRNAs leave the nucleus through a nuclear pore. |
+| C5 | E | In the cytoplasm, RBPs regulate protein translation of an mRNA and its eventual decay. |
+| C6 | F | Neurons also send many mRNAs down the axon, packaged in RBP granules, to make protein where it is needed. |
+| C7 | G | Each step is a mode of post-transcriptional regulation. TDP-43 takes part in many. |
 
 - **"Not every RNA"** is carried by the picture: the bare "non-target RNA" in the inset ("other RNA" until 2026-10-17).
 - **"Takes part in many"** is deliberate: the evidence for TDP-43 in splicing, stability, transport, translation and granules is strong, while for nuclear export it is weaker, so the text doesn't claim TDP-43 does all of them equally.
@@ -129,7 +130,7 @@ One line each at the stage's width (22 px italic serif, about 90 characters at m
 Story layout. Top to bottom:
 1. Eyebrow "RBP dysfunction · Step 4"; title "TDP-43 and its targets".
 2. The stage (hairline box, paper showing through, as in step 1), about 280 px tall at 1280 px wide: the neuron left to right, the inset box above the axon, the side note top right, the "Schematic" pill bottom right.
-3. The caption block: C5 rolled up and quiet, C6 below it.
+3. The caption block: C6 rolled up and quiet, C7 below it.
 4. Two panels side by side: **Your target** (5 parts) and **Your question** (3 parts). Since 2026-10-17 both headings are 22 px serif ("Your target: *futsch* mRNA" was 28 px, too big), and the question is upright 22 px serif between large quiet quotation marks, the opening one hung in the margin (it was italic).
 5. Controls: "Next: hypotheses" and "Replay".
 
@@ -156,7 +157,7 @@ The same template in every case: what the protein does and where these neurons n
 
 **The question** (all cases, gene in italic): "Which steps in the life of *futsch* mRNA go wrong when TDP-43 carries the ALS mutation?" It says "steps", plural, because modes can co-occur. It is carried forward to the top of the hypotheses step, the step 8 claim, the summary PNG header and the top of the notebook drawer.
 
-The three proteins share one thing the text lets students see for themselves: each works far from the nucleus, in axons and synapses (futsch and stathmin on microtubules, UNC-13 at synapses). Students connect that with C5.
+The three proteins share one thing the text lets students see for themselves: each works far from the nucleus, in axons and synapses (futsch and stathmin on microtubules, UNC-13 at synapses). Students connect that with C6.
 
 ## Layers (instructor material only; no badges on screen)
 
@@ -174,7 +175,7 @@ The three proteins share one thing the text lets students see for themselves: ea
 
 ## Giveaway checks
 
-- **Localisation stays in the generic story.** C5 says that neurons send many mRNAs down the axon. The target panel says only where the protein is needed, never that the target's mRNA travels: transport is supported for the leg motor neuron, ruled out for Pdf and ambiguous for the mushroom body, so a target-specific line would nudge every group towards it.
+- **Localisation stays in the generic story.** C6 says that neurons send many mRNAs down the axon. The target panel says only where the protein is needed, never that the target's mRNA travels: transport is supported for the leg motor neuron, ruled out for Pdf and ambiguous for the mushroom body, so a target-specific line would nudge every group towards it.
 - **The literature priors balance out.** The text names each target as a known (or orthologue-known) TDP-43 target without naming a mode. The literature points to splicing for UNC13A (the case agrees), to splicing for STMN2 (the case rules it out: the designed trap) and to transport and translation for *futsch* (the case answer is stability). It is right once, wrong once and off to the side once.
 - **The FlyBase function line stays in probe design.** *stai*'s FlyBase wording ("axonal transport", "stability") stays on the probe-design gene card, as now. This step uses the sentences above.
 - **Nothing mutant is drawn** (decision 3): the question names the mutation in words.
@@ -188,7 +189,7 @@ The three proteins share one thing the text lets students see for themselves: ea
   - The question sits at the top, then "Which steps could the TDP-43 dysfunction you saw in step 3 disturb? Shortlist at least two; several can be true at once."
   - The cards keep their Nucleus / Cytoplasm / Both groups. At 1280×720 the current step 4 already fills the height (the last card touches the bottom), so the static end-frame drawing can't sit above the cards. Proposal: a small copy in the side pane under the step 3 recap, where hovering or focusing a card lights its station.
   - The "because…" placeholder becomes "Because in step 3 we saw…".
-- **Probe design (6):** renamed. One line above the map: "smFISH shows each *futsch* mRNA molecule where it is in the neuron. With two probes on different regions, you can tell which parts each molecule carries." The gene card, its links and the FlyBase function line stay.
+- **Probe design (6):** renamed. One line above the map: "smFISH shows each *futsch* mRNA molecule where it is in the neuron. With two probes on different regions, you can tell which parts each molecule carries. At first, it's most informative to design probes against a constitutive exon and a constitutive intron." The gene card, its links and the FlyBase function line stay.
 - **Interpret & revise (8):** the claim answers the question (heading to be settled at planning). The summary PNG and the notebook drawer show the question.
 - **Glossary:** new entries for RNA-binding protein (RBP), post-transcriptional regulation and RNA granule. They are hovers in the end-frame caption and in step 3; the timed captions are plain text.
 - **DESIGN.md:** record the TDP-43 red-orange exception in the drawn world.
@@ -211,9 +212,9 @@ The three proteins share one thing the text lets students see for themselves: ea
   - **D, 10.2–13.0.** The finished mRNA and its TDP-43 appear inside the nucleus and slide out through the pore (10.5–12.0); "nuclear export" at 12.0.
   - **E, 13.0–17.2.** The translation strand draws on; the small subunit grows (13.5), the large one drops on (13.8), and four beads follow (14.2–15.0); "translation" at 14.4. The older copy's far end is erased back to its end-frame length (15.3–16.5), leaving four fragments that fade to their end opacities; "decay" at 16.4.
   - **F, 17.2–22.0.** Two mRNAs and two TDP-43 gather (17.2) and the halo forms (17.6) at the start of the neurite; "RNA granule" at 18.0. The motor appears (18.2) and walks the granule to mid-axon (18.6–20.6, easing in, gliding and slowing), its feet stepping on the lower microtubule. The neurite and axon swell just enough round the granule wherever it is (their outlines are redrawn each frame), so the end frame's swelling is where it stops. Trail marks at 18.8; the transport arrow's shaft and then its head draw on (19.2–20.2); "transport" at 19.8. In the large bouton the strand and a TDP-43 appear (20.6), a ribosome assembles and three beads grow (20.8–21.8); "local translation" at 21.4. As the plan proposed, F reads "the granule travels to mid-axon; separately, a ribosome makes protein in the bouton": the granule does not reach the terminal or loosen there, matching the end frame.
-  - **G, 22.0–24.0.** C6; the side note at 22.4–23.0. The live hold is the ink boil on the outlines; the granule does not drift.
+  - **G, 22.0–24.0.** C7; the side note at 22.4–23.0. The live hold is the ink boil on the outlines; the granule does not drift.
   - **H, 24.0–25.2.** The target panel (24.0–24.4), the question panel (24.6–25.0).
-- **Captions with hovers.** C1, C5 and C6 carry glossary hovers (RNA-binding protein, granules, post-transcriptional regulation), in the timed captions too, not only at the end frame: `caption.js` now sets trusted constant HTML. On the rolled-up line, which screen readers skip, the hovers leave the tab order. Step 3's sentence and the hypotheses prompt carry the RBP and post-transcriptional regulation hovers.
+- **Captions with hovers.** C1, C6 and C7 carry glossary hovers (RNA-binding protein, granules, post-transcriptional regulation), in the timed captions too, not only at the end frame: `caption.js` now sets trusted constant HTML. On the rolled-up line, which screen readers skip, the hovers leave the tab order. Step 3's sentence and the hypotheses prompt carry the RBP and post-transcriptional regulation hovers.
 - **Ink boil.** The shared filter from `fly.js` on the neuron's outline, the nuclear envelope and the RNA strands; TDP-43, ribosomes and text stay crisp. (Since the redesign it runs on the held end frame only.) Frozen time and reduced motion keep the filter still.
 - **Changes at build (instructor, 2026-10-16).**
   - Probe design: the smFISH line stays above the map. The map's minimum row pitch went from 32 to 26 px so the mushroom body's seven isoforms fit at 1280×720; read-only maps keep 32 px.
@@ -339,13 +340,13 @@ Times are written from the start of each shot (`SHOT` in `step4.js`), so a shot 
 
 | Shot | Time (s) | Caption up for | What happens (times from the shot's start) |
 | --- | --- | --- | --- |
-| A | 0–6.5 | C1 from 0.3 to 12.5 | The binders travel (0.8–3.5) and clasp the UG run (3.2–4.1); the others drift past the non-target RNA and leave (2.6–4.6); "target RNA" at 4.2, "non-target RNA" at 4.8. |
-| B | 6.5–12.5 | | The close-up shrinks into its box (0–1.4). The neuron grows (0.5–4.1). The microtubules draw (2.4–4.6). The compartment names come in one at a time (3.6–5.2) and leave with the close-up (5.5–5.9). |
-| C | 12.5–20.5 | C2, 8 s | Camera to the nucleus (0–1.8). The chromatin gathers (0.3–2.9). Seven TDP-43 come in through the pores (0.6–3.7). The pre-mRNA draws (2.4–3.6). TDP-43 lands on the intron (3.7) and the intron loops out (4.5–5.7). "splicing" at 5.0. |
-| D | 20.5–27 | C3, 6.5 s | Camera to the pore (0–1.6). The finished mRNA draws (1.0), its TDP-43 lands (1.5), it lines up (2.2) and leaves through the pore (2.6–4.4). "nuclear export" at 4.0. |
-| E | 27–34.5 | C4, 7.5 s | Camera to the cell body (0–1.6). Both strands draw (1.0–2.1) and a TDP-43 lands on each (1.7, 2.1). The ribosome closes (2.2–3.1); four beads extrude (3.0–4.6). The older copy's far end is erased (4.6–5.8). "translation" at 3.4, "decay" at 5.5. |
-| F | 34.5–48 | C5, 13.5 s | Camera to the neurite (0–1.6). The cargo gathers (1.0–2.9) and the halo grows (2.0–2.8); "RNA transport granule" at 2.6. The motor walks the granule to mid-axon (3.6–6.6), followed by the camera; the axon's free TDP-43 drifts in (5.4). The arrow draws (6.2–7.3); "transport" at 6.8. Camera to the terminals (8.8–10.4); a TDP-43 drifts into a terminal (9.8); local translation (9.8–12.5), with its label at 11.4. |
-| G | 48–53 | C6 to the end | The camera pulls back (0–1.8). The labels arrive one by one, 0.2 s apart (2.0–4.4), then the close-up (3.0), its magnifier (3.4) and the side note (4.0). |
+| A | 0–6.5 | C1 from 0.3 to 7.0 | The binders travel (0.8–3.5) and clasp the UG run (3.2–4.1); the others drift onto the non-target RNA, touch it and bounce lightly off as they fade (touching at 2.4, 2.8, 3.2 and 3.6; gone by 4.7); "target RNA" at 4.2, "non-target RNA" at 4.8. |
+| B | 6.5–12.5 | C2 from 7.0 | The close-up shrinks into its box (0–1.4). The neuron grows (0.5–4.1). The microtubules draw (2.4–4.6). The compartment names come in one at a time (3.6–5.2) and leave with the close-up (5.5–5.9). |
+| C | 12.5–20.5 | C3, 8 s | Camera to the nucleus (0–1.8). The chromatin gathers (0.3–2.9). Seven TDP-43 come in through the pores (0.6–3.7). The pre-mRNA draws (2.4–3.6). TDP-43 lands on the intron (3.7) and the intron loops out (4.5–5.7). "splicing" at 5.0. |
+| D | 20.5–27 | C4, 6.5 s | Camera to the pore (0–1.6). The finished mRNA draws (1.0), its TDP-43 lands (1.5), it lines up (2.2) and leaves through the pore (2.6–4.4). "nuclear export" at 4.0. |
+| E | 27–34.5 | C5, 7.5 s | Camera to the cell body (0–1.6). Both strands draw (1.0–2.1) and a TDP-43 lands on each (1.7, 2.1). The ribosome closes (2.2–3.1); four beads extrude (3.0–4.6). The older copy's far end is erased (4.6–5.8). "translation" at 3.4, "decay" at 5.5. |
+| F | 34.5–48 | C6, 13.5 s | Camera to the neurite (0–1.6). The cargo gathers (1.0–2.9) and the halo grows (2.0–2.8); "RNA transport granule" at 2.6. The motor walks the granule to mid-axon (3.6–6.6), followed by the camera; the axon's free TDP-43 drifts in (5.4). The arrow draws (6.2–7.3); "transport" at 6.8. Camera to the terminals (8.8–10.4); a TDP-43 drifts into a terminal (9.8); local translation (9.8–12.5), with its label at 11.4. |
+| G | 48–53 | C7 to the end | The camera pulls back (0–1.8). The labels arrive one by one, 0.2 s apart (2.0–4.4), then the close-up (3.0), its magnifier (3.4) and the side note (4.0). |
 | H | 53–54.6 | | The ink and the rim (0–0.8); the target panel (0.2), then the question (0.7). |
 
 ### Checks
@@ -354,3 +355,10 @@ Times are written from the start of each shot (`SHOT` in `step4.js`), so a shot 
 - **Frame rate.** 60 fps through the whole 54.6 s at 1920×1080 (no frame over 16.8 ms).
 - **Layout.** At 1280×720 Next ends at 708 px in all three cases and both themes; the smaller target heading moved it up from 713. On the summary slide the upright question still fits one line in every case.
 - **Elsewhere.** The question reads correctly in the hypotheses pane, the notebook drawer and step 8.
+
+## Revisions (2026-10-19)
+
+Instructor's wording, with grammar corrected.
+
+- **Captions, now seven.** C1 "TDP-43 is an RNA-binding protein. It binds target RNAs with UG-rich sequences and regulates them." A new C2 at 7.0 s (shot B, as the neuron grows): "RBPs regulate an RNA's life cycle." It was written as the opening of the splicing caption, but the two together ran past one line at 1280 px, so it has its own beat. C3–C6 are reworded so that RBPs are the subject (see the caption table above). C7 is the old C6. At 1280×720 the widest caption (C6, the axon) is 921 px of the line's 968.
+- **Shot A.** The four free TDP-43 no longer drift past the non-target RNA. Each drifts onto it, touches it, and springs lightly back with a small turn from the glancing touch while it fades (touches at 2.4, 2.8, 3.2 and 3.6 s; each gone 1.1 s after its touch). This is a rebound, not a bounce ease: there is one touch, and the push off dies away exponentially with no oscillation. The start points are clear of the "…UGUGUGUG…" and "…ACGAUCCA…" sequences and inside the box (`BOUNCE` and `REBOUND` in `step4.js`).

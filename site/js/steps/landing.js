@@ -156,7 +156,7 @@ export async function mount(root) {
         <div class="hero__text">
           <p class="t-label">Introduction · Start</p>
           <h1 class="t-display" id="hero-title">Studying ALS in humanised flies</h1>
-          <p class="t-story t-muted">${term("als", "ALS")} is a fatal disease of motor neurons. These two flies are ${term("humanised", "humanised")}: human <i>TDP-43</i> replaces the fly gene <i>TBPH</i>, wild-type (WT) version in one, an <span class="nw">ALS-linked</span> mutation in the other.</p>
+          <p class="t-story t-muted">${term("als", "ALS")} is a fatal neurodegenerative disease. These two flies are ${term("humanised", "humanised")}: human <i>TDP-43</i> replaces the fly gene <i>TBPH</i>, wild-type (WT) version in one, an <span class="nw">ALS-linked</span> mutation in the other.</p>
           <p class="hero__caption"><span class="hero__cap">They look the same, but behave differently.</span></p>
         </div>
         <div class="hero__art">

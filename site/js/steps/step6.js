@@ -75,7 +75,7 @@ export async function mount(root, ctx) {
         </div>
       </header>
       <section class="bench__main probe-main" aria-label="Transcript map">
-        <p class="probe-lede">${term("smfish", "smFISH")} shows each ${caseProse(ctx.case, t.gene)} mRNA molecule where it is in the neuron. With two probes on different regions, you can tell which parts each molecule carries.</p>
+        <p class="probe-lede">${term("smfish", "smFISH")} shows each ${caseProse(ctx.case, t.gene)} mRNA molecule where it is in the neuron. With two probes on different regions, you can tell which parts each molecule carries. At first, it’s most informative to design probes against a ${term("constitutive", "constitutive")} exon and a constitutive intron.</p>
         <div id="map"></div>
         ${HOWTO}
       </section>
