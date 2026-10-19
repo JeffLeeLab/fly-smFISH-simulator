@@ -107,7 +107,7 @@ G  0.0–3.5   [transition in: the station expands (Flip), 0.8 s]  two large tub
            2.2–3.5  walking through the beam adds one to the counter
    caption: "Each fly lives in its own tube. Every time it walks through the infrared beam, the
              monitor counts one crossing."
-   then waits (flies keep walking and pausing) for the button "Start the light–dark days"
+   then waits (flies keep walking and pausing) for the button "Start the light–dark days" (since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
 
 H  0.0–8.4   (after the click) three days pass, 2.8 s each: a light–dark bar above the tubes runs with
              ZT ticks; during lights-off the scene's paper takes a warm grey wash; flies move faster
@@ -128,7 +128,7 @@ J  10.6–11.8 hold: flies rest and groom; the "Next: look inside the brain" but
    reads:  10.8–11.8 where to go next (the hold continues, untimed, until the group moves on)
 ```
 
-As built: the marker sits on a fourth, partial row rather than on day 3, because a day-3 marker followed by the rest of day 3's bars would say the flies kept walking after their brains were taken. The Next button sits in the row under the caption, so it appears without scrolling on a 1280 × 720 screen. The counter keeps the real crossings from shot G and then adds the activity model's counts as the days run. A Skip button jumps to the end of G or of H–J, and Replay restarts the days.
+As built: the marker sits on a fourth, partial row rather than on day 3, because a day-3 marker followed by the rest of day 3's bars would say the flies kept walking after their brains were taken. The Next button sits in the row under the caption, so it appears without scrolling on a 1280 × 720 screen. The counter keeps the real crossings from shot G and then adds the activity model's counts as the days run. A Skip button jumps to the end of H–J (there is no Skip during G since 2026-10-19: Start, shown from 0.8 s, takes the group past it), and Replay restarts the days.
 
 As built (walking, in the landing's mini monitor and in step 1's real-time walking; the time-lapse days are unchanged): a walk is not a glide.
 - Each walk is 1–3 bouts (one for a short walk), each at its own pace, 0.75–1.25× the walk's speed. Between bouts the fly either hesitates for 0.12–0.42 s with its legs still, or only slows to 45% of its speed.

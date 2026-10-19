@@ -43,7 +43,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Train the flies</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
-        <button class="btn" type="button" data-act="skip">Skip animation</button>
+        <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the training</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">T-maze assay</span> In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point, between an arm smelling of each odour. Flies that remember avoid the shocked odour. Each count stands for a group of about a hundred flies.</p>
@@ -119,10 +119,19 @@ export async function mount(root, ctx) {
     btn.skip.hidden = !!still;
     btn.replay.hidden = true;
   }
-  tlG.eventCallback("onComplete", () => { if (phase === "g") { btn.start.hidden = false; btn.skip.hidden = true; } });
+  // Start comes in as soon as the stage has arrived (0.8 s), while the parts are still being named;
+  // there is no Skip before it (Start takes the group past the rest of G)
+  const showStart = () => {
+    if (phase !== "g" || !btn.start.hidden) return;
+    btn.start.hidden = false;
+    if (frozen == null && !still) gsap.fromTo(btn.start, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
+  };
+  tlG.call(showStart, null, 0.8);
+  tlG.eventCallback("onComplete", showStart);
   let endedAt = null;   // after the hold, the flies keep walking and grooming on a running clock
   tlH.eventCallback("onComplete", () => { endedAt = performance.now(); btn.skip.hidden = true; btn.replay.hidden = !!still; });
   btn.start.addEventListener("click", () => {
+    if (tlG.progress() < 1) tlG.progress(1);   // an early start: the parts are named at once
     startTraining(clock());
     if (still) { tlH.progress(1); render(); } else { tlH.play(0); btn.skip.focus(); }
   });

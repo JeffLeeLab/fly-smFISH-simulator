@@ -127,7 +127,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Start the light–dark days</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
-        <button class="btn" type="button" data-act="skip">Skip animation</button>
+        <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the days</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">Activity monitor assay</span> The monitor counts every walk through the beam, day and night. Over days of 12 hours light and 12 hours dark, the counts show when each fly is active and when it sleeps: a fly that does not cross the beam for five minutes or more is counted as asleep.</p>
@@ -205,10 +205,19 @@ export async function mount(root, ctx) {
     btn.replay.hidden = true;
   }
 
-  tlG.eventCallback("onComplete", () => { if (phase === "g") { btn.start.hidden = false; btn.skip.hidden = true; } });
+  // Start comes in as soon as the stage has arrived (0.8 s), while the parts are still being named;
+  // there is no Skip before it (Start takes the group past the rest of G)
+  const showStart = () => {
+    if (phase !== "g" || !btn.start.hidden) return;
+    btn.start.hidden = false;
+    if (frozen == null && !still) gsap.fromTo(btn.start, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
+  };
+  tlG.call(showStart, null, 0.8);
+  tlG.eventCallback("onComplete", showStart);
   let endedAt = null;   // after the hold, the flies rest and groom on a running clock
   tlH.eventCallback("onComplete", () => { endedAt = performance.now(); btn.skip.hidden = true; btn.replay.hidden = !!still; });
   btn.start.addEventListener("click", () => {
+    if (tlG.progress() < 1) tlG.progress(1);   // an early start: the parts are named at once
     startDays(clock());
     if (still) { tlH.progress(1); render(); } else { tlH.play(0); btn.skip.focus(); }
   });

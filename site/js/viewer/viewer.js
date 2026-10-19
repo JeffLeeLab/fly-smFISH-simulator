@@ -344,10 +344,11 @@ export async function createViewer(root, opts) {
     fields.forEach(f => {
       const g = f.shown;
       const probes = mode === "results" && pair
-        ? `<span class="d" style="--c:${FISH_LUT.ch1.color}"></span>${regionLabel(pair.ch1)} · <span class="d" style="--c:${FISH_LUT.ch2.color}"></span>${regionLabel(pair.ch2)} · `
-        : `<span class="d" style="--c:${TDP_LUTS[state.tdpLut].color}"></span>TDP-43 protein · `;
+        ? `<span class="d" style="--c:${FISH_LUT.ch1.color}"></span>${regionLabel(pair.ch1)} · <span class="d" style="--c:${FISH_LUT.ch2.color}"></span>${regionLabel(pair.ch2)}`
+        : `<span class="d" style="--c:${TDP_LUTS[state.tdpLut].color}"></span>TDP-43 protein`;
+      // the genotype leads, in bold: which field is which must never be in doubt
       f.el.querySelector(".viewer__overlay").innerHTML =
-        `${probes}${GENOTYPE_LABEL[g]} · animal ${state.animal} · simulated&nbsp;data`;
+        `<b>${GENOTYPE_LABEL[g]}</b> · ${probes} · animal ${state.animal} · simulated&nbsp;data`;
     });
     const legend = root.querySelector(".viewer__legend");
     if (legend && pair) {
@@ -530,19 +531,22 @@ export async function createViewer(root, opts) {
       const c = f.app.renderer.extract.canvas({ target: f.app.stage, resolution: scale, frame: f.app.screen.clone(), clearColor: "#000000" });
       const ox = i * (fw * scale + gap);
       g.drawImage(c, ox, 0, fw * scale, fh * scale);
-      // overlay: same text as on screen, scaled for a slide; in results mode the gene leads, so
-      // a slide names its gene. Pieces wrap onto a new line rather than run past the field.
+      // overlay: the on-screen line, scaled for a slide: the genotype leads in bold; in results
+      // mode the gene follows it, so a slide names its gene. Pieces wrap onto a new line rather
+      // than run past the field.
       const px = Math.round(11 * scale * 1.15);
       const mono = `${px}px "IBM Plex Mono", ui-monospace, monospace`;
       g.textBaseline = "top";
       g.shadowColor = "#000";
       g.shadowBlur = 3 * scale;
-      const parts = f.el.querySelector(".viewer__overlay").textContent.split(" · ");
-      const pieces = mode === "results" && pair
-        ? [{ text: CASES[caseId].target.gene, font: `italic 500 ${Math.round(px * 1.15)}px Newsreader, Georgia, serif` },
-          { text: regionLabel(pair.ch1), dot: FISH_LUT.ch1.color }, { text: regionLabel(pair.ch2), dot: FISH_LUT.ch2.color },
-          ...parts.slice(2).map(text => ({ text }))]
-        : parts.map(text => ({ text }));
+      const pieces = [
+        { text: GENOTYPE_LABEL[f.shown], font: `600 ${mono}` },
+        ...(mode === "results" && pair
+          ? [{ text: CASES[caseId].target.gene, font: `italic 500 ${Math.round(px * 1.15)}px Newsreader, Georgia, serif` },
+            { text: regionLabel(pair.ch1), dot: FISH_LUT.ch1.color }, { text: regionLabel(pair.ch2), dot: FISH_LUT.ch2.color }]
+          : [{ text: "TDP-43 protein", dot: TDP_LUTS[state.tdpLut].color }]),
+        { text: `animal ${state.animal}` }, { text: "simulated data" },
+      ];
       const x0 = ox + 8 * scale, xMax = ox + fw * scale - 8 * scale, lineH = px * 1.4;
       let x = x0, y = 6 * scale;
       const sep = " · ";

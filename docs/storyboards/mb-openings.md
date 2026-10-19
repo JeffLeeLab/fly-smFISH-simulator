@@ -41,7 +41,7 @@ G 0.0–3.5    [transition in: the station expands (Flip), 0.8 s]  ten flies per
                     "shock grid", "OCT (3-octanol)", "MCH (4-methylcyclohexanol)")
            2.2–3.5  the two arms smell different
    caption: "Flies learn in the training tube, then choose between two odours at the T."
-   then waits (flies keep wandering) for the button "Train the flies"
+   then waits (flies keep wandering) for the button "Train the flies" (since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
 
 H 0.0–4.2    (after the click) OCT flows down the tube (the stipple drifts in from the top); the grid
              flashes three times (0.5, 1.2, 1.9 s; an ink zig-zag along the hatch, 0.15 s each) and at
@@ -71,7 +71,7 @@ J 8.4–11.8   under each lane the performance index builds: "PI = (MCH − OCT)
    caption: 8.4 "Performance index: 1 if every fly avoided the shocked odour, 0 if they chose at random."
 ```
 
-Reduced motion: the end frame of G; on "Train the flies", the finished counts and both performance indices, with the Next button (as in the Pdf case). Skip jumps to the end of G or of H–J; Replay restarts the training.
+Reduced motion: the end frame of G; on "Train the flies", the finished counts and both performance indices, with the Next button (as in the Pdf case). Skip jumps to the end of H–J (no Skip during G since 2026-10-19: Start, shown from 0.8 s, takes the group past it); Replay restarts the training.
 
 ## 4 · Descent (`#/mb/step-2`), scroll-driven, 14 s at a steady scroll
 

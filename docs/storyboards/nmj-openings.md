@@ -62,7 +62,7 @@ G 0.0–3.5    [transition in: the station expands (Flip), 0.8 s]  ten flies per
            2.2–3.5  flies climb up the wall by instinct
    caption: "Tapped to the bottom, flies climb straight up the wall. We count how many pass the line in
              10 seconds."
-   then waits (flies keep walking and pausing) for the button "Tap the flies down"
+   then waits (flies keep walking and pausing) for the button "Tap the flies down" (since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
 
 H 0.0–1.4    (after the click) the taped pair of vials lifts a little and drops onto the bench, three times
              (0.2 s each, a short ink impact mark under each vial at each tap); the flies fall to the bottom
@@ -94,7 +94,7 @@ J 11.4–13.4  the timer stops at 10.0 s and the counters hold (8 and 2). From 1
 
 Amended 2026-10-16 (decision 2; instructor): H–J are longer because the timer is now real time. Previous H-time marks: the timer stopped at 8.4 s, the index appeared at 8.7 s, the rest began at 10.6 s, the Next button at 10.8 s and the end was 11.8 s; the captions began at 1.4, 4.4 and 8.4 s. The taps and the righting are unchanged, and the climb still starts at 1.4 s. H–J now runs 0–13.4 s (was 0–11.8 s; the instructor's later tightening of the end of the climb, 2026-10-16, is in the Budget line and the step 1 timings in the spec). Every caption is up for at least 3 s.
 
-Reduced motion: the end frame of G. On "Tap the flies down", the finished counts and both climbing indices with the Next button, as in the other cases. Skip jumps to the end of G or of H–J; Replay taps the vials again.
+Reduced motion: the end frame of G. On "Tap the flies down", the finished counts and both climbing indices with the Next button, as in the other cases. Skip jumps to the end of H–J (no Skip during G since 2026-10-19: Start, shown from 0.8 s, takes the group past it); Replay taps the vials again.
 
 As built (captions, 2026-10-16): the captions roll up, as in broadcast captions. The newest caption wipes in on the lower line (the same 0.6 s clip wipe as before); the caption before it moves up to the upper line, set at 18 px against the current caption's 22 px. As it rolls up it shrinks gradually from 22 px to 18 px during the 0.45 s move (a scale from its top-left corner) and turns to the quiet label ink (`--text-3`); it never snaps. The oldest fades out upwards. A later caption is never shown early, and the upper line is always the caption before the current one in story order, so frozen, skipped and replayed states depend only on story time. The caption runs the stage's width, so each fits on one line at 1280 × 720 (the longest caption in the three assays, the activity monitor's first, is 898 px of 968); the upper line truncates rather than wraps, so the controls never move. Step 2's captions keep a single line.
 

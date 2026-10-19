@@ -53,7 +53,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Tap the flies down</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the fly</a>
-        <button class="btn" type="button" data-act="skip">Skip animation</button>
+        <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Tap them down again</button>
       </div>
       <p class="assay__note"><span class="t-label run-in">Climbing assay</span> Flies climb upwards by instinct. Tapped to the bottom of a vial, they turn and climb the wall within seconds. In this assay, the vials are tapped down, and after a set time the flies above a finish line are counted; climbing declines with age and in many fly models of motor neuron disease. Each vial here holds ten flies.</p>
@@ -128,10 +128,19 @@ export async function mount(root, ctx) {
     btn.skip.hidden = !!still;
     btn.replay.hidden = true;
   }
-  tlG.eventCallback("onComplete", () => { if (phase === "g") { btn.start.hidden = false; btn.skip.hidden = true; } });
+  // Start comes in as soon as the stage has arrived (0.8 s), while the parts are still being named;
+  // there is no Skip before it (Start takes the group past the rest of G)
+  const showStart = () => {
+    if (phase !== "g" || !btn.start.hidden) return;
+    btn.start.hidden = false;
+    if (frozen == null && !still) gsap.fromTo(btn.start, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
+  };
+  tlG.call(showStart, null, 0.8);
+  tlG.eventCallback("onComplete", showStart);
   let endedAt = null;   // after the hold, the flies keep resting and grooming on a running clock
   tlH.eventCallback("onComplete", () => { endedAt = performance.now(); btn.skip.hidden = true; btn.replay.hidden = !!still; });
   btn.start.addEventListener("click", () => {
+    if (tlG.progress() < 1) tlG.progress(1);   // an early start: the parts are named at once
     takeOrigins(clock());
     startTapping(clock());
     if (still) { tlH.progress(1); render(); } else { tlH.play(0); btn.skip.focus(); }
