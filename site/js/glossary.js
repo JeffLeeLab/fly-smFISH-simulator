@@ -19,6 +19,7 @@ const ENTRIES = {
   mip: ["Maximum-intensity projection", "The microscope images the neurons in 3D, as a stack of focal planes. For viewing, the stack is flattened into one 2D image that keeps the brightest pixel at each point."],
   zt: ["Zeitgeber time (ZT)", "Hours since lights on, in a cycle of 12 hours light and 12 hours dark. ZT2 is two hours after lights on, when the Pdf neurons’ dorsal terminals are most branched. This daily synaptic remodelling needs tight control of gene expression."],
   humanised: ["Humanised fly (knock-in)", "The fly gene is replaced by the human gene at the same place in the genome."],
+  tdp43: ["TDP-43", "An RNA-binding protein (RBP), made from the human gene <i>TARDBP</i>. It becomes dysfunctional in about 97% of ALS cases. The fly version is called TBPH."],
   als: ["Amyotrophic lateral sclerosis (ALS)", "A devastating neurodegenerative disease that kills motor neurons. Known in the UK as motor neurone disease (MND), it can also affect many other neuron types, including those controlling sleep and cognition."],
   nmj: ["Neuromuscular junction (NMJ)", "The synapse where a motor neuron’s terminals meet a muscle fibre."],
   orthologue: ["Orthologue", "The corresponding gene in another species, inherited from a common ancestor."],

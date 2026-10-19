@@ -61,7 +61,7 @@ export function groomFrame(frames, t0, t1, t) {
   const loops = Math.max(0, Math.floor((Math.floor((t1 - t0) * 12) - nIn - nOut) / cyc)) * cyc;
   if (k < 0) return ["stand", 0];
   if (k < nIn) return ["groom_in", k];
-  if (k < nIn + loops) return ["groom", k - nIn];
+  if (k < nIn + loops) return ["groom", (k - nIn) % cyc];
   if (k < nIn + loops + nOut) return ["groom_out", k - nIn - loops];
   return ["stand", 0];
 }

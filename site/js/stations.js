@@ -2,10 +2,10 @@
 // (left) and a mutant lane (right). All three run live: the activity monitor (flies walking and
 // pausing, the beam, a tiny actogram in which the mutant's night bars stand out), the climbing
 // vial (the moment after a climb: most WT flies high, the mutants low, shaking) and the T-maze
-// (flies resting and grooming in the arms).
+// (flies walking, pausing and grooming in the arms).
 
-import { activity, walkPause, walkAt, lastCrossing, tube, tubeFly, actogramRows } from "./monitor.js";
-import { flyNode, groomFrame } from "./fly.js";
+import { activity, walkPause, walkAt, gait, GAIT_HZ, lastCrossing, tube, tubeFly, actogramRows } from "./monitor.js";
+import { flyNode } from "./fly.js";
 import { mulberry32 } from "./prng.js";
 import { odourDefs, driftOdours, swatch } from "./tmaze.js";
 import { LANES as VIAL_LANES, VW as VIAL_W, FLOOR as VIAL_FLOOR, vialMarkup, laneFlies as vialFlies, ambientPose as vialPose, poseTransform } from "./vial.js";
@@ -107,21 +107,72 @@ export function startMiniVial(svg, meta) {
 // ---------- T-maze (live once its case is available; a still otherwise) ----------
 // Front-on, as in step 1, after the test: a short training tube, the elevator docked at the
 // choice point, and the two arms with their odours (washes under textures). Most WT flies rest in the MCH
-// arm, away from the shocked odour; the mutants split half and half. They stand and groom.
+// arm, away from the shocked odour; the mutants split half and half. They walk, pause and groom.
 const MAZE = { tubeY: 18, tubeH: 66, tubeW: 18, armY: 100, armH: 18, dock: 11 };
-const MAZE_FLY = { h: 13, vh: 197.8, ground: 118 };   // side-view sprite: frame height, thorax to feet
-const MAZE_LANES = [   // [dx from the lane centre, on the ceiling?] per arm
-  { id: "wt", seed: 61, oct: [[-44, 0]], mch: [[24, 0], [33, 1], [46, 0], [56, 1]] },
-  { id: "mut", seed: 73, oct: [[-24, 1], [-36, 0], [-52, 1]], mch: [[26, 0], [42, 1], [55, 0]] },   // half and half: chance
+// Side-view sprite, in its own units (as in its meta): frame height, thorax to feet, stride, and
+// how far the drawing reaches behind the thorax (wing tips) and ahead of it (front legs, grooming).
+// The height keeps step 1's fly-to-arm proportion (15 in 36), so floor and ceiling flies clear
+// each other.
+const MAZE_FLY = { h: 7.5, vh: 197.8, ground: 118, stride: 70, back: 269, front: 146 };
+const MAZE_K = MAZE_FLY.h / MAZE_FLY.vh;   // sprite units to station units
+const MAZE_LANES = [   // flies per arm: [on the floor, on the ceiling]
+  { id: "wt", seed: 61, oct: [1, 0], mch: [2, 2] },
+  { id: "mut", seed: 73, oct: [1, 2], mch: [2, 1] },   // half and half: chance
 ];
 
-function mazeFlies(l, cx) {
-  const k = MAZE_FLY.h / MAZE_FLY.vh, g = MAZE_FLY.ground * k;
-  const fly = ([dx, up], face) => {
-    const y = up ? MAZE.armY + 1 + g : MAZE.armY + MAZE.armH - 1 - g;
-    return `<g class="fly maze-fly" transform="translate(${cx + dx} ${y.toFixed(2)}) scale(${(face * k).toFixed(4)} ${(up ? -k : k).toFixed(4)})"><use href="#fly-lateral-stand-0"/></g>`;
-  };
-  return l.oct.map((f, i) => fly(f, i % 2 ? 1 : -1)).join("") + l.mch.map((f, i) => fly(f, i % 3 === 2 ? -1 : 1)).join("");
+// The flies on one floor or ceiling walk, pause and groom on seeded schedules between lo and hi
+// (thorax x), as segments that monitor.js's walkAt plays. They keep their order and a body's
+// length apart: each new walk or rest keeps clear of the stretch its neighbours hold until their
+// own segments end, so two flies never meet. The opening places assume room for them (n ≤ 2).
+function surfaceWalks(n, seed, lo, hi, gap, stride) {
+  const r = mulberry32(seed), rg = mulberry32(seed + 7);   // the schedule, and the walks' gaits
+  const flies = Array.from({ length: n }, (_, i) => {
+    const x = n === 1 ? lo + r() * (hi - lo) : lo + (hi - lo) * i / (n - 1) + (i ? -4 : 4) * r();
+    return { segs: [], cursor: 0, x, face: r() < 0.5 ? 1 : -1, t: 0, hold: [x, x], rest: true };
+  });
+  for (;;) {
+    const f = flies.reduce((a, b) => (b.t < a.t ? b : a));   // the next fly to finish what it is doing
+    if (f.t >= 900) break;
+    const i = flies.indexOf(f);
+    const a = Math.max(lo, i > 0 ? flies[i - 1].hold[1] + gap : lo);
+    const b = Math.min(hi, i < n - 1 ? flies[i + 1].hold[0] - gap : hi);
+    const x1 = a + r() * (b - a);
+    if (f.rest || Math.abs(x1 - f.x) < 3) {
+      const groom = r() < 0.35, t1 = f.t + (groom ? 2.2 + r() : 0.6 + r() * 2.2);
+      f.segs.push({ t0: f.t, t1, x0: f.x, x1: f.x, act: groom ? "groom" : "stand", face: f.face });
+      Object.assign(f, { t: t1, hold: [f.x, f.x], rest: false });
+    } else {
+      f.face = Math.sign(x1 - f.x);
+      const prog = gait(rg, Math.abs(x1 - f.x), 6 + r() * 4, stride);
+      const t1 = f.t + (prog.length - 1) / GAIT_HZ;
+      f.segs.push({ t0: f.t, t1, x0: f.x, x1, act: "walk", face: f.face, prog });
+      Object.assign(f, { t: t1, hold: [Math.min(f.x, x1), Math.max(f.x, x1)], x: x1, rest: true });
+    }
+  }
+  return flies.map(f => ({ segs: f.segs, cursor: 0 }));
+}
+
+// Every station fly, per lane, as { up, w } (on the ceiling?, its walks); built once.
+let mazeWalks = null;
+function mazeFlyWalks() {
+  if (mazeWalks) return mazeWalks;
+  const back = MAZE_FLY.back * MAZE_K, gap = (MAZE_FLY.back + MAZE_FLY.front) * MAZE_K;
+  const inner = MAZE.dock + back, outer = LANE_W / 2 - 4 - back;   // where a thorax may go, from the lane centre
+  mazeWalks = MAZE_LANES.map(l => [["oct", -1], ["mch", 1]].flatMap(([arm, dir], a) => l[arm].flatMap((n, up) => {
+    if (!n) return [];
+    const [lo, hi] = dir < 0 ? [-outer, -inner] : [inner, outer];
+    return surfaceWalks(n, l.seed + 10 * a + up, lo, hi, gap, MAZE_FLY.stride * MAZE_K).map(w => ({ up, w }));
+  })));
+  return mazeWalks;
+}
+
+const mazeTransform = (cx, up, x, face) => {
+  const g = MAZE_FLY.ground * MAZE_K, y = up ? MAZE.armY + 1 + g : MAZE.armY + MAZE.armH - 1 - g;
+  return `translate(${(cx + x).toFixed(2)} ${y.toFixed(2)}) scale(${(face * MAZE_K).toFixed(4)} ${(up ? -MAZE_K : MAZE_K).toFixed(4)})`;
+};
+
+function mazeFlies(i, cx) {
+  return mazeFlyWalks()[i].map(({ up, w }) => `<g class="fly maze-fly" transform="${mazeTransform(cx, up, w.segs[0].x0, w.segs[0].face)}"><use href="#fly-lateral-stand-0"/></g>`).join("");
 }
 
 function mazeArt() {
@@ -147,26 +198,27 @@ function mazeArt() {
           <rect class="maze-elevator" x="${cx - d}" y="${ay - 3}" width="${2 * d}" height="${ah + 6}" rx="1.5"/>
           ${swatch(a0, ay + ah + 11, "oct", 8)}<text class="station-odour" x="${a0 + 11}" y="${ay + ah + 15}">OCT</text>
           ${swatch(a1 - 8, ay + ah + 11, "mch", 8)}<text class="station-odour" x="${a1 - 11}" y="${ay + ah + 15}" text-anchor="end">MCH</text>
-          <g class="maze-flies">${mazeFlies(l, cx)}</g>
+          <g class="maze-flies">${mazeFlies(i, cx)}</g>
         </g>`;
       }).join("")}
     </svg>`;
 }
 
-// The station's flies stand and groom on seeded schedules, never in step; the odours drift.
-// Returns draw(t).
+// The station's flies walk, pause and groom on their seeded schedules, never in step; the odours
+// drift. Returns draw(t).
 export function startMiniMaze(svg, meta) {
-  const flies = [...svg.querySelectorAll(".maze-fly use")].map((use, i) => {
-    const r = mulberry32(97 + i * 13);
-    const bouts = [];
-    for (let t = r() * 4; t < 900;) { const b = 2.2 + r(); bouts.push([t, t + b]); t += b + 2.4 + r() * 3.6; }
-    return { use, bouts, shown: "" };
+  const stride = MAZE_FLY.stride * MAZE_K;
+  const flies = MAZE_LANES.flatMap((l, i) => {
+    const cx = LANE_X[i] + LANE_W / 2;
+    const els = svg.querySelectorAll(`.mini-maze[data-lane=${l.id}] .maze-fly`);
+    return mazeFlyWalks()[i].map(({ up, w }, j) => ({ cx, up, w, g: els[j], use: els[j].firstElementChild, pose: "", shown: "" }));
   });
   return t => {
     for (const f of flies) {
-      const g = f.bouts.find(([a, b]) => t >= a && t < b);
-      const [seq, k] = g ? groomFrame(meta.frames, g[0], g[1], t) : ["stand", 0];
-      const id = `#fly-lateral-${seq}-${k}`;
+      const st = walkAt(f.w, t, stride, meta.frames);
+      const pose = mazeTransform(f.cx, f.up, st.x, st.face);
+      if (pose !== f.pose) { f.g.setAttribute("transform", pose); f.pose = pose; }
+      const id = `#fly-lateral-${st.seq}-${st.frame % (meta.frames[st.seq] || 1)}`;
       if (id !== f.shown) { f.use.setAttribute("href", id); f.shown = id; }
     }
     driftOdours(svg, "mini", t);
