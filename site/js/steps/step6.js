@@ -30,7 +30,7 @@ const HOWTO = `
           <rect x="10" y="32" width="50" height="16" fill="var(--map-cds)"/>
           <rect x="120" y="32" width="70" height="16" fill="var(--map-cds)"/>
           <rect x="250" y="32" width="70" height="16" fill="var(--map-cds)"/>
-          <path d="M122,26 L122,21 L188,21 L188,26" fill="none" stroke="var(--ch1-ink)" stroke-width="2.5"/><text x="155" y="16" text-anchor="middle" style="fill:var(--ch1-ink);font-weight:600">A</text>
+          <path d="M122,26 L122,21 L188,21 L188,26" fill="none" stroke="var(--ch1-ink)" stroke-width="2.5"/><text x="155" y="16" text-anchor="middle" style="fill:var(--ch1-text);font-weight:600">A</text>
           <path d="M252,26 L252,21 L318,21 L318,26" fill="none" stroke="var(--ch2-ink)" stroke-width="2.5"/><text x="285" y="16" text-anchor="middle" style="fill:var(--ch2-ink);font-weight:600">B</text>
           ${[[78, "1 2 3", [[0, 40], [40, 90], [90, 140]], "#FFFFFF", "A and B: white"], [112, "1 2", [[0, 40], [40, 90]], "#46E66E", "A only: green"], [146, "1 3", [[0, 40], [40, 90]], "#EB46E1", "B only: magenta"]].map(([y, label, ex, color, txt], k) => `
             ${ex.map(([a, b], i) => `<rect x="${10 + a}" y="${y - 6}" width="${b - a - 2}" height="12" fill="var(--map-cds)"/>`).join("")}
@@ -47,7 +47,7 @@ const HOWTO = `
           <li><b>Probes:</b> each probe set is many short labelled DNA oligos that bind one region of the RNA. Region A’s set is green; region B’s is magenta.</li>
           <li><b>One molecule, one spot:</b> each RNA molecule appears as a single small spot.</li>
           <li><b>Colours:</b> a molecule carrying both regions looks white (green + magenta). A molecule carrying only one region shows only that region’s colour.</li>
-          <li><b>Transcription sites:</b> many ${term("nascent", "nascent RNAs")} on one gene make one bright spot in the nucleus. Probes against an intron label only nascent RNA, because introns are removed from mature mRNA.</li>
+          <li><b>Transcription sites:</b> many ${term("nascent", "nascent RNAs")} on one gene make one bright spot in the nucleus. Probes against an intron mostly label nascent RNA, because introns are usually removed from mature mRNA. If an intron is kept in the mRNA, its probe also labels molecules away from the transcription site.</li>
           <li><b>Counting:</b> counting spots in each compartment tells you how many molecules are where.</li>
         </ol>
       </div>
@@ -170,7 +170,7 @@ export async function mount(root, ctx) {
   return () => { unbind(); offHowto(); map.destroy(); root.removeEventListener("click", onClick); };
 }
 
-// "Choose a new pair": a fresh map, predictions cleared (they belong to a pair).
+// "Try another pair" (steps 7 and 8): a fresh map, predictions cleared (they belong to a pair).
 // Observation, interpretation, verdicts and the claim are kept.
 export function newPair(caseId) {
   updateCase(caseId, s => { s.pair = { ch1: null, ch2: null }; s.predictions = {}; });

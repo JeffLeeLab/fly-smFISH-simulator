@@ -50,7 +50,7 @@ export async function mount(root, ctx) {
               <div class="probecard__body"><div class="probecard__map"></div></div>
             </div>
           </span>
-          <button class="btn" type="button" data-act="new-pair">Choose a new pair</button>
+          <button class="btn" type="button" data-act="new-pair">Try another pair</button>
         </div>
       </header>
       <section class="bench__main" aria-label="Microscope view">

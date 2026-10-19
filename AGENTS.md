@@ -45,7 +45,7 @@ Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock 
 - Data and results: `data.js` (`loadJSON`, `transcripts()`, `regionLabel()`), `map.js` (transcript map), `results.js` (step 7 SuperPlot from `tables.json`), `export.js` (PNG).
 - Story layer: `fly.js` (sprites, ink boil), `gsap.js` (loads the vendored GSAP), `caption.js`, `handoff.js` (elements carried across a route change), `stations.js` (landing), `brain.js` (descent), `storycam.js` (the step 4 camera: the SVG viewBox as a function of time, labels in screen space), `mrnalife.js` (the step 4 neuron, also drawn small beside the hypotheses); per case `monitor.js` (`pdf`), `tmaze.js` and `mbanatomy.js` (`mb`), `vial.js` (`nmj`).
 - UI helpers: `popcard.js` (help cards), `tour.js` (once-per-browser tours), `forms.js` (fields bound to the store), `icons.js`, `prng.js` (seeded, so animations replay identically).
-- `css/`: `tokens.css` (the live tokens: the frozen set plus `--text-3` and the odour colours), `base.css`, `app.css` (layouts, per-case animation), `fonts.css`.
+- `css/`: `tokens.css` (the live tokens: the frozen set plus `--text-3`, `--ch1-text` and the odour colours), `base.css`, `app.css` (layouts, per-case animation), `fonts.css`.
 - `data/` and `textures/`: generated (below); never edit by hand.
 
 **generator/** (run as `uv run python -m generator.<name>`)

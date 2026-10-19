@@ -349,6 +349,7 @@ export async function createViewer(root, opts) {
       // the genotype leads, in bold: which field is which must never be in doubt
       f.el.querySelector(".viewer__overlay").innerHTML =
         `<b>${GENOTYPE_LABEL[g]}</b> · ${probes} · animal ${state.animal} · simulated&nbsp;data`;
+      f.app.canvas?.setAttribute("aria-label", `${GENOTYPE_LABEL[g]}: simulated confocal image`);
     });
     const legend = root.querySelector(".viewer__legend");
     if (legend && pair) {

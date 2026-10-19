@@ -225,12 +225,14 @@ export async function mount(root, ctx) {
     if (phase === "g") tlG.progress(1);
     else tlH.progress(1);
     render();
+    (btn.replay.hidden ? root.querySelector(".assay__end") : btn.replay).focus();
   });
   btn.replay.addEventListener("click", () => {
     btn.replay.hidden = true; btn.skip.hidden = false;
     for (const l of lanes) l.shown = -100;
     endedAt = null;
     tlH.restart();
+    btn.skip.focus();
   });
 
   // ---------- drawing, every frame, from time ----------

@@ -233,7 +233,7 @@ export function plotTable(entry, pair, channel, measure, cs) {
 // The plot's title in two parts: which regions, and what is plotted (the PNG sets them on two lines).
 export function plotTitleParts(pair, channel, measure, cs) {
   const a = regionLabel(pair.ch1), b = regionLabel(pair.ch2);
-  const who = channel === "ch1" ? `${a} (smFISH 1)` : channel === "ch2" ? `${b} (smFISH 2)` : `${a} + ${b} (white, both regions)`;
+  const who = channel === "ch1" ? `${a} (smFISH 1)` : channel === "ch2" ? `${b} (smFISH 2)` : `${a} + ${b} (both regions; white in the viewer)`;
   return [who, `${measuresOf(cs)[measure].label} · mean ± SD, n = 3 animals · simulated data`];
 }
 

@@ -295,7 +295,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
         gp.addEventListener("click", () => onPick(q.p.id));
         gp.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onPick(q.p.id); } });
       }
-      gp.addEventListener("mouseenter", ev => tip(ev, `<b>${q.label}</b> ·${fmt(q.p.length_nt)} nt<br>${g.chrom}:${fmt(q.p.lo)}–${fmt(q.p.hi)}`));
+      gp.addEventListener("mouseenter", ev => tip(ev, `<b>${q.label}</b> · ${fmt(q.p.length_nt)} nt<br>${g.chrom}:${fmt(q.p.lo)}–${fmt(q.p.hi)}`));
       gp.addEventListener("mousemove", moveTip);
       gp.addEventListener("mouseleave", hideTip);
       if (q.p.id === focused) gp.focus();
@@ -303,7 +303,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
 
     // the legend: the key, then the strand and scale notes in small print
     host.querySelector(".tmap__notes").textContent = [
-      g.strand === "-" ? "Minus strand, shown 5′→3′ (left to right); FlyBase displays this gene reversed" : "Plus strand, shown 5′→3′ (left to right)",
+      g.strand === "-" ? "Minus strand, shown 5′→3′ (reversed from FlyBase)" : "Plus strand, shown 5′→3′ (left to right)",
       state.scale === "comp" ? "Introns compressed; break marks show their true length" : "Drawn to scale",
     ].join(" · ");
     host.querySelector(".tmap__key").innerHTML = `
@@ -453,10 +453,10 @@ export function slideMap(g, pair, { x, y, width, P }) {
   }).filter(Boolean);
   placeLabels(chosen, 22, 24, x, x + width);
   const bands = chosen.map(c => {
-    const ink = P[c.ch];
+    const ink = P[c.ch], text = P[c.ch + "Text"];   // the label in the text ink (≥4.5:1 on white)
     return `<rect x="${c.x0}" y="${bandTop}" width="${c.x1 - c.x0}" height="${bottom - bandTop}" fill="${ink}" fill-opacity=".14"/>
       <path d="M${c.x0},${bandTop + 7} L${c.x0},${bandTop} L${c.x1},${bandTop} L${c.x1},${bandTop + 7}" fill="none" stroke="${ink}" stroke-width="3"/>
-      <text x="${c.lx}" y="${bandTop - 9}" text-anchor="middle" font-family="${P.mono}" font-size="22" font-weight="500" fill="${ink}">${c.label}</text>`;
+      <text x="${c.lx}" y="${bandTop - 9}" text-anchor="middle" font-family="${P.mono}" font-size="22" font-weight="500" fill="${text}">${c.label}</text>`;
   });
   return { svg: bands.join("") + out.join(""), height: bottom - y };
 }

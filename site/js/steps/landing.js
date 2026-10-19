@@ -138,14 +138,16 @@ const STATION_SYSTEM = {
 function stations() {
   return CASE_ORDER.map(id => {
     const c = CASES[id];
-    const body = `
+    const name = `<span class="station__name">${c.phenotype}</span>`;
+    const body = link => `
       <span class="station__art">${stationArt[id]()}</span>
-      <span class="station__name">${c.phenotype}</span>
-      <span class="station__sub t-ui t-muted"><span>${STATION_SYSTEM[id]}</span><span>${c.assay}</span></span>
+      ${link ? `<a class="station__link" href="${link}" aria-describedby="station-sub-${id}">${name}</a>` : name}
+      <span class="station__sub t-ui t-muted" id="station-sub-${id}"><span>${STATION_SYSTEM[id]}</span><span>${c.assay}</span></span>
       <span class="station__go">${c.available ? "Choose this system →" : "Not available in this build"}</span>`;
+    // a card, not a link: the link wraps the name and stretches over the card, so the NMJ glossary button is no link's child
     return c.available
-      ? `<li><a class="station" data-case="${id}" href="${href(id, 1)}">${body}</a></li>`
-      : `<li><div class="station is-off" aria-disabled="true">${body}</div></li>`;
+      ? `<li><div class="station" data-case="${id}">${body(href(id, 1))}</div></li>`
+      : `<li><div class="station is-off" aria-disabled="true">${body("")}</div></li>`;
   }).join("");
 }
 
@@ -286,8 +288,8 @@ export async function mount(root) {
   const controls = { skip: root.querySelector("[data-act=skip]"), replay: root.querySelector("[data-act=replay]") };
   const hooks = { done: () => {}, replay: () => {} };   // set by the hero-to-legend transition below
   tl.eventCallback("onComplete", () => { controls.skip.hidden = true; controls.replay.hidden = false; hooks.done(); });
-  controls.skip.addEventListener("click", () => { tl.progress(1); drawPoses(); });
-  controls.replay.addEventListener("click", () => { controls.replay.hidden = true; controls.skip.hidden = false; hooks.replay(); tl.restart(); drawPoses(); });
+  controls.skip.addEventListener("click", () => { tl.progress(1); drawPoses(); controls.replay.focus({ preventScroll: true }); });   // the clicked button hides: keep focus on the pair
+  controls.replay.addEventListener("click", () => { controls.replay.hidden = true; controls.skip.hidden = false; hooks.replay(); tl.restart(); drawPoses(); controls.skip.focus({ preventScroll: true }); });
 
   let drawWings = null;   // the flying stand-ins' wingbeat (below)
 

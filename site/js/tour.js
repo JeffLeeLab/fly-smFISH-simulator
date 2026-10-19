@@ -15,6 +15,7 @@ export function runTour(steps, { key } = {}) {
   endTour();
   const live = steps.filter(s => document.querySelector(s.target)?.getClientRects().length);  // visible targets only
   if (!live.length) return;
+  const opener = document.activeElement;   // focus returns here when the tour ends
   let i = 0;
   const pop = document.createElement("div");
   pop.className = "tour";
@@ -57,11 +58,13 @@ export function runTour(steps, { key } = {}) {
 
   function close() {
     lit?.classList.remove("tour-lit");
+    const hadFocus = pop.contains(document.activeElement);
     pop.remove();
     document.removeEventListener("keydown", onKey);
     window.removeEventListener("resize", place);
     if (key) write(`tour:${key}`, true);
     active = null;
+    if (hadFocus && opener instanceof HTMLElement && opener.isConnected && opener !== document.body) opener.focus({ preventScroll: true });
   }
   const onKey = e => { if (e.key === "Escape") { e.stopPropagation(); close(); } };
 

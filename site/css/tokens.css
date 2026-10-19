@@ -60,6 +60,7 @@
   --dapi: #5A78EB;
   --ch1-ink: #1F8A4C;     /* smFISH 1 on the page (map, plot, chips), 3.8:1 */
   --ch2-ink: #B0328F;     /* smFISH 2 on the page, 4.9:1 */
+  --ch1-text: #177341;    /* smFISH 1 as text (probe IDs), 4.7:1 on panel; --ch2-ink already reads ≥4.5:1 */
 
   /* ---- illustration (story layer only; never on data) ---- */
   --ink: #2B2A27;
@@ -92,6 +93,7 @@
   --viewer-frame: #141413;
   --ch1-ink: #4CC27A;
   --ch2-ink: #E066C4;
+  --ch1-text: #4CC27A;
   --ink: #E8E6DC;
   --wash-body: #3A3833; --wash-wing: rgba(255,255,255,.06); --wash-eye: #7E4C3D; --wash-gene: #4A4640;
   --wash-a: #3B352D; --wash-b: #4B3429; --wash-c: #34332F;

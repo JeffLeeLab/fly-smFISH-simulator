@@ -110,6 +110,7 @@ function drawerBody(caseId) {
 
 function setOpen(open, { focus = true } = {}) {
   isOpen = open;
+  if (!open) sync();
   drawer.classList.toggle("is-open", open);
   drawer.inert = !open;
   tab.setAttribute("aria-expanded", String(open));
@@ -134,12 +135,38 @@ function render() {
   drawer.querySelector("[data-act=nb-close]").addEventListener("click", () => setOpen(false));
   unbind = bind(drawer, caseId);
   // Re-render when the shortlist, pair or verdicts change elsewhere (new cards, new options).
-  let last = structureKey(caseId);
-  offStore = onChange(key => {
-    if (key !== "case:" + caseId) return;
-    const k = structureKey(caseId);
-    if (k !== last && !drawer.contains(document.activeElement)) { last = k; render(); }
-  });
+  last = structureKey(caseId);
+  offStore = onChange(key => { if (key === "case:" + caseId) sync(); });
+}
+
+const TEXT_CONTROL = "textarea, select, input:not([type=checkbox], [type=radio], [type=button])";
+let last = "", pointerDown = false;
+
+// Redraws if the structure changed, unless the student is typing (then the focusout flush does it).
+function sync() {
+  const { caseId } = current;
+  if (!caseId || structureKey(caseId) === last) return;
+  if (document.activeElement?.matches?.(TEXT_CONTROL) && drawer.contains(document.activeElement)) return;
+  const a = document.activeElement, inside = drawer.contains(a) && a !== drawer;
+  const sel = inside && controlSelector(a);
+  const body = () => drawer.querySelector(".nb-body");
+  const top = [drawer.scrollTop, body()?.scrollTop];
+  render();
+  drawer.scrollTop = top[0];
+  if (body() && top[1] != null) body().scrollTop = top[1];
+  if (sel) drawer.querySelector(sel)?.focus({ preventScroll: true });
+}
+
+// A selector that finds the same control after a redraw.
+function controlSelector(el) {
+  const q = (name, v) => `[${name}="${CSS.escape(v)}"]`;
+  if (el.dataset.bind) return q("data-bind", el.dataset.bind);
+  const bar = el.closest("[data-verdict]");
+  if (bar && el.dataset.value) return `${q("data-verdict", bar.dataset.verdict)} ${q("data-value", el.dataset.value)}`;
+  if (el.dataset.act) return q("data-act", el.dataset.act);
+  if (el.id) return "#" + CSS.escape(el.id);
+  if (el.getAttribute("href")) return `a${q("href", el.getAttribute("href"))}`;
+  return null;
 }
 
 const structureKey = caseId => {
@@ -151,6 +178,10 @@ export function initNotebook(tabEl, drawerEl) {
   tab = tabEl;
   drawer = drawerEl;
   drawer.inert = true;
+  drawer.addEventListener("focusout", () => setTimeout(() => { if (!pointerDown) sync(); }));
+  drawer.addEventListener("pointerdown", () => { pointerDown = true; });
+  document.addEventListener("pointerup", () => { pointerDown = false; });
+  drawer.addEventListener("click", () => setTimeout(sync));
   tab.addEventListener("click", () => setOpen(!isOpen));
   document.addEventListener("keydown", e => { if (e.key === "Escape" && isOpen) setOpen(false); });
 }

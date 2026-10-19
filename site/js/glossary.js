@@ -35,7 +35,7 @@ ENTRIES.intron = ENTRIES.exon;
 // Markup for a term inside running text.
 export const term = (key, text) => `<button type="button" class="gl" data-term="${key}" aria-describedby="gl-tip">${text}</button>`;
 
-let tip, current = null, pinned = false;
+let tip, current = null, pinned = false, hideTimer = 0;
 
 function show(el) {
   const e = ENTRIES[el.dataset.term];
@@ -51,7 +51,12 @@ function show(el) {
   tip.style.top = `${above ? r.top - h - 8 : r.bottom + 8}px`;
 }
 
+// Leaving the term or the tooltip hides after a short grace, so the pointer can cross the gap (WCAG 1.4.13).
+const cancelHide = () => clearTimeout(hideTimer);
+const hideSoon = () => { cancelHide(); hideTimer = setTimeout(hide, 150); };
+
 function hide() {
+  cancelHide();
   tip.hidden = true;
   current = null;
   pinned = false;
@@ -67,20 +72,26 @@ export function initGlossary() {
 
   document.addEventListener("pointerover", e => {
     const el = e.target.closest?.(".gl");
-    if (el && e.pointerType === "mouse" && !pinned) show(el);
+    if (el && e.pointerType === "mouse") { cancelHide(); if (!pinned) show(el); }
   });
   document.addEventListener("pointerout", e => {
     const el = e.target.closest?.(".gl");
-    if (el && e.pointerType === "mouse" && !pinned && !el.contains(e.relatedTarget)) hide();
+    if (el && e.pointerType === "mouse" && !pinned && !el.contains(e.relatedTarget) && !tip.contains(e.relatedTarget)) hideSoon();
+  });
+  tip.addEventListener("pointerenter", e => { if (e.pointerType === "mouse") cancelHide(); });
+  tip.addEventListener("pointerleave", e => {
+    if (e.pointerType === "mouse" && !pinned && !current?.contains(e.relatedTarget)) hideSoon();
   });
   document.addEventListener("focusin", e => { if (e.target.classList?.contains("gl")) show(e.target); });
-  document.addEventListener("focusout", e => { if (e.target.classList?.contains("gl") && !pinned) hide(); });
+  document.addEventListener("focusout", e => {
+    if (e.target.classList?.contains("gl") && !pinned && !tip.contains(e.relatedTarget)) hide();
+  });
   document.addEventListener("click", e => {
     const el = e.target.closest?.(".gl");
     if (el) {
       e.preventDefault();
       if (current === el && pinned) hide(); else { show(el); pinned = true; }
-    } else if (!tip.hidden) hide();
+    } else if (!tip.hidden && !tip.contains(e.target)) hide();
   });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !tip.hidden) hide(); });
   window.addEventListener("scroll", () => { if (!tip.hidden) hide(); }, { passive: true, capture: true });

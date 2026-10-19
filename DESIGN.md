@@ -34,6 +34,7 @@ colors:
   green-ink: "#1F8A4C"
   magenta-ink: "#B0328F"
   green-ink-dark: "#4CC27A"
+  green-ink-text: "#177341"
   magenta-ink-dark: "#E066C4"
   illustration-ink: "#2B2A27"
   illustration-ink-dark: "#E8E6DC"
@@ -224,7 +225,7 @@ Each of these means the same thing in the viewer, the transcript map, the plot, 
 - **Merge White** (`lut-merge`): a molecule carrying both regions. White is reserved for this, so no other channel may default to white or grey.
 - **TDP-43 Red-orange** (`lut-tdp`): the default TDP-43 IF LUT, dimmed to 40% while any smFISH channel is on (`--tdp-with-fish: .4`) so it doesn't add up to a false white.
 - **Membrane Blue** (`membrane-blue`) and **DAPI Blue** (`dapi-blue`): the labelled neuron and its nuclei. Membrane Blue is also the colour of the neurons in the story artwork, so blue always means "the labelled neuron". It is the only saturated colour in the drawn world, with one exception: in the step 4 drawing, TDP-43 is drawn in the TDP-43 channel's red-orange (`lut-tdp`), so it reads as the protein students have just looked at in step 3 (2026-10-16). A data colour keeps its meaning in the drawing; the mRNA stays in ink, and smFISH colours still arrive only with the probes. The neuron's wash there is Membrane Blue over the paper (`--nw-1` → `--nw-2` in `tokens.css`: 7% → 17%, or 14% → 28% in dark, deepening downwards, with a darker rim where it pools at the edges); its nucleus takes `--nuc-1` → `--nuc-2`.
-- **Green Ink** and **Magenta Ink** (`green-ink`, `magenta-ink`; dark-theme variants `-dark`): the same two hues, darkened for the page (map probe bands, plot points, chip dots) so they reach ≥3:1 on ivory.
+- **Green Ink** and **Magenta Ink** (`green-ink`, `magenta-ink`; dark-theme variants `-dark`): the same two hues, darkened for the page (map probe bands, plot points, chip dots) so they reach ≥3:1 on ivory. Where smFISH 1's ink is text (the probe IDs on the map and the probe strip, the help card's "A", the summary slide's region labels), it is **Green Ink Text** (`green-ink-text`, `--ch1-text`), darker again so it reads ≥4.5:1 on every light surface, the panel included (4.7:1); in the dark theme it is `green-ink-dark`. Magenta Ink already reads ≥4.5:1 as text (2026-10-19).
 
 ### Illustration
 - **Drawing Ink** (`illustration-ink`; dark theme `illustration-ink-dark`) for the boiling outlines, plus the **washes** (`wash-body`, `wash-eye`, `wash-gene`, `wash-a/b/c`): ivory, warm grey and clay-tinted fills. They are used in the story layer only and never on data.
@@ -313,7 +314,7 @@ The controls are precise and unadorned: hairline outlines, near-square corners a
 
 ### Buttons
 - **Shape:** near-square (3px).
-- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Choose a new pair", the fly-to buttons and "Copy as PNG", and for the animation controls ("Skip animation", "Replay animation" and step 1's replays) so they read as buttons (instructor, 2026-10-17). The step 2 descents' "Skip animation" sits at the pinned stage's bottom right, beside the caption, and takes the viewer's ink (`--viewer-text`, a 35% border) once the stage turns dark (2026-10-19). A quiet variant without the border at rest is kept for the tour's "Skip".
+- **Ghost (default):** transparent background, 1px `hairline` border, UI text, padding 3px 10px. Used for "Try another pair", the fly-to buttons and "Copy as PNG", and for the animation controls ("Skip animation", "Replay animation" and step 1's replays) so they read as buttons (instructor, 2026-10-17). The step 2 descents' "Skip animation" sits at the pinned stage's bottom right, beside the caption, and takes the viewer's ink (`--viewer-text`, a 35% border) once the stage turns dark (2026-10-19). A quiet variant without the border at rest is kept for the tour's "Skip".
 - **Hover / Focus (provisional, not in the mockups):** hover fills with `ivory-panel`. Focus-visible shows a 2px clay outline offset by 2px. Colour transitions take about 150ms; nothing moves or scales.
 - **Primary action (provisional)** ("Show results"): a clay fill with `on-clay` text. Use it on at most one control per screen.
 

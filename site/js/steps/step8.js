@@ -12,6 +12,7 @@ import { createMap } from "../map.js";
 import { loadFlySprite } from "../fly.js";
 import { summarySVG, slideFly, SLIDE, CASE_LOCATOR } from "../summary.js";
 import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
+import { newPair } from "./step6.js";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
@@ -43,7 +44,7 @@ export async function mount(root, ctx) {
         <label class="field"><span class="field__label">Uncertainty: the strongest remaining alternative</span>
           <select class="select" data-bind="uncertainty.mode" id="unc-mode"></select></label>
         <label class="field"><span class="field__label">Why it isn’t excluded yet</span>
-          <input class="input" data-bind="uncertainty.why" placeholder="What would you still need to see?"></label>
+          <textarea class="textarea" rows="2" data-bind="uncertainty.why" placeholder="What would you still need to see?"></textarea></label>
       </section>
       <section class="slide" aria-labelledby="p2-h">
         <h2 class="t-h3" id="p2-h">Starting point for Part 2</h2>
@@ -53,7 +54,7 @@ export async function mount(root, ctx) {
       </section>
       <p class="next-row">
         <a class="btn btn--lg" href="${href(id, 7)}">← Back to results</a>
-        <a class="btn btn--lg" href="${href(id, 6)}">Try another pair</a>
+        <button class="btn btn--lg" type="button" data-act="new-pair">Try another pair</button>
       </p>
     </div>`;
 
@@ -96,6 +97,7 @@ export async function mount(root, ctx) {
     if (!root.contains(document.activeElement)) refresh();
     drawSoon();
   });
+  root.querySelector("[data-act=new-pair]").addEventListener("click", () => newPair(id));
   root.querySelector("[data-act=summary-png]").addEventListener("click", async e => {
     const button = e.currentTarget; // currentTarget is cleared once the handler awaits
     const canvas = await svgToCanvas(summarySVG({ c, s: caseState(id), date, g, art }), SLIDE.W, SLIDE.H, LIGHT.bg);
