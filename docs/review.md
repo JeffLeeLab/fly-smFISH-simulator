@@ -471,3 +471,27 @@ The instructor asked for these changes:
 | 5 | Descent captions | The room kept for Skip narrows the caption to 844 px at 1280×720, so some captions wrap. A wrapping caption made the caption row taller and the scene shorter. The scene is laid out only on build, so the screen-space labels could drift off the drawing; the NMJ's long captions already did this. | Fixed: the caption row always holds two lines (95 px), so the scene is 625 px at 1280×720 for every caption. |
 | 6 | Step 6, mb, 1280×720 | The lede is now three lines. The "How two-colour smFISH works" link ends 11 px below the panel's edge, so the panel needs 12 px of scroll. | Accepted (instructor): the panel scrolls by design, and the map and probe track still fit. |
 | 7 | ZT2 hover | The request said the terminals are "most fasciculated" at ZT2, which reverses Fernández et al. 2008 (as in the 2026-10-16 run). | Written as "most branched". |
+
+## 2026-10-19: TDP-43 hover; the T-maze card's flies smaller, steady and walking (instructor)
+
+The instructor asked for these changes:
+- **Hero:** "TDP-43" in the introduction gets a glossary hover: an RNA-binding protein (RBP), made from the human gene *TARDBP*; it becomes dysfunctional in about 97% of ALS cases; the fly version is called TBPH.
+- **T-maze card:** the flies were too big and blinked in and out at random. Make them smaller. After the first fix, the instructor added that the flies should walk.
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for mb, pdf and nmj. The push also carries the instructor's unreviewed commit 8663d64: the viewer genotype first and bold, and Start sooner on the three Phenotype pages. The sets cover it as well.
+  - mb: the hero, step 1, step 3 and step 7 inspected at both sizes and in both themes; steps 2, 4–6 and 8 on one contact sheet.
+  - pdf and nmj: step 1, step 3 and step 7 inspected at both sizes and in both themes. In both, step 1 and the station flies pass `groomFrame`'s frame through `flyNode.show`, which already wrapped it by the same count, so their frames are unchanged.
+- **Viewer overlay (8663d64):** it leads with the genotype in bold on steps 3 and 7 in all three cases. In the narrow panes at 1280×720 it wraps to a second line ("simulated data"), clear of the neurons.
+- **Start (8663d64), live at 1280×720:** on all three Phenotype pages Start is fully shown 1.1 s after the page opens (0.8 s plus its 0.3 s fade), with no Skip before it. On mb, an early click names the maze parts at once and brings in Skip.
+- **Station cards:** extra shots at 1280×720 and 1920×1080 in both themes, since the review set shows the landing only at the hero. Frozen frames at 0–10.5 s, 1920×1080, show the flies walking, turning and grooming.
+- **Card schedules:** the card's `draw(t)` was run every 0.05 s from 0 to 900 s in the page. No frame pointed at a missing sprite, and no thorax left its arm. Flies sharing a floor or ceiling never came closer than 15.74 units, the gap set. A fly alone on its floor or ceiling walks 45% of the time across the whole arm. Each fly of a pair walks about 19% of the time over 17–18 units.
+- **Glossary hover:** TDP-43 on the hero, in both themes and at both sizes. The introduction wraps as before.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | T-maze card | Flies vanished for up to 0.67 s at a time. For bouts long enough to rub twice, `groomFrame` returned rubbing frames 8–15, and the lateral sprite has only 0–7. The card set its `href` directly, without the wrap that `flyNode.show` does. | Fixed: `groomFrame` wraps the rubbing frame. |
+| 2 | T-maze card | Flies were 13 units tall in an 18-unit arm. Floor and ceiling flies overlapped, and some ran into the elevator. | Fixed: 7.5 units, step 1's proportion to the arm (15 in 36). |
+| 3 | T-maze card | The flies only stood and groomed, although shot F has them walk and pause (instructor). | Fixed: they walk, pause and groom. Flies that share a floor or ceiling keep their order and a body's length apart. |
+| 4 | TDP-43 hover | The request said "97% of the ALS cases". The figure is an estimate: TDP-43 pathology is found in about 97% of cases. | Written as "about 97%". |
+| 5 | Process | `playwright-cli` sessions closed between separate shell calls, and a reopened session came back at 1280×720. The first spot checks therefore mixed screenshots from two window sizes. | Redone with each check in a single command. |
