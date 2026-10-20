@@ -90,12 +90,12 @@ export function fullView(bench, { controls }) {
   const onFs = () => { if (on && ownFs && !fsElement()) { ownFs = false; exit(); } };
   document.addEventListener("fullscreenchange", onFs);
   document.addEventListener("webkitfullscreenchange", onFs);
-  // In the in-page view, Esc leaves, unless it is closing a tour, a glossary tip or a card first
-  // (capture phase: seen before those close themselves).
+  // In the in-page view, Esc leaves, unless it is closing a tour, a glossary tip, a card or the
+  // Save menu first (capture phase: seen before those close themselves).
   const onKey = e => {
     if (e.key !== "Escape" || !on) return;
     const tip = document.getElementById("gl-tip");
-    if (document.querySelector(".tour") || (tip && !tip.hidden) || document.querySelector(".popcard:not([hidden])")) return;
+    if (document.querySelector(".tour") || (tip && !tip.hidden) || document.querySelector(".popcard:not([hidden]), .savemenu__menu.is-open")) return;
     exit();
   };
   window.addEventListener("keydown", onKey, true);

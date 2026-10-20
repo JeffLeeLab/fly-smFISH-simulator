@@ -19,7 +19,7 @@ const area = (bindKey, label, placeholder, rows = 3) => `
     <textarea class="textarea" rows="${rows}" data-bind="${bindKey}" placeholder="${placeholder}"></textarea></label>`;
 
 export const storageWarning = () => storage.available ? "" : `
-  <p class="notice nb-warn" role="status">This browser is blocking storage, so these notes will be lost if the page is refreshed. Copying PNGs still works.</p>`;
+  <p class="notice nb-warn" role="status">This browser is blocking storage, so these notes will be lost if the page is refreshed. Saving PNGs still works.</p>`;
 
 // Mode verdict cards (step 7), grouped as on the step 5 cards. Used by the drawer and the compare pane.
 export function renderModeCards(caseId) {

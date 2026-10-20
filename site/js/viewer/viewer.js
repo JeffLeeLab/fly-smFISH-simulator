@@ -17,7 +17,7 @@
 import { Application, CanvasSource, Container, Filter, GlProgram, ImageSource, Rectangle, Sprite, Texture, TilingSprite, UniformGroup, defaultFilterVert } from "pixi.js";
 import { Viewport } from "pixi-viewport";
 import { loadJSON, regionLabel } from "../data.js";
-import { copyCanvas } from "../export.js";
+import { bindSaveMenu, saveMenuHTML } from "../export.js";
 import { CASES } from "../content.js";
 import { term } from "../glossary.js";
 import { EXPAND_ICON, SHRINK_ICON } from "../icons.js";
@@ -167,7 +167,7 @@ export async function createViewer(root, opts) {
       </span>
       <button type="button" class="vbtn" data-act="flip" hidden>Switch genotype <kbd>F</kbd></button>
       <span class="viewer__spacer"></span>
-      <button type="button" class="vbtn" data-act="png">Copy as PNG</button>
+      ${saveMenuHTML({ label: "Save view", what: "current view", cls: "vbtn", extra: "savemenu--viewer" })}
       <button type="button" class="vbtn vbtn--full" data-act="full" aria-label="Full screen" title="Full screen" hidden><span class="i-expand">${EXPAND_ICON}</span><span class="i-shrink">${SHRINK_ICON}</span><span class="vbtn__exit">Exit full screen <kbd>Esc</kbd></span></button>
     </div>
     <div class="viewer__fields" data-layout="split">
@@ -495,7 +495,6 @@ export async function createViewer(root, opts) {
     if (b.dataset.fly) flyTo(b.dataset.fly);
     else if (b.dataset.layout) setLayout(b.dataset.layout);
     else if (b.dataset.act === "flip") flip();
-    else if (b.dataset.act === "png") copyPNG(b);
   });
 
   const onKey = e => {
@@ -582,10 +581,10 @@ export async function createViewer(root, opts) {
     return out;
   }
 
-  async function copyPNG(button) {
-    const c = await exportCanvas();
-    await copyCanvas(c, `smFISH-${caseId}-${mode}-animal${state.animal}.png`, button);
-  }
+  bindSaveMenu(root.querySelector(".savemenu"), {
+    render: exportCanvas,
+    filename: () => `smFISH-${caseId}-${mode}-animal${state.animal}.png`,
+  });
 
   // ---------- start ----------
   showWorlds();

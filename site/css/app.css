@@ -805,6 +805,33 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .howto__body b { font-weight: 600; }
 .howto svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--text-2); }
 
+/* ---------- the Save menu (export.js): Copy or Download, on the help card's sheet; charcoal in the viewer ---------- */
+.savemenu { display: inline-flex; }
+.savemenu__btn svg { flex: none; width: 10px; height: 10px; transform: rotate(180deg); transition: transform .2s ease; }
+.savemenu__btn[aria-expanded="true"] svg { transform: none; }
+.savemenu__btn.is-said svg { display: none; }
+.btn.savemenu__btn[aria-expanded="true"]:not(.btn--primary) { background: var(--panel); border-color: var(--border-strong); }
+.vbtn.savemenu__btn[aria-expanded="true"] { background: var(--viewer-hover); border-color: var(--viewer-line-strong); }
+.savemenu__menu {
+  display: none; position: fixed; inset: auto; z-index: 60; margin: 0; padding: 4px; overflow: visible;
+  flex-direction: column; gap: 2px;
+  background: var(--field); color: var(--text);
+  border: var(--hairline) solid var(--border-strong); border-radius: var(--r-pane);
+}
+.savemenu__menu.is-open { display: flex; }
+.savemenu__menu [role="menuitem"] {
+  display: flex; align-items: center; gap: var(--sp-2); min-height: 30px; padding: 4px 12px 4px 8px;
+  font: 400 var(--fs-ui)/1.3 var(--font-sans); color: inherit; text-align: left; white-space: nowrap;
+  background: none; border: 0; border-radius: var(--r-chip); cursor: pointer;
+}
+.savemenu__menu [role="menuitem"]:hover, .savemenu__menu [role="menuitem"]:focus-visible { background: var(--panel); }
+.savemenu__menu [role="menuitem"]:focus-visible { outline-offset: -2px; }
+.savemenu__menu svg { flex: none; color: var(--text-2); }
+.savemenu--viewer .savemenu__menu { background: var(--viewer-frame); color: var(--viewer-text); border-color: var(--viewer-line-strong); }
+.savemenu--viewer .savemenu__menu [role="menuitem"]:hover, .savemenu--viewer .savemenu__menu [role="menuitem"]:focus-visible { background: var(--viewer-hover); }
+.savemenu--viewer .savemenu__menu svg { color: var(--viewer-text-2); }
+@media (prefers-reduced-motion: reduce) { .savemenu__btn svg { transition: none; } }
+
 /* ---------- step 8: the Part 1 summary slide, the starting point for Part 2 ---------- */
 .slide { display: flex; flex-direction: column; gap: var(--sp-3); max-width: 880px !important; }
 .slide__svg { display: block; width: 100%; height: auto; border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip); background: #fff; }

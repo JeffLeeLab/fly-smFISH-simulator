@@ -33,7 +33,7 @@ The images and numbers come from one seeded simulation built from an instructor-
 - One live 2-hour session, run three groups at a time. Students use their own Windows and macOS laptops in current Chrome, Edge, Firefox or Safari, often with low-end integrated graphics. The minimum viewport is 1280×720, with trackpad pinch and scroll.
 - The flow has eight steps in five stages: Introduction (1 Phenotype, 2 Anatomy) → RBP dysfunction (3 TDP-43 dysfunction, 4 TDP-43 and its targets) → Experimental design (5 Hypotheses, 6 Probe design) → Observe (7 Microscopy reveal) → Conclude (8 Interpret & revise). Each step has its own hash URL so a group can recover after a refresh.
 - Students record notes in a lab notebook drawer stored in localStorage on their own browser. Nothing is uploaded.
-- Evidence leaves the site only as PNGs (viewer, plot and a 16:9 Part 1 summary) and students' own screenshots, which go into the group's own PowerPoint for Part 2. Every image is labelled "simulated".
+- Evidence leaves the site only as PNGs (viewer, plot and a 16:9 Part 1 summary, each copied or downloaded from its Save menu) and students' own screenshots, which go into the group's own PowerPoint for Part 2. Every image is labelled "simulated".
 - A companion lecture covers RNA/RBP "Core Skills". FlyBase is the external reference students are sent to.
 
 ## Capabilities and Constraints
@@ -75,5 +75,5 @@ The images and numbers come from one seeded simulation built from an instructor-
 - WCAG AA contrast in both light and dark themes. Minimum text sizes: body ≥16 px, UI text ≥13 px, overlays and plot ticks ≥11 px.
 - Reduced motion shows still end frames. The opening animations stay under 40 seconds (the leg motor neuron case runs 40.5 s with its real-time climbing timer; instructor, 2026-10-16) and can be skipped and replayed.
 - The transcript map's probe regions are themselves keyboard-operable buttons (Tab to a region; Enter or Space chooses or removes it), focus stays on the region when the map redraws, click targets are at least 24 px wide, and each channel slot has a × button that clears its region.
-- Fallback states for missing WebGL 2 and for blocked localStorage (copying PNGs still works).
+- Fallback states for missing WebGL 2 and for blocked localStorage (saving PNGs still works).
 - Genotype is always shown by position and label, never by colour alone. Control is always on the left.

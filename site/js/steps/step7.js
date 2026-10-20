@@ -15,7 +15,7 @@ import { fullView } from "../viewer/fullview.js";
 import { loadJSON, transcripts, regionLabel } from "../data.js";
 import { measuresFor, fixedScales, plotSVG, plotTable, plotTitle, plotTitleParts } from "../results.js";
 import { CASES } from "../content.js";
-import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
+import { LIGHT, bindSaveMenu, saveMenuHTML, svgToCanvas } from "../export.js";
 import { createMap, drawStrip } from "../map.js";
 import { popCard } from "../popcard.js";
 import { CHEVRON_ICON, X_ICON } from "../icons.js";
@@ -64,7 +64,7 @@ export async function mount(root, ctx) {
           </div>
           <label class="results__measure"><span class="vh">Measure</span>
             <select class="select" data-act="measure">${Object.entries(measures).map(([k, m]) => `<option value="${k}">${m.label}</option>`).join("")}</select></label>
-          <button type="button" class="btn results__png" data-act="plot-png">Copy as PNG</button>
+          ${saveMenuHTML({ label: "Save plot", what: "plot", extra: "results__png" })}
         </div>
         <div class="results__plot" id="results-plot" hidden>
           <p class="results__title"></p>
@@ -181,7 +181,11 @@ export async function mount(root, ctx) {
     if (!b) return;
     if (b === toggle) setOpen(!foot.classList.contains("is-open"));
     else if (b.dataset.channel) { plot.channel = b.dataset.channel; if (!foot.classList.contains("is-open")) setOpen(true); else drawPlot(); }
-    else if (b.dataset.act === "plot-png") {
+    else if (b.classList.contains("splot__cat") && viewer) viewer.flyTo(b.dataset.fly);
+    else if (b.classList.contains("splot__pt") && viewer) viewer.setAnimal(+b.dataset.animal);
+  });
+  bindSaveMenu(foot.querySelector(".savemenu"), {
+    render() {
       const W = 1920, H = 1080;
       const pal = { ...LIGHT, ink: LIGHT[plot.channel] };
       // two-line header: gene and regions, then what is plotted (the slide names its gene)
@@ -190,9 +194,9 @@ export async function mount(root, ctx) {
         <text x="64" y="116" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${what}</text>
         <g transform="translate(40,150)">${plotSVG({ entry, channel: plot.channel, measure: plot.measure, yMax: yMax[plot.measure], width: W - 80, height: H - 250, pal, font: 2.2, cs })}</g>
         <text x="64" y="${H - 40}" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${measures[plot.measure].note} · Simulated teaching data</text>`;
-      await copyCanvas(await svgToCanvas(inner, W, H, LIGHT.bg), `smFISH-${id}-plot-${plot.measure}.png`, b);
-    } else if (b.classList.contains("splot__cat") && viewer) viewer.flyTo(b.dataset.fly);
-    else if (b.classList.contains("splot__pt") && viewer) viewer.setAnimal(+b.dataset.animal);
+      return svgToCanvas(inner, W, H, LIGHT.bg);
+    },
+    filename: () => `smFISH-${id}-plot-${plot.measure}.png`,
   });
   foot.addEventListener("keydown", e => {
     const c = e.target.closest(".splot__cat");

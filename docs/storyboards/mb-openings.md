@@ -40,7 +40,7 @@ G 0.0–3.5    [transition in: the station expands (Flip), 0.8 s]  ten flies per
    reads:  0.8–2.2  a training tube with a shock grid, above a choice point (labels: "training tube",
                     "shock grid", "OCT (3-octanol)", "MCH (4-methylcyclohexanol)")
            2.2–3.5  the two arms smell different
-   caption: "Flies learn in the training tube, then choose between two odours at the T."
+   caption: "Flies learn in the training tube, then choose between two odours at the T choice gate."
    then waits (flies keep wandering) for the button "Train the flies" (since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
 
 H 0.0–4.2    (after the click) OCT flows down the tube (the stipple drifts in from the top); the grid

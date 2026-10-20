@@ -20,7 +20,7 @@ const FEED_TAG = { oct: "OCT", air: "air", mch: "MCH" };
 const ID = "step";
 
 const CAPTIONS = {
-  g: "Flies learn in the training tube, then choose between two odours at the T.",
+  g: "Flies learn in the training tube, then choose between two odours at the T choice gate.",
   h: "OCT comes with mild shocks. MCH comes with none.",
   i: "A few minutes later, each fly picks an arm.",
   j: "Performance index: 1 if every fly avoided the shocked odour, 0 if they chose at random.",

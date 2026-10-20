@@ -1,6 +1,6 @@
 // Step 8: revise the explanation → Claim and Uncertainty, under the question from step 4; the
 // starting point for Part 2: the experiment summary (with the pair on the read-only transcript
-// map), a preview of the Part 1 summary slide and "Copy summary as PNG". No gate; nothing is
+// map), a preview of the Part 1 summary slide and its Save menu (copy or download). No gate; nothing is
 // required.
 
 import { MODES, VERDICTS, question } from "../content.js";
@@ -11,7 +11,7 @@ import { loadJSON, transcripts, regionLabel } from "../data.js";
 import { createMap } from "../map.js";
 import { loadFlySprite } from "../fly.js";
 import { summarySVG, slideFly, SLIDE, CASE_LOCATOR } from "../summary.js";
-import { LIGHT, copyCanvas, svgToCanvas } from "../export.js";
+import { LIGHT, bindSaveMenu, saveMenuHTML, svgToCanvas } from "../export.js";
 import { newPair } from "./step6.js";
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
@@ -50,7 +50,7 @@ export async function mount(root, ctx) {
         <h2 class="t-h3" id="p2-h">Starting point for Part 2</h2>
         <p class="t-story">What would you test next, and how might you intervene?</p>
         <svg class="slide__svg" viewBox="0 0 ${SLIDE.W} ${SLIDE.H}" role="img" aria-label="Preview of your Part 1 summary slide"></svg>
-        <p class="next-row"><button class="btn btn--primary btn--lg" type="button" data-act="summary-png">Copy summary as PNG</button><span class="t-ui t-muted">Your Part 1 summary · 1920 × 1080, for a white slide</span></p>
+        <p class="next-row">${saveMenuHTML({ label: "Save summary", what: "summary", cls: "btn btn--primary btn--lg" })}<span class="t-ui t-muted">Your Part 1 summary · 1920 × 1080, for a white slide</span></p>
       </section>
       <p class="next-row">
         <a class="btn btn--lg" href="${href(id, 7)}">← Back to results</a>
@@ -98,10 +98,9 @@ export async function mount(root, ctx) {
     drawSoon();
   });
   root.querySelector("[data-act=new-pair]").addEventListener("click", () => newPair(id));
-  root.querySelector("[data-act=summary-png]").addEventListener("click", async e => {
-    const button = e.currentTarget; // currentTarget is cleared once the handler awaits
-    const canvas = await svgToCanvas(summarySVG({ c, s: caseState(id), date, g, art }), SLIDE.W, SLIDE.H, LIGHT.bg);
-    await copyCanvas(canvas, `smFISH-${id}-summary.png`, button);
+  bindSaveMenu(root.querySelector(".savemenu"), {
+    render: () => svgToCanvas(summarySVG({ c, s: caseState(id), date, g, art }), SLIDE.W, SLIDE.H, LIGHT.bg),
+    filename: () => `smFISH-${id}-summary.png`,
   });
   return () => { unbind(); off(); map.destroy(); cancelAnimationFrame(pending); };
 }
