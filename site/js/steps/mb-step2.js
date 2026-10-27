@@ -160,7 +160,7 @@ export async function mount(root, ctx) {
       </section>
       <div class="story descent__after">
         <p class="t-story">The mushroom bodies are the fly’s centre for learning and memory, often likened to our hippocampus. Each holds about 2,000 Kenyon cells, whose cell bodies sit in a cap at the back of the brain. A Kenyon cell sends out one neurite: it first branches into dendrites, where the cell receives its input, then runs on as an axon, bundled with all the others, to the lobes, where its synapses are. Kenyon cells come in three classes (α/β, α′/β′ and γ), each forming its own lobes. This simulation follows 30 of them, 10 of each class, seen from an oblique angle so every part has its own space.</p>
-        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made in all Kenyon cells) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, axon bundle and lobes. The dendrites are drawn but not counted.</p>
+        <p class="t-story">A membrane label (${term("labels", "mCD8::BFP")}, made in all Kenyon cells) shows their shape in blue, and ${term("labels", "DAPI")} marks their nuclei in the same blue. In the images you will count spots in four compartments: nucleus, cell body, axon bundle and lobes. You will see the dendrites, but you will not count them.</p>
         <p class="next-row"><a class="btn btn--primary btn--lg" data-act="next" href="${href(ctx.caseId, 3)}">Next: TDP-43 dysfunction</a></p>
       </div>
     </div>`;

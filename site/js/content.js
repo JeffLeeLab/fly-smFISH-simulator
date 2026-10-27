@@ -228,7 +228,7 @@ export function lockReason(step, s) {
     return { text: "Choose two probe regions to see the results.", fix: 6 };
   }
   if (step >= 8 && s.shortlist.some(m => !s.verdicts[m])) {
-    return { text: "Give every shortlisted mode a verdict to revise your explanation. Unresolved counts.", fix: 7 };
+    return { text: "Give every shortlisted mode a verdict to revise your explanation. Unresolved counts as a verdict.", fix: 7 };
   }
   return null;
 }

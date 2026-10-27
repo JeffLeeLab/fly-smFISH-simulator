@@ -89,7 +89,7 @@ export const VIEWER_TOUR = [
   {
     target: ".viewer__group",
     title: "Zoom and move",
-    text: "Scroll or pinch to zoom; drag to move. These buttons fly to each part of the neuron.",
+    text: "Scroll or pinch to zoom, and drag to pan. Use these buttons to jump to each part of the neuron.",
   },
   {
     target: "[data-tour=channels]",
@@ -99,12 +99,12 @@ export const VIEWER_TOUR = [
   {
     target: ".vseg",
     title: "Compare genotypes",
-    text: "Control is on the left and the mutant on the right, zoomed together. Flicker shows one field and swaps genotype in place: press F.",
+    text: "The control is on the left and the mutant on the right; they zoom together. In Flicker you see one field at a time: press F to switch genotype.",
   },
   {
     target: "[data-act=full]",
     title: "Full screen",
-    text: "Give the images the whole screen, with the controls over their corner. Esc or the same button brings you back.",
+    text: "Expand the images to fill the whole screen, with the controls in the corner. Press Esc or click this button again to return.",
   },
 ];
 
@@ -112,6 +112,6 @@ export const LEGEND_POINTER = [
   {
     target: ".viewer__legend",
     title: "Decoder legend",
-    text: "Read the colours here: this line says what white, green and magenta mean for your probe pair.",
+    text: "Check this legend to see what white, green and magenta mean for your probe pair.",
   },
 ];

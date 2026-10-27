@@ -46,7 +46,7 @@ export async function mount(root, ctx) {
         <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the training</button>
       </div>
-      <p class="assay__note"><span class="t-label run-in">T-maze assay</span> In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point, between an arm smelling of each odour. Flies that remember avoid the shocked odour. Each count stands for a group of about a hundred flies.</p>
+      <p class="assay__note"><span class="t-label run-in">T-maze assay</span> In the training tube, one odour comes with mild electric shocks from the grid and a second odour comes with none. A few minutes later the flies are moved down to the choice point between two arms, one smelling of each odour. Flies that remember avoid the shocked odour. Each performance index (PI) comes from a group of about a hundred flies tested together; here we <span class="nw">show ten</span>.</p>
     </div>`;
 
   const stage = root.querySelector(".stage--assay");

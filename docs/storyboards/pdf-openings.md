@@ -67,7 +67,7 @@ E  8.2–9.6   hold (instructor, 2026-10-16): the caption is already on screen f
     the assay scene (Flip)]
 ```
 
-As built (hero text, 2026-10-17, instructor): the introduction reads "ALS is a fatal neurodegenerative disease. These two flies are humanised: human *TDP-43* replaces the fly gene *TBPH*, wild-type (WT) version in one, an ALS-linked mutation in the other." ("ALS-linked" never breaks at its hyphen). The genotype labels are the names alone, with no line under them. "Skip animation" and "Replay animation" sit with the "Schematic" tag at the drawing's bottom right; the text column ends with the caption (no scroll cue). Reworded 2026-10-19 (instructor).
+As built (hero text, 2026-10-17, instructor): the introduction reads "ALS is a fatal neurodegenerative disease. These two flies are humanised: human *TDP-43* replaces the fly gene *TBPH*, wild-type (WT) version in one, an ALS-linked mutation in the other." (Reworded 2026-10-27: "These two flies are humanised, with human *TDP-43* replacing the fly gene *TBPH*: one carries the wild-type (WT) version, and the other carries an ALS-linked mutation.") ("ALS-linked" never breaks at its hyphen). The genotype labels are the names alone, with no line under them. "Skip animation" and "Replay animation" sit with the "Schematic" tag at the drawing's bottom right; the text column ends with the caption (no scroll cue). Reworded 2026-10-19 (instructor).
 
 As built (transition out): the caption does not change on scroll. The legend ("hTDP-43 WT, left lane" | "hTDP-43 ALS mutant, right lane") sits under the landing's intro line. From the first scroll until the legend is 45% of the way up the screen (or the end of the page, if that comes first), stand-ins for the two flies travel from the hero to the legend, shrinking, the mutant's turn straightening, dropping down first and sliding across last so they clear the hero text. The hero's leader lines fade as the flies leave; the knock-ins stay. Scrolling back reverses it.
 
@@ -107,7 +107,7 @@ G  0.0–3.5   [transition in: the station expands (Flip), 0.8 s]  two large tub
            2.2–3.5  walking through the beam adds one to the counter
    caption: "Each fly lives in its own tube. Every time it walks through the infrared beam, the
              monitor counts one crossing."
-   then waits (flies keep walking and pausing) for the button "Start the light–dark days" (since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
+   then waits (flies keep walking and pausing) for the button "Record fly activity" (until 2026-10-27 "Start the light–dark days"; its replay is "Replay the recording"; since 2026-10-19 the button fades in at 0.8 s, once the stage has arrived, while the parts are still being named; an early click finishes G at once; instructor)
 
 H  0.0–8.4   (after the click) three days pass, 2.8 s each: a light–dark bar above the tubes runs with
              ZT ticks; during lights-off the scene's paper takes a warm grey wash; flies move faster

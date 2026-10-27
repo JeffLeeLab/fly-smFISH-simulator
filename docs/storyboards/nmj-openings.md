@@ -216,4 +216,4 @@ Built after the signed-off storyboard above, with these differences and details.
 **Descent (as built, 2026-10-16; instructor):**
 - The Next button ("Next: TDP-43 dysfunction") is the descent's only one, below the story text; the in-stage button that faded in under N at 13.5 s is gone. The matched swap runs from that button while the end frame is still at least partly on screen; otherwise the link navigates.
 - The end frame's bottom bar gives "maximum-intensity projection" the glossary hover.
-- The story text drops the MaleCNS tracing clause, says "through the joint", adds "This contact is the neuromuscular junction (NMJ).", and ends "For simplicity, the images leave out the dendrites."
+- The story text drops the MaleCNS tracing clause, says "through the joint", adds "This contact is the neuromuscular junction (NMJ).", and ends "For simplicity, the images leave out the dendrites." (Reworded 2026-10-27 so people, not the images, act: "here we show it far shorter so you can see the whole cell in one view", "glow faintly from autofluorescence", "For simplicity, we have left out the dendrites.")

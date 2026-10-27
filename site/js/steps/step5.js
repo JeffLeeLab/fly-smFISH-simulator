@@ -47,7 +47,7 @@ export function mount(root, ctx) {
       <aside class="bench__side" aria-label="Your question, notes and shortlist">
         <div class="yourq"><h2 class="t-label">Your question</h2><p class="yourq__text">${question(ctx.case)}</p></div>
         <figure class="hyp-life">${lifeSVG({ prefix: "hyp", labels: false }).markup}
-          <figcaption>Hover over or focus a card to see where it acts.</figcaption></figure>
+          <figcaption>Hover over or tab to a card to see where that mode acts.</figcaption></figure>
         <div class="recap">
           <h2 class="t-label">Your notes (step 3)</h2>
           <p class="recap__item"><b>Observation</b><span data-recap="observation"></span></p>

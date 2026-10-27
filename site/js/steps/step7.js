@@ -103,7 +103,7 @@ export async function mount(root, ctx) {
     const s = caseState(id);
     const missing = s.shortlist.filter(m => !s.verdicts[m]).length;
     next.innerHTML = missing
-      ? `<span class="btn btn--lg" aria-disabled="true">Next: interpret &amp; revise</span><span class="t-ui t-muted">${missing} mode${missing > 1 ? "s" : ""} still need${missing > 1 ? "" : "s"} a verdict. Unresolved counts.</span>`
+      ? `<span class="btn btn--lg" aria-disabled="true">Next: interpret &amp; revise</span><span class="t-ui t-muted">You still need to give ${missing} mode${missing > 1 ? "s" : ""} a verdict. Unresolved counts as a verdict.</span>`
       : `<a class="btn btn--primary btn--lg" href="${href(id, 8)}">Next: interpret &amp; revise</a>`;
   };
   gate();

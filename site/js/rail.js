@@ -11,9 +11,9 @@ import { Q_ICON } from "./icons.js";
 
 // one line each, so eight steps fit the rail at 1280×720
 const SHORT_REASON = {
-  6: "Needs two modes",
-  7: "Needs a probe pair",
-  8: "Needs every verdict",
+  6: "Shortlist two modes",
+  7: "Choose a probe pair",
+  8: "Finish the verdicts",
 };
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);

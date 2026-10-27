@@ -61,7 +61,7 @@ function section(n, title, body, open) {
   return `
     <section class="nb-sec" aria-labelledby="nb-h${n}">
       <h3 class="nb-sec__h" id="nb-h${n}"><span class="nb-sec__n">${n}</span>${title}</h3>
-      ${open ? body : `<p class="t-ui t-muted">Opens at step ${n}.</p>`}
+      ${open ? body : `<p class="t-ui t-muted">You will fill this in at step ${n}.</p>`}
     </section>`;
 }
 

@@ -219,7 +219,7 @@ The three proteins share one thing the text lets students see for themselves: ea
 - **Changes at build (instructor, 2026-10-16).**
   - Probe design: the smFISH line stays above the map. The map's minimum row pitch went from 32 to 26 px so the mushroom body's seven isoforms fit at 1280×720; read-only maps keep 32 px.
   - Summary slide: the question is its own row above the probe pair, labelled "QUESTION". In the right column it pushed a long claim into the footer. Claim and Uncertainty now go down to 22 px.
-  - Rail: the lock reasons are one line each ("Needs two modes", "Needs a probe pair", "Needs every verdict").
+  - Rail: the lock reasons are one line each ("Needs two modes", "Needs a probe pair", "Needs every verdict"; reworded 2026-10-27 to "Shortlist two modes", "Choose a probe pair", "Finish the verdicts").
 - **Checks.** The `?t=25.2` frame equals the reduced-motion frame (no pixel differs by more than 8 levels at 1280×720). Playback holds 60 fps on the dev laptop, and every sampled frame of the stage has motion. Next ends at 713 px at 1280×720 in all three cases; 1920×1080 and the dark theme were checked by eye.
 
 ## Redesign (2026-10-16)

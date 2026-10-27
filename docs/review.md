@@ -576,3 +576,45 @@ The instructor asked for a short student guide they can edit themselves: what th
 | 1 | Rail, nmj step 5, 1280×720 | With the guide link, the rail was 1 px taller than the window (721/720), enough for a scrollbar on Windows. | Fixed: the footer buttons are 24 px tall in windows up to 760 px. |
 | 2 | Guide headings | The column width was 70ch, which scales with the type, so the headings ran wider than the text and sat at the left edge. | Fixed: 46rem. |
 | 3 | Guide screenshots | Badges covered text in four shots (the step 6 eyebrow and hint, step 5's placeholder, the overview's "TDP-43 is an"). | Fixed: those badges moved into the margins. |
+
+## 2026-10-27: student-facing wording, lecturer voice (instructor)
+
+**Change.** A language review (Gemini 4 Argon, reviewed by Claude, chosen row by row by the instructor) looked for LLM-like writing in the student-facing text. It found no stock clichés. It did find telegraphic fragments, UI elements as the subject of a sentence, and drawing or developer words in the science text. The rewrites:
+- **Rail:** the lock reasons are now "Shortlist two modes", "Choose a probe pair" and "Finish the verdicts" (were "Needs …").
+- **Steps 7 and 8:** "Unresolved counts." is now "Unresolved counts as a verdict.", and step 7 says "You still need to give *n* mode(s) a verdict."
+- **Viewer tour:**
+  - "drag to pan" and "Use these buttons to jump to each part of the neuron" (were "drag to move" and "These buttons fly to …").
+  - "In Flicker you see one field at a time: press F to switch genotype".
+  - "Press Esc or click this button again to return".
+- **Legend pointer:** "Check this legend to see …".
+- **Step 5:** "Hover over or tab to a card to see where that mode acts".
+- **Pdf step 1 buttons:** "Record fly activity" and "Replay the recording".
+- **Notebook placeholder:** "You will fill this in at step *n*."
+- **Summary slide placeholder:** "Not written yet".
+- **Landing sentence:** rewritten with full verbs.
+- **Step 2:**
+  - mb: "You will see the dendrites, but you will not count them".
+  - nmj: "here we show it far shorter …", "glow faintly from autofluorescence", "we have left out the dendrites".
+- **mb T-maze note:** "Each performance index (PI) comes from a group of about a hundred flies tested together; here we show ten".
+- **Guide:** "Neuron system" now matches the rail label.
+- **Docs:** the as-built quotes in the spec and storyboards were updated.
+
+**Checks.**
+- **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj. A first run went to a server that had stopped and was discarded. The rerun was looked at on the hero and step 1–2 sheets.
+- **Targeted shots at 1280×720, both themes:**
+  - The rail with three locked steps (nmj, two-line system name): each reason is one line, and the rail's scroll height is 720/720.
+  - All four viewer tour cards and the legend pointer.
+  - The notebook placeholders, the step 7 hint with one verdict missing, and the step 8 lock page.
+  - The Pdf step 1 start button.
+  - The mb step 1 note, and the mb and nmj step 2 text.
+- **Guide screenshots:** retaken with `tools/guide-shots.sh` (choose, step 5, step 6 and step 8 changed). They were looked at for the new step 5 caption and the "Not written yet" slide boxes.
+- **Consistency:** two Sonnet passes checked for stale references (none in code or tools) and for terminology and voice against the rest of the app.
+- **No giveaway:** no changed string hints at a hypothesis or region.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 7 hint | The first wording, "Unresolved counts as one", could be read as "one mode". | Fixed: "Unresolved counts as a verdict", matching the step 8 lock message. |
+| 2 | mb step 2 | "you will count … but we do not count them" switched voice mid-paragraph. | Fixed: "you will not count them". |
+| 3 | Viewer tour | "drag to move" disagreed with the viewer's own hint and the guide ("drag to pan"). | Fixed: "drag to pan". |
+| 4 | mb step 1 note | "ten." sat alone on the last line at 1280×720. | Fixed: "show ten" kept together. |
+| 5 | Rail, steps 7–8 | The short reason names that step's own requirement even when the real blocker is an earlier one (shortlist). This was already the case before the change. | Open, not changed. |

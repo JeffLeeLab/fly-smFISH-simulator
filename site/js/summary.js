@@ -267,7 +267,7 @@ export function summarySVG({ c, s, date, g, art }) {
     } else {
       const h = 2 * f.size * 1.35;
       out.push(`<rect x="${rx}" y="${ry - f.size * 0.6}" width="${rw}" height="${h}" fill="none" stroke="${P.grid}" stroke-width="2" stroke-dasharray="8 8"/>`);
-      out.push(`<text x="${rx + 16}" y="${ry + 12}" font-family="${P.sans}" font-size="24" fill="${P.text2}">To write</text>`);
+      out.push(`<text x="${rx + 16}" y="${ry + 12}" font-family="${P.sans}" font-size="24" fill="${P.text2}">Not written yet</text>`);
       ry += h + 26;
     }
   }

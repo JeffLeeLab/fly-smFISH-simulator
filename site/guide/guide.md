@@ -41,7 +41,7 @@ Groups will be assigned before the session. Each group investigates one *Drosoph
 ![The app at step 3, with the parts you use most](img/overview.webp)
 
 1. **Progress rail.** Click any unlocked step to return to it. Locked steps tell you what you need to complete first.
-2. **Neuronal system.** Shows your current case; *Change system* returns you to the start page.
+2. **Neuron system.** See your current case here, or click *Change system* to return to the start page.
 3. **Notebook.** Collects everything you write across all steps and saves automatically as you type.
 4. **Footer controls.** Open this **Webapp usage guide**, toggle the **Dark theme**, or find the instructor's email address.
 5. **Dotted underlines.** Click any underlined term for a brief glossary definition.
