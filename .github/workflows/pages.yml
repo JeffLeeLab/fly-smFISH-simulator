@@ -3,10 +3,11 @@
 # then uploads site/ as it is. (The molecule build itself runs locally: generator.build.)
 name: Deploy site to GitHub Pages
 
-# Manual runs only until the site is ready to go live. To publish on every push, restore:
-#   push:
-#     branches: [main]
+# Publishes the live branch, which the shinytest VM also follows, so one push updates both
+# servers: release with `git push origin main:live`. Manual runs remain for a re-deploy.
 on:
+  push:
+    branches: [live]
   workflow_dispatch:
 
 permissions:
