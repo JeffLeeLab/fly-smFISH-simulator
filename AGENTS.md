@@ -24,6 +24,7 @@ Three cases. The case ID is used in code, data paths and URLs: `pdf` (Pdf clock 
 
 - `PRODUCT.md`: users, purpose, constraints, brand, accessibility minimums.
 - `docs/part1-overview.md`: a short brief on what Part 1 teaches, for designing Part 2 and later sessions (includes the answer key).
+- `docs/INSTRUCTOR-KEY.md`: the instructor answer key for all three cases (probe menus with what each region detects, numbers, verdicts, traps, prompts for stuck groups). It follows the signed truth tables in `data/<case>/truth-table.toml`; update it when a truth table changes.
 - `docs/spec.md` (about 870 lines; read only the section you need):
   - *Introduction*: the biology, PTR modes, and the case truth tables (the instructor answer key) under *Simulations*.
   - *Part 1 › Implementation spec*: Architecture, Transcript models and probe menus, Geometry references, Simulation parameters, Rendering stack, Visual design and navigation (art direction, theme, rail, notebook, layouts, plot, export), Openings (steps 1–2), Steps 3–5, Steps 6–8, Motion principles, Viewer features, Image realism model, Student-facing text (gene cards, glossary), Hosting and offline use.

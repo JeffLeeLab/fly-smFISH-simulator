@@ -230,8 +230,10 @@ MB = {
 
 # Leg motor neuron, stai ("RNA stuck on the way"). Two kinds of stai mRNA by their 3' end: the
 # long-3'UTR isoforms (RB, RD) ride TDP-43 transport granules down the axon and make up most of
-# the RNA in the axon and synaptic terminals; the short ones (RA, RC, RE) mostly stay in the cell
-# body. Invented: in the mutant, viscous TDP-43 granules stall in the axon with their long-3'UTR
+# the RNA in the axon and synaptic terminals; the short ones (RC, RE) mostly stay in the cell
+# body. stai-RA, the only isoform that skips the cassette exon, is not expressed in this neuron, so
+# every short isoform starts at TSS1 (S1) and the cassette exon is in every molecule (instructor,
+# 2026-10-27). Invented: in the mutant, viscous TDP-43 granules stall in the axon with their long-3'UTR
 # cargo, so fewer long molecules reach the synaptic terminals and more sit in the axon on
 # granules. Production, splicing and decay are unchanged, so the whole-cell count and the cell
 # body's isoform mix stay flat. CG31642, nested in a stai intron on the same strand, is drawn too
@@ -244,7 +246,7 @@ NMJ = {
     "animal_sd": 0.10,
     "spot_intensity_sd": 0.10,
     # within-group weights; the groups' shares of each compartment are set below
-    "isoform_groups": {"long": {"RB": 60, "RD": 40}, "short": {"RA": 35, "RC": 15, "RE": 50}},
+    "isoform_groups": {"long": {"RB": 60, "RD": 40}, "short": {"RC": 15, "RE": 50}},
     "other_genes": ("CG31642",),  # overlapping same-strand genes drawn as their own kind (no nascent RNA)
     # production in proportion to the whole-cell counts below (equal decay rates): long 132 : short 153
     "production": {"control": {"long": 132 / 285, "short": 153 / 285}, "mutant": {"long": 132 / 285, "short": 153 / 285}},
@@ -256,7 +258,7 @@ NMJ = {
         "mutant": {"nucleus": {"long": 3, "short": 12, "CG31642": 3}, "cellbody": {"long": 30, "short": 120, "CG31642": 20},
                    "axon": {"long": 73.1, "short": 11.9}, "terminals": {"long": 20, "short": 9}},
     },
-    "ts_active": 0.90,
+    "ts_active": 1.0,            # every nucleus active: with one nucleus per animal, a silent one would dominate the spread (instructor, 2026-10-27)
     "ts_reference": ("S5", 12),  # S5 sites hold about 12 nascent transcripts
     "ts_spread_um": 0.12,
     "ts_detect_min": 2,

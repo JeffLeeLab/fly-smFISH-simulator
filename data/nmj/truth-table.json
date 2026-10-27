@@ -3,7 +3,7 @@
  "gene": "stai",
  "status": "signed-off",
  "signed_off_by": "Jeff Lee (instructor)",
- "signed_off_on": "2026-10-13",
+ "signed_off_on": "2026-10-27",
  "source": "data/nmj/truth-table.toml",
  "verdicts": {
   "transport": "supported",
@@ -26,7 +26,7 @@
   "ts_intensity": 0.15
  },
  "nascent": {
-  "ts_active": 0.9,
+  "ts_active": 1.0,
   "ts_detect_min": 2,
   "measurable": 4.0
  },
@@ -39,7 +39,6 @@
   },
   "short": {
    "isoforms": {
-    "RA": 35,
     "RC": 15,
     "RE": 50
    }
@@ -124,7 +123,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -134,28 +133,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -226,7 +225,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     }
@@ -236,31 +235,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -271,7 +270,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -285,8 +284,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -622,7 +621,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -632,31 +631,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -667,7 +666,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -681,8 +680,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -943,7 +942,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -964,7 +963,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -991,28 +990,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -1066,31 +1065,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -1101,7 +1100,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -1115,8 +1114,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -1186,16 +1185,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.7692,
+     "nominal_control": 0.15,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 5.7692,
+     "nominal_control": 3.4,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     }
    ]
   },
@@ -1216,7 +1215,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -1263,28 +1262,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -1453,7 +1452,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.2681,
+     "nominal_control": 0.1742,
      "rule": "same"
     }
    ]
@@ -1475,7 +1474,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -1523,28 +1522,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -1718,14 +1717,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.1538,
+     "nominal_control": 0.1,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 3.4872,
+     "nominal_control": 2.2667,
      "rule": "ratio",
      "nominal_ratio": 0.3922
     }
@@ -1748,7 +1747,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -1794,28 +1793,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -1969,7 +1968,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -1993,7 +1992,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -2013,7 +2012,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -2023,28 +2022,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -2098,31 +2097,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -2133,7 +2132,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -2147,8 +2146,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -2180,28 +2179,28 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -2246,16 +2245,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 1.3846,
+     "nominal_control": 1.25,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 9.7179,
+     "nominal_control": 6.6667,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     }
    ]
   },
@@ -2276,7 +2275,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -2321,7 +2320,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -2331,28 +2330,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -2491,28 +2490,28 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -2557,14 +2556,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 1.9231,
+     "nominal_control": 1.25,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 10.2564,
+     "nominal_control": 6.6667,
      "rule": "ratio",
      "nominal_ratio": 0.4833
     }
@@ -2587,7 +2586,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -2630,28 +2629,28 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -2815,14 +2814,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.3846,
+     "nominal_control": 0.25,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 8.7179,
+     "nominal_control": 5.6667,
      "rule": "ratio",
      "nominal_ratio": 0.3922
     }
@@ -2847,7 +2846,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -2866,7 +2865,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -2893,31 +2892,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -2928,7 +2927,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -2942,8 +2941,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -2975,28 +2974,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -3088,16 +3087,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 1.3,
+     "nominal_control": 6.6667,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.1733,
+     "nominal_control": 0.2941,
      "rule": "ratio",
-     "nominal_ratio": 2.2277
+     "nominal_ratio": 2.55
     }
    ]
   },
@@ -3120,7 +3119,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -3169,31 +3168,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -3204,7 +3203,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -3218,8 +3217,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -3366,7 +3365,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.3485,
+     "nominal_control": 1.1616,
      "rule": "same"
     }
    ]
@@ -3390,7 +3389,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -3440,31 +3439,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -3475,7 +3474,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -3489,8 +3488,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -3642,16 +3641,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.2,
+     "nominal_control": 0.6667,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.6044,
-     "rule": "ratio",
-     "nominal_ratio": 0.8736
+     "nominal_control": 0.6667,
+     "rule": "same"
     }
    ]
   },
@@ -3674,7 +3672,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -3722,31 +3720,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -3757,7 +3755,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -3771,8 +3769,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -3906,7 +3904,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -3930,7 +3928,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -3961,31 +3959,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -3996,7 +3994,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -4010,8 +4008,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -4043,31 +4041,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -4078,7 +4076,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -4092,8 +4090,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -4198,15 +4196,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 1.8,
+     "nominal_control": 8.3333,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.6844,
-     "rule": "same"
+     "nominal_control": 1.9608,
+     "rule": "ratio",
+     "nominal_ratio": 1.2325
     }
    ]
   },
@@ -4229,7 +4228,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -4276,7 +4275,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     }
@@ -4286,31 +4285,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -4321,7 +4320,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -4335,8 +4334,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -4453,31 +4452,31 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "both",
@@ -4488,7 +4487,7 @@
      "channel": "both",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "both",
@@ -4502,8 +4501,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -4526,16 +4525,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 2.5,
+     "nominal_control": 8.3333,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.7778,
+     "nominal_control": 1.9608,
      "rule": "ratio",
-     "nominal_ratio": 1.0767
+     "nominal_ratio": 1.2325
     }
    ]
   },
@@ -4558,7 +4557,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -4605,31 +4604,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch1",
@@ -4640,7 +4639,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch1",
@@ -4654,8 +4653,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -4823,16 +4822,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.5,
+     "nominal_control": 1.6667,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.5111,
-     "rule": "ratio",
-     "nominal_ratio": 0.8736
+     "nominal_control": 1.6667,
+     "rule": "same"
     }
    ]
   },
@@ -4873,7 +4871,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -4977,28 +4975,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -5090,7 +5088,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 3.7304,
+     "nominal_control": 5.7391,
      "rule": "same"
     }
    ]
@@ -5134,7 +5132,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -5240,31 +5238,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -5275,7 +5273,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -5289,8 +5287,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -5360,7 +5358,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 2.8696,
+     "nominal_control": 0.8609,
      "rule": "same"
     }
    ]
@@ -5903,7 +5901,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -6009,31 +6007,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -6044,7 +6042,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -6058,8 +6056,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -6129,7 +6127,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 5.1652,
+     "nominal_control": 7.1739,
      "rule": "same"
     }
    ]
@@ -6695,7 +6693,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -6804,28 +6802,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -6917,14 +6915,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 6.5,
+     "nominal_control": 10.0,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.2868,
+     "nominal_control": 0.4412,
      "rule": "ratio",
      "nominal_ratio": 2.55
     }
@@ -6970,7 +6968,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -7081,31 +7079,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -7116,7 +7114,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -7130,8 +7128,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -7201,16 +7199,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 5.0,
+     "nominal_control": 1.5,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.6544,
-     "rule": "ratio",
-     "nominal_ratio": 1.1447
+     "nominal_control": 1.5,
+     "rule": "same"
     }
    ]
   },
@@ -7760,7 +7757,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -7874,31 +7871,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -7909,7 +7906,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -7923,8 +7920,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -8029,16 +8026,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 9.0,
+     "nominal_control": 12.5,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 2.7868,
+     "nominal_control": 2.9412,
      "rule": "ratio",
-     "nominal_ratio": 1.1595
+     "nominal_ratio": 1.2325
     }
    ]
   },
@@ -8704,7 +8701,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -8778,28 +8775,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -8927,7 +8924,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -9003,31 +9000,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -9038,7 +9035,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -9052,8 +9049,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -9621,7 +9618,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -9698,31 +9695,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -9733,7 +9730,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -9747,8 +9744,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -10287,7 +10284,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -10306,7 +10303,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -10326,7 +10323,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -10336,31 +10333,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -10371,7 +10368,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -10385,8 +10382,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -10418,28 +10415,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -10493,28 +10490,28 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -10559,16 +10556,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.7222,
+     "nominal_control": 0.8,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.1029,
+     "nominal_control": 0.15,
      "rule": "ratio",
-     "nominal_ratio": 2.1992
+     "nominal_ratio": 2.069
     }
    ]
   },
@@ -10594,7 +10591,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -10615,7 +10612,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -10646,31 +10643,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -10681,7 +10678,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -10695,8 +10692,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -10728,31 +10725,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -10763,7 +10760,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -10777,8 +10774,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -10883,15 +10880,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.5556,
+     "nominal_control": 0.12,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.5937,
-     "rule": "same"
+     "nominal_control": 0.51,
+     "rule": "ratio",
+     "nominal_ratio": 0.8114
     }
    ]
   },
@@ -10917,7 +10915,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -10966,31 +10964,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -11001,7 +10999,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -11015,8 +11013,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -11163,7 +11161,7 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.1936,
+     "nominal_control": 0.1394,
      "rule": "same"
     }
    ]
@@ -11190,7 +11188,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -11243,31 +11241,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -11278,7 +11276,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -11292,8 +11290,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -11480,16 +11478,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.1111,
+     "nominal_control": 0.08,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.3588,
+     "nominal_control": 0.34,
      "rule": "ratio",
-     "nominal_ratio": 0.8624
+     "nominal_ratio": 0.8114
     }
    ]
   },
@@ -11515,7 +11513,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -11564,31 +11562,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -11599,7 +11597,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -11613,8 +11611,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -11751,7 +11749,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -11801,7 +11799,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -11811,31 +11809,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -11846,7 +11844,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -11860,8 +11858,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -11978,31 +11976,31 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "both",
@@ -12013,7 +12011,7 @@
      "channel": "both",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "both",
@@ -12027,8 +12025,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -12051,16 +12049,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 1.3889,
+     "nominal_control": 1.0,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.0554,
-     "rule": "ratio",
-     "nominal_ratio": 1.063
+     "nominal_control": 1.0,
+     "rule": "same"
     }
    ]
   },
@@ -12086,7 +12083,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -12135,31 +12132,31 @@
      "channel": "ch1",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch1",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch1",
@@ -12170,7 +12167,7 @@
      "channel": "ch1",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch1",
@@ -12184,8 +12181,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -12353,16 +12350,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.2778,
+     "nominal_control": 0.2,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.8971,
+     "nominal_control": 0.85,
      "rule": "ratio",
-     "nominal_ratio": 0.8624
+     "nominal_ratio": 0.8114
     }
    ]
   },
@@ -12408,7 +12405,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -12428,7 +12425,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -12523,28 +12520,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -12598,28 +12595,28 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -12664,14 +12661,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.52,
+     "nominal_control": 0.8,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.0975,
+     "nominal_control": 0.15,
      "rule": "ratio",
      "nominal_ratio": 2.069
     }
@@ -12721,7 +12718,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -12743,7 +12740,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     }
@@ -12838,31 +12835,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -12873,7 +12870,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -12887,8 +12884,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -12920,31 +12917,31 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "both",
@@ -12955,7 +12952,7 @@
      "channel": "both",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "both",
@@ -12969,8 +12966,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -12993,16 +12990,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.4,
+     "nominal_control": 0.12,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.5625,
+     "nominal_control": 0.51,
      "rule": "ratio",
-     "nominal_ratio": 0.9287
+     "nominal_ratio": 0.8114
     }
    ]
   },
@@ -13899,7 +13896,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -13924,7 +13921,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     }
@@ -14019,31 +14016,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -14054,7 +14051,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -14068,8 +14065,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -14101,31 +14098,31 @@
      "channel": "both",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "both",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "both",
@@ -14136,7 +14133,7 @@
      "channel": "both",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "both",
@@ -14150,8 +14147,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -14174,16 +14171,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 0.72,
+     "nominal_control": 1.0,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.9475,
-     "rule": "ratio",
-     "nominal_ratio": 0.9408
+     "nominal_control": 1.0,
+     "rule": "same"
     }
    ]
   },
@@ -14530,7 +14526,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -14627,28 +14623,28 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 78.0,
+     "nominal_control": 120.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 7.8,
+     "nominal_control": 12.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 5.85,
+     "nominal_control": 9.0,
      "rule": "same"
     },
     {
@@ -14739,14 +14735,14 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 2.6,
+     "nominal_control": 4.0,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.1147,
+     "nominal_control": 0.1765,
      "rule": "ratio",
      "nominal_ratio": 2.55
     }
@@ -14790,7 +14786,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 0.6,
-      "short": 0.35,
+      "short": 0.0,
       "CG31642": 0.0
      }
     },
@@ -14891,31 +14887,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 6.0,
+     "nominal_control": 1.8,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 60.0,
+     "nominal_control": 18.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 33.0,
+     "nominal_control": 28.8,
      "rule": "ratio",
-     "nominal_ratio": 1.4553
+     "nominal_ratio": 1.5229
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 33.75,
+     "nominal_control": 30.6,
      "rule": "ratio",
-     "nominal_ratio": 0.4489
+     "nominal_ratio": 0.3922
     },
     {
      "channel": "ch2",
@@ -14926,7 +14922,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4619
+     "nominal_ratio": 0.411
     },
     {
      "channel": "ch2",
@@ -14940,8 +14936,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.0873,
-      "mutant": 0.5023
+      "control": 0.1,
+      "mutant": 0.55
      }
     },
     {
@@ -15036,16 +15032,15 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 2.0,
+     "nominal_control": 0.6,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 0.6618,
-     "rule": "ratio",
-     "nominal_ratio": 1.1447
+     "nominal_control": 0.6,
+     "rule": "same"
     }
    ]
   },
@@ -15842,7 +15837,7 @@
      "genes": [],
      "kind_fractions": {
       "long": 1.0,
-      "short": 0.65,
+      "short": 1.0,
       "CG31642": 0.0
      }
     },
@@ -15945,31 +15940,31 @@
      "channel": "ch2",
      "measure": "count",
      "compartment": "nucleus",
-     "nominal_control": 10.8,
+     "nominal_control": 15.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "cellbody",
-     "nominal_control": 108.0,
+     "nominal_control": 150.0,
      "rule": "same"
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "axon",
-     "nominal_control": 55.8,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 1.4487
+     "nominal_ratio": 1.4167
     },
     {
      "channel": "ch2",
      "measure": "count",
      "compartment": "terminals",
-     "nominal_control": 56.85,
+     "nominal_control": 60.0,
      "rule": "ratio",
-     "nominal_ratio": 0.4547
+     "nominal_ratio": 0.4833
     },
     {
      "channel": "ch2",
@@ -15980,7 +15975,7 @@
      "channel": "ch2",
      "measure": "share_distal",
      "rule": "ratio",
-     "nominal_ratio": 0.4673
+     "nominal_ratio": 0.4943
     },
     {
      "channel": "ch2",
@@ -15994,8 +15989,8 @@
      "compartment": "axon",
      "rule": "share",
      "nominal": {
-      "control": 0.086,
-      "mutant": 0.4974
+      "control": 0.08,
+      "mutant": 0.473
      }
     },
     {
@@ -16090,16 +16085,16 @@
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "whole_cell",
-     "nominal_control": 3.6,
+     "nominal_control": 5.0,
      "rule": "same"
     },
     {
      "channel": "ratio",
      "measure": "region_ratio",
      "pool": "distal",
-     "nominal_control": 1.1147,
+     "nominal_control": 1.1765,
      "rule": "ratio",
-     "nominal_ratio": 1.1595
+     "nominal_ratio": 1.2325
     }
    ]
   },

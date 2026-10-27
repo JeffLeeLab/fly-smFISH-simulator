@@ -8,10 +8,15 @@
 # 56 ordered pairs) and data/nmj/truth-table.md (the readable version to sign off).
 #
 # Drafted on 2026-10-13 from the decisions the instructor made that day (spec, *Case truth tables*
-# and *Simulation parameters*); signed off by the instructor the same day.
+# and *Simulation parameters*); signed off by the instructor the same day. Revised on 2026-10-27
+# (instructor): stai-RA is not expressed in this neuron, so S1 + S8 splits the RNA cleanly into
+# short and long, and S2 + S8 or S6 + S7 shows that RA is absent (every mature S2 or S6 spot is white).
+# The cassette-exon trap goes with it: S6 now detects every molecule, as S7 does. Every nucleus has
+# an active transcription site (ts_active 1.0): with one nucleus per animal, a silent one plotted as
+# 0 and dominated the spread of every transcription-site plot (instructor, 2026-10-27).
 #
 # The biology. stai makes two kinds of mRNA by its 3' end: the long-3'UTR isoforms (RB, RD) and
-# the short ones (RA, RC, RE). The long ones ride TDP-43 transport granules down the axon and make
+# the short ones (RC, RE, both from TSS1; RA is annotated but not expressed here). The long ones ride TDP-43 transport granules down the axon and make
 # up most of the RNA in the axon and synaptic terminals; the short ones mostly stay in the cell
 # body. Invented: in the mutant, viscous TDP-43 granules stall in the axon with their long-3'UTR
 # cargo, so fewer long molecules reach the synaptic terminals (51 -> 20) and more sit in the axon
@@ -29,14 +34,14 @@ case = "nmj"
 gene = "stai"
 status = "signed-off"
 signed_off_by = "Jeff Lee (instructor)"
-signed_off_on = "2026-10-13"
+signed_off_on = "2026-10-27"
 
 # The coverage row for this case (spec, *Coverage*).
 [verdicts]
 transport = "supported"     # S7: fewer spots in the synaptic terminals, more in the axon, whole cell flat: the RNA stops on the way
 granule = "supported"       # the long-3'UTR molecules in the mutant axon sit on TDP-43 granules far above chance
 isoform = "unresolved"      # only the long-3'UTR isoforms are lost, but they are also the only ones that travel: specific, or general transport failure? (Part 2)
-splicing = "ruled-out"      # in the nucleus and cell body, S1, S2, S4 and S6 keep their ratio to S7
+splicing = "ruled-out"      # in the nucleus and cell body, S1, S2 and S4 keep their ratio to S7; S6 + S7 is white everywhere (no skipping)
 export = "ruled-out"        # nuclear counts and N:C unchanged
 stability = "ruled-out"     # whole-cell count unchanged
 translation = "not-tested"
@@ -47,7 +52,7 @@ celltype = "not-tested"
 isoforms = { RB = 60, RD = 40 }
 
 [kinds.short]
-isoforms = { RA = 35, RC = 15, RE = 50 }
+isoforms = { RC = 15, RE = 50 }
 
 [kinds.CG31642]
 gene = "CG31642"
@@ -96,7 +101,7 @@ region_ratio_whole_cell = ["S7+S8"]
 tdp43_overlap = { cellbody = "chance", axon = "cargo", terminals = "chance" }
 
 [nascent]
-ts_active = 0.9      # share of nuclei with an active site
+ts_active = 1.0      # share of nuclei with an active site: all of them here (one nucleus per animal)
 ts_detect_min = 2    # a site is counted at 2 or more nascent molecules
 measurable = 4.0     # transcription-site intensity is compared only above this many molecules per active site
 
@@ -105,7 +110,7 @@ measurable = 4.0     # transcription-site intensity is compared only above this 
 # (cases.py), with production unchanged. 5' regions sit on more of each transcript, so their sites are
 # brighter; S8, at the very end of the long isoforms, is dim.
 [ts]
-S1 = [57.89, 57.89]
+S1 = [89.06, 89.06]
 S2 = [83.27, 83.27]
 S3 = [26.76, 26.76]
 S4 = [23.41, 23.41]

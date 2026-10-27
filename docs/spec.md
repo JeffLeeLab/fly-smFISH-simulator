@@ -62,7 +62,7 @@
 - All three targets encode cytoskeletal or synaptic proteins, so their mRNAs plausibly occur in the cell body, axon and synapse (unlike transcription factors, which would be hard to justify at synapses).
 - **[stai](https://flybase.org/search/stai) (STMN2) → leg motor neuron**: tubulin-binding protein in axo-dendritic transport and NMJ synaptic growth; human STMN2 splicing is affected by TDP-43 dysfunction. stai mutants lose NMJ stability (Graf et al. 2011).
 	- Intron, alternative exons, TSS, 3'PAS ![stai gene model](references/gene-models/stai-gene-model.png)
-	- FlyBase isoforms stai-RA–RE: 3 TSSs (RC/RE; RA/RB; RD), a cassette exon skipped only in RA, and a long 3'UTR in RB and RD.
+	- FlyBase isoforms stai-RA–RE: 3 TSSs (RC/RE; RA/RB; RD), a cassette exon skipped only in RA, and a long 3'UTR in RB and RD. In the leg motor neuron RA is not expressed (instructor, 2026-10-27; an expression level, not a change to the gene model, so the map still draws RA): the short isoforms are RC and RE, both from TSS1, and the cassette exon is in every molecule.
 	- The same-strand gene CG31642 is nested in a stai intron, so intron probes placed there also detect CG31642 mRNA (probe-design trap).
 - **[futsch](https://flybase.org/search/futsch) (MAP1B) → Pdf neurons**: microtubule-binding protein for synaptic bouton formation at the NMJ; expression regulated by [TBPH](https://flybase.org/search/TBPH). In Pdf neurons: microtubules in the s-LNv dorsal terminals, which remodel daily (Fernández et al. 2008).
 	- Introns, 3 alternative TSSs/first exons, alternative 3'PAS (short vs long 3'UTR) ![futsch gene model](references/gene-models/futsch-gene-model.png)
@@ -106,14 +106,14 @@ Shared across cases:
 *Leg motor neuron – stai: RNA stuck on the way*
 - **TDP-43 dysfunction:** mild nuclear loss; more transport granules along the axon and in the synaptic terminals, larger than in the other cases and, in the mutant, stretched (viscous); no aggregates.
 - **One probe:** with S7, fewer spots in the synaptic terminals (60 → 29) and more in the axon (60 → 85), while the whole-cell count is unchanged, so the RNA is redistributed, not lost. The rise in the axon is a key readout (instructor, 2026-10-13).
-- **Informative pair:** S7 (last exon) + S8 (long 3'UTR). The missing synaptic-terminal molecules are the long-3'UTR isoforms (stai-RB, -RD), which sit on TDP-43 puncta in the axon. The long:short ratio in the cell body is unchanged, so "less long isoform made" is ruled out.
+- **Informative pair:** S7 (last exon) + S8 (long 3'UTR). The missing synaptic-terminal molecules are the long-3'UTR isoforms (stai-RB, -RD), which sit on TDP-43 puncta in the axon. The long:short ratio in the cell body is unchanged, so "less long isoform made" is ruled out. S1 + S8 splits the RNA cleanly (instructor, 2026-10-27): S1 is in every short isoform (RC, RE) and S8 in every long one (RB, RD), so the pair has no white spots. Its two channels show the short isoforms flat in every compartment and at chance on TDP-43 granules, while the long ones fall in the synaptic terminals (51 → 20), rise in the axon (48 → 73) and ride granules there (10% → 55%). A group that worries that S1 misses RA can check that RA is absent: every mature S2 spot in S2 + S8, and every mature spot in S6 + S7, is white. (In S2 + S8 the transcription site stays single-coloured, because S2 lies in the RC/RE pre-mRNA and nascent S8 is dim.)
 - **Supported:** transport (the RNA stops in the axon); granule incorporation (more long-3'UTR mRNA on TDP-43 granules in the mutant axon, far above chance).
-- **Ruled out:** splicing, judged where the RNA is made (instructor, 2026-10-13). In the nucleus and cell body, S1, S2, S4 and S6 keep the same ratio to S7 in both genotypes: the STMN2 prior meets a clean null, and starting a new pair lets the group recover. In the synaptic terminals S2, S4 and S6 fall with the long isoforms they detect (−55 to −61%). That is a trap: S6 + S7 looks as if the cassette exon is skipped, until the cell body shows the same ratio in both genotypes. Also ruled out: nuclear export (N:C unchanged); stability (whole-cell count unchanged).
+- **Ruled out:** splicing, judged where the RNA is made (instructor, 2026-10-13). S6 + S7 is white everywhere in both genotypes: with RA not expressed, the cassette exon is in every molecule, so the STMN2 prior meets a clean null at once (instructor, 2026-10-27; this replaced the cassette-exon trap). In the nucleus and cell body, S1, S2 and S4 keep the same ratio to S7 in both genotypes. In the synaptic terminals S2 (RB) and S4 (RD), which detect only long isoforms, fall with them (−61%, against −52% for S7): S2 + S7 or S4 + S7 can look like a switch of start site until the cell body shows the same ratio in both genotypes. Also ruled out: nuclear export (N:C unchanged); stability (whole-cell count unchanged).
 - **Unresolved → Part 2:** isoform-specific regulation (instructor, 2026-10-13). Only the long-3'UTR isoforms are lost from the synaptic terminals, but they are also the only ones that travel: the short isoforms mostly stay in the cell body (about 15% of S1's cytoplasmic spots are in the axon or synaptic terminals, against about 77% of S8's). So the snapshot can't tell a defect specific to the long isoforms (an RNA-specific stall in TDP-43 granules) from general failure of microtubule transport that only shows in the RNA that travels (stathmin itself regulates microtubules, so the defect could feed itself). A group that marks the mode supported has read the observation correctly; "unresolved" is the stronger answer once they notice that only the long isoforms travel.
 - **Distal measure (instructor, 2026-10-13):** this case plots "Proportion in synaptic terminals" (synaptic terminals / all cytoplasmic RNA; S7 0.22 → 0.11). Axon + synaptic terminals, the measure the other cases use, stays flat here (0.44 → 0.43) because the RNA stalls inside the axon.
 - **Confound and trap:** S3 also detects CG31642 mRNA, which looks like intron retention but is equal in both genotypes.
 - **Synaptic-terminal number (instructor only; outside the students' scope):** the mutant has fewer synaptic terminals (20 → 15), visible in the images but never measured or plotted. Their spots are set as a compartment total, so the fall holds per terminal too (3.0 → 1.9).
-- **Instructor key:** to be written once the truth table is final (instructor, 2026-10-13).
+- **Instructor key:** [INSTRUCTOR-KEY.md](INSTRUCTOR-KEY.md), for all three cases (2026-10-27).
 
 *Pdf neurons – futsch: RNA made but not kept*
 - **TDP-43 dysfunction:** nuclear loss, less diffuse cytoplasmic signal, and irregular aggregates around the nucleus. Small round transport granules are equal in both genotypes.
@@ -255,14 +255,16 @@ Molecules do not depend on probe choice, so every group, and every new attempt, 
 
 | ID | Region (R6) | Type | Mature in | Nascent in | Note |
 | --- | --- | --- | --- | --- | --- |
-| S1 | 6,100,377–6,100,549 | first exon (TSS1) | RC, RE | RC, RE | start-site decoy |
+| S1 | 6,100,377–6,100,549 | first exon (TSS1) | RC, RE | RC, RE | start-site decoy; every short isoform here |
 | S2 | 6,109,667–6,109,772 | first exon (TSS2) | RA, RB | RA, RB, RC, RE | start-site decoy (nested) |
 | S3 | 6,118,512–6,120,522 | intron | CG31642 mRNA | RA, RB, RC, RE | same-strand gene trap |
 | S4 | 6,120,674–6,121,210 | first exon (TSS3) | RD | all | start-site decoy (nested) |
 | S5 | 6,122,411–6,122,697 | intron | – | all | transcription sites |
-| S6 | 6,122,698–6,122,853 | cassette exon | all but RA | all | splicing decoy |
+| S6 | 6,122,698–6,122,853 | cassette exon | all but RA | all | splicing decoy; in every molecule here |
 | S7 | 6,122,978–6,123,899 | last exon | all | all | constitutive reference |
 | S8 | 6,123,900–6,124,653 | long 3'UTR | RB, RD | RB, RD | long-3'UTR isoforms |
+
+The Mature in and Nascent in columns give the annotation. In the leg motor neuron RA is not expressed (instructor, 2026-10-27), so mature S1 is every short isoform, mature S2 is RB alone, and S6 is in every molecule.
 
 **futsch** (+ strand, X)
 
@@ -363,12 +365,12 @@ An AI agent (antigravity-gemini or Opus) builds the geometry files from three in
 
 Starting values for the generator; tune after the pilot. Counts are mean mature molecules per cell (Poisson draws).
 
-- **Shared:** n = 3 animals per genotype, each with a multiplicative animal factor (SD 10%). Detection efficiency is 1.0 in the pilot (every molecule carrying a region is detected). Each spot's intensity varies by about ±10% (seeded), for realism. One transcription site per nucleus (paired homologues), active in 80–90% of nuclei; nascent transcripts per site follow production and gene length. Primary effects are 40–60%; "unchanged" means within ±5% (tightened from ±10% in the Phase 1 build at the instructor's request). The key readouts each case's conclusions rest on are held to ±5% with no allowance for counting noise (Pdf: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6); small decoy subsets may also differ by two standard errors of counting noise, which shows as spread in the plot. A spot overlaps TDP-43 if it lies within 0.3 µm of a transport granule's edge (aggregates are not counted); overlap is worked out per compartment, and the randomised control places the same number of spots uniformly in the same compartment.
+- **Shared:** n = 3 animals per genotype, each with a multiplicative animal factor (SD 10%). Detection efficiency is 1.0 in the pilot (every molecule carrying a region is detected). Each spot's intensity varies by about ±10% (seeded), for realism. One transcription site per nucleus (paired homologues), active in 80–90% of nuclei (in every nucleus in the leg motor neuron, which has one nucleus per animal; instructor, 2026-10-27); nascent transcripts per site follow production and gene length. Primary effects are 40–60%; "unchanged" means within ±5% (tightened from ±10% in the Phase 1 build at the instructor's request). The key readouts each case's conclusions rest on are held to ±5% with no allowance for counting noise (Pdf: F6 nuclear count and distal share, F5 transcription sites, whole-cell region ratios against F6); small decoy subsets may also differ by two standard errors of counting noise, which shows as spread in the plot. A spot overlaps TDP-43 if it lies within 0.3 µm of a transport granule's edge (aggregates are not counted); overlap is worked out per compartment, and the randomised control places the same number of spots uniformly in the same compartment.
 - **Mushroom body geometry (connectome-assisted):** `generator.connectome_mb` downloads 450 MaleCNS v0.9 Kenyon cells (150 per lobe system; 10 per system are the simulated cells) from the public bucket, with no token, into `data/mb/connectome/` (not committed). `generator.geometry_mb` splits them into regions by position and projects them at the oblique view above.
 	- *Region rules:* the lobes start where the vertical lobes rise. The heel, the horizontal lobes' stretch left of the vertical lobes' base in this view, belongs to the peduncle (axon bundle) (instructor, 2026-10-12). The peduncle is a cylinder round its axis from the heel to the calyx, plus the heel; the calyx is an ellipsoid behind it; everything else behind the lobes is soma tracts.
 	- *Simplified:* 30 cell bodies, drawn about 10 µm across (about twice real size) with nuclei about 6 µm, packed as a cap over the calyx. The mutant's anatomy is the control's; animals differ by ±2° rotation, ±3% scale and their packing.
 
-**Leg motor neuron – stai** (1 motor neuron; 20 synaptic swellings in control, 15 in mutant, for the images only). Long = RB : RD (60:40); short = RA : RC : RE (35:15:50).
+**Leg motor neuron – stai** (1 motor neuron; 20 synaptic swellings in control, 15 in mutant, for the images only). Long = RB : RD (60:40); short = RC : RE (15:50, about 23:77); RA is not expressed (instructor, 2026-10-27).
 
 | Compartment | Control (long %) | Mutant (long %) |
 | --- | --- | --- |
@@ -377,9 +379,9 @@ Starting values for the generator; tune after the pilot. Counts are mean mature 
 | Axon | 60 (80%) | 85 (86%) |
 | Synaptic terminals, all | 60 (85%) | 29 (69%) |
 
-- What S7 shows, control → mutant: synaptic terminals 60 → 29, axon 60 → 85, whole cell 285 → 279 (unchanged); proportion in synaptic terminals (the plot's distal measure here) 0.22 → 0.11; S1 (short isoforms only) flat in every compartment.
+- What S7 shows, control → mutant: synaptic terminals 60 → 29, axon 60 → 85, whole cell 285 → 279 (unchanged); proportion in synaptic terminals (the plot's distal measure here) 0.22 → 0.11; S1 (every short isoform) flat in every compartment.
 - Axonal long-3'UTR molecules on TDP-43 granules: 10% in control, 55% in mutant (randomised level about 2% in control and 10% in the mutant, which has five times the granules). Short isoforms in the axon, and all *stai* mRNA in the cell body and synaptic terminals, sit on granules only by chance (no cargo; draft, 2026-10-13).
-- Transcription site (S5): about 12 nascent transcripts per active site in both genotypes. The other regions' sites follow from the same nascent model as the other cases, calibrated on S5, and are flat between genotypes, since production is unchanged. With one nucleus per animal there are only 3 sites per genotype, so transcription sites are weak evidence here (a caveat for the instructor key).
+- Transcription site (S5): about 12 nascent transcripts per active site in both genotypes. Every nucleus has an active site (instructor, 2026-10-27): with one nucleus per animal, a silent nucleus plotted as 0 and dominated the spread of every transcription-site plot. The other regions' sites follow from the same nascent model as the other cases, calibrated on S5, and are flat between genotypes, since production is unchanged. With one nucleus per animal there are only 3 sites per genotype, so transcription sites are weak evidence here (a caveat for the instructor key).
 - CG31642 (S3 trap), the same in both genotypes: about 20 mature mRNAs in the cell-body cytoplasm and 3 in the nucleus; none in the axon or synaptic terminals (it is not transported). Its own nascent RNA is left out, so S3's transcription sites are *stai*'s alone (*Simplified*; draft, 2026-10-13).
 - TDP-43 (draft numbers, invented on 2026-10-13 at the instructor's request; no aggregates):
 	- Diffuse nuclear signal 1.0 → 0.7 (a mild loss).

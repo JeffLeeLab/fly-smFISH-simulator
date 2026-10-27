@@ -610,6 +610,12 @@ def render_md_kinds(t: dict, regions: dict) -> str:
     for comp, by in t["cargo"].items():
         for k, v in by.items():
             lines += ["", f"On TDP-43 granules: {v[0]:.0%} → {v[1]:.0%} of the {k} molecules in the {name(comp).lower()}; none elsewhere."]
+    # isoforms the menu annotates but this neuron doesn't make are left out of the isoform lists below
+    made = {iso for k in kinds.values() for iso in k.get("isoforms", {})}
+    annotated = {"R" + m for r in regions.values() for m in r["mature_in"]}
+    if annotated - made:
+        lines += ["", f"Annotated but not expressed in this neuron, so left out of the isoform lists below: {', '.join(sorted(annotated - made))}."]
+    isos = lambda ms: ["R" + m for m in ms if "R" + m in made]
     lines += [
         "",
         "## Single probes",
@@ -647,8 +653,8 @@ def render_md_kinds(t: dict, regions: dict) -> str:
                 ov.append(f"{name(e['compartment']).lower()}: {e['nominal']['control']:.0%} → {e['nominal']['mutant']:.0%} on granules + chance")
             else:
                 ov.append(f"{name(e['compartment']).lower()}: {WORD.get(e['rule'], e['rule'])}")
-        mat = ", ".join(["R" + m for m in info["mature"]] + [g + " mRNA" for g in info["genes"]]) or "–"
-        nas = ", ".join("R" + m for m in info["nascent"]) or "–"
+        mat = ", ".join(isos(info["mature"]) + [g + " mRNA" for g in info["genes"]]) or "–"
+        nas = ", ".join(isos(info["nascent"])) or "–"
         lines.append(f"| {rid} | {regions[rid]['label']} | {mat} | {nas} | {' | '.join(cell('count', c.id) for c in comps)} | "
                      f"{cell('nc_ratio')} | {cell('share_distal')} | {'; '.join(ov) or '–'} | {ts_int} | {look} |")
     lines += [
@@ -668,8 +674,8 @@ def render_md_kinds(t: dict, regions: dict) -> str:
         ib = s["channels"]["both"]
         rr = {e["pool"]: e for e in s["expect"] if e["measure"] == "region_ratio"}
         txt = lambda p: f"{rr[p]['nominal_control']:g}, {fmt_rule(rr[p])}" if p in rr else "–"
-        both = ", ".join(["R" + m for m in ib["mature"]] + [g + " mRNA" for g in ib["genes"]]) or "–"
-        lines.append(f"| {a} + {b} | {both} | {', '.join('R' + m for m in ib['nascent']) or '–'} | {txt('whole_cell')} | {txt('distal')} |")
+        both = ", ".join(isos(ib["mature"]) + [g + " mRNA" for g in ib["genes"]]) or "–"
+        lines.append(f"| {a} + {b} | {both} | {', '.join(isos(ib['nascent'])) or '–'} | {txt('whole_cell')} | {txt('distal')} |")
     r = t["rules"]
     keys = sorted({f"{k} {e['channel']} {e['measure']}" + (f" {e['compartment']}" if "compartment" in e else "") + (f" {e['pool']}" if "pool" in e else "")
                    for k, s in sel.items() for e in s["expect"] if e.get("key")})

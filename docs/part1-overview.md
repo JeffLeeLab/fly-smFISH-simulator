@@ -2,7 +2,7 @@
 
 A brief for designing Part 2 and later parts of the course. It summarises `PRODUCT.md` and `docs/spec.md` as of 2026-10-20; where they disagree with this file, they win.
 
-> **This file contains the instructor answer key (section 7).** Keep section 7 out of anything students see.
+> **This file contains the instructor answer key (section 7; the full key is `docs/INSTRUCTOR-KEY.md`).** Keep section 7 out of anything students see.
 
 ## 1. In one paragraph
 
@@ -72,8 +72,8 @@ Probe IDs are internal (S = *stai*, F = *futsch*, U = *unc-13*, numbered 5′→
 **Leg motor neuron – *stai*: RNA stuck on the way**
 - *TDP-43:* mild nuclear loss; more and larger transport granules in the axon and synaptic terminals, stretched (viscous) in the mutant; no aggregates.
 - *One probe (S7, last exon):* synaptic terminals 60 → 29, axon 60 → 85, whole cell unchanged. The RNA is redistributed, not lost.
-- *Informative pair:* S7 + S8 (long 3′UTR). The missing molecules are the long-3′UTR isoforms, sitting on TDP-43 granules in the axon.
-- *Supported:* transport; granule incorporation. *Ruled out:* splicing (cell-body ratios are unchanged, and the cassette-exon drop in the terminals is a trap), nuclear export, stability.
+- *Informative pair:* S7 + S8 (long 3′UTR). The missing molecules are the long-3′UTR isoforms, sitting on TDP-43 granules in the axon. S1 + S8 splits short from long with no white spots: the short isoforms stay flat and at chance on granules. (stai-RA is annotated but not expressed in this neuron, so S1 is in every short isoform; S2 + S8 and S6 + S7 are all white, which shows it.)
+- *Supported:* transport; granule incorporation. *Ruled out:* splicing (S6 + S7 is white everywhere, so the cassette exon is in every molecule; cell-body ratios are unchanged, and the fall of S2 and S4, which detect only long isoforms, in the terminals is a trap), nuclear export, stability.
 - *Unresolved → Part 2:* isoform-specific regulation. The long isoforms are the only ones that travel, so a stall specific to them cannot be told apart from a general failure of microtubule transport (stathmin itself regulates microtubules).
 - *Trap:* the intron probe S3 also detects the nested gene CG31642.
 
@@ -137,6 +137,7 @@ Ideas the spec parks for later versions of the app, each a possible downstream s
 
 - `PRODUCT.md`: users, purpose, constraints, accessibility.
 - `docs/spec.md`: *Introduction* (biology, PTR mode table with alternative explanations and next evidence, case truth tables), *Part 1* (screens), *Part 2*, *Future implementation ideas*.
+- `docs/INSTRUCTOR-KEY.md`: the instructor answer key for all three cases, with the probe menus, numbers, traps and prompts for stuck groups.
 - `data/<case>/truth-table.md`: the signed-off truth tables in full.
 - `docs/transcript_models_R6.json`: transcript models and probe menus.
 - `docs/storyboards/targets-step.md`: the step 4 primer.
