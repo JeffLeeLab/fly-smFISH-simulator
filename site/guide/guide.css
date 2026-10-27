@@ -1,0 +1,80 @@
+/* Webapp usage guide (guide/index.html): one reading column on the app's tokens, with the
+   screenshots wider than the text. --mark is the badge colour drawn on the screenshots by
+   tools/guide-shots.js; the numbered key under each picture uses the same badges. */
+
+:root { --mark: #FFB000; --mark-ink: #141413; --guide-wide: 1120px; }
+
+/* ---------- top bar ---------- */
+.guide-top {
+  display: flex; align-items: center; gap: var(--sp-4);
+  max-width: var(--guide-wide); margin: 0 auto; padding: var(--sp-4);
+  border-bottom: var(--hairline) solid var(--border);
+}
+.guide-top__brand {
+  font: 500 var(--fs-h3)/1.2 var(--font-serif); letter-spacing: -.01em;
+  color: var(--text); text-decoration: none;
+}
+.guide-top__brand:hover { text-decoration: underline; text-decoration-thickness: 1px; }
+.guide-top__theme { margin-left: auto; padding-left: 6px; }
+.guide-top__dot {
+  width: 12px; height: 12px; border-radius: 50%; flex: none;
+  border: 1.5px solid var(--text); background: linear-gradient(90deg, var(--text) 50%, transparent 50%);
+}
+
+/* ---------- the guide: text at reading width, pictures wider ---------- */
+.guide { max-width: var(--guide-wide); margin: 0 auto; padding: var(--sp-6) var(--sp-4) var(--sp-7); }
+.guide > * { max-width: 46rem; margin-left: auto; margin-right: auto; }   /* rem, not ch: the same column for headings and text */
+.guide > figure { max-width: none; }
+
+.guide h1, .guide h2, .guide h3 { font-family: var(--font-serif); font-weight: 500; letter-spacing: -.01em; text-wrap: balance; }
+.guide h1 { font-size: var(--fs-h1); line-height: var(--lh-tight); margin-bottom: var(--sp-5); }
+.guide h2 { font-size: var(--fs-h2); line-height: 1.15; margin-top: var(--sp-7); margin-bottom: var(--sp-3); }
+.guide h3 { font-size: 22px; line-height: 1.25; margin-top: var(--sp-6); margin-bottom: var(--sp-2); }
+.guide h2 + h3 { margin-top: var(--sp-4); }
+.guide p, .guide ul, .guide ol, .guide blockquote, .guide table { margin-bottom: var(--sp-3); text-wrap: pretty; }
+.guide ul, .guide ol { padding-left: 1.4em; }
+.guide li + li { margin-top: var(--sp-1); }
+.guide li > ul, .guide li > ol { margin: var(--sp-1) 0 0; }
+.guide strong { font-weight: 600; }
+.guide code { font: 400 .9em var(--font-mono); padding: 0 .25em; background: var(--panel); border-radius: var(--r-chip); }
+.guide hr { border: 0; border-top: var(--hairline) solid var(--border); margin: var(--sp-6) auto; }
+
+/* the "simulated data" notice: the dashed outline of the app's Simulated pill */
+.guide blockquote {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--field); border: var(--hairline) dashed var(--border-strong); border-radius: var(--r-pane);
+}
+.guide blockquote > :last-child { margin-bottom: 0; }
+
+.guide table { border-collapse: collapse; width: 100%; font-size: var(--fs-ui-lg); }
+.guide th, .guide td { text-align: left; vertical-align: top; padding: 6px 10px 6px 0; border-bottom: var(--hairline) solid var(--border); }
+.guide th { font-weight: 600; color: var(--text-2); }
+
+/* ---------- screenshots and their keys ---------- */
+.guide figure { margin: var(--sp-4) 0 var(--sp-4); }
+.guide figure a { display: block; }
+.guide figure img {
+  width: 100%; height: auto;
+  border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip);
+}
+.guide ol.key { list-style: none; padding-left: 0; counter-reset: key; }
+.guide ol.key > li { counter-increment: key; position: relative; padding-left: 36px; min-height: 26px; }
+.guide ol.key > li + li { margin-top: var(--sp-2); }
+.guide ol.key > li::before {
+  content: counter(key);
+  position: absolute; left: 0; top: -1px;
+  width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center;
+  font: 700 14px/1 var(--font-sans); color: var(--mark-ink);
+  background: var(--mark); border: 2px solid var(--mark-ink);
+}
+
+/* ---------- print (the page switches to the light theme first; see guide.js) ---------- */
+@media print {
+  html, body { background: #fff; }
+  .guide-top__theme { display: none; }
+  .guide { padding-top: var(--sp-4); }
+  .guide figure, .guide ol.key > li { break-inside: avoid; }
+  .guide h2, .guide h3 { break-after: avoid; }
+  .guide ol.key > li::before { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

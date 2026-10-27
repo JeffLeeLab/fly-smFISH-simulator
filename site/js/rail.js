@@ -7,6 +7,7 @@
 import { CASES, STAGES, STEPS, lockReason } from "./content.js";
 import { href } from "./router.js";
 import { currentTheme, toggleTheme } from "./theme.js";
+import { Q_ICON } from "./icons.js";
 
 // one line each, so eight steps fit the rail at 1280×720
 const SHORT_REASON = {
@@ -29,6 +30,9 @@ function themeButton() {
   const label = dark ? "Switch to light theme" : "Switch to dark theme";
   return `<button class="btn btn--quiet rail__theme" type="button" data-act="theme" aria-label="${label}"><span class="rail__theme-dot" aria-hidden="true"></span>${dark ? "Light theme" : "Dark theme"}</button>`;
 }
+
+// the student guide (guide/guide.md), in a new tab so the app keeps its place
+const GUIDE_LINK = `<a class="btn btn--quiet rail__guide" href="guide/" target="_blank" rel="noopener">${Q_ICON}Webapp usage guide<span class="vh"> (opens in a new tab)</span></a>`;
 
 function caseBox(route) {
   const c = route.caseId && CASES[route.caseId];
@@ -71,7 +75,7 @@ export function renderRail(el, route, s) {
     <a class="rail__brand" href="#/">smFISH Simulator</a>
     ${caseBox(route)}
     <ol class="rail__stages" role="list">${stages(route, s)}</ol>
-    <div class="rail__foot">${themeButton()}<p class="rail__contact">Questions? <a href="mailto:jeff.lee@glasgow.ac.uk">jeff.lee@glasgow.ac.uk</a></p><span class="tag-sim">Simulated teaching data</span></div>`;
+    <div class="rail__foot">${GUIDE_LINK}${themeButton()}<p class="rail__contact">Questions? <a href="mailto:jeff.lee@glasgow.ac.uk">jeff.lee@glasgow.ac.uk</a></p><span class="tag-sim">Simulated teaching data</span></div>`;
   const theme = el.querySelector("[data-act=theme]");
   theme.addEventListener("click", toggleTheme);
   el.querySelector("[data-act=choose]")?.addEventListener("click", toChooser);

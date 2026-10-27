@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webapp usage guide · smFISH Simulator</title>
+<meta name="description" content="How to use the smFISH Simulator: what it teaches, which link to open, how to find your way around and what to do in each step. Simulated teaching data.">
+<script>
+  // Theme before first paint, with the app's rule and key (see ../js/theme.js).
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("smfish:theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../css/fonts.css">
+<link rel="stylesheet" href="../css/tokens.css">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="guide.css">
+<script type="module" src="guide.js"></script>
+</head>
+<body>
+<header class="guide-top">
+  <a class="guide-top__brand" href="../">smFISH Simulator</a>
+  <span class="tag-sim">Simulated teaching data</span>
+  <button class="btn btn--quiet guide-top__theme" type="button" data-act="theme"></button>
+</header>
+<main class="guide" id="guide"><p class="t-muted">Loading the guide…</p></main>
+<noscript><p class="notice">This guide needs JavaScript. Please turn it on, or open it in a current version of Chrome, Edge, Firefox or Safari.</p></noscript>
+</body>
+</html>

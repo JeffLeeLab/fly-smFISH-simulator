@@ -558,3 +558,21 @@ The instructor asked for these changes to the nmj case:
 | 2 | Step 7, page and full screen | The viewer and plot differ (new molecules). Region 7 reads as before: cell body flat, axon about 58 → 81, synaptic terminals 56 → 28. | OK. |
 | 3 | Step 7, Region 2 + Region 8, Transcription sites | Reported by the instructor on the first rebuild: a silent nucleus in one animal per genotype gave a spread of 0 to 97. Now WT 104, 77, 75 and mutant 68, 97, 90. | Fixed (every nucleus active). |
 | 4 | Steps 1, 2, 6 and 8 | Up to 100 px differ by at most 7 grey levels; in step 6 they are one-pixel antialiasing lines on the map. | Rendering noise. |
+
+## 2026-10-27: the Webapp usage guide and its rail link (instructor)
+
+The instructor asked for a short student guide they can edit themselves: what the app teaches (simulated data), which link to open (shinytest on campus or the VPN, GitHub Pages otherwise), how to find your way around, and each step with annotated screenshots.
+- **The guide:** `site/guide/`. The text is `guide.md`; `index.html` and `guide.js` show it with `marked` 15.0.12 (vendored) in the app's tokens. It follows the app's theme and prints in the light theme. Seven annotated screenshots (Pdf, 1280 px wide at 2×, WebP, 96–177 KB each) come from the new `tools/guide-shots.sh`, with a neutral example notebook (Regions 1 + 2, both verdicts unresolved; step 7's images blurred, plot closed).
+- **The rail:** a "Webapp usage guide" link (help icon, new tab) at the top of the footer, the label the instructor chose. In windows up to 760 px tall, the footer's two buttons are now 24 px tall instead of 28 px.
+
+**Checks.**
+- **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj. Looked at the rail footer in every 1280×720 shot (54 crops, both themes) and at the step 5 sheets at both sizes.
+- **Rail fit at 1280×720:** nmj step 5 with an empty shortlist (a two-line system name and three locked steps with their reasons), the landing and pdf step 3: the rail's scroll height equals the window (720 px).
+- **The guide page:** 1280×720 light and 390×844 dark (no horizontal scroll); all seven pictures load; no console messages.
+- **No giveaway:** the guide text checked against `PRODUCT.md`. The pictures show only Regions 1 + 2 and "Unresolved", and the text says the choices in them are examples.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Rail, nmj step 5, 1280×720 | With the guide link, the rail was 1 px taller than the window (721/720), enough for a scrollbar on Windows. | Fixed: the footer buttons are 24 px tall in windows up to 760 px. |
+| 2 | Guide headings | The column width was 70ch, which scales with the type, so the headings ran wider than the text and sat at the left edge. | Fixed: 46rem. |
+| 3 | Guide screenshots | Badges covered text in four shots (the step 6 eyebrow and hint, step 5's placeholder, the overview's "TDP-43 is an"). | Fixed: those badges moved into the margins. |
