@@ -540,3 +540,21 @@ The instructor asked for these changes:
 | 2 | Viewer toolbar, nmj, 1280×720 | "Downloaded" and "Saved as file" are wider than "Save view". With the chevron, they would have wrapped the toolbar for 1.8 s. | Fixed: the chevron is hidden while the button reports. |
 | 3 | Full screen, 1280×720 | The Viewer controls panel covers the end of the mutant pane's overlay line ("…simul"), raised by the Haiku sweep. | Unchanged by this run: the panel floats over the fields' top-right corner by design, and these shots differ only at the buttons. |
 | 4 | mb step 1 | The drawing labels the centre of the maze "choice point", while the caption now says "T choice gate". | Wording note for the instructor. |
+
+## 2026-10-27: leg motor neuron, stai-RA not expressed; every nucleus with an active site (instructor)
+
+The instructor asked for these changes to the nmj case:
+- **stai-RA is not expressed in the leg motor neuron.** The short-3′UTR isoforms are RC and RE (15:50), both from the first start site, so Region 1 detects every short isoform and Region 1 + Region 8 splits short from long with no white spots. Region 2 + Region 8 and Region 6 + Region 7 turn all white, which shows RA is absent. The cassette-exon trap goes. The map still draws RA (FlyBase annotates it).
+- **Every nucleus has an active transcription site** (`ts_active` 1.0, nmj only). After the first rebuild, one animal per genotype had a silent nucleus, which plotted as 0 and stretched every transcription-site plot (Region 2: 0 to 97).
+
+**Checks.**
+- **Generator gates:** `generator.validate nmj --signed` 2,805 checks, 0 failed. The Pdf output was rebuilt and stayed byte-identical after the shared `truth_table.py` change (baseline sha256 matched; Pdf gate 2,712/0), and the mb truth table regenerated unchanged. The nmj truth table warns that Region 5's 12 nascent molecules per nucleus lie within 15% of the 14-molecule edge between "present" and "bright"; the gate holds the three-animal mean at "present".
+- **Review sets:** `tools/review-shots.sh` for nmj, before (a worktree of origin/main served on port 8766) and after (the new commits), compared with `tools/shot-diff.py`.
+- **Extra shot:** step 7 in full screen with Region 2 + Region 8 and the Transcription sites measure, at 1280×720.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Step 3, page and full screen | The TDP-43 images differ: the rebuild chose new animals. The mutant still shows a dimmer nucleus and more, stretched granules along the axon, so the review state's observation still holds. | OK. |
+| 2 | Step 7, page and full screen | The viewer and plot differ (new molecules). Region 7 reads as before: cell body flat, axon about 58 → 81, synaptic terminals 56 → 28. | OK. |
+| 3 | Step 7, Region 2 + Region 8, Transcription sites | Reported by the instructor on the first rebuild: a silent nucleus in one animal per genotype gave a spread of 0 to 97. Now WT 104, 77, 75 and mutant 68, 97, 90. | Fixed (every nucleus active). |
+| 4 | Steps 1, 2, 6 and 8 | Up to 100 px differ by at most 7 grey levels; in step 6 they are one-pixel antialiasing lines on the map. | Rendering noise. |
