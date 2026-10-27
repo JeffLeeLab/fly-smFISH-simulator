@@ -183,7 +183,7 @@ Paths in this document are relative to `docs/` unless stated otherwise.
 | `generator/` (root) | Python scripts, run with uv as `uv run python -m generator.<script>`: `public_models`, `geometry_pdf`, `truth_table`, `build` (generator and tables), `validate` (the gate) and `flies` (fly drawings from flybody, written to `site/data/flies/`) |
 | `data/<case>/` (root) | Never served: the truth table (`truth-table.toml`, the rules the instructor signs off; `truth-table.json` and `.md`, expanded from it) and full molecule records (`generated/`, rebuilt by the generator and not committed) |
 | `tools/` (root) | `serve.py` (local server without caching), `contact-sheet.sh` and `frozen-time.sh` (animation review loop) and `review-shots.sh` (screenshots of every step in both themes and at both sizes) |
-| `.github/workflows/pages.yml` | Deploys `site/` to GitHub Pages after checking that the generated data is up to date and the validation gate passes |
+| `.github/workflows/pages.yml` | On every push to the `live` branch, deploys `site/` to GitHub Pages after checking that the generated data is up to date and the validation gate passes |
 
 Mockups and screenshots in `docs/` are design records and are not served.
 
@@ -221,7 +221,7 @@ Build one case completely before the others, so every shared part (data pipeline
 - **Per case:** geometry (connectome-assisted: MaleCNS v0.9 for the leg motor neuron's cell body and its path out of the VNC, and for Kenyon cells), simulation parameters, truth table and validation gate, gene card and map, assay animation (climbing with shaking; T-maze), and descent path. The mushroom body case is built (truth table signed off 2026-10-12, gate in the Pages workflow). The leg motor neuron case is built (truth table signed off 2026-10-13; steps 1–2 and the step 7 locator built 2026-10-14 after the signed-off storyboard, [storyboards/nmj-openings.md](storyboards/nmj-openings.md), with an "As built" section there; gate in the Pages workflow).
 - **Shared:** the leg motor neuron and mushroom body cases reuse the same four-class TDP-43 layer (diffuse nuclear, diffuse cytoplasmic, transport granules, aggregates). The leg motor neuron has no aggregates (instructor, 2026-10-13): its extra mutant puncta along the axon and in the synaptic terminals are stalled transport granules carrying cargo, which keeps the cases' stories distinct.
 - **Shared:** all three landing stations live; cross-case check that the student-facing template is identical and the *Coverage* table holds across the three cases.
-- **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
+- **Pilot readiness:** full review loop for all three cases; deploy to GitHub Pages (done 2026-10-27, with a second copy on the shinytest VM; see *Hosting and offline use*) and test the offline copy; a dry run of the 2-hour session with colleagues; instructor answer key (truth tables, example Part 2 directions) as a separate document.
 
 #### Architecture
 
@@ -872,7 +872,7 @@ The *stai* line keeps FlyBase's wording ("axonal transport", "stability", "synap
 
 #### Hosting and offline use
 
-The same folder runs on GitHub Pages and on a laptop with no internet connection.
+The same folder runs on GitHub Pages, on the shinytest VM (below) and on a laptop with no internet connection.
 
 - **Devices:** students' own laptops (Windows and macOS; current Chrome, Edge, Firefox and Safari). Minimum viewport 1280×720; trackpad pinch and two-finger scroll supported; WebGL 2 required, with a clear message if it is missing. No projector or shared screen is needed; the plenary is a discussion, with groups presenting from their own slides. Test on a low-end Windows laptop with integrated graphics and on a MacBook.
 
@@ -882,16 +882,16 @@ The same folder runs on GitHub Pages and on a laptop with no internet connection
 - Keep individual files under 100 MB; compress textures.
 - Check that the installed `pixi-viewport` version supports PixiJS v8 before building.
 
-**Second server: the shinytest VM (an idea, not a final plan; instructor, 2026-10-16)**
+**Two servers: GitHub Pages and the shinytest VM (deployed 2026-10-27)**
 
-A second copy of the site on the university VM `shinytest.mvls.gla.ac.uk`, in addition to GitHub Pages, so that if one server fails during a session, students can use the other. Nothing is deployed yet.
+The site is live on two servers, so that if one fails during a session, students can use the other: GitHub Pages at https://jeffleelab.github.io/fly-smFISH-simulator/ and the university VM at https://shinytest.mvls.gla.ac.uk/smfish/. Both serve the `live` branch, not `main`, so work in progress never reaches students, and both always serve the same release.
 
-- **Server:** the VM already runs nginx with HTTPS (Let's Encrypt) in front of its other apps (Shiny Server, `/probedesign/`, `/napari/`). nginx would serve the site directly as static files at its own path, e.g. `https://shinytest.mvls.gla.ac.uk/smfish/`; the relative paths above make any path work. SELinux is enforcing, so the files live under `/var/www`, not in a home folder. Changing nginx needs sudo, which only the instructor can run.
-- **Updates by git:** the VM keeps a sparse checkout of `site/` only (no `docs/` or `data/`), and nginx's `alias` points at that `site/` folder, so neither the answer key nor `.git` is ever served. It follows a `live` release branch, not `main`, so work in progress never reaches students. A cron job under the instructor's account fetches every few minutes and resets to `origin/live`, so nothing is ever edited on the VM. To release, run the validation gate locally (`generator.validate <case> --signed` for every case in the Pages gate), then `git push origin main:live`. To roll back, push an older commit to `live`.
-- **nginx settings:** `Cache-Control: no-cache`, so browsers check every file again and never mix old and new files after a release; and `types { application/javascript mjs; }`, because nginx 1.20's `mime.types` has no `.mjs` entry and browsers refuse to run PixiJS (`pixi.min.mjs`) served with the wrong type.
-- **Keeping the two servers in step:** both should serve the same release, or a student who switches sees a different site. One way: publish to Pages from `live` too, so one push updates both.
+- **Releasing:** run the validation gate locally (`generator.validate <case> --signed` for every case in the Pages gate), then `git push origin main:live`. Pages redeploys in about a minute (the workflow runs on every push to `live`, and the `github-pages` environment has a deployment rule allowing `live`); the VM follows within 5 minutes. Release at least 10 minutes before a session: Pages tells browsers to keep files for up to 10 minutes (`max-age=600`), and that can't be changed.
+- **Rolling back:** `git push --force origin <tag or commit>:live`; both servers follow.
+- **The VM:** nginx with HTTPS (Let's Encrypt) in front of other apps (Shiny Server as the catch-all, `/probedesign/`, `/napari/`). The site is a blob-less sparse clone of `site/` at `/var/www/smfish/repo`, owned by the instructor's account (`jeff`); `docs/` and `data/` are never downloaded. SELinux is enforcing, so the files live under `/var/www` with the `httpd_sys_content_t` label, not in a home folder. A cron job in that account fetches every 5 minutes and resets to `origin/live` (errors to `~/smfish-update.log`), so nothing is ever edited on the VM. sudo (nginx, `/var/www`) is the instructor's alone.
+- **nginx:** `location /smfish/`, inside the HTTPS server block of `/etc/nginx/conf.d/shiny.conf`, aliases `/var/www/smfish/repo/site/`, so neither the answer key, the repository's top-level files nor `.git` is served (checked: all 404). It adds `mjs` to the standard `mime.types`, because nginx 1.20's has no `.mjs` entry and browsers refuse to run PixiJS (`pixi.min.mjs`) served with the wrong type; sends `Cache-Control: no-cache`, so browsers check every file again and never mix old and new files after a release; and gzips JSON, JavaScript, CSS and SVG. `location = /smfish` redirects to `/smfish/`. The config before this change is kept as `shiny.conf.bak.20261027134940`.
 - **Switching loses the notebook:** progress is saved per browser and per site, so a student who moves to the other server mid-session starts with an empty notebook (PNGs already copied or downloaded are kept). Tell students this before the session.
-- **Access, still to decide:** university network only (campus and VPN address ranges from IT, then `deny all`), a shared class password, or university single sign-on (set up by IT). First check whether the VM can be reached from off campus.
+- **Access:** no restriction, like the Pages copy (the repository and the Pages copy are public, so restricting the VM would protect nothing). Still to check: whether the VM can be reached from off campus; if not, students at home need the VPN to use it as the fallback.
 
 ---
 
