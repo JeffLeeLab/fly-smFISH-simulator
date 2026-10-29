@@ -643,3 +643,22 @@ The instructor asked for a short student guide they can edit themselves: what th
 | # | Where | Finding | Status |
 | --- | --- | --- | --- |
 | 1 | Phenotype PNG | The fly sprites' strokes don't scale, so at slide size the flies looked paler than on the page. | Fixed: the sprites' stroke width is scaled by export width ÷ width on screen. |
+
+## 2026-10-29: no flash of unplaced artwork on a fresh load (instructor)
+
+**Report.** On a fresh load, flies, brain or muscle outlines flashed for a moment at the top left of the view.
+
+**Cause.** The landing page and step 2 (all cases) put their artwork on the page first, then hide or place it once GSAP has loaded, and GSAP was fetched only when a view first asked for it. Until then, the landing's two flying stand-in flies (`.legend-ghosts`) and step 2's brain, muscle and label layers sat unplaced at the view's top left. Once GSAP has loaded it stays loaded, so only the first view after a load flashed. Reproduced by holding back `gsap.min.js`.
+
+**Change.**
+- **The view stays hidden while it mounts** (`.view[data-mounting]`, `visibility: hidden`, so its layout can still be measured), and shows when `mount()` resolves. The rail stays visible.
+- **Steps 3 and 7** call `ctx.reveal()` before loading the image viewer, so their text (and step 3's frame growing out of the descent) shows at once, as before.
+- **GSAP is fetched alongside the first view** (`main.js`), so the wait is short.
+
+**Checks.**
+- **GSAP held back:** the landing page and step 2 of pdf, mb and nmj stay blank in the content area until it arrives, then appear placed; no stray artwork.
+- **Normal local loads:** each view is hidden for 45–180 ms (landing, steps 1–8). Step 7 shows its text before the viewer's canvas exists.
+- **Hand-offs:** station → step 1 and step 2 → step 3 still grow from the previous view; no console errors; focus lands on the view.
+- **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj, locally and from GitHub Pages (`REVIEW_URL`), compared with `tools/shot-diff.py`. All 65 shots per case match the release except for faint texture noise (largest pixel difference 28 of 255, mostly under 500 px): the mutant fly's ink in the dark hero, step 5's small neuron, step 6's map, and the muscle fill in nmj step 2's labels frame (12,074 px, difference ≤ 16). The frozen end frames are unchanged, as expected: the change affects only the moment before a view appears. The pdf hero, step 2 and step 7 sheets were looked at in both sizes and themes.
+
+No findings.
