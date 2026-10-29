@@ -223,6 +223,8 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 /* the roll-up (caption.js): the caption before the current one, one line up and quiet */
 .assay__prev { display: block; font-size: var(--fs-story); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* never pushes the controls down */
 .assay__ghost { position: absolute; left: 0; right: 0; }
+/* the captions' wipe (caption.js, the descents) is a clip-path, whose box on an inline span is its first line: as blocks, a caption that wraps shows every line */
+.assay__cap, .descent__cap { display: block; }
 .t-label.run-in { margin-right: .3em; }
 /* the assay's description under the controls: a quiet sans note, so it doesn't compete with the narration */
 .assay__note { font: 400 var(--fs-body)/var(--lh-body) var(--font-sans); color: var(--text-2); }

@@ -509,7 +509,7 @@ export async function mount(root, ctx) {
     if (k !== capKey) {
       capKey = k;
       capEl.textContent = CAPTIONS[k][1];
-      if (frozen == null && !still) gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power2.out" });
+      if (frozen == null && !still) gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.5, ease: "power2.out", clearProps: "clipPath" });
     }
     stage.classList.toggle("is-dark", t >= 8.4);
   }

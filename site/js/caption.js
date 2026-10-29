@@ -42,6 +42,6 @@ export function rollCaption(gsap, box, captions, order, animate) {
       gsap.fromTo(prevEl, { y: dy, scale: k, transformOrigin: "0% 0%", color: ink },
         { y: 0, scale: 1, color: getComputedStyle(prevEl).color, duration: 0.45, ease: "power2.inOut", clearProps: "transform,transformOrigin,color" });
     }
-    gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out", delay: rolls ? 0.25 : 0 });
+    gsap.fromTo(capEl, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "power2.out", delay: rolls ? 0.25 : 0, clearProps: "clipPath" });
   };
 }
