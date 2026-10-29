@@ -397,7 +397,7 @@ export function drawStrip(svg, g, pair, width) {
   return bottom;
 }
 
-// The pair on the Part 1 summary slide (summary.js): the map's rows in its compressed coordinates
+// The pair on the summary slide (summary.js): the map's rows in its compressed coordinates
 // with their names, start and end marks, and the pair's two regions as ink bands under a bracket
 // and ID (the probe track's other regions are left out). Markup with inline colours from the
 // palette P, so one string serves the page preview and the PNG. Returns { svg, height }.

@@ -1,5 +1,5 @@
-// The Part 1 summary slide (16:9, 1920×1080, light background for white slides), the starting
-// point for Part 2: case, genotypes and a locator for the neurons; the question from step 4; the
+// The summary slide (16:9, 1920×1080, light background for white slides), the starting
+// point for follow-up experiments: case, genotypes and a locator for the neurons; the question from step 4; the
 // probe pair on the transcript map; mode verdicts; Claim and Uncertainty. One SVG serves as the
 // on-page preview and the copied PNG. Empty fields stay as blank placeholders, so copying always works.
 
@@ -180,7 +180,7 @@ export function summarySVG({ c, s, date, g, art }) {
   const label = (x, y, text) => `<text x="${x}" y="${y}" font-family="${P.sans}" font-size="22" font-weight="600" letter-spacing="2" fill="${P.text2}">${text}</text>`;
 
   // header: the case, the two genotypes, and where the neurons are
-  out.push(`<text x="80" y="104" font-family="${P.sans}" font-size="24" font-weight="600" letter-spacing="2.5" fill="${P.text2}">PART 1 SUMMARY</text>`);
+  out.push(`<text x="80" y="104" font-family="${P.sans}" font-size="24" font-weight="600" letter-spacing="2.5" fill="${P.text2}">smFISH SIMULATOR SUMMARY</text>`);
   out.push(`<text x="80" y="170" font-family="${P.serif}" font-size="60" font-weight="500" fill="${P.text}">${esc(c.system)} · <tspan font-style="italic">${esc(c.target.gene)}</tspan></text>`);
   out.push(`<text x="80" y="218" font-family="${P.sans}" font-size="28" fill="${P.text2}">hTDP-43 WT vs hTDP-43 mutant</text>`);
   if (art) out.push(locator({ ...art, loc: CASE_LOCATOR[c.id], cells: c.cells, right: W - 80, top: 56 }));
@@ -250,7 +250,7 @@ export function summarySVG({ c, s, date, g, art }) {
   const rx = 900, rw = W - 80 - rx;
   const um = s.uncertainty.mode === "other" ? "Other" : s.uncertainty.mode ? MODES[s.uncertainty.mode].title : "";
   const unc = [um, s.uncertainty.why].filter(Boolean).join(": ");
-  const fields = [["CLAIM · OUR LEADING EXPLANATION", s.claim], ["UNCERTAINTY · THE STRONGEST REMAINING ALTERNATIVE", unc]];
+  const fields = [["CLAIM · LEADING EXPLANATION", s.claim], ["UNCERTAINTY · ANYTHING STILL OPEN", unc]];
   let laid;
   for (const [size, max] of [[34, 3], [30, 3], [27, 4], [24, 4], [22, 4]]) {
     laid = fields.map(([name, text]) => ({ name, size, lines: text ? wrap(text, serifFont(size), rw, max) : null }));

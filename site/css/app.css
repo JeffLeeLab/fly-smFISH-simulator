@@ -834,7 +834,7 @@ body[data-notebook="drawer"] .bench { padding-right: 44px; }
 .savemenu--viewer .savemenu__menu svg { color: var(--viewer-text-2); }
 @media (prefers-reduced-motion: reduce) { .savemenu__btn svg { transition: none; } }
 
-/* ---------- step 8: the Part 1 summary slide, the starting point for Part 2 ---------- */
+/* ---------- step 8: the summary slide, the starting point for follow-up experiments ---------- */
 .slide { display: flex; flex-direction: column; gap: var(--sp-3); max-width: 880px !important; }
 .slide__svg { display: block; width: 100%; height: auto; border: var(--hairline) solid var(--border-strong); border-radius: var(--r-chip); background: #fff; }
 

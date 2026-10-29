@@ -618,3 +618,28 @@ The instructor asked for a short student guide they can edit themselves: what th
 | 3 | Viewer tour | "drag to move" disagreed with the viewer's own hint and the guide ("drag to pan"). | Fixed: "drag to pan". |
 | 4 | mb step 1 note | "ten." sat alone on the last line at 1280×720. | Fixed: "show ten" kept together. |
 | 5 | Rail, steps 7–8 | The short reason names that step's own requirement even when the real blocker is an earlier one (shortlist). This was already the case before the change. | Open, not changed. |
+
+## 2026-10-29: individual use wording and step 1's Save phenotype (instructor)
+
+**Change.** Students now work through the app on their own, after the session. The text no longer says "Part 1" or "Part 2", and no longer assumes a group:
+- **Summary slide:** headed "smFISH SIMULATOR SUMMARY" (was "PART 1 SUMMARY"); the fields are "CLAIM · LEADING EXPLANATION" and "UNCERTAINTY · ANYTHING STILL OPEN".
+- **Step 8 and the notebook:** "Claim: your leading explanation" and "Uncertainty: anything still open (optional)". The heading is "Starting point for your follow-up experiments", and the caption and preview label say "Your summary".
+- **Guide:**
+  - The group wording is gone (working in groups, one laptop for the group's notes, "your group's conclusion").
+  - The "Part 1/Part 2" wording is gone, and so is "for the whole session".
+  - It no longer promises that a mechanism will stay unresolved, and *Unresolved* is now "a valid verdict".
+  - The group-assigned system (start page, step 4) and the Groups section stay, as the instructor asked.
+- **Step 1, all cases:** a "Save phenotype" menu beside Next, shown with Next when the recording ends. It exports a 1920×1080 PNG for a white slide: the step's title and the neuron system above, the live drawing redrawn in the light theme (`lightSVG` in `export.js`, fly sprites included, ink boil left out) and "Simulated teaching data" at the foot. Anatomy (step 2) has no Save; the summary slide's locator covers it.
+
+**Checks.**
+- **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj. In the first run the server stopped partway through mb, so the mb and nmj sets were rerun. A brightness check found no error pages in any set. The step 1 and step 8 sheets were looked at in both sizes and themes.
+- **Export, in the browser:**
+  - The phenotype PNG of each case, made from the dark theme: it is light, with fonts, sprites and the T-maze odour fills intact.
+  - The live page stays dark, with no colour fade, and Download writes `smFISH-pdf-phenotype.png`.
+  - Save is hidden at `?t=8` (mid-recording).
+- **Guide screenshots:** retaken with `tools/guide-shots.sh`; step 8 shows the new labels, heading, slide header and caption.
+- **No giveaway:** no changed string hints at a hypothesis or region.
+
+| # | Where | Finding | Status |
+| --- | --- | --- | --- |
+| 1 | Phenotype PNG | The fly sprites' strokes don't scale, so at slide size the flies looked paler than on the page. | Fixed: the sprites' stroke width is scaled by export width ÷ width on screen. |

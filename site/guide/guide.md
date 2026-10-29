@@ -7,7 +7,7 @@
 
 # Webapp usage guide
 
-The smFISH Simulator is an interactive web app for the *L4 Core Skills in MCB* feedback session. Working in groups, you will design a two-colour single-molecule FISH (smFISH) experiment to investigate how an ALS-linked mutation in TDP-43 disrupts post-transcriptional regulation of a target mRNA in *Drosophila* neurons.
+The smFISH Simulator is an interactive web app for the *L4 Core Skills in MCB* feedback session. You will design a two-colour single-molecule FISH (smFISH) experiment to investigate how an ALS-linked mutation in TDP-43 disrupts post-transcriptional regulation of a target mRNA in *Drosophila* neurons.
 
 > **Microscopy data in the app are simulated for teaching.** The genes and transcript maps come from FlyBase, but the images, counts and parts of the biology are invented for this exercise. Do not cite them as research findings.
 
@@ -18,7 +18,7 @@ The smFISH Simulator is an interactive web app for the *L4 Core Skills in MCB* f
 - Compare smFISH signals and quantitative spot counts across neuronal compartments (nucleus, cell body, axon and synaptic terminals).
 - Separate direct observation from interpretation, and evaluate each hypothesis against the evidence.
 
-Your goal in Part 1 is to narrow down the candidate mechanisms, not to solve the case completely. At least one plausible mechanism will remain unresolved from smFISH alone, and that open question forms the starting point for your group's Part 2 experimental design.
+Your goal is to narrow down the candidate mechanisms, not to solve the case completely. Any question that smFISH alone cannot settle becomes the starting point for your follow-up experiments.
 
 ## Open the app
 
@@ -27,7 +27,7 @@ Your goal in Part 1 is to narrow down the candidate mechanisms, not to solve the
 
 Both links run the same app. Use a laptop with a current version of Chrome, Edge, Firefox or Safari. The interface requires a window of at least 1280 × 720 pixels and is not designed for phones.
 
-**Stay on one link and one browser for the whole session.** Your notebook is saved locally in that browser for that URL only. Opening the other link, switching browsers or using a private/incognito window starts with an empty notebook (and closing a private window discards your notes). If your group uses multiple laptops to explore, remember that **notebooks do not sync between laptops**: nominate one person's laptop to record the group's final notes, verdicts and summary slide.
+**Stay on one link and one browser.** Your notebook is saved locally in that browser for that URL only. Opening the other link, switching browsers or using a private/incognito window starts with an empty notebook (and closing a private window discards your notes). **Notebooks do not sync between computers**, so finish the app on the computer you started on.
 
 ## Groups
 
@@ -58,7 +58,7 @@ Watch the introductory sequence, then select your group's assigned neuronal syst
 
 ![The three neuron systems on the start page](img/choose.webp)
 
-1. Click your assigned system. A short animation illustrates the *Drosophila* behavioural assay used to characterise the mutant phenotype; click **Next** when it finishes.
+1. Click your assigned system. A short animation illustrates the *Drosophila* behavioural assay used to characterise the mutant phenotype. When it finishes, **Save phenotype** copies or downloads the result as a PNG for your slides; click **Next** to continue.
 
 ### 2. Anatomy
 
@@ -113,25 +113,25 @@ Inspect the simulated confocal images and quantitative spot data across compartm
 1. Your active probe pair. Click **Try another pair** to return to Step 6; you can test as many probe combinations as you like.
 2. Simulated confocal images (blurred in this guide). The legend directly beneath explains how to interpret dual-channel colocalisation (white) versus single-channel spots (green or magenta).
 3. Switch between **Viewer controls** (channels and the three biological replicates, `Animal 1–3`) and **Compare** (your notes and hypothesis verdicts).
-4. Assign a verdict to each shortlisted mode (*Ruled out*, *Supported* or *Unresolved*) and summarise the evidence. *Unresolved* is an expected and valid verdict when smFISH alone cannot settle a mechanism.
+4. Assign a verdict to each shortlisted mode (*Ruled out*, *Supported* or *Unresolved*) and summarise the evidence. *Unresolved* is a valid verdict when smFISH alone cannot settle a mechanism.
 5. Click **Show plot** to view the quantitative SuperPlots across replicates and compartments, and use the dropdown menu to switch metrics. **Save plot** copies or downloads the figure.
 
 Step 8 unlocks once every mode on your shortlist has been given a verdict.
 
 ### 8. Interpret & revise
 
-Review the summary of your experiment and formulate your group's conclusion.
+Review the summary of your experiment and formulate your conclusion.
 
 ![Step 8: claim, uncertainty and the summary slide](img/step8.webp)
 
 1. **Claim**: state your leading mechanistic explanation for how mutant TDP-43 affects the target mRNA, supported by your smFISH evidence.
-2. **Uncertainty**: identify the strongest alternative hypothesis you cannot yet rule out, and explain why.
-3. **Save summary** exports a 16:9 overview slide containing your question, probe pair, verdicts, claim and uncertainty. Use this alongside your saved viewer images and plots as the foundation for your group's Part 2 presentation.
+2. **Uncertainty** (optional): note anything still open, such as a mode you cannot yet rule out, and explain why.
+3. **Save summary** exports a 16:9 overview slide containing your question, probe pair, verdicts, claim and uncertainty. Use this alongside your saved viewer images and plots as the foundation for your presentation.
 
 ## Saving your work
 
 - Everything you type in the notebook stays locally in your browser; nothing is uploaded to a server.
-- To export figures for your presentation, use the **Save** menu on the microscopy viewer, the quantification plot, or the Step 8 summary slide: choose **Copy** to paste directly into PowerPoint, or **Download** to save a PNG file.
+- To export figures for your presentation, use the **Save** menu on the Step 1 phenotype, the microscopy viewer, the quantification plot, or the Step 8 summary slide: choose **Copy** to paste directly into PowerPoint, or **Download** to save a PNG file.
 
 ## If something goes wrong
 

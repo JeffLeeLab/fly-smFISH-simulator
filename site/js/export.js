@@ -162,6 +162,87 @@ export function bindSaveMenu(wrap, { render, filename }) {
   }
 }
 
+// A live story SVG as standalone markup in the light theme, whatever the current theme: the page
+// switches to light, every element's paint and type are copied from its computed style, and the
+// page switches back, all in one task, so nothing is painted in between. Transitions are held
+// off throughout, or the restored colours would fade back in. Things the drawing uses from
+// elsewhere on the page (the fly sprites) come along in <defs>; the ink boil is left out. The
+// sprites' strokes don't scale with the drawing, so `scale` (export width ÷ width on screen)
+// keeps them as heavy, relative to the drawing, as they look on the page.
+const PAINT = ["fill", "fill-opacity", "fill-rule", "stroke", "stroke-width", "stroke-opacity", "stroke-dasharray",
+  "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "opacity", "visibility", "display",
+  "font-family", "font-size", "font-weight", "font-style", "letter-spacing", "text-anchor", "dominant-baseline",
+  "paint-order", "stop-color", "stop-opacity", "mix-blend-mode"];
+
+const refsIn = el => {
+  const ids = [];
+  for (const n of [el, ...el.querySelectorAll("*")]) {
+    for (const a of n.attributes) {
+      const m = a.name.endsWith("href") ? a.value.match(/^#(.+)/) : a.value.match(/url\(["']?#([^)"']+)/);
+      if (m) ids.push(m[1]);
+    }
+  }
+  return ids;
+};
+
+export function lightSVG(svg, { scale = 1 } = {}) {
+  const html = document.documentElement, theme = html.getAttribute("data-theme");
+  const hold = Object.assign(document.createElement("style"), { textContent: "*,*::before,*::after{transition:none!important}" });
+  document.head.append(hold);
+  html.setAttribute("data-theme", "light");
+  try {
+    const clone = svg.cloneNode(true);
+    clone.querySelectorAll("[filter*='ink-boil']").forEach(n => n.removeAttribute("filter"));
+    // the sprites and gradients it points to, and whatever they point to in turn
+    const defs = document.createElementNS(svg.namespaceURI, "defs");
+    const seen = new Set();
+    const todo = refsIn(clone);
+    while (todo.length) {
+      const id = todo.pop();
+      if (seen.has(id) || clone.querySelector(`[id="${CSS.escape(id)}"]`)) continue;
+      seen.add(id);
+      const src = document.getElementById(id);
+      if (!src || svg.contains(src)) continue;
+      const copy = src.cloneNode(true);
+      defs.append(copy);
+      todo.push(...refsIn(copy));
+    }
+    // the custom properties those copies read (the fly's ink and washes) travel with the paint
+    const vars = [...new Set([...defs.innerHTML.matchAll(/var\((--[\w-]+)/g)].map(m => m[1]))];
+    const from = [svg, ...svg.querySelectorAll("*")], to = [clone, ...clone.querySelectorAll("*")];
+    from.forEach((el, i) => {
+      const cs = getComputedStyle(el), st = to[i].style;
+      for (const p of [...PAINT, ...vars]) st.setProperty(p, cs.getPropertyValue(p));
+      if (to[i].localName === "use" && seen.has(to[i].getAttribute("href")?.slice(1))) {
+        st.setProperty("stroke-width", `${parseFloat(cs.strokeWidth) * scale}px`);
+      }
+    });
+    clone.prepend(defs);
+    return clone;
+  } finally {
+    if (theme == null) html.removeAttribute("data-theme");
+    else html.setAttribute("data-theme", theme);
+    getComputedStyle(svg).fill;   // settle the page in its own theme before transitions return
+    hold.remove();
+  }
+}
+
+// Step 1's assay as a 1920 × 1080 PNG for a white slide: the step's title and the neuron system
+// above the drawing, as the plot export has them.
+export function assayToCanvas(svg, { title, system }) {
+  const W = 1920, H = 1080, top = 150, foot = 80;
+  const { width: vw, height: vh } = svg.viewBox.baseVal;
+  const h = H - top - foot, w = Math.min(W - 80, h * vw / vh), dh = w * vh / vw;
+  const art = lightSVG(svg, { scale: w / (svg.getBoundingClientRect().width || w) });
+  for (const [k, v] of Object.entries({ x: (W - w) / 2, y: top + (h - dh) / 2, width: w, height: dh })) art.setAttribute(k, v);
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const inner = `<text x="64" y="76" font-family="${LIGHT.sans}" font-size="34" font-weight="600" fill="${LIGHT.text}">${esc(title)}</text>
+    <text x="64" y="116" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">${esc(system)}</text>
+    ${new XMLSerializer().serializeToString(art)}
+    <text x="64" y="${H - 40}" font-family="${LIGHT.sans}" font-size="24" fill="${LIGHT.text2}">Simulated teaching data</text>`;
+  return svgToCanvas(inner, W, H, LIGHT.bg);
+}
+
 // Resolved colours for a light, slide-ready export, whatever the current theme.
 export const LIGHT = {
   bg: "#FFFFFF", text: "#141413", text2: "#3D3D3A", text3: "#66655F", grid: "#DEDBD2", band: "#F1EFE8", ch1: "#1F8A4C", ch2: "#B0328F", both: "#3D3D3A", ch1Text: "#177341", ch2Text: "#B0328F",

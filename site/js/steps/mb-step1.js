@@ -14,6 +14,8 @@ import { tubeFly } from "../monitor.js";
 import { VB, LANES, H, FLY_H, DROP, TUBE_SPAN, odourDefs, driftOdours, mazeMarkup, piMarkup, laneFlies, flyPose, poseTransform, armCounts, odourAt, shockAt, boltAt, feedAt } from "../tmaze.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
 import { rollCaption } from "../caption.js";
+import { assayToCanvas, bindSaveMenu, saveMenuHTML } from "../export.js";
+import { CASES } from "../content.js";
 
 const G_END = 3.5;
 const FEED_TAG = { oct: "OCT", air: "air", mch: "MCH" };
@@ -43,6 +45,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Train the flies</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
+        ${saveMenuHTML({ label: "Save phenotype", what: "phenotype", extra: "assay__end" })}
         <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the training</button>
       </div>
@@ -226,6 +229,10 @@ export async function mount(root, ctx) {
   // the descent (step 2) starts from a WT fly that remembered: one in the MCH arm
   const chosen = lanes[0].flies.find(f => f.arm === "mch" && !f.ceiling);
   root.querySelector(".assay__controls a.btn").addEventListener("click", () => handOff("fly", chosen.node.g));
+  bindSaveMenu(root.querySelector(".savemenu"), {
+    render: () => assayToCanvas(svg, { title: root.querySelector("h1").textContent, system: CASES[ctx.caseId].system }),
+    filename: () => `smFISH-${ctx.caseId}-phenotype.png`,
+  });
   window.__assay = { tlG, tlH, clock, lanes };   // for review tooling
 
   return () => {

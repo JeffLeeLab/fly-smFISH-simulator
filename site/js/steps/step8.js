@@ -1,6 +1,6 @@
 // Step 8: revise the explanation → Claim and Uncertainty, under the question from step 4; the
-// starting point for Part 2: the experiment summary (with the pair on the read-only transcript
-// map), a preview of the Part 1 summary slide and its Save menu (copy or download). No gate; nothing is
+// starting point for follow-up experiments: the experiment summary (with the pair on the read-only transcript
+// map), a preview of the summary slide and its Save menu (copy or download). No gate; nothing is
 // required.
 
 import { MODES, VERDICTS, question } from "../content.js";
@@ -38,19 +38,19 @@ export async function mount(root, ctx) {
       </section>
       <section class="revise" aria-label="Claim and uncertainty">
         <div class="yourq"><h2 class="t-label">Your question</h2><p class="yourq__text">${question(c)}</p></div>
-        <label class="field"><span class="field__label">Claim: our leading explanation</span>
+        <label class="field"><span class="field__label">Claim: your leading explanation</span>
           <span class="field__hint" id="claim-prompts"></span>
           <textarea class="textarea" rows="3" data-bind="claim" placeholder="What is your leading explanation?" aria-describedby="claim-prompts"></textarea></label>
-        <label class="field"><span class="field__label">Uncertainty: the strongest remaining alternative</span>
+        <label class="field"><span class="field__label">Uncertainty: anything still open (optional)</span>
           <select class="select" data-bind="uncertainty.mode" id="unc-mode"></select></label>
         <label class="field"><span class="field__label">Why it isn’t excluded yet</span>
           <textarea class="textarea" rows="2" data-bind="uncertainty.why" placeholder="What would you still need to see?"></textarea></label>
       </section>
       <section class="slide" aria-labelledby="p2-h">
-        <h2 class="t-h3" id="p2-h">Starting point for Part 2</h2>
+        <h2 class="t-h3" id="p2-h">Starting point for your follow-up experiments</h2>
         <p class="t-story">What would you test next, and how might you intervene?</p>
-        <svg class="slide__svg" viewBox="0 0 ${SLIDE.W} ${SLIDE.H}" role="img" aria-label="Preview of your Part 1 summary slide"></svg>
-        <p class="next-row">${saveMenuHTML({ label: "Save summary", what: "summary", cls: "btn btn--primary btn--lg" })}<span class="t-ui t-muted">Your Part 1 summary · 1920 × 1080, for a white slide</span></p>
+        <svg class="slide__svg" viewBox="0 0 ${SLIDE.W} ${SLIDE.H}" role="img" aria-label="Preview of your summary slide"></svg>
+        <p class="next-row">${saveMenuHTML({ label: "Save summary", what: "summary", cls: "btn btn--primary btn--lg" })}<span class="t-ui t-muted">Your summary · 1920 × 1080, for a white slide</span></p>
       </section>
       <p class="next-row">
         <a class="btn btn--lg" href="${href(id, 7)}">← Back to results</a>

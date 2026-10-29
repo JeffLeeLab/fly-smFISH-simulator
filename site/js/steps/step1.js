@@ -13,6 +13,8 @@ import { loadFlySprite, flyNode, groomFrame, startBoil, stopBoil, ensureBoilFilt
 import { BINS, DAY_S, activity, walkPause, walkAt, crossingsBy, lastCrossing, timelapse, lapseAt, tube, tubeFly, actogramRows } from "../monitor.js";
 import { handOff, takeHandOff, growFrom } from "../handoff.js";
 import { rollCaption } from "../caption.js";
+import { assayToCanvas, bindSaveMenu, saveMenuHTML } from "../export.js";
+import { CASES } from "../content.js";
 import { term } from "../glossary.js";
 import { mulberry32 } from "../prng.js";
 
@@ -127,6 +129,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Record fly activity</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
+        ${saveMenuHTML({ label: "Save phenotype", what: "phenotype", extra: "assay__end" })}
         <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the recording</button>
       </div>
@@ -333,6 +336,10 @@ export async function mount(root, ctx) {
   render();
   // the descent (step 2) starts from the WT fly where it stands now
   root.querySelector(".assay__controls a.btn").addEventListener("click", () => handOff("fly", lanes[0].fly.g));
+  bindSaveMenu(root.querySelector(".savemenu"), {
+    render: () => assayToCanvas(svg, { title: root.querySelector("h1").textContent, system: CASES[ctx.caseId].system }),
+    filename: () => `smFISH-${ctx.caseId}-phenotype.png`,
+  });
   window.__assay = { tlG, tlH, clock, lanes };   // for review tooling
 
   return () => {

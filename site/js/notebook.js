@@ -83,8 +83,8 @@ function drawerBody(caseId) {
 
   const unresolved = s.shortlist.filter(m => s.verdicts[m] === "unresolved");
   const revise = `
-    ${area("claim", "Claim: our leading explanation", "What is your leading explanation?")}
-    <label class="field"><span class="field__label">Uncertainty: the strongest remaining alternative</span>
+    ${area("claim", "Claim: your leading explanation", "What is your leading explanation?")}
+    <label class="field"><span class="field__label">Uncertainty: anything still open (optional)</span>
       <select class="select" data-bind="uncertainty.mode">
         <option value="">Choose…</option>
         ${unresolved.map(m => `<option value="${m}">${esc(MODES[m].title)}</option>`).join("")}
