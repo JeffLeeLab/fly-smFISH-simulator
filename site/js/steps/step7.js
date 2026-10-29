@@ -240,6 +240,7 @@ export async function mount(root, ctx) {
     setOpen(true, { remember: false });
   } else {
     setOpen(!!read("plot")?.open, { remember: false });
+    ctx.reveal();   // the text and plot show while the viewer loads
     const { createViewer } = await import("../viewer/viewer.js");
     const regionIds = g.probe_regions.map(r => r.id);
     viewer = await createViewer(host, { caseId: id, mode: "results", pair, regionIds, ...viewerPrefs() });

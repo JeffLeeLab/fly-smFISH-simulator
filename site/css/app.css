@@ -23,6 +23,7 @@
 }
 .app[data-layout="workbench"] { height: 100vh; overflow: hidden; }
 .view { min-width: 0; outline: none; }
+.view[data-mounting] { visibility: hidden; }   /* until the view has placed its artwork (main.js) */
 .app[data-layout="workbench"] .view { height: 100vh; overflow: hidden; }
 
 /* ---------- progress rail ---------- */

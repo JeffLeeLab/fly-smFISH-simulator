@@ -46,6 +46,7 @@ export async function mount(root, ctx) {
     renderNoWebGL(host);
     return unbind;
   }
+  ctx.reveal();   // the text and the growing frame show while the viewer loads
   const { createViewer } = await import("../viewer/viewer.js");
   const viewer = await createViewer(host, { caseId: ctx.caseId, mode: "clue", ...viewerPrefs() });
   const offControls = renderControls(root.querySelector("#controls"), viewer, { mode: "clue" });

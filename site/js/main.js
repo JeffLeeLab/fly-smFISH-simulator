@@ -8,6 +8,7 @@ import { renderRail } from "./rail.js";
 import { initNotebook, updateNotebook } from "./notebook.js";
 import { initGlossary } from "./glossary.js";
 import { endTour } from "./tour.js";
+import { loadGsap } from "./gsap.js";
 
 const VIEWS = {
   landing: () => import("./steps/landing.js"),
@@ -106,18 +107,24 @@ async function show(r) {
   if (my !== token) return; // a newer route arrived while loading
   unmount();
   unmount = () => {};
+  // The view stays hidden while it mounts: a view draws its artwork first and hides or places it
+  // once GSAP and the sprites have loaded, so unplaced layers would otherwise flash at its top left.
+  // A view that waits on something slow (the image viewer) calls ctx.reveal() once its text is in.
+  view.dataset.mounting = "";
+  const reveal = () => { if (my === token) delete view.dataset.mounting; };
   view.replaceChildren();
   window.scrollTo(0, 0);
-  const ctx = { ...r, case: c, stage: r.caseId ? stageOf(r.step) : "Introduction", reason: choice.reason };
+  const ctx = { ...r, case: c, stage: r.caseId ? stageOf(r.step) : "Introduction", reason: choice.reason, reveal };
   let cleanup;
   try {
     cleanup = (await mod.mount(view, ctx)) || (() => {});
   } catch (err) {
-    if (my === token) failed(err, false);
+    if (my === token) { failed(err, false); reveal(); }
     return;
   }
   if (my !== token) { cleanup(); return; } // left before the view finished mounting
   unmount = cleanup;
+  reveal();
   view.focus({ preventScroll: true });
 }
 
@@ -128,3 +135,4 @@ onTheme(drawRail);
 onChange(key => { if (route.caseId && key === "case:" + route.caseId) drawRail(); });
 onRoute(show);
 show(route);
+loadGsap().catch(() => {});   // fetched alongside the first view, so its mount waits less (a failure shows in the view)
