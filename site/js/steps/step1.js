@@ -129,7 +129,7 @@ export async function mount(root, ctx) {
       <div class="assay__controls">
         <button class="btn btn--primary btn--lg" type="button" data-act="start" hidden>Record fly activity</button>
         <a class="btn btn--primary btn--lg assay__end" href="${href(ctx.caseId, 2)}">Next: look inside the brain</a>
-        ${saveMenuHTML({ label: "Save phenotype", what: "phenotype", extra: "assay__end" })}
+        ${saveMenuHTML({ label: "Save current view as PNG", what: "current view", extra: "assay__end" })}
         <button class="btn" type="button" data-act="skip" hidden>Skip animation</button>
         <button class="btn" type="button" data-act="replay" hidden>Replay the recording</button>
       </div>

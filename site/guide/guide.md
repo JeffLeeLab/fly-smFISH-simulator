@@ -58,7 +58,7 @@ Watch the introductory sequence, then select your group's assigned neuronal syst
 
 ![The three neuron systems on the start page](img/choose.webp)
 
-1. Click your assigned system. A short animation illustrates the *Drosophila* behavioural assay used to characterise the mutant phenotype. When it finishes, **Save phenotype** copies or downloads the result as a PNG for your slides; click **Next** to continue.
+1. Click your assigned system. A short animation illustrates the *Drosophila* behavioural assay used to characterise the mutant phenotype. When it finishes, **Save current view as PNG** copies or downloads the result for your slides; click **Next** to continue.
 
 ### 2. Anatomy
 
