@@ -25,7 +25,7 @@ Your goal is to narrow down the candidate mechanisms, not to solve the case comp
 1. On campus (eduroam) or on the university VPN: **[shinytest.mvls.gla.ac.uk/fly-smfish-simulator](https://shinytest.mvls.gla.ac.uk/fly-smfish-simulator/)**
 2. Anywhere else, or if the campus link does not load: **[jeffleelab.github.io/fly-smFISH-simulator](https://jeffleelab.github.io/fly-smFISH-simulator/)**
 
-Both links run the same app. Use a laptop with a current version of Chrome, Edge, Firefox or Safari. The interface requires a window of at least 1280 × 720 pixels and is not designed for phones.
+Both links run the same app. Use a laptop with a current version of Chrome, Edge, Firefox or Safari. The interface requires a window of at least 1280 × 720 pixels and is not designed for phones. Allow 60–90 minutes to work through all eight steps.
 
 **Stay on one link and one browser.** Your notebook is saved locally in that browser for that URL only. Opening the other link, switching browsers or using a private/incognito window starts with an empty notebook (and closing a private window discards your notes). **Notebooks do not sync between computers**, so finish the app on the computer you started on.
 
@@ -110,7 +110,7 @@ Inspect the simulated confocal images and quantitative spot data across compartm
 
 ![Step 7: results, with the images blurred](img/step7.webp)
 
-1. Your active probe pair. Click **Try another pair** to return to Step 6; you can test as many probe combinations as you like.
+1. Your active probe pair. Click **Try another pair** to return to Step 6; you can test as many probe combinations as you like, and there is no penalty for trying.
 2. Simulated confocal images (blurred in this guide). The legend directly beneath explains how to interpret dual-channel colocalisation (white) versus single-channel spots (green or magenta).
 3. Switch between **Viewer controls** (channels and the three biological replicates, `Animal 1–3`) and **Compare** (your notes and hypothesis verdicts).
 4. Assign a verdict to each shortlisted mode (*Ruled out*, *Supported* or *Unresolved*) and summarise the evidence. *Unresolved* is a valid verdict when smFISH alone cannot settle a mechanism.
@@ -132,6 +132,7 @@ Review the summary of your experiment and formulate your conclusion.
 
 - Everything you type in the notebook stays locally in your browser; nothing is uploaded to a server.
 - To export figures for your presentation, use the **Save** menu on the Step 1 phenotype, the microscopy viewer, the quantification plot, or the Step 8 summary slide: choose **Copy** to paste directly into PowerPoint, or **Download** to save a PNG file.
+- For your group's slides, keep the Step 1 phenotype, the Step 2 anatomy (it has no **Save** menu, so take a screenshot), your best microscope images from Steps 3 and 7, the plot and the Step 8 summary.
 
 ## If something goes wrong
 
