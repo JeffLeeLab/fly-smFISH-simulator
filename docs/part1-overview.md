@@ -2,7 +2,7 @@
 
 A brief for designing Part 2 and later parts of the course. It summarises `PRODUCT.md` and `docs/spec.md` as of 2026-10-20; where they disagree with this file, they win.
 
-> **This file contains the instructor answer key (section 7; the full key is `docs/INSTRUCTOR-KEY.md`).** Keep section 7 out of anything students see.
+> **This file contains the instructor answer key (section 7).** Keep section 7 out of anything students see.
 
 ## 1. In one paragraph
 
@@ -137,7 +137,6 @@ Ideas the spec parks for later versions of the app, each a possible downstream s
 
 - `PRODUCT.md`: users, purpose, constraints, accessibility.
 - `docs/spec.md`: *Introduction* (biology, PTR mode table with alternative explanations and next evidence, case truth tables), *Part 1* (screens), *Part 2*, *Future implementation ideas*.
-- `docs/INSTRUCTOR-KEY.md`: the instructor answer key for all three cases, with the probe menus, numbers, traps and prompts for stuck groups.
 - `data/<case>/truth-table.md`: the signed-off truth tables in full.
 - `docs/transcript_models_R6.json`: transcript models and probe menus.
 - `docs/storyboards/targets-step.md`: the step 4 primer.

@@ -113,7 +113,6 @@ Shared across cases:
 - **Distal measure (instructor, 2026-10-13):** this case plots "Proportion in synaptic terminals" (synaptic terminals / all cytoplasmic RNA; S7 0.22 → 0.11). Axon + synaptic terminals, the measure the other cases use, stays flat here (0.44 → 0.43) because the RNA stalls inside the axon.
 - **Confound and trap:** S3 also detects CG31642 mRNA, which looks like intron retention but is equal in both genotypes.
 - **Synaptic-terminal number (instructor only; outside the students' scope):** the mutant has fewer synaptic terminals (20 → 15), visible in the images but never measured or plotted. Their spots are set as a compartment total, so the fall holds per terminal too (3.0 → 1.9).
-- **Instructor key:** [INSTRUCTOR-KEY.md](INSTRUCTOR-KEY.md), for all three cases (2026-10-27).
 
 *Pdf neurons – futsch: RNA made but not kept*
 - **TDP-43 dysfunction:** nuclear loss, less diffuse cytoplasmic signal, and irregular aggregates around the nucleus. Small round transport granules are equal in both genotypes.
