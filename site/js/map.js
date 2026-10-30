@@ -90,7 +90,7 @@ function buildAxis(g, width, scale) {
 // (the mushroom body's seven isoforms under the probe-design line at 1280×720)
 const RH_START = 32, RH_MIN = 26, RH_MAX = 52;
 
-export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly = false }) {
+export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly = false, note = "" }) {
   // the name gutter fits the longest isoform name (Plex Mono 12px: 7.2px a character) or the
   // two-line track label, whichever is wider, so the map keeps the rest of the width
   const names = g.transcripts.map(t => t.name);
@@ -102,7 +102,7 @@ export function createMap(host, g, { onPick = () => {}, fitTo = null, readOnly =
   host.classList.add("tmap");
   host.innerHTML = `
     <div class="tmap__bar">
-      <p class="tmap__title"><i>${g.gene}</i> transcript map <span>· ${g.transcripts.length} annotated ${term("isoform", "isoforms")}</span></p>
+      <p class="tmap__title"><i>${g.gene}</i> transcript map <span>· ${g.transcripts.length} annotated ${term("isoform", "isoforms")}${note ? `, ${note}` : ""}</span></p>
       <div class="seg" role="group" aria-label="Intron scale">
         <button type="button" data-scale="comp" aria-pressed="true">Introns compressed</button><button type="button" data-scale="lin" aria-pressed="false">To scale</button>
       </div>

@@ -466,8 +466,8 @@ def kinds_table(rules: dict, layout) -> list:
         "## Three kinds of molecule",
         "",
         f"Group 1 and group 2 are made at the same rates in both genotypes. The exon covered by {ex['region']} is group 2's first coding exon, "
-        f"and lies in an intron of group-1 pre-mRNA. In control {ex['psi'][0]:.0%} of group-1 transcripts include it; in the mutant "
-        f"{ex['psi'][1]:.0%} do. Those transcripts are broken down soon after export (nonsense-mediated decay), so the share that survives falls with distance from the nucleus: "
+        f"and lies in an intron of group-1 pre-mRNA. In control {ex['psi'][0] * 100:g}% of group-1 transcripts include it; in the mutant "
+        f"{ex['psi'][1] * 100:g}% do. Those transcripts are broken down soon after export (nonsense-mediated decay), so the share that survives falls with distance from the nucleus: "
         + ", ".join(f"{SHORT_MB.get(c, c)} {v:.0%}" for c, v in ex["survives"].items())
         + ". A probe counts a molecule only if it carries its region: group-1 molecules that include the exon carry "
         f"{ex['region']} as well as their usual regions. Mean molecules per Kenyon cell, control → mutant:",

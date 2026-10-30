@@ -197,7 +197,7 @@ MB = {
     # the included exon: its genomic span (all of U4), the group whose pre-mRNA holds it in an
     # intron, the share of that group's transcripts that include it per genotype, and the share of
     # those that survive NMD in each compartment. The rest of the group skips it, as annotated.
-    "exon": {"lo": 886965, "hi": 892840, "into": "g1", "psi": {"control": 0.02, "mutant": 0.70},
+    "exon": {"lo": 886965, "hi": 892840, "into": "g1", "psi": {"control": 0.005, "mutant": 0.70},
              "survives": {"nucleus": 1.0, "cellbody": 0.35, "calyx": 0.10, "peduncle": 0.05, "lobes": 0.0}},
     "ts_active": 0.90,
     "ts_reference": ("U6", 10),  # U6 sites hold about 10 nascent transcripts (control production)

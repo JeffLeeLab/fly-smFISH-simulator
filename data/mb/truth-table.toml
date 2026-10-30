@@ -12,7 +12,8 @@
 # not a typical RNA-binding-protein job). Revised the same day at the instructor's request: a
 # larger fall in U2, most of it in the axon bundle and lobes, with less U2 RNA reaching them; the
 # TDP-43 puncta made sparse (0.0072 per µm², in cases.py). Signed off by the instructor on
-# 2026-10-12.
+# 2026-10-12. Revised on 2026-10-30 at the instructor's request: control psi 0.02 -> 0.005, so white
+# U2+U4 spots in control are at the floor (about one per animal) and read as the mutation's doing.
 #
 # The biology. Two isoform groups with separate start sites (group 1 = RA, RC, RD, RF, RG; group 2
 # = RB, RE) are made at the same rates in both genotypes, so transcription sites are flat. The
@@ -74,18 +75,18 @@ lobes = [5.4, 0.6]
 #
 # What this gives, per Kenyon cell, control -> mutant:
 #   compartment   group 2   group 1 skips   group 1 includes (white U2+U4)   total
-#   nucleus       0.90      2.06 -> 0.63    0.04 -> 1.47                     3.00 -> 3.00
-#   cell body     7.00     12.74 -> 3.90    0.09 -> 3.19                    19.83 -> 14.09
-#   calyx         1.05      1.91 -> 0.59    0.00 -> 0.14                     2.96 -> 1.77
-#   peduncle      0.60      2.35 -> 0.72    0.00 -> 0.08                     2.95 -> 1.40
-#   lobes         0.60      5.29 -> 1.62    0                                5.89 -> 2.22
-# U2: nucleus unchanged, cell body x0.55, peduncle x0.34, lobes x0.31, whole cell x0.51; N:C x1.81;
-# share in peduncle + lobes 0.37 -> 0.26 (x0.68). U4: nucleus x2.5, cell body x1.44, lobes
-# unchanged. U7: whole cell 31.7 -> 20.7 (x0.65).
+#   nucleus       0.90      2.09 -> 0.63    0.01 -> 1.47                     3.00 -> 3.00
+#   cell body     7.00     12.94 -> 3.90    0.02 -> 3.19                    19.96 -> 14.09
+#   calyx         1.05      1.94 -> 0.59    0.00 -> 0.14                     2.99 -> 1.77
+#   peduncle      0.60      2.39 -> 0.72    0.00 -> 0.08                     2.99 -> 1.40
+#   lobes         0.60      5.37 -> 1.62    0                                5.97 -> 2.22
+# U2: nucleus unchanged, cell body x0.55, peduncle x0.34, lobes x0.30, whole cell x0.51; N:C x1.83;
+# share in peduncle + lobes 0.38 -> 0.26 (x0.68). U4: nucleus x2.6, cell body x1.45, lobes
+# unchanged. U7: whole cell 31.9 -> 20.7 (x0.65).
 [exon]
 region = "U4"
 carried_by = "g1"
-psi = [0.02, 0.70]
+psi = [0.005, 0.70]
 survives = { nucleus = 1.0, cellbody = 0.35, calyx = 0.10, peduncle = 0.05, lobes = 0.0 }
 
 # How the mutant compares with control. A count or ratio that moves is expected to follow the
@@ -97,7 +98,7 @@ survives = { nucleus = 1.0, cellbody = 0.35, calyx = 0.10, peduncle = 0.05, lobe
 same = 0.05                  # "unchanged": within ±5%
 ratio = 0.10                 # a moving count or ratio: within ±10% of the nominal mutant / control ratio
 nominal = 0.20               # control means within ±20% of the numbers above
-appears_cap = 0.15           # "appears": control mean at most 0.15 per cell
+appears_cap = 0.05           # "appears": control mean at most 0.05 per cell (0.15 until 2026-10-30)
 chance = 0.04                # TDP-43 overlap within 4 percentage points of the randomised-position control (or 2 SE, whichever is larger)
 above = 0.10                 # "above chance": at least 10 percentage points over the randomised-position level (less 2 SE)
 ts_number = 8                # transcription-site number: within 8 nuclei of control (30 nuclei per genotype)

@@ -109,6 +109,9 @@ export const CASES = {
       function: "A presynaptic protein that primes synaptic vesicles for release; without it, neurotransmitter release fails. In these Kenyon cells: cell bodies, dendrites, axons and the synapses in the lobes.",
       flybase: "https://flybase.org/reports/FBgn0025726",
       orthologueLink: "https://www.ncbi.nlm.nih.gov/gene/23025",
+      // after "7 annotated isoforms" in the step 6 map title, this case only: its new isoform is not on
+      // the map (instructor, 2026-10-30)
+      mapNote: "all found in healthy flies",
     },
     compartments: ["Nucleus", "Cell body", "Dendrites", "Axon bundle", "Lobes"],
     // The calyx (dendrites) is simulated and drawn but never counted, plotted or offered as a fly-to.

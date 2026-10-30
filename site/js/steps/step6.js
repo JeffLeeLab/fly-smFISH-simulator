@@ -118,7 +118,7 @@ export async function mount(root, ctx) {
   const unbind = bind(root, id);
   const msg = root.querySelector("#slot-msg");
   const byId = new Map(models.probe_regions.map(r => [r.id, r]));
-  const map = createMap(root.querySelector("#map"), models, { onPick: pick, fitTo: root.querySelector(".probe-main") });
+  const map = createMap(root.querySelector("#map"), models, { onPick: pick, fitTo: root.querySelector(".probe-main"), note: t.mapNote });
 
   function refresh() {
     const { pair } = caseState(id);

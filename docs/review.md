@@ -677,3 +677,16 @@ No findings.
 - **No giveaway:** the new label names no hypothesis or region.
 
 No findings.
+
+## 2026-10-30: mb, the map title's note and fewer white spots in WT (instructor)
+
+**Changes.**
+- **Step 6, mushroom body only:** the map title reads "*unc-13* transcript map · 7 annotated isoforms, all found in healthy flies" (`mapNote` in `content.js`). The case's new isoform is not on the map, and the case is the hardest of the three. A line under the legend was tried first, but at 1280×720 it pushed the "How two-colour smFISH works" link below the fold; the title line has room. `PRODUCT.md` records the exception.
+- **mb truth table:** control psi 0.02 → 0.005 and the "appears" cap 0.15 → 0.05 per cell, so white Region 2 + 4 spots in WT are at the floor and read as the mutation's doing. Rebuilt; the animal choice changed, so every mb image is new. `generator.validate mb --signed`: 3786 checks, 0 failed. White Region 2 + 4 spots per animal (30 cells), WT: 0, 2 and 2 (nucleus + cell body), none in the axon bundle or lobes; mutant: 131–148 (nucleus + cell body), 2–4 in the axon bundle, none in the lobes.
+
+**Checks.**
+- **Review set:** `tools/review-shots.sh` for mb, locally and from GitHub Pages (`REVIEW_URL`), compared with `tools/shot-diff.py`. Steps 3 and 7 differ (new animals), step 6 by the title; steps 5 and 8 by texture noise (at most 490 px, difference ≤ 28); the rest match. The step 3, 6 and 7 sheets were looked at in both sizes and themes: step 3 still shows the nuclear loss; the step 6 title fits on one line at 1280×720 and the map keeps its height; step 7's WT cell bodies show green and magenta spots with white only at transcription sites.
+- **Other cases:** the note appears only in mb (`createMap` takes it from the case); the pdf and nmj truth tables regenerate unchanged.
+- **No giveaway:** the note names no mode, region or isoform; it says where the annotation comes from.
+
+No findings.
