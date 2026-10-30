@@ -39,8 +39,12 @@ let route = parse();
 let unmount = () => {};
 let token = 0;
 
-function layoutFor(r) {
-  return r.caseId ? STEPS[r.step].layout : "story";
+// The layout changes with the view, not before it: the old view stays on screen while the new one
+// loads, and a scrolled story view put in the workbench's fixed frame jumps to its top (the descent
+// then rewinds there, its drawing piling up at the top left until step 3 replaces it).
+function setLayout(r) {
+  app.dataset.layout = r.caseId ? STEPS[r.step].layout : "story";
+  app.dataset.step = r.caseId ? String(r.step) : "landing";
 }
 
 function drawRail() {
@@ -86,9 +90,6 @@ async function show(r) {
     updateCase(r.caseId, s => { if (!s.visited.includes(r.step)) s.visited.push(r.step); });
   }
 
-  const layout = layoutFor(r);
-  app.dataset.layout = layout;
-  app.dataset.step = r.caseId ? String(r.step) : "landing";
   drawRail();
   updateNotebook(r.caseId && CASES[r.caseId].available ? r : { caseId: null, step: 1 });
 
@@ -101,12 +102,13 @@ async function show(r) {
   try {
     mod = await viewOf(r.caseId, choice.key)();
   } catch (err) {
-    if (my === token) failed(err, true);
+    if (my === token) { failed(err, true); setLayout(r); }
     return;
   }
   if (my !== token) return; // a newer route arrived while loading
   unmount();
   unmount = () => {};
+  setLayout(r);
   // The view stays hidden while it mounts: a view draws its artwork first and hides or places it
   // once GSAP and the sprites have loaded, so unplaced layers would otherwise flash at its top left.
   // A view that waits on something slow (the image viewer) calls ctx.reveal() once its text is in.
