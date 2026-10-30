@@ -662,3 +662,18 @@ The instructor asked for a short student guide they can edit themselves: what th
 - **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj, locally and from GitHub Pages (`REVIEW_URL`), compared with `tools/shot-diff.py`. All 65 shots per case match the release except for faint texture noise (largest pixel difference 28 of 255, mostly under 500 px): the mutant fly's ink in the dark hero, step 5's small neuron, step 6's map, and the muscle fill in nmj step 2's labels frame (12,074 px, difference ≤ 16). The frozen end frames are unchanged, as expected: the change affects only the moment before a view appears. The pdf hero, step 2 and step 7 sheets were looked at in both sizes and themes.
 
 No findings.
+
+## 2026-10-30: step 1's Save menu renamed; wrapped captions show every line (instructor)
+
+**Changes.**
+- **Step 1, all cases:** the Save menu beside Next is "Save current view as PNG" (was "Save phenotype"), with the viewer's choices, "Copy current view" and "Download current view as PNG". The guide and spec follow; the file is still `smFISH-<case>-phenotype.png`.
+- **Captions that wrap:** the wipe that brings a caption in is a clip-path, and it stayed in place when the wipe ended. On an inline span its box is the first line only, so a caption's second line was hidden. The instructor saw this in nmj step 2 ("…called the neuromuscular junction (NMJ)."). The caption spans (`.assay__cap`, `.descent__cap`) are now blocks, and the wipe clears its clip when it ends.
+
+**Checks.**
+- **Where captions wrapped:** every caption of steps 1, 2 (all cases) and 4 was put into the page at 1024×768, 1100×700, 1280×720, 1440×900 and 1920×1080 and its lines counted. Before the fix, nmj step 2's central nervous system and neuromuscular junction captions lost their second line at 1280 and 1440 px wide; the mb and pdf descents and the step 1 and step 4 roll-up captions lost one only below 1280 px. Now every descent caption fits its two held lines at every size, and the roll-up captions fit one line from 1280 px (the minimum viewport); below that, a wrapped caption shows both lines and moves Next down one line.
+- **Live animation:** nmj step 2 scrolled to the neuromuscular junction caption at 1280×720, and nmj step 1 played at 1100×700: both lines show after the wipe, with no clip left.
+- **Save menu:** fits beside Next on one line at 1280×720 and 1920×1080 in every case; the menu opens clear of the text.
+- **Review sets:** `tools/review-shots.sh` for pdf, mb and nmj, compared with `tools/shot-diff.py` against the sets of the release before (2026-10-29). Only step 1 changed (the Save label, about 910 px per shot); the rest is texture noise. The step 1 sheets were looked at in both sizes and themes. The frozen frames show captions without the wipe, so they were the same before and after.
+- **No giveaway:** the new label names no hypothesis or region.
+
+No findings.
